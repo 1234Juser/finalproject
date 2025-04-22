@@ -7,6 +7,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.App {
+  width: 100%;
+  max-width: 1120px;    /* 화면이 커져도 이 이상 넓어지지 않음 */
+  margin: 0 auto;       /* 가운데 정렬 */
+  padding: 0 1rem;      /* 모바일 대비 내부 여백 */
+  box-sizing: border-box;
+}
+
+a {text-decoration: none;}
+ul {list-style: none;}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
