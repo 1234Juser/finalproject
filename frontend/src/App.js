@@ -13,11 +13,11 @@ function App() {
       <div className="App">
         <Routes>
           <Route element={<HeaderCom />} />
-          <Route path="/" element={<IndexPage />} />
-          <Route path="/like" element={<LikePage />} />
-          <Route path="/my" element={<MyPage />} />
-          <Route path="/myreservation" element={<MyReservationPage />} />
-          <Route path="/myreview" element={<MyReviewPage />} />
+          {/*<Route path="/" element={<IndexPage />} />*/}
+          {/*<Route path="/like" element={<LikePage />} />*/}
+          {/*<Route path="/my" element={<MyPage />} />*/}
+          {/*<Route path="/myreservation" element={<MyReservationPage />} />*/}
+          {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
         </Routes>
       </div>
   );
