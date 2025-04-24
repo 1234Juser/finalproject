@@ -24,7 +24,125 @@ VALUES
     (2, 2),  -- 김유진: USER (소셜 로그인 사용자)
     (3, 2);  -- 박수정: USER (소셜 로그인 사용자)
 
-INSERT INTO tbl_wish_group (member_code, group_name, wish_count) VALUES
+
+
+INSERT INTO tbl_region (region_code, region_uid, region_type, region_name) VALUES
+                                                                               (1, 'SEOUL_GYEONGGI', 'DOMESTIC', '서울/경기/강원/충청'),
+                                                                               (2, 'BUSAN_GYEONGSANG', 'DOMESTIC', '부산/경상/전라'),
+                                                                               (3, 'JEJU', 'DOMESTIC', '제주'),
+                                                                               (4, 'ASIA', 'INTERNATIONAL', '아시아'),
+                                                                               (5, 'EUROPE', 'INTERNATIONAL', '유럽'),
+                                                                               (6, 'AMERICAS', 'INTERNATIONAL', '아메리카'),
+                                                                               (7, 'OCEANIA', 'INTERNATIONAL', '오세아니아'),
+                                                                               (8, 'AFRICA', 'INTERNATIONAL', '아프리카');
+
+
+INSERT INTO tbl_country (country_code, region_code, country_uid, country_name) VALUES
+                                                                                   (1, 4, 'KOR', '대한민국'),
+                                                                                   (2, 4, 'JPN', '일본'),
+                                                                                   (3, 4, 'THA', '태국'),
+                                                                                   (4, 5, 'FRA', '프랑스'),
+                                                                                   (5, 5, 'ITA', '이탈리아'),
+                                                                                   (6, 6, 'USA', '미국'),
+                                                                                   (7, 4, 'MDV', '몰디브'),
+                                                                                   (8, 7, 'AUS', '호주'),
+                                                                                   (9, 4, 'ARE', '아랍에미리트'),
+                                                                                   (10, 8, 'ZAF', '남아프리카공화국');
+
+INSERT INTO tbl_city (city_code, country_code, city_uid, city_name) VALUES
+                                                                        (1001, 1, 'SEOUL', '서울'),
+                                                                        (1002, 1, 'BUSAN', '부산'),
+                                                                        (1003, 1, 'JEJU', '제주'),
+                                                                        (1004, 1, 'GANGNEUNG', '강릉'),
+                                                                        (1005, 1, 'DAEJEON', '대전'),
+                                                                        (1110, 1, 'INCHEON', '인천'),
+                                                                        (1101, 2, 'TOKYO', '도쿄'),
+                                                                        (1102, 3, 'BANGKOK', '방콕'),
+                                                                        (1103, 4, 'PARIS', '파리'),
+                                                                        (1104, 5, 'ROME', '로마'),
+                                                                        (1105, 6, 'NEWYORK', '뉴욕'),
+                                                                        (1106, 7, 'MALE', '말레'),
+                                                                        (1107, 8, 'SYDNEY', '시드니'),
+                                                                        (1108, 9, 'DUBAI', '두바이'),
+                                                                        (1109, 10, 'CAPE_TOWN', '케이프타운');
+
+INSERT INTO tbl_theme (theme_code, theme_uid, theme_name) VALUES
+                                                              (1, 'THEME_001', '자연'),
+                                                              (2, 'THEME_002', '문화'),
+                                                              (3, 'THEME_003', '역사'),
+                                                              (4, 'THEME_004', '모험'),
+                                                              (5, 'THEME_005', '가족'),
+                                                              (6, 'THEME_006', '힐링'),
+                                                              (7, 'THEME_007', '미식'),
+                                                              (8, 'THEME_008', '쇼핑'),
+                                                              (9, 'THEME_009', '야경'),
+                                                              (10, 'THEME_010', '디지털 노마드');
+
+INSERT INTO tbl_product (
+    product_code, product_uid, city_code, product_title, product_content,
+    product_adult, product_child, product_start_date, product_end_date,
+    product_min_participants, product_max_participants,
+    product_status, product_thumbnail, product_type
+) VALUES
+      (1, 'SEOUL_001', 1001, '서울 시티 투어', '서울 시내 관광 투어',
+       100000, 50000, '2025-05-01 09:00:00', '2025-05-31 18:00:00',
+       1, 30, 'ON_SALE', 'seoul_tour.jpg', 'TOUR'),
+      (2, 'BUSAN_001', 1002, '부산 해변 투어', '부산 해운대 해변과 주변 관광지 투어',
+       120000, 60000, '2025-06-01 09:00:00', '2025-06-30 18:00:00',
+       1, 40, 'ON_SALE', 'busan_beach.jpg', 'TOUR'),
+      (3, 'JEJU_001', 1003, '제주도 일주 투어', '제주도 전경을 즐길 수 있는 일주 투어',
+       130000, 65000, '2025-07-01 09:00:00', '2025-07-31 18:00:00',
+       1, 25, 'ON_SALE', 'jeju_island.jpg', 'TOUR'),
+      (4, 'GANGNEUNG_001', 1004, '강릉 바다와 함께하는 투어', '강릉의 아름다운 해변과 바다를 즐기는 투어',
+       95000, 45000, '2025-06-15 09:00:00', '2025-06-30 18:00:00',
+       1, 20, 'ON_SALE', 'gangneung_beach.jpg', 'TOUR'),
+      (5, 'DAEJEON_001', 1005, '대전 과학도시 탐방', '대전의 과학도시와 연구소 탐방 투어',
+       85000, 45000, '2025-07-01 09:00:00', '2025-07-15 18:00:00',
+       1, 15, 'ON_SALE', 'daejeon_science.jpg', 'TOUR'),
+      (6, 'TOKYO_001', 1101, '도쿄 디즈니랜드 투어', '도쿄 디즈니랜드 하루 종일 즐기기',
+       120000, 60000, '2025-06-01 09:00:00', '2025-06-30 18:00:00',
+       1, 30, 'ON_SALE', 'tokyo_disneyland.jpg', 'TOUR'),
+      (7, 'BANGKOK_001', 1102, '방콕 시내 투어', '방콕의 주요 명소를 둘러보는 시내 투어',
+       90000, 45000, '2025-06-01 09:00:00', '2025-06-30 18:00:00',
+       1, 25, 'ON_SALE', 'bangkok_tour.jpg', 'TOUR'),
+      (8, 'PARIS_001', 1103, '파리 에펠탑 투어', '에펠탑과 파리 시내를 한 번에',
+       150000, 75000, '2025-07-01 09:00:00', '2025-07-15 18:00:00',
+       1, 20, 'ON_SALE', 'paris_eiffel.jpg', 'TOUR'),
+      (9, 'ROME_001', 1104, '로마 역사 투어', '로마의 고대 유적지를 둘러보는 역사 투어',
+       140000, 70000, '2025-08-01 09:00:00', '2025-08-31 18:00:00',
+       1, 20, 'ON_SALE', 'rome_historical.jpg', 'TOUR'),
+      (10, 'NEWYORK_001', 1105, '뉴욕 시티 투어', '뉴욕의 주요 명소를 둘러보는 시티 투어',
+       130000, 65000, '2025-08-01 09:00:00', '2025-08-15 18:00:00',
+       1, 25, 'ON_SALE', 'newyork_city.jpg', 'TOUR');
+
+
+INSERT INTO tbl_product_theme (pt_id, product_code, theme_code) VALUES
+                                                                    (1, 1, 1),   -- 서울 시티 투어 -> 자연
+                                                                    (2, 2, 2),   -- 부산 해변 투어 -> 문화
+                                                                    (3, 3, 3),   -- 제주도 일주 투어 -> 역사
+                                                                    (4, 4, 4),   -- 강릉 바다 투어 -> 모험
+                                                                    (5, 5, 5),   -- 대전 탐방 -> 가족
+                                                                    (6, 6, 6),   -- 도쿄 디즈니랜드 -> 힐링
+                                                                    (7, 7, 7),   -- 방콕 시내 투어 -> 미식
+                                                                    (8, 8, 8),   -- 파리 에펠탑 -> 쇼핑
+                                                                    (9, 9, 9),   -- 로마 투어 -> 야경
+                                                                    (10, 10, 10);-- 뉴욕 투어 -> 디지털 노마드
+
+
+
+INSERT INTO tbl_product_country (pc_id, country_code, product_code) VALUES
+                                                                        (1, 1, 1),    -- 서울 시티 투어 -> 대한민국
+                                                                        (2, 1, 2),    -- 부산 해변 투어 -> 대한민국
+                                                                        (3, 1, 3),    -- 제주도 투어 -> 대한민국
+                                                                        (4, 1, 4),    -- 강릉 투어 -> 대한민국
+                                                                        (5, 1, 5),    -- 대전 투어 -> 대한민국
+                                                                        (6, 2, 6),    -- 도쿄 투어 -> 일본
+                                                                        (7, 3, 7),    -- 방콕 투어 -> 태국
+                                                                        (8, 4, 8),    -- 파리 투어 -> 프랑스
+                                                                        (9, 5, 9),    -- 로마 투어 -> 이탈리아
+                                                                        (10, 6, 10);  -- 뉴욕 투어 -> 미국
+
+INSERT INTO tbl_wish_group (member_code, group_title, wish_count) VALUES
     (1, '파리', 12),
     (1, '도쿄', 8),
     (1, '뉴욕', 15),
@@ -36,15 +154,15 @@ INSERT INTO tbl_wish (member_code, group_code, product_code) VALUES
     (1, 1, 1),
     (1, 2, 1),
     (1, 3, 1),
-    (1, 4, 2),
-    (1, 5, 3),
-    (1, 6, 3),
-    (2, 7, 4),
-    (2, 8, 4),
-    (2, 9, 5),
-    (2, 10, 5),
-    (3, 11, 6),
-    (3, 12, 6);
+    (1, 1, 2),
+    (1, 2, 3),
+    (1, 3, 3),
+    (2, 1, 4),
+    (2, 2, 4),
+    (2, 3, 5),
+    (2, 1, 5),
+    (3, 2, 6),
+    (3, 3, 6);
 
 INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count) VALUES
     (1, '2025-05-20', 2, NULL),
@@ -53,22 +171,22 @@ INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count
     (4, '2025-04-23', 1, 1),
     (5, '2025-04-23', 1, 1);
 
-INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, order_adult_price, order_children_price, total_price, order_date, order_status) VALUES
+INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, order_adult_price, order_child_price, total_price, order_date, order_status) VALUES
 -- 일반상품: 아동 분리 없음
-(1, 1, 1, 'RSV20250401-01', 120000, NULL, 240000, '2025-04-01 10:23:45', '예정'),
+(1, 1, 1, 'RSV20250401-01', 120000, NULL, 240000, '2025-04-01 10:23:45', 'SCHEDULED'),
 -- 디즈니월드: 아동 분리 있음
-(2, 2, 1, 'RSV20250401-02', 80000, 50000, 310000, '2025-04-02 14:10:12', '완료'),
+(2, 2, 1, 'RSV20250401-02', 80000, 50000, 310000, '2025-04-02 14:10:12', 'COMPLETED'),
 -- 디즈니월드: 취소된 주문
-(3, 3, 1, 'RSV20250401-03', 80000, 50000, 130000, '2025-04-03 09:05:33', '취소'),
-(4, 4, 2, 'RSV20250401-04', 80000, 50000, 130000, '2025-04-03 10:05:33', '완료'),
-(5, 5, 3, 'RSV20250401-05', 80000, 50000, 130000, '2025-04-04 12:05:33', '완료');
+(3, 3, 1, 'RSV20250401-03', 80000, 50000, 130000, '2025-04-03 09:05:33', 'CANCELED'),
+(4, 4, 2, 'RSV20250401-04', 80000, 50000, 130000, '2025-04-03 10:05:33', 'COMPLETED'),
+(5, 5, 3, 'RSV20250401-05', 80000, 50000, 130000, '2025-04-04 12:05:33', 'COMPLETED');
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
-    (1, 1, '카드', '삼성카드', '2025-04-01 10:23:45', 240000, '완료', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
-    (1, 2, '무통장', '신한카드', '2025-04-02 14:10:12', 310000, '완료', 'imp_1234567891', 'RSV20250401-02', 'https://receipt.url/2'),
-    (1, 3, '카드', '국민카드', '2025-04-03 09:05:33', 130000, '취소', 'imp_1234567892', 'RSV20250401-03', 'https://receipt.url/3'),
-    (2, 4, '카드', '롯데카드', '2025-04-04 09:12:33', 130000, '완료', 'imp_1234567893', 'RSV20250401-04', 'https://receipt.url/4'),
-    (3, 5, '카드', '우리카드', '2025-04-04 09:15:33', 130000, '완료', 'imp_1234567894', 'RSV20250401-05', 'https://receipt.url/5');
+    (1, 1, '카드', '삼성카드', '2025-04-01 10:23:45', 240000, 'COMPLETED', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
+    (1, 2, '무통장', '신한카드', '2025-04-02 14:10:12', 310000, 'COMPLETED', 'imp_1234567891', 'RSV20250401-02', 'https://receipt.url/2'),
+    (1, 3, '카드', '국민카드', '2025-04-03 09:05:33', 130000, 'CANCELED', 'imp_1234567892', 'RSV20250401-03', 'https://receipt.url/3'),
+    (2, 4, '카드', '롯데카드', '2025-04-04 09:12:33', 130000, 'COMPLETED', 'imp_1234567893', 'RSV20250401-04', 'https://receipt.url/4'),
+    (3, 5, '카드', '우리카드', '2025-04-04 09:15:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-05', 'https://receipt.url/5');
 
 INSERT INTO tbl_payment_cancel (payment_code, cancel_time, cancel_amount, pg_tid, cancel_receipt_url) VALUES
     (3, '2025-04-04 11:35:20', 130000, 'pg_cancel_9876543210', 'https://receipt.url/cancel/3');
@@ -91,3 +209,52 @@ VALUES
     ('자주 묻는 질문 1', '첫 번째 FAQ 내용'),
     ('자주 묻는 질문 2', '두 번째 FAQ 내용'),
     ('자주 묻는 질문 3', '세 번째 FAQ 내용');
+
+
+INSERT INTO tbl_companion (
+    comp_id, member_code, comp_member_id, comp_title, comp_created_at, comp_view_count
+) VALUES
+      (1, 1, 'user001', '5월 황금연휴 강릉 여행 같이 가요!', '2025-04-10 09:00:00', 12),
+      (2, 2, 'user002', '도쿄 맛집 투어 멤버 구해요', '2025-04-12 15:20:00', 25),
+      (3, 3, 'user003', '부산 당일치기 여행 동행 구해요~', '2025-04-15 11:45:00', 8);
+
+INSERT INTO tbl_companion_comment (
+    com_id, member_code, comp_id, com_member_id, com_content, com_created_at
+) VALUES
+      (1, 2, 1, 'user002', '저 강릉 좋아해요! 같이 가요~', '2025-04-10 10:05:00'),
+      (2, 3, 1, 'user003', '일정 맞으면 저도 참여하고 싶어요.', '2025-04-10 11:00:00'),
+      (3, 1, 2, 'user001', '맛집 코스 어떻게 짜셨나요?', '2025-04-12 16:00:00'),
+      (4, 3, 2, 'user003', '저 도쿄 가는 비행기 이미 예매했어요!', '2025-04-12 16:20:00'),
+      (5, 1, 3, 'user001', '부산 좋아요~ 몇 시 출발 예정이신가요?', '2025-04-15 12:00:00');
+
+INSERT INTO tbl_inquiry_chat (
+    ic_id, member_code, authority_code, ic_start_date, ic_end_date, ic_chat_status
+) VALUES
+      (1, 2, 2, '2025-04-20 10:00:00', NULL, 'ACTIVE'),
+      (2, 2, 2, '2025-04-21 09:30:00', '2025-04-21 09:45:00', 'CLOSED'),
+      (3, 3, 2, '2025-04-22 11:15:00', NULL, 'WAITING');
+
+
+INSERT INTO tbl_chat (
+    chat_id, member_code, chat_uid, chat_title, chat_create_at
+) VALUES
+      (1, 1, 'CHAT001', '서울 여행 같이 가실 분~', '2025-04-01 10:00:00'),
+      (2, 2, 'CHAT002', '도쿄 디즈니 동행 구해요!', '2025-04-05 15:30:00');
+
+INSERT INTO tbl_chat_room_member (
+    crm_id, chat_id, member_code, crm_joined_at, crm_is_exited, crm_exited_at
+) VALUES
+      (1, 1, 1, '2025-04-01 10:00:00', false, NULL),
+      (2, 1, 2, '2025-04-01 10:05:00', false, NULL),
+      (3, 2, 2, '2025-04-05 15:30:00', false, NULL),
+      (4, 2, 3, '2025-04-05 15:35:00', true, '2025-04-05 16:00:00');
+
+
+INSERT INTO tbl_notification (
+    noti_id, member_code, noti_message, noti_is_read, noti_created_at
+) VALUES
+      (1, 1, '새로운 여행 동행 댓글이 달렸습니다.', false, '2025-04-23 08:30:00'),
+      (2, 2, '1:1 문의에 답변이 도착했습니다.', true, '2025-04-22 15:45:00'),
+      (3, 1, '예약하신 투어 상품의 일정이 확정되었습니다.', false, '2025-04-23 11:00:00'),
+      (4, 3, '회원님의 리뷰에 답글이 달렸습니다.', true, '2025-04-21 17:20:00'),
+      (5, 1, '새로운 이벤트가 시작되었습니다! 지금 확인해보세요.', false, '2025-04-24 09:10:00');
