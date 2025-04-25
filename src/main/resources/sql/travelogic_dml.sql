@@ -11,8 +11,8 @@ VALUES
 -- 2. 권한 테이블 (tbl_authority)
 INSERT INTO tbl_authority (authority_name)
 VALUES
-    ('ADMIN'),  -- 관리자 권한
-    ('USER');  -- 일반 사용자 권한
+    ('ROLE_ADMIN'),  -- 관리자 권한
+    ('ROLE_USER');  -- 일반 사용자 권한
 
 -- 3. 회원별권한 테이블 (tbl_member_role)
 -- 홍길동: ADMIN 권한

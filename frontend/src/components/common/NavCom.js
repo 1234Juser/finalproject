@@ -1,6 +1,7 @@
-import styled from 'styled-components';
 import {StyledNav} from "../style/StyleSet";
 import {Link} from "react-router-dom";
+
+
 
 function NavCom() {
     return (

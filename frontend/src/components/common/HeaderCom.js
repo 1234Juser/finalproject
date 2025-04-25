@@ -1,9 +1,18 @@
 import styled from 'styled-components';
 import {WrapBlock, StyledHeader, StyledTitle} from "../style/StyleSet";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import NavCom from "./NavCom";
 
+const HeaderRight = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+`;
+
 function HeaderCom() {
+    const navigate = useNavigate();
+
     return (
         <>
             <WrapBlock>
@@ -11,19 +20,13 @@ function HeaderCom() {
                     <StyledTitle>
                         <Link to="/" className="link">Hello, Travelogic!</Link>
                     </StyledTitle>
+                    <HeaderRight>
+                        <button onClick={() => navigate("/register")}>회원가입</button>
+                    </HeaderRight>
                 </StyledHeader>
                 <NavCom />
             </WrapBlock>
-            <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                style={{ width: '100%', height: 'auto' }}
-            >
-                <source src="http://localhost:8080/img/logo/finalvideo.mp4" type="video/mp4" />
-                브라우저가 video 태그를 지원하지 않습니다.
-            </video>
+
         </>
     )
 }
