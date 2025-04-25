@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 // 폼 전체 박스
 const FormBox = styled.form`
     min-width: 340px;
-    width: 380px;         // 폼 고정 너비 추가!
+    width: 380px;        
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.04);
@@ -56,7 +56,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-    width: 100%;               // <== 입력란 100% 차지!
+    width: 100%;               
     padding: 10px;
     border-radius: 5px;
     border: 1.2px solid #aaa;
@@ -85,7 +85,7 @@ const InlineButton = styled.button`
 `;
 
 const Button = styled.button`
-    width: 100%;               // 메인버튼도 똑같이
+    width: 100%;               // 
     margin-top: 10px;
     background: #496af2;
     color: #fff;
@@ -105,15 +105,15 @@ const Message = styled.div`
     font-size: 0.93rem;
     margin-top: 4px;
     margin-bottom: 4px;
-    text-align: center;      // 양쪽 모두 가운데로!
+    text-align: center;      // 
 `;
 
-// 에러일 때 색상만 따로!
+//
 const ErrorMsg = styled(Message)`
     color: #d81b60;
 `;
 
-// 성공일 때 색상만 따로!
+//
 const SuccessMsg = styled(Message)`
     color: #258a23;
 `;
