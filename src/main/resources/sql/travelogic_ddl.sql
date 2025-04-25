@@ -74,6 +74,13 @@ CREATE TABLE `tbl_region` (
                               PRIMARY KEY (`region_code`)
 );
 
+CREATE TABLE `tbl_theme` (
+                             `theme_code` INT AUTO_INCREMENT NOT NULL COMMENT '테마id',
+                             `theme_uid` VARCHAR(20) NOT NULL COMMENT '테마고유코드',
+                             `theme_name` VARCHAR(20) NOT NULL COMMENT '도시명',
+                             CONSTRAINT `PK_TBL_THEME` PRIMARY KEY (`theme_code`)
+);
+
 CREATE TABLE `tbl_country` (
                                `country_code` INT AUTO_INCREMENT NOT NULL COMMENT '국가id',
                                `region_code` INT NOT NULL COMMENT '지역 고유번호',
@@ -91,10 +98,12 @@ CREATE TABLE `tbl_city` (
                             CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`)
 );
 
+
 CREATE TABLE `tbl_product` (
                                `product_code` INT AUTO_INCREMENT NOT NULL COMMENT '투어상품 id',
                                `product_uid` VARCHAR(20) NOT NULL COMMENT '상품 고유 코드',
                                `city_code` INT NOT NULL COMMENT '도시고유번호',
+                               `theme_code` INT NULL COMMENT '테마코드',
                                `product_title` VARCHAR(255) NOT NULL COMMENT '투어상품 제목',
                                `product_content` TEXT NOT NULL COMMENT '투어상품 상세내용',
                                `product_adult` INT NOT NULL COMMENT '성인금액',
@@ -105,9 +114,9 @@ CREATE TABLE `tbl_product` (
                                `product_max_participants` INT NOT NULL COMMENT '투어 출발 최대 인원',
                                `product_status` ENUM('ON_SALE', 'SOLD_OUT', 'CLOSED') NOT NULL COMMENT '상품 판매 상태',
                                `product_thumbnail` VARCHAR(255) NOT NULL COMMENT '대표 이미지 URL',
-                               `product_type` ENUM('TOUR', 'GOLF', 'CRUISE', 'KIDS', 'HONEYMOON','SILVER') NOT NULL COMMENT '상품의 테마',
                                CONSTRAINT `PK_TBL_PRODUCT` PRIMARY KEY (`product_code`),
-                               CONSTRAINT `FK_tbl_city_TO_tbl_product_1` FOREIGN KEY (`city_code`) REFERENCES `tbl_city` (`city_code`)
+                               CONSTRAINT `FK_tbl_city_TO_tbl_product` FOREIGN KEY (`city_code`) REFERENCES `tbl_city` (`city_code`),
+                               CONSTRAINT `FK_tbl_theme_TO_tbl_product` FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
 );
 
 
@@ -219,13 +228,6 @@ CREATE TABLE tbl_faq (
                          faq_title VARCHAR(50) NOT NULL COMMENT '제목',
                          faq_content VARCHAR(255) NOT NULL COMMENT '내용'
 )ENGINE=INNODB COMMENT 'FAQ';
-
-CREATE TABLE `tbl_theme` (
-                             `theme_code` INT AUTO_INCREMENT NOT NULL COMMENT '테마id',
-                             `theme_uid` VARCHAR(20) NOT NULL COMMENT '테마고유코드',
-                             `theme_name` VARCHAR(20) NOT NULL COMMENT '도시명',
-                             CONSTRAINT `PK_TBL_THEME` PRIMARY KEY (`theme_code`)
-);
 
 CREATE TABLE `tbl_product_theme` (
                                      `pt_id` INT AUTO_INCREMENT NOT NULL COMMENT '상품테마 id',
