@@ -126,19 +126,6 @@ INSERT INTO tbl_product_theme (pt_id, product_code, theme_code) VALUES
                                                                     (10, 10, 6);  -- 뉴욕 실버 시티 투어 -> SILVER
 
 
-
-INSERT INTO tbl_product_country (pc_id, country_code, product_code) VALUES
-                                                                        (1, 1, 1),    -- 서울 시티 투어 -> 대한민국
-                                                                        (2, 1, 2),    -- 부산 해변 투어 -> 대한민국
-                                                                        (3, 1, 3),    -- 제주도 투어 -> 대한민국
-                                                                        (4, 1, 4),    -- 강릉 투어 -> 대한민국
-                                                                        (5, 1, 5),    -- 대전 투어 -> 대한민국
-                                                                        (6, 2, 6),    -- 도쿄 투어 -> 일본
-                                                                        (7, 3, 7),    -- 방콕 투어 -> 태국
-                                                                        (8, 4, 8),    -- 파리 투어 -> 프랑스
-                                                                        (9, 5, 9),    -- 로마 투어 -> 이탈리아
-                                                                        (10, 6, 10);  -- 뉴욕 투어 -> 미국
-
 INSERT INTO tbl_wish_group (member_code, group_title, wish_count) VALUES
     (1, '파리', 12),
     (1, '도쿄', 8),

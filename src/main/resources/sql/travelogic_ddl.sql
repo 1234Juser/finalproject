@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS tbl_option CASCADE;
 DROP TABLE IF EXISTS tbl_wish CASCADE;
 DROP TABLE IF EXISTS tbl_wish_group CASCADE;
 DROP TABLE IF EXISTS `tbl_product_theme` CASCADE;
-DROP TABLE IF EXISTS `tbl_product_country` CASCADE;
 DROP TABLE IF EXISTS `tbl_product` CASCADE;
 DROP TABLE IF EXISTS `tbl_city` CASCADE;
 DROP TABLE IF EXISTS `tbl_country` CASCADE;
@@ -238,14 +237,6 @@ CREATE TABLE `tbl_product_theme` (
                                      CONSTRAINT `FK_tbl_theme_TO_tbl_product_theme_1` FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
 );
 
-CREATE TABLE `tbl_product_country` (
-                                       `pc_id` INT AUTO_INCREMENT NOT NULL COMMENT '상품국가 id',
-                                       `country_code` INT NOT NULL COMMENT '국가id',
-                                       `product_code` INT NOT NULL COMMENT '투어상품 id',
-                                       CONSTRAINT `PK_TBL_PRODUCT_COUNTRY` PRIMARY KEY (`pc_id`, `country_code`, `product_code`),
-                                       CONSTRAINT `FK_tbl_country_TO_tbl_product_country_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`),
-                                       CONSTRAINT `FK_tbl_product_TO_tbl_product_country_1` FOREIGN KEY (`product_code`) REFERENCES `tbl_product` (`product_code`)
-);
 
 CREATE TABLE `tbl_companion` (
                                  `comp_id` INT AUTO_INCREMENT NOT NULL COMMENT '여행동행게시판 번호',
