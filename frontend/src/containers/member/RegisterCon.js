@@ -19,6 +19,17 @@ export default function RegisterCon() {
     const [agreeTerms, setAgreeTerms] = useState(false);
     const [termsError, setTermsError] = useState("");
 
+    // === 아이디/이메일 중복상태 ===
+    const [idChecked, setIdChecked] = useState(null);
+    const [emailChecked, setEmailChecked] = useState(null);
+
+    // 중복체크 성공 메시지 상태 추가
+    const [idSuccessMsg, setIdSuccessMsg] = useState("");
+    const [emailSuccessMsg, setEmailSuccessMsg] = useState("");
+
+
+
+
 
     //유효성 검사
     const validate = (field, value) => {
@@ -61,8 +72,22 @@ export default function RegisterCon() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
-
         setErrors(prev => ({ ...prev, [name]: validate(name, value) }));
+
+        // 아이디/이메일 입력값이 바뀌면 중복체크 상태 초기화
+        if (name === "memberId") {
+            setIdChecked(null);
+            setIdSuccessMsg("");
+
+
+        }
+        if (name === "memberEmail") {
+            setEmailChecked(null);
+            setEmailSuccessMsg("");
+
+
+        }
+
     };
 
     // 약관동의 체크박스 변경 핸들러
@@ -88,6 +113,83 @@ export default function RegisterCon() {
         setErrors(newErrors);
         return isValid;
     };
+    //아이디 중복체크
+    const handleCheckId = async ()=>{
+        setIdSuccessMsg(""); // 체크시 일단 초기화
+        if(!form.memberId){
+            setErrors(prev => ({...prev, memberId: "아이디를 입력하세요."}));
+            return;
+        }
+        try{
+            const res = await fetch("http://localhost:8080/member/check-id",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({memberId:form.memberId})
+            });
+            const exists = await res.json();
+            setIdChecked(exists);
+            setErrors(prev =>({
+                ...prev,
+                memberId: exists? "이미 사용중인 아이디입니다" : ""
+            }));
+
+            if(!exists) {
+                setIdSuccessMsg("사용 가능한 아이디입니다.");
+
+
+            } else {
+                setIdSuccessMsg(""); // 사용불가면 메세지 없음
+
+            }
+
+        }catch(e){
+            setErrors(prev => ({
+                ...prev,
+                memberId: "네트워크 오류"
+            }));
+        }
+    };
+
+    //이메일 중복 체크
+    const handleCheckEmail = async ()=>{
+        setEmailSuccessMsg(""); // 체크시 일단 초기화
+        if(!form.memberEmail){
+            setErrors(prev=>({...prev, memberEmail: "이메일을 입력하세요"}));
+            return;
+        }
+        // 추가: 이메일 형식검증
+        if (!/^[\w-.]+@[\w-]+\.[a-zA-Z]{2,}$/.test(form.memberEmail)) {
+            setErrors(prev => ({...prev, memberEmail: "이메일 형식이 올바르지 않습니다."}));
+            return;
+        }
+            try {
+            const res = await fetch("http://localhost:8080/member/check-email", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ memberEmail: form.memberEmail })
+            });
+            const exists = await res.json();
+            setEmailChecked(!exists);
+            setErrors(prev => ({
+                ...prev,
+                memberEmail: exists ? "이미 사용중인 이메일입니다" : ""
+            }));
+
+            if(!exists) {
+                setEmailSuccessMsg("사용 가능한 이메일입니다.");
+
+            } else {
+                setEmailSuccessMsg("");
+
+            }
+
+        } catch (e) {
+            setErrors(prev => ({
+                ...prev,
+                memberEmail: "네트워크 오류"
+            }));
+        }
+    };
 
     // 비밀번호 보기/숨기기 토글
     const handleTogglePw = () => setShowPw(prev => !prev);
@@ -100,12 +202,14 @@ export default function RegisterCon() {
         e.preventDefault();
         setSubmitMsg("");
         setTermsError("");
-
+        //약관동의 안할시 불가
         if (!agreeTerms) {
             setTermsError("약관에 동의해야 회원가입이 가능합니다.");
             return;
         }
         if (!isFormValid()) return;
+
+
 
         setIsSubmitting(true);
         try {
@@ -117,7 +221,14 @@ export default function RegisterCon() {
 
             if (!res.ok) {
                 const msg = await res.text();
-                setSubmitMsg(msg || "회원가입에 실패했습니다.");
+
+                // 여기서 오류 메시지 짧게 가공
+                let shortMsg = msg;
+                if (msg.includes("아이디")) shortMsg = "이미 사용중인 아이디입니다";
+                if (msg.includes("이메일")) shortMsg = "이미 사용중인 이메일입니다";
+
+
+                setSubmitMsg(shortMsg || "회원가입에 실패했습니다.");
             } else {
                 setSubmitMsg("회원가입이 완료되었습니다!");
                 setForm({
@@ -150,7 +261,12 @@ export default function RegisterCon() {
             agreeTerms={agreeTerms}
             onAgreeTerms={handleAgreeTerms}
             termsError={termsError}
-
+            onCheckId={handleCheckId}
+            onCheckEmail={handleCheckEmail}
+            idSuccessMsg={idSuccessMsg}
+            emailSuccessMsg={emailSuccessMsg}
+            isIdChecked={idChecked}
+            isEmailChecked={emailChecked}
         />
     );
 }

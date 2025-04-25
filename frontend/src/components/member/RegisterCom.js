@@ -120,8 +120,11 @@ const TermsError = styled.div`
   margin-bottom: 4px;
 `;
 
-export default function RegisterCom({form,errors, showPw, onChange, onSubmit, onTogglePw, submitMsg, isSubmitting, agreeTerms, onAgreeTerms, termsError
+export default function RegisterCom({form,errors, showPw, onChange, onSubmit, onTogglePw, submitMsg, isSubmitting,
+                                        agreeTerms, onAgreeTerms, termsError, onCheckId, onCheckEmail, idSuccessMsg, emailSuccessMsg,
+                                        isIdChecked, isEmailChecked
                                     }) {
+
     return(
         <Wrapper>
             <FormBox onSubmit={onSubmit} autoComplete="off">
@@ -134,7 +137,10 @@ export default function RegisterCom({form,errors, showPw, onChange, onSubmit, on
                 <div>
                     <Label htmlFor="memberId">아이디</Label>
                     <Input name="memberId" value={form.memberId} onChange={onChange} maxLength={20} required/>
+                    <button type="button" onClick={onCheckId}>중복확인</button>
                     {errors.memberId && <ErrorMsg>{errors.memberId}</ErrorMsg>}
+                    {/* 성공 메시지 출력 */}
+                    {!errors.memberId && idSuccessMsg && <SuccessMsg>{idSuccessMsg}</SuccessMsg>}
                 </div>
                 <div>
                     <Label htmlFor="memberPassword">비밀번호</Label>
@@ -150,11 +156,15 @@ export default function RegisterCom({form,errors, showPw, onChange, onSubmit, on
                 <div>
                     <Label htmlFor="memberEmail">이메일</Label>
                     <Input name="memberEmail" value={form.memberEmail} onChange={onChange} required maxLength={40}/>
+                    <button type="button" onClick={onCheckEmail}>중복확인</button>
                     {errors.memberEmail && <ErrorMsg>{errors.memberEmail}</ErrorMsg>}
+                    {/* 성공 메시지 출력 */}
+                    {!errors.memberEmail && emailSuccessMsg && <SuccessMsg>{emailSuccessMsg}</SuccessMsg>}
                 </div>
                 <div>
                     <Label htmlFor="memberPhone">휴대폰번호</Label>
                     <Input name="memberPhone" value={form.memberPhone} onChange={onChange} placeholder="010-1234-5678" maxLength={13} required/>
+
                     {errors.memberPhone && <ErrorMsg>{errors.memberPhone}</ErrorMsg>}
                 </div>
 
