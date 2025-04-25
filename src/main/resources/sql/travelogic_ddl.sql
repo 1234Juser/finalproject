@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS tbl_authority
     authority_name VARCHAR(20) NOT NULL UNIQUE COMMENT '권한이름',
     -- TABLE LEVEL CONSTRAINTS
     CONSTRAINT pk_authority_code PRIMARY KEY (authority_code)
-    ) ENGINE=INNODB COMMENT '권한';
+) ENGINE=INNODB COMMENT '권한';
 
 -- 3. 회원별권한 테이블 (tbl_member_role)
 CREATE TABLE IF NOT EXISTS tbl_member_role
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS tbl_member_role
     CONSTRAINT pk_member_role PRIMARY KEY (member_code, authority_code),
     CONSTRAINT fk_member_code FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
     CONSTRAINT fk_authority_code FOREIGN KEY (authority_code) REFERENCES tbl_authority (authority_code)
-    ) ENGINE=INNODB COMMENT '회원별권한';
+) ENGINE=INNODB COMMENT '회원별권한';
 
 
 CREATE TABLE `tbl_region` (
@@ -101,6 +101,7 @@ CREATE TABLE `tbl_city` (
 CREATE TABLE `tbl_product` (
                                `product_code` INT AUTO_INCREMENT NOT NULL COMMENT '투어상품 id',
                                `product_uid` VARCHAR(20) NOT NULL COMMENT '상품 고유 코드',
+                               `country_code` INT NOT NULL COMMENT '국가고유번호',
                                `city_code` INT NOT NULL COMMENT '도시고유번호',
                                `theme_code` INT NULL COMMENT '테마코드',
                                `product_title` VARCHAR(255) NOT NULL COMMENT '투어상품 제목',
@@ -114,6 +115,7 @@ CREATE TABLE `tbl_product` (
                                `product_status` ENUM('ON_SALE', 'SOLD_OUT', 'CLOSED') NOT NULL COMMENT '상품 판매 상태',
                                `product_thumbnail` VARCHAR(255) NOT NULL COMMENT '대표 이미지 URL',
                                CONSTRAINT `PK_TBL_PRODUCT` PRIMARY KEY (`product_code`),
+                               CONSTRAINT `FK_tbl_country_TO_tbl_product` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`),
                                CONSTRAINT `FK_tbl_city_TO_tbl_product` FOREIGN KEY (`city_code`) REFERENCES `tbl_city` (`city_code`),
                                CONSTRAINT `FK_tbl_theme_TO_tbl_product` FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
 );
