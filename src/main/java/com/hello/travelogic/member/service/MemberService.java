@@ -64,4 +64,11 @@ public class MemberService {
                 .build();
         memberRoleRepository.save(memberRole);
     }
+
+    public boolean isIdDuplicated(String memberId){
+        return memberRepository.existsByMemberId(memberId);
+    }
+    public boolean isEmailDuplicated(String memberEmail){
+        return memberRepository.existsByMemberEmail(memberEmail);
+    }
 }
