@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "tbl_country")
 @Getter
@@ -23,7 +20,7 @@ public class CountryEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_code", nullable = false)
-    private RegionEntity region;
+    private RegionEntity regionCode;
 
     @Column(name = "country_uid", nullable = false, length = 20)
     private String countryUid;
@@ -31,7 +28,4 @@ public class CountryEntity {
     @Column(name = "country_name", nullable = false, length = 20)
     private String countryName;
 
-
-    @OneToMany(mappedBy = "country")
-    private List<ProductEntity> products = new ArrayList<>();
 }

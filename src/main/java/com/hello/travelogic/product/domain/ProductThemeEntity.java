@@ -20,9 +20,9 @@ public class ProductThemeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_code", nullable = false)
-    private ProductEntity product;
+    private ProductEntity productCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_code", nullable = false)
-    private ThemeEntity theme;
+    private ThemeEntity themeCode;
 }

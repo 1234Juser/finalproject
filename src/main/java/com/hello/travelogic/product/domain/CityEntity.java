@@ -20,7 +20,7 @@ public class CityEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_code", nullable = false)
-    private CountryEntity country;
+    private CountryEntity countryCode;
 
     @Column(name = "city_uid", nullable = false, length = 20)
     private String cityUid;

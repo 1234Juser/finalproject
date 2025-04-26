@@ -1,13 +1,13 @@
 package com.hello.travelogic.product.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_theme")
@@ -26,4 +26,8 @@ public class ThemeEntity {
 
     @Column(name = "theme_name", nullable = false, length = 20)
     private String themeName;
+
+    // 양방향 매핑
+    @OneToMany(mappedBy = "themeCode", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductThemeEntity> productThemes = new ArrayList<>();
 }

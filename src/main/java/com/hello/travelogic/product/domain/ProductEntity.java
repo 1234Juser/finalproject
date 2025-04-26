@@ -36,7 +36,7 @@ public class ProductEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_code")
-    private ThemeEntity themeCode;      // 테마 1 - 상품 N 관계
+    private ThemeEntity themeCode;      // 테마 1 - 상품 N 관계 (N:M 관계로 변경시 theme_code 컬럼은 삭제할 것)
 
     @Column(name = "product_title", nullable = false, length = 255)
     private String productTitle;
@@ -74,12 +74,8 @@ public class ProductEntity {
     private ProductType productType;
 
     // 양방향 매핑
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "productCode", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();
-
-
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProductCountryEntity> productCountries = new ArrayList<>();
 
 
     public enum ProductStatus {

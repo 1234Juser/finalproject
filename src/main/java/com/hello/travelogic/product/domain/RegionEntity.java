@@ -16,7 +16,7 @@ public class RegionEntity {
     @Column(name = "region_code", nullable = false)
     private Long regionCode;
 
-    @Column(name = "region_name", nullable = false, length = 20)
+    @Column(name = "region_uid", nullable = false, length = 20)
     private String regionUid;
 
     @Enumerated(EnumType.STRING)
