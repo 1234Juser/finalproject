@@ -1,5 +1,6 @@
 package com.hello.travelogic.config;
 
+import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -11,16 +12,20 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtUtil jwtUtil;
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
@@ -31,12 +36,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 모든 요청 허용 (초기 개발 단계용)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        // 회원 관련 엔드포인트는 인증 없이 허용
+                        .requestMatchers("/member/**").permitAll()
+                        // 게시물 작성, 마이페이지(MyPage) 등 개인정보/행동이 필요한 API는 인증 필요(원하는 보호 URL 패턴으로 수정)
+                        .requestMatchers("/api/**").authenticated()
+                        // 그 외 모두 허용
                         .anyRequest().permitAll()
+
                 )
-                // CSRF 비활성화 (JWT를 사용하므로 필요 없음)
-                .csrf(AbstractHttpConfigurer::disable);
+                // JWT 인증 필터 적용
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

@@ -36,6 +36,9 @@ public class MemberEntity {
     @Column(name ="member_phone", nullable = false, length = 20)
     private String memberPhone;
 
+    @Column(name="member_profileImageUrl", length = 255)
+    private String memberProfileImageUrl;
+
     @Column(name="member_registerdate", nullable = false)
     private LocalDateTime memberRegisterdate;
 
