@@ -1,0 +1,66 @@
+import React, {useEffect, useState} from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import LoginCom from "../../components/member/LoginCom";
+
+
+function LoginCon(){
+    const [memberId, setMemberId] = useState("");
+    const [memberPassword, setMemberPassword] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const navigate = useNavigate();
+
+    // 디버깅용: 비밀번호 입력될 때마다 출력
+    useEffect(() => {
+        console.log("현재 입력된 비밀번호:", memberPassword);
+    }, [memberPassword]);
+
+    //로그인 처리 핸들러
+    const handleSubmit = async (e) =>{
+        e.preventDefault();
+        setErrorMsg("");
+
+        // 디버깅: 서버로 보낼 데이터 로그
+        console.log("로그인 시도");
+        console.log("입력된 ID:", memberId);
+        console.log("입력된 PW:", memberPassword);
+
+        try{
+            const response = await axios.post("/member/login", {
+                memberId,
+                memberPassword
+            });
+
+            console.log("로그인 응답:", response.data);
+            const {accessToken, memberName, memberProfileImageUrl, roles} = response.data;
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("memberName", memberName);
+            localStorage.setItem("memberProfileImageUrl", memberProfileImageUrl);
+            localStorage.setItem("roles", JSON.stringify(roles));
+
+            //로그인 성공시 메인페이지로 이동
+            navigate("/");
+
+        } catch(err){
+            console.error("로그인 에러:", err.response?.data || err.message);
+            if(err.response && err.response.data){
+                setErrorMsg("아이디 또는 비밀번호가 올바르지 않습니다.");
+            }else{
+                setErrorMsg("서버 오류가 발생했습니다.")
+            }
+        }
+    };
+
+    return (
+        <LoginCom
+            memberId={memberId}
+            memberPassword={memberPassword}
+            onChangeId={e => setMemberId(e.target.value)}
+            onChangePassword={e => setMemberPassword(e.target.value)}
+            onSubmit={handleSubmit}
+            errorMsg={errorMsg}
+        />
+    );
+}
+
+export default LoginCon;

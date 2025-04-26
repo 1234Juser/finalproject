@@ -3,16 +3,21 @@ package com.hello.travelogic.member.service;
 import com.hello.travelogic.member.domain.AuthorityEntity;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.domain.MemberRoleEntity;
+import com.hello.travelogic.member.dto.LoginRequestDTO;
+import com.hello.travelogic.member.dto.LoginResponseDTO;
 import com.hello.travelogic.member.dto.MemberDTO;
 import com.hello.travelogic.member.repository.AuthorityRepository;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.member.repository.MemberRoleRepository;
+import com.hello.travelogic.utils.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +27,7 @@ public class MemberService {
     private final AuthorityRepository authorityRepository;
     private final MemberRoleRepository memberRoleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public void signup(MemberDTO memberDTO){
@@ -31,9 +37,6 @@ public class MemberService {
         if(memberRepository.existsByMemberEmail(memberDTO.getMemberEmail())){
             throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
         }
-
-
-
 
         //1. dto-> entity 변환 및 암호화
         MemberEntity memberEntity = MemberEntity.builder()
@@ -64,11 +67,37 @@ public class MemberService {
                 .build();
         memberRoleRepository.save(memberRole);
     }
-
+    //회원가입중복관련코드
     public boolean isIdDuplicated(String memberId){
         return memberRepository.existsByMemberId(memberId);
     }
     public boolean isEmailDuplicated(String memberEmail){
         return memberRepository.existsByMemberEmail(memberEmail);
+    }
+
+    //로그인
+    public LoginResponseDTO login(LoginRequestDTO dto){
+        MemberEntity member = memberRepository.findByMemberId(dto.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("해당아이디가 존재하지않습니다."));
+
+        if(!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())){
+            throw new IllegalArgumentException("비밀번호가 맞지 않습니다.");
+        }
+
+        String token = jwtUtil.generateToken(member.getMemberId());
+
+        // 1. 프로필 이미지가 없으면 기본 이미지 사용
+        String profileUrl = member.getMemberProfileImageUrl();
+        if (profileUrl == null || profileUrl.isEmpty()) {
+            profileUrl = "/img/default-profile.jpg"; // static 폴더 기준 경로로 작성
+        }
+
+        // 2. 권한(roles) 리스트 추출
+        List<String> roles = member.getRoles().stream()
+                .map(role -> role.getAuthority().getAuthorityName())
+                .collect(Collectors.toList());
+
+        return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles);
+
     }
 }

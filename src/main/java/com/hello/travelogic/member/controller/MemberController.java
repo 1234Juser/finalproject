@@ -1,5 +1,7 @@
 package com.hello.travelogic.member.controller;
 
+import com.hello.travelogic.member.dto.LoginRequestDTO;
+import com.hello.travelogic.member.dto.LoginResponseDTO;
 import com.hello.travelogic.member.dto.MemberDTO;
 import com.hello.travelogic.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -43,6 +45,13 @@ public class MemberController {
         }
         boolean exists = memberService.isEmailDuplicated(memberEmail);
         return ResponseEntity.ok(exists);
+    }
+
+    //로그인
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequest){
+        LoginResponseDTO result = memberService.login(loginRequest);
+        return ResponseEntity.ok(result);
     }
 
 }
