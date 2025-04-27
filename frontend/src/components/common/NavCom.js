@@ -8,7 +8,7 @@ function NavCom() {
         <>
             <StyledNav>
                 <ul className="nav">
-                    <li>국내</li>
+                    <li><Link to="/domestic">국내</Link></li>
                     <li>해외</li>
                     <li>투어/티켓</li>
                     <li>이심</li>

@@ -1,4 +1,9 @@
 package com.hello.travelogic.product.repo;
 
-public interface ProductRepo {
+import com.hello.travelogic.product.domain.ProductEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
+
+
 }
