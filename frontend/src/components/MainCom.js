@@ -1,4 +1,6 @@
 import React from "react";
+import MainBanner from "../style/components/StyleMain";
+import { BannerContainer, SlideWrapper, SlideImage, images } from "../style/components/StyleMain";
 
 
 export default function MainCom() {
@@ -7,6 +9,20 @@ export default function MainCom() {
     return (
         <div>
             <h1>메인 페이지</h1>
+            <BannerContainer>
+                <SlideWrapper>
+                    {images.map((src, index) => (
+                        <SlideImage
+                            key={index}
+                            src={`http://localhost:8080${src}`}
+                            alt={`banner-${index}`}
+                        />
+                    ))}
+                </SlideWrapper>
+            </BannerContainer>
+
+            {/*<MainBanner src="http://localhost:8080/img/banner/130743172_04.jpg" alt="bannerImg"/>*/}
+            <br/>
             <video
                 autoPlay
                 muted
