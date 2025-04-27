@@ -5,7 +5,8 @@ export const Wrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 220px;
+    margin-top: 48px
+
 `;
 
 export const FormBox = styled.form`

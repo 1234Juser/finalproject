@@ -1,17 +1,17 @@
 import './App.css';
 import {Route, Routes} from "react-router-dom";
-import HeaderCom from "./components/common/HeaderCom";
 import DomesticCon from "./containers/DomesticCon";
 import RegisterPage from "./pages/member/RegisterPage";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/member/LoginPage";
 import MyPagePage from "./pages/member/MyPagePage";
 import FooterCom from './components/common/FooterCom';
+import HeaderCon from "./containers/common/HeaderCon";
 
 function App() {
   return (
       <div className="main-content">
-          <HeaderCom /> {/* 항상 헤더/네비가 상단에 고정 */}
+          <HeaderCon /> {/* 항상 헤더/네비가 상단에 고정 */}
 
           <Routes>
               <Route path="/" element={<MainPage />} />
