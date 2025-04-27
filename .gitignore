@@ -41,7 +41,7 @@ out/
 *.log                         # 로그파일
 *.class                       # 컴파일된 클래스
 *.jar                         # 빌드된 jar
-
+logs/application.log
 # ⚛React 관련 (frontend 폴더 안에 있는 것들)
 frontend/node_modules/        # 의존성 (용량 큼)
 frontend/build/               # yarn build 결과물

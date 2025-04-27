@@ -33,14 +33,14 @@ const WrapBlock = styled.div`
         width: 100%;  /* 공백을 완전히 없애고, 너비를 100%로 설정 */
     }
 `;
-const StyledHeader = styled.header`
-    margin : 0 auto;    // 중앙
-    display : flex;     // 가로배치
-    //width : calc(100% - 800px);
-    width : 100%;
-    height : 200px;
-    align-items : center;   // 글씨가 세로의 중앙. display를 사용해야 가능
+const StyledHeader = styled.header`   
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    /* 필요한 나머지 스타일 유지 */
 `;
+
 const StyledWrapper = styled.div`
     display: flex;
     align-items: flex-start;
