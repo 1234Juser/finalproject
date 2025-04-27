@@ -3,15 +3,15 @@ package com.hello.travelogic.member.controller;
 import com.hello.travelogic.member.dto.LoginRequestDTO;
 import com.hello.travelogic.member.dto.LoginResponseDTO;
 import com.hello.travelogic.member.dto.MemberDTO;
+import com.hello.travelogic.member.dto.MyPageResponseDTO;
 import com.hello.travelogic.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -52,6 +52,15 @@ public class MemberController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequest){
         LoginResponseDTO result = memberService.login(loginRequest);
         return ResponseEntity.ok(result);
+    }
+
+    //회원마이페이지
+    @GetMapping("/mypage")
+    public ResponseEntity<MyPageResponseDTO> getMyPageInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = (String) authentication.getPrincipal();
+        MyPageResponseDTO dto = memberService.getMyPageInfo(memberId);
+        return ResponseEntity.ok(dto);
     }
 
 }

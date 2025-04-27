@@ -16,7 +16,7 @@ function NavCom() {
                 </ul>
                 <ul className="nav">
                     <li><Link to="/like">찜 목록</Link></li>
-                    <li><Link to="/my">마이페이지</Link></li>
+                    <li><Link to="/mypage">마이페이지</Link></li>
                 </ul>
             </StyledNav>
         </>

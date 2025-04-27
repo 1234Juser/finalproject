@@ -6,6 +6,7 @@ import com.hello.travelogic.member.domain.MemberRoleEntity;
 import com.hello.travelogic.member.dto.LoginRequestDTO;
 import com.hello.travelogic.member.dto.LoginResponseDTO;
 import com.hello.travelogic.member.dto.MemberDTO;
+import com.hello.travelogic.member.dto.MyPageResponseDTO;
 import com.hello.travelogic.member.repository.AuthorityRepository;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.member.repository.MemberRoleRepository;
@@ -99,5 +100,18 @@ public class MemberService {
 
         return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles);
 
+    }
+    //회원마이페이지
+    public MyPageResponseDTO getMyPageInfo(String memberId) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+        return MyPageResponseDTO.builder()
+                .memberName(member.getMemberName())
+                .memberId(member.getMemberId())
+                .memberEmail(member.getMemberEmail())
+                .memberPhone(member.getMemberPhone())
+                .memberProfileImageUrl(member.getMemberProfileImageUrl())
+                .memberPassword("***") // 보안상 필요시 마스킹처리
+                .build();
     }
 }

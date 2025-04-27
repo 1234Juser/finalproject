@@ -5,6 +5,7 @@ import DomesticCon from "./containers/DomesticCon";
 import RegisterPage from "./pages/member/RegisterPage";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/member/LoginPage";
+import MyPagePage from "./pages/member/MyPagePage";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               {/*<Route path="/" element={<IndexPage />} />*/}
           {/*<Route path="/like" element={<LikePage />} />*/}
-          {/*<Route path="/my" element={<MyPage />} />*/}
+          <Route path="/mypage" element={<MyPagePage />} />
           {/*<Route path="/myreservation" element={<MyReservationPage />} />*/}
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
             <Route path="/domestic" element={<DomesticCon />} />
