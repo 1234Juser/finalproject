@@ -7,7 +7,7 @@ import {
     Input,
     ErrorMsg,
     Button
-} from "../../components/style/LoginStyle";
+} from "../../style/LoginStyle";
 
 function LoginCom({
                       memberId,

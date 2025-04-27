@@ -2,7 +2,7 @@ import React from "react";
 import {
     Wrapper, FormBox, FormRow, InputGroup, EyeButton, Label, Input, InlineButton, Button,
     ErrorMsg, SuccessMsg, TermsBox, TermsLabel, TermsError, Title
-} from "../../components/style/RegisterStyle";
+} from "../../style/RegisterStyle";
 
 
 
