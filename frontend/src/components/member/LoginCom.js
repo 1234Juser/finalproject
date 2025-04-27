@@ -1,6 +1,16 @@
 import React from "react";
+import {
+    LoginFormContainer,
+    Form,
+    FormItem,
+    Label,
+    Input,
+    ErrorMsg,
+    Button
+} from "../../components/style/LoginStyle";
 
-function LoginCom({   memberId,
+function LoginCom({
+                      memberId,
                       memberPassword,
                       onChangeId,
                       onChangePassword,
@@ -8,25 +18,33 @@ function LoginCom({   memberId,
                       errorMsg
                   }) {
     return (
-        <div className="login-form-container" style={{ maxWidth: 340, margin: "48px auto", padding: 20, border: "1px solid #eee", borderRadius: 10 }}>
+        <LoginFormContainer>
             <h2 style={{ textAlign: "center" }}>로그인</h2>
-            <form onSubmit={onSubmit}>
-                <div style={{ margin: "16px 0" }}>
-                    <label>아이디</label>
-                    <input type="text" value={memberId} onChange={onChangeId} required style={{ width: "100%", padding: "8px" }}
+            <Form onSubmit={onSubmit}>
+                <FormItem>
+                    <Label>아이디</Label>
+                    <Input
+                        type="text"
+                        value={memberId}
+                        onChange={onChangeId}
+                        required
                         autoComplete="username"
                     />
-                </div>
-                <div style={{ margin: "16px 0" }}>
-                    <label>비밀번호</label>
-                    <input type="password" value={memberPassword} onChange={onChangePassword} required style={{ width: "100%", padding: "8px" }}
+                </FormItem>
+                <FormItem>
+                    <Label>비밀번호</Label>
+                    <Input
+                        type="password"
+                        value={memberPassword}
+                        onChange={onChangePassword}
+                        required
                         autoComplete="current-password"
                     />
-                </div>
-                {errorMsg && <div style={{ color: "red", marginBottom: 12 }}>{errorMsg}</div>}
-                <button type="submit" style={{ width: "100%", padding: "10px", background: "#1976d2", color: "#fff", border: "none", borderRadius: 6 }}>로그인</button>
-            </form>
-        </div>
+                </FormItem>
+                {errorMsg && <ErrorMsg>{errorMsg}</ErrorMsg>}
+                <Button type="submit">로그인</Button>
+            </Form>
+        </LoginFormContainer>
     );
 }
 
