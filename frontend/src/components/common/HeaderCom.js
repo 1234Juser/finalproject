@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {WrapBlock, StyledHeader, StyledTitle} from "../style/StyleSet";
+import {WrapBlock, StyledHeader, StyledTitle} from "../../style/StyleSet";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import NavCom from "./NavCom";
 import { useEffect, useState } from "react";
