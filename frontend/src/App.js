@@ -6,6 +6,7 @@ import RegisterPage from "./pages/member/RegisterPage";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/member/LoginPage";
 import MyPagePage from "./pages/member/MyPagePage";
+import FooterCom from './components/common/FooterCom';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
             <Route path="/domestic" element={<DomesticCon />} />
         </Routes>
+        <FooterCom/>
       </div>
   );
 }

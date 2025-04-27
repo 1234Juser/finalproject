@@ -1,4 +1,4 @@
-import {StyledNav} from "../../style/StyleSet";
+import {StyledNav} from "../../style/components/StyleNav";
 import {Link} from "react-router-dom";
 
 
