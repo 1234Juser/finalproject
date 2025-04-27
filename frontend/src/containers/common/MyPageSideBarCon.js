@@ -2,7 +2,7 @@ import MyPageSideBarCom from "../../components/common/MyPageSideBarCom";
 import React,{useState} from "react";
 
 const menuList = [
-    { label: "개인정보조회", path: "/mypage/profile" },
+    { label: "개인정보조회", path: "/mypage" },
     { label: "예약내역", path: "/mypage/reservations" },
     { label: "나의 리뷰", path: "/mypage/review" },
     { label: "나의 커뮤니티글", path: "/mypage/community" },
