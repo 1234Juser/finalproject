@@ -5,6 +5,7 @@ import DomesticCon from "./containers/DomesticCon";
 import RegisterPage from "./pages/member/RegisterPage";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/member/LoginPage";
+import FooterCom from './components/common/FooterCom';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
             <Route path="/domestic" element={<DomesticCon />} />
         </Routes>
+        <FooterCom/>
       </div>
   );
 }

@@ -39,6 +39,7 @@
 
 /* App.css */
 .main-content {
-  padding-top: 120px; /* 헤더, 네비 합친 높이만큼 조정(값은 실제 height에 맞게 수정) */
+  /*padding-top: 120px; !* 헤더, 네비 합친 높이만큼 조정(값은 실제 height에 맞게 수정) *!*/
+  width: 100%;
 }
 

@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
-const WrapBlock = styled.div`
-    position : fixed;
-    top: 0;
-    left: 400px;
-    right: 400px;
-    z-index : 1;    // 스크롤 내렸을 때 메인화면인 헤드 안으로 들어가게
+const HeaderWrapBlock = styled.div`
+    //top: 0;
+    // left: 400px;
+    // right: 400px;
+    position: relative;
+    padding: 0 100px;
+    //z-index : 1;    // 스크롤 내렸을 때 메인화면인 헤드 안으로 들어가게
     background-color : white;   // 헤더에 색깔 넣으면 위로 올라간 메인화면은 색깔에 가려져 안보임
-    width: calc(100% - 800px);
+    // width: calc(100% - 800px);
     border-bottom : 1px solid rgba( 0, 0, 0, 0.1 );
     @media (max-width: 1440px) {
         left: 300px;  /* 화면이 1440px보다 작으면 좌측 공백을 300px로 줄임 */
@@ -33,13 +34,7 @@ const WrapBlock = styled.div`
         width: 100%;  /* 공백을 완전히 없애고, 너비를 100%로 설정 */
     }
 `;
-const StyledHeader = styled.header`   
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    /* 필요한 나머지 스타일 유지 */
-`;
+
 
 const StyledWrapper = styled.div`
     display: flex;
@@ -50,22 +45,8 @@ const StyledWrapper = styled.div`
     position: relative;
     background-color : #fbeff1;
 `;
-const StyledTitle = styled.h1`
-    width : 200px;
-    .link { color : black; }
-    .link:hover {color : gray;}
-`;
-const StyledNav = styled.nav`
-    display : flex;
-    justify-content : space-between;
-    width : 100%;
-    height : 100px;
-    ul { display : flex; }
-    ul li { margin-right : 30px; }
-    .menu li a { font-size : 20px; font-weight : bold; }
-    a { color : black; }
-    a:hover { color : gray; }
-`;
+
+
 const StyleContentBlock = styled.div`
     width: calc(100% - 1000px);
     position : absolute;
@@ -122,4 +103,4 @@ const ProductPrice = styled.p`
     color : #007bff;
     text-align : right;
 `;
-export { WrapBlock, StyledHeader, StyledTitle, StyledWrapper, StyledNav, StyleContentBlock, StyleContentWrap, ProductTitle, ProductList, ProductListBox, ProductImg, ProductName, ProductContext, ProductPrice };
+export { HeaderWrapBlock, StyledWrapper, StyleContentBlock, StyleContentWrap, ProductTitle, ProductList, ProductListBox, ProductImg, ProductName, ProductContext, ProductPrice };
