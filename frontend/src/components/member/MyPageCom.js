@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MyPageSideBarPage from "../../pages/common/MyPageSideBarPage";
 import {
     containerStyle,
@@ -13,7 +13,8 @@ import {
     infoFieldsGrid,
     infoFieldCard,
     infoFieldLabelRow,
-    infoFieldValue
+    infoFieldValue,
+    iconWrapper
 } from '../../style/member/MyPageStyle';
 import { FaUser, FaPhone, FaLock, FaEnvelope, FaIdCard} from "react-icons/fa6";
 
@@ -22,16 +23,29 @@ import { FaUser, FaPhone, FaLock, FaEnvelope, FaIdCard} from "react-icons/fa6";
 function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
 
     const [editMode, setEditMode] = useState(false);
-    const [form, setForm] = useState({
-        memberName: memberData?.memberName || "",
-        memberPhone: memberData?.memberPhone || "",
-        currentPassword: "",
-        newPassword: ""
-    });
+    const [form, setForm] = useState(memberData);
+
     const [errors, setErrors] = useState({});
     // 포커스 시 border 색 변환용
     const [focus, setFocus] = useState("");
+    useEffect(() => {
+        setForm(memberData); // memberData 변경시 폼도 갱신
+    }, [memberData]);
+
+    useEffect(() => {
+        if (editMode) {
+            setForm(f => ({
+                ...f,
+                currentPassword: '',
+                newPassword: ''
+            }));
+            setErrors({});
+        }
+    }, [editMode]);
+
+
     if (!memberData) return <div>로딩중...</div>;
+
 
     // 마스킹 처리
     const phoneMasked = memberData.memberPhone?.replace(/(\d{3})\d{2,3}(\d{3,4})/, '$1****$2');
@@ -40,18 +54,33 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
     // 검증 예시
     const validate = () => {
         let errs = {};
-        if (!form.memberName.trim()) errs.memberName = "이름을 입력해주세요.";
+        if (
+            (!form.memberName || form.memberName === memberData.memberName) &&
+            (!form.memberPhone || form.memberPhone === memberData.memberPhone) &&
+            !form.newPassword
+        ) {
+            errs.noChange = "변경할 항목을 입력하세요.";
+        }
+        if (form.memberName && form.memberName.trim().length < 2) {
+            errs.memberName = "이름은 두 글자 이상 입력하세요.";
+        }
         if (!form.memberPhone.match(/^01[016789]-?\d{3,4}-?\d{4}$/))
             errs.memberPhone = "올바른 휴대폰 번호를 입력하세요.";
-        if (!form.currentPassword)
-            errs.currentPassword = "현재 비밀번호를 입력하세요.";
-        else if (form.currentPassword.length < 4)
+        // 현재 비밀번호: 비밀번호 변경시만 필수
+        if (form.newPassword) {
+            if (!form.currentPassword) {
+                errs.currentPassword = "현재 비밀번호를 입력하세요.";
+            }
+            if (form.newPassword.length < 4) {
+                errs.newPassword = "새 비밀번호는 4자 이상 입력";
+            }
+        }
+        // 현재 비밀번호 입력한 경우만 최소길이
+        if (form.currentPassword && form.currentPassword.length < 4) {
             errs.currentPassword = "비밀번호는 4자 이상 입력";
-        if (form.newPassword && form.newPassword.length < 4)
-            errs.newPassword = "새 비밀번호는 4자 이상 입력";
+        }
         return errs;
     };
-
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -62,7 +91,11 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
 
     const handleEditClick = () => setEditMode(true);
 
-    const handleCancel = () => setEditMode(false);
+    const handleCancel = () => {
+        setForm(memberData); // 취소 시 원래 정보로 복구
+        setEditMode(false);
+
+    };
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -73,6 +106,8 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
         setEditMode(false);
         setErrors({});
     };
+
+
     return (
         <div style={containerStyle}>
             {/* 왼쪽: 사이드바만 */}
@@ -130,7 +165,7 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                         <div style={{fontWeight:700, fontSize:'21px', marginBottom:14, letterSpacing:"-.5px"}}>개인정보 수정</div>
 
                         <div style={fieldRow}>
-                            <span><FaUser color="#7747e8"/></span>
+                            <span style={iconWrapper}><FaUser color="#7747e8"/></span>
                             <div style={{flex:'1'}}>
                                 <label style={fieldLabel} htmlFor="editMemberName">이름</label>
                                 <input
@@ -142,14 +177,13 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                                     onFocus={handleFocus}
                                     onBlur={handleBlur}
                                     maxLength={20}
-                                    required
                                     placeholder="이름을 입력"
                                 />
                                 {errors.memberName && <div style={editErrorTxt}>{errors.memberName}</div>}
                             </div>
                         </div>
                         <div style={fieldRow}>
-                            <span><FaPhone color="#7747e8"/></span>
+                            <span style={iconWrapper}><FaPhone color="#7747e8"/></span>
                             <div style={{flex:'1'}}>
                                 <label style={fieldLabel} htmlFor="editMemberPhone">전화번호</label>
                                 <input
@@ -161,14 +195,13 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                                     onFocus={handleFocus}
                                     onBlur={handleBlur}
                                     maxLength={16}
-                                    required
                                     placeholder="예: 010-1234-5678"
                                 />
                                 {errors.memberPhone && <div style={editErrorTxt}>{errors.memberPhone}</div>}
                             </div>
                         </div>
                         <div style={fieldRow}>
-                            <span><FaLock color="#7747e8"/></span>
+                            <span style={iconWrapper}><FaLock color="#7747e8"/></span>
                             <div style={{flex:'1'}}>
                                 <label style={fieldLabel} htmlFor="editCurPwd">현재 비밀번호</label>
                                 <input
@@ -181,14 +214,14 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                                     onFocus={handleFocus}
                                     onBlur={handleBlur}
                                     autoComplete="new-password"
-                                    placeholder="필수 입력"
-                                    required
+                                    placeholder={form.newPassword ? "필수 입력" : "비밀번호 변경시만 입력"}
+                                    required={!!form.newPassword}
                                 />
                                 {errors.currentPassword && <div style={editErrorTxt}>{errors.currentPassword}</div>}
                             </div>
                         </div>
                         <div style={fieldRow}>
-                            <span><FaLock color="#bbb"/></span>
+                            <span style={iconWrapper}><FaLock color="#bbb"/></span>
                             <div style={{flex:'1'}}>
                                 <label style={fieldLabel} htmlFor="editNewPwd">새 비밀번호</label>
                                 <input
@@ -218,5 +251,4 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
 }
 
 export default MyPageCom;
-
 

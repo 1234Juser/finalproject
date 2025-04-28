@@ -201,4 +201,11 @@ export const infoFieldValue = {
     wordBreak: "break-all"
 };
 
-
+export const iconWrapper = {
+    width: '24px',
+    height: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '20px'
+};

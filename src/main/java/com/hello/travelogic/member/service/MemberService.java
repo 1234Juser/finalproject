@@ -9,6 +9,7 @@ import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.member.repository.MemberRoleRepository;
 import com.hello.travelogic.utils.JwtUtil;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,11 +29,11 @@ public class MemberService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public void signup(MemberDTO memberDTO){
-        if(memberRepository.existsByMemberId(memberDTO.getMemberId())){
+    public void signup(MemberDTO memberDTO) {
+        if (memberRepository.existsByMemberId(memberDTO.getMemberId())) {
             throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
         }
-        if(memberRepository.existsByMemberEmail(memberDTO.getMemberEmail())){
+        if (memberRepository.existsByMemberEmail(memberDTO.getMemberEmail())) {
             throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
         }
 
@@ -65,20 +66,22 @@ public class MemberService {
                 .build();
         memberRoleRepository.save(memberRole);
     }
+
     //회원가입중복관련코드
-    public boolean isIdDuplicated(String memberId){
+    public boolean isIdDuplicated(String memberId) {
         return memberRepository.existsByMemberId(memberId);
     }
-    public boolean isEmailDuplicated(String memberEmail){
+
+    public boolean isEmailDuplicated(String memberEmail) {
         return memberRepository.existsByMemberEmail(memberEmail);
     }
 
     //로그인
-    public LoginResponseDTO login(LoginRequestDTO dto){
+    public LoginResponseDTO login(LoginRequestDTO dto) {
         MemberEntity member = memberRepository.findByMemberId(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("해당아이디가 존재하지않습니다."));
 
-        if(!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())){
+        if (!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())) {
             throw new IllegalArgumentException("비밀번호가 맞지 않습니다.");
         }
         // 1. roles를 먼저 추출
@@ -98,6 +101,7 @@ public class MemberService {
         return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles);
 
     }
+
     //회원마이페이지
     public MyPageResponseDTO getMyPageInfo(String memberId) {
         MemberEntity member = memberRepository.findByMemberId(memberId)
@@ -111,10 +115,11 @@ public class MemberService {
                 .memberPassword("***") // 보안상 필요시 마스킹처리
                 .build();
     }
+
     //관리자 마이페이지
     public AdminMyPageResponseDTO getAdminMyPageInfo(String memberId) {
         MemberEntity member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(()-> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
         // 권한 확인 (실제 프로젝트에서는 hasRole 등 검증 추가 권장)
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> "ROLE_ADMIN".equals(role.getAuthority().getAuthorityName()));
@@ -137,4 +142,56 @@ public class MemberService {
                 .build();
     }
 
+    @Transactional
+    public void updateProfile(String memberId, @Valid MemberUpdateDTO dto) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+        //관리자차단
+        boolean isAdmin = member.getRoles().stream()
+                .anyMatch(role -> "ROLE_ADMIN".equals(role.getAuthority().getAuthorityName()));
+        if (isAdmin) {
+            throw new SecurityException("일반회원만 변경가능합니다.");
+        }
+        // '이름' 또는 '전화번호' 중 하나라도 변경값이 있을 때 수정
+        boolean nameChanged = dto.getMemberName() != null && !dto.getMemberName().isBlank()
+                && !dto.getMemberName().equals(member.getMemberName());
+        boolean phoneChanged = dto.getMemberPhone() != null && !dto.getMemberPhone().isBlank()
+                && !dto.getMemberPhone().equals(member.getMemberPhone());
+
+        // 비밀번호 변경 로직
+        if (dto.getNewPassword() != null && !dto.getNewPassword().isBlank()) {
+            // 현재 비밀번호는 필수
+            if (dto.getCurrentPassword() == null || dto.getCurrentPassword().isBlank()) {
+                throw new IllegalArgumentException("비밀번호 변경 시 현재 비밀번호를 입력해야 합니다.");
+            }
+            if (!passwordEncoder.matches(dto.getCurrentPassword(), member.getMemberPassword())) {
+                throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+            }
+            if (passwordEncoder.matches(dto.getNewPassword(), member.getMemberPassword())) {
+                throw new IllegalArgumentException("새 비밀번호가 현재 비밀번호와 같습니다.");
+            }
+            if (dto.getNewPassword().length() < 4) {
+                throw new IllegalArgumentException("새 비밀번호는 4자 이상이어야 합니다.");
+            }
+            // 비번 변경
+            member.setMemberPassword(passwordEncoder.encode(dto.getNewPassword()));
+        } else if (dto.getCurrentPassword() != null && !dto.getCurrentPassword().isBlank()) {
+            // 비밀번호 변경이 아니라 정보수정 시에도 현재 비밀번호 확인(옵션)
+            if (!passwordEncoder.matches(dto.getCurrentPassword(), member.getMemberPassword())) {
+                throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+            }
+        }
+
+        // 이름/전화번호 업데이트 (필요 시)
+        if (nameChanged) {
+            member.setMemberName(dto.getMemberName());
+        }
+        if (phoneChanged) {
+            member.setMemberPhone(dto.getMemberPhone());
+        }
+
+        // 실제 저장은 @Transactional로 처리됨
+
+
+    }
 }

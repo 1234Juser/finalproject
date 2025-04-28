@@ -68,5 +68,15 @@ public class MemberController {
         AdminMyPageResponseDTO dto = memberService.getAdminMyPageInfo(memberId);
         return ResponseEntity.ok(dto);
     }
+    //회원 마이페이지 수정    
+    @PutMapping("/mypage/update")
+    public ResponseEntity<String> updateMyPageInfo(@RequestBody @Valid MemberUpdateDTO dto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = (String) authentication.getPrincipal();
+        memberService.updateProfile(memberId, dto);
+        return ResponseEntity.ok("회원 정보가 수정되었습니다.");
+    }
+    
+    // 회원 프로필이미지 수정
 
 }
