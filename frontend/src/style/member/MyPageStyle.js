@@ -6,7 +6,7 @@ export const containerStyle = {
 };
 
 export const sidebarStyle = {
-    width: '250px',
+    width: '270px',
     backgroundColor: '#f8f2e9',
     padding: '20px',
     boxSizing: 'border-box',

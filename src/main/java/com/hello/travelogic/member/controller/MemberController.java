@@ -2,6 +2,7 @@ package com.hello.travelogic.member.controller;
 
 import com.hello.travelogic.member.dto.*;
 import com.hello.travelogic.member.service.MemberService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,5 +86,14 @@ public class MemberController {
         String memberId = (String) authentication.getPrincipal();
         String savedUrl = memberService.updateProfileImage(memberId,file);
         return ResponseEntity.ok(savedUrl);
+    }
+    //회원탈퇴
+    @PutMapping("/withdraw")
+    public ResponseEntity<String> withdraw(@RequestBody Map<String, String> payload){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = (String) authentication.getPrincipal();
+        String password = payload.get("password");
+        memberService.withdrawMember(memberId, password);
+        return ResponseEntity.ok("회원 탈퇴가 처리되었습니다.");
     }
 }

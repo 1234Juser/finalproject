@@ -8,6 +8,7 @@ import com.hello.travelogic.member.repository.AuthorityRepository;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.member.repository.MemberRoleRepository;
 import com.hello.travelogic.utils.JwtUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -85,8 +86,13 @@ public class MemberService {
         MemberEntity member = memberRepository.findByMemberId(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("해당아이디가 존재하지않습니다."));
 
+        if ("Y".equals(member.getMemberEndstatus())) {
+            throw new RuntimeException("탈퇴한 회원은 로그인할 수 없습니다.");
+        }
+
+
         if (!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())) {
-            throw new IllegalArgumentException("비밀번호가 맞지 않습니다.");
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         // 1. roles를 먼저 추출
 
@@ -221,5 +227,22 @@ public class MemberService {
         member.setMemberProfileImageUrl(imageUrl);
 
         return imageUrl;
+    }
+
+    //회원탈퇴
+    @Transactional
+    public void withdrawMember(String memberId, String password) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(()-> new EntityNotFoundException("회원이 존재하지 않습니다."));
+
+        //비밀번호 검증
+        if(!passwordEncoder.matches(password, member.getMemberPassword())){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        member.setMemberEndstatus("Y");
+        member.setMemberEnddate(LocalDateTime.now());
+
+        memberRepository.save(member);
+
     }
 }
