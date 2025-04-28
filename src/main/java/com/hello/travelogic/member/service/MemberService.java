@@ -3,10 +3,7 @@ package com.hello.travelogic.member.service;
 import com.hello.travelogic.member.domain.AuthorityEntity;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.domain.MemberRoleEntity;
-import com.hello.travelogic.member.dto.LoginRequestDTO;
-import com.hello.travelogic.member.dto.LoginResponseDTO;
-import com.hello.travelogic.member.dto.MemberDTO;
-import com.hello.travelogic.member.dto.MyPageResponseDTO;
+import com.hello.travelogic.member.dto.*;
 import com.hello.travelogic.member.repository.AuthorityRepository;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.member.repository.MemberRoleRepository;
@@ -84,20 +81,20 @@ public class MemberService {
         if(!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())){
             throw new IllegalArgumentException("비밀번호가 맞지 않습니다.");
         }
+        // 1. roles를 먼저 추출
 
-        String token = jwtUtil.generateToken(member.getMemberId());
+        List<String> roles = member.getRoles().stream()
+                .map(role -> role.getAuthority().getAuthorityName())
+                .collect(Collectors.toList());
+        // 2. roles를 담아 token 생성
 
-        // 1. 프로필 이미지가 없으면 기본 이미지 사용
+        String token = jwtUtil.generateToken(member.getMemberId(), roles);
+
+        // 3. 프로필 이미지가 없으면 기본 이미지 사용
         String profileUrl = member.getMemberProfileImageUrl();
         if (profileUrl == null || profileUrl.isEmpty()) {
             profileUrl = "/img/default-profile.jpg"; // static 폴더 기준 경로로 작성
         }
-
-        // 2. 권한(roles) 리스트 추출
-        List<String> roles = member.getRoles().stream()
-                .map(role -> role.getAuthority().getAuthorityName())
-                .collect(Collectors.toList());
-
         return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles);
 
     }
@@ -114,4 +111,30 @@ public class MemberService {
                 .memberPassword("***") // 보안상 필요시 마스킹처리
                 .build();
     }
+    //관리자 마이페이지
+    public AdminMyPageResponseDTO getAdminMyPageInfo(String memberId) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(()-> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+        // 권한 확인 (실제 프로젝트에서는 hasRole 등 검증 추가 권장)
+        boolean isAdmin = member.getRoles().stream()
+                .anyMatch(role -> "ROLE_ADMIN".equals(role.getAuthority().getAuthorityName()));
+        if (!isAdmin) {
+            throw new SecurityException("관리자 권한이 없습니다.");
+        }
+        String defaultProfileUrl = "/img/default-profile.jpg";
+        String roleName = member.getRoles().stream()
+                .map(role -> role.getAuthority().getAuthorityName())
+                .filter("ROLE_ADMIN"::equals)
+                .findFirst()
+                .orElse("");
+        return AdminMyPageResponseDTO.builder()
+                .memberName(member.getMemberName())
+                .memberId(member.getMemberId())
+                .memberEmail(member.getMemberEmail())
+                .memberPhone(member.getMemberPhone())
+                .memberRole(roleName)
+                .memberProfileImageUrl(defaultProfileUrl)
+                .build();
+    }
+
 }

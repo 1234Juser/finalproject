@@ -1,7 +1,7 @@
 import {HeaderWrapBlock} from "../../style/components/StyleSet";
 import {ProfileImg, StyledHeader, HeaderRight, StyledTitle} from "../../style/components/StyleHeader";
 import { Link, useNavigate } from "react-router-dom";
-import NavCom from "../../components/common/NavCom";
+import NavPage from "../../pages/common/NavPage";
 
 function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
 
@@ -29,7 +29,7 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
                         )}
                     </HeaderRight>
                 </StyledHeader>
-                <NavCom />
+                <NavPage />
             </HeaderWrapBlock>
         </>
     )

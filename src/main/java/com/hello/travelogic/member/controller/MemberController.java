@@ -1,9 +1,6 @@
 package com.hello.travelogic.member.controller;
 
-import com.hello.travelogic.member.dto.LoginRequestDTO;
-import com.hello.travelogic.member.dto.LoginResponseDTO;
-import com.hello.travelogic.member.dto.MemberDTO;
-import com.hello.travelogic.member.dto.MyPageResponseDTO;
+import com.hello.travelogic.member.dto.*;
 import com.hello.travelogic.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +57,15 @@ public class MemberController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = (String) authentication.getPrincipal();
         MyPageResponseDTO dto = memberService.getMyPageInfo(memberId);
+        return ResponseEntity.ok(dto);
+    }
+
+    //관리자 마이페이지
+    @GetMapping("/adminmypage")
+    public ResponseEntity<AdminMyPageResponseDTO> getAdminMyPageInfo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = (String) authentication.getPrincipal();
+        AdminMyPageResponseDTO dto = memberService.getAdminMyPageInfo(memberId);
         return ResponseEntity.ok(dto);
     }
 

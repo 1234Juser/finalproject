@@ -37,8 +37,6 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
     const phoneMasked = memberData.memberPhone?.replace(/(\d{3})\d{2,3}(\d{3,4})/, '$1****$2');
     const emailMasked = memberData.memberEmail?.replace(/(.{2}).*(@.*)/, '$1***$2');
 
-
-
     // 검증 예시
     const validate = () => {
         let errs = {};
