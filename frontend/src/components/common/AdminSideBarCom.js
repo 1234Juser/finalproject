@@ -4,33 +4,73 @@ import {activeStyle, linkHoverStyle, linkStyle, navStyle, sidebarStyle} from "..
 
 function AdminSideBarCom({ menuList, activeIdx, setActiveIdx }) {
     const [hoverIdx, setHoverIdx] = useState(null);
+    const [openedIdx, setOpenedIdx] = useState(null);
     const location = useLocation();
+
+    const handleMenuClick = (i, hasSub) => {
+        if (hasSub) {
+            setOpenedIdx(openedIdx === i ? null : i);
+        }
+        setActiveIdx(i);
+    };
 
     return (
         <aside style={sidebarStyle}>
             <nav style={navStyle}>
                 {menuList.map((menu, i) => {
-                    // 실제 라우터 경로가 현재 경로와 같으면 active로 처리
                     const isActive = location.pathname === menu.path;
+                    const hasSub = !!menu.subMenu;
                     return (
-                        <Link
-                            to={menu.path}
-                            key={menu.path}
-                            style={{
-                                ...linkStyle,
-                                ...(isActive ? activeStyle : {}),
-                                ...(hoverIdx === i ? linkHoverStyle : {})
-                            }}
-                            onMouseEnter={() => setHoverIdx(i)}
-                            onMouseLeave={() => setHoverIdx(null)}
-                            onClick={() => setActiveIdx(i)}
-                        >
-                            {menu.label}
-                        </Link>
+                        <div key={menu.path}>
+                            <div // 메인 메뉴
+                                style={{
+                                    ...linkStyle,
+                                    ...(isActive ? activeStyle : {}),
+                                    ...(hoverIdx === i ? linkHoverStyle : {})
+                                }}
+                                onMouseEnter={() => setHoverIdx(i)}
+                                onMouseLeave={() => setHoverIdx(null)}
+                                onClick={() => handleMenuClick(i, hasSub)}
+                            >
+                                {hasSub && (
+                                    <span style={{marginRight: 6}}>
+                                        {openedIdx === i ? "▼" : "▶"}
+                                    </span>
+                                )}
+                                <Link
+                                    to={menu.path}
+                                    style={{
+                                        color: "inherit",
+                                        textDecoration: "none"
+                                    }}
+                                >
+                                    {menu.label}
+                                </Link>
+                            </div>
+                            {hasSub && openedIdx === i && (
+                                <div style={{marginLeft: 20}}>
+                                    {menu.subMenu.map((sub, subIdx) => (
+                                        <Link
+                                            to={sub.path}
+                                            key={sub.path}
+                                            style={{
+                                                ...linkStyle,
+                                                fontSize: "14px",
+                                                ...(location.pathname === sub.path ? activeStyle : {})
+                                            }}
+                                            onClick={() => setActiveIdx(null)}
+                                        >
+                                            {sub.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     );
                 })}
             </nav>
         </aside>
     );
 }
+
 export default AdminSideBarCom;
