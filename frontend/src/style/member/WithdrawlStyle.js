@@ -37,6 +37,8 @@ export const titleStyle = {
     color: '#264265',
     letterSpacing: '-1px',
     fontWeight: 700,
+    textAlign: 'center',
+
 };
 
 export const warningBoxStyle = {

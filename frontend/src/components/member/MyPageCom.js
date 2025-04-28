@@ -188,7 +188,7 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                 <div style={popupOverlay}>
                     <form style={editPopupCard} onSubmit={handleSubmit} autoComplete="off">
                         <button style={closeEditBtn} onClick={handleCancel} tabIndex={-1} type="button">&times;</button>
-                        <div style={{fontWeight:700, fontSize:'21px', marginBottom:14, letterSpacing:"-.5px"}}>개인정보 수정</div>
+                        <div style={{fontWeight:700, fontSize:'21px', marginBottom:14, letterSpacing:"-.5px", textAlign: "center"}}>개인정보 수정</div>
 
                         <div style={fieldRow}>
                             <span style={iconWrapper}><FaUser color="#7747e8"/></span>
