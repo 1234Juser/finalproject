@@ -13,9 +13,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -193,5 +197,29 @@ public class MemberService {
         // 실제 저장은 @Transactional로 처리됨
 
 
+    }
+    //프로필이미지변경
+    @Transactional
+    public String updateProfileImage(String memberId, MultipartFile file) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(()-> new IllegalArgumentException("회원정보가 존재하지않습니다."));
+
+        //파일 실제 저장로직
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String uploadDir = new File("upload/img/").getAbsolutePath() + File.separator;
+        File dir = new File(uploadDir);
+        if(!dir.exists()) dir.mkdirs();
+
+        File targetFile = new File(uploadDir + fileName);
+        try {
+            file.transferTo(targetFile);
+        } catch (IOException e) {
+            throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.", e);
+        }
+
+        String imageUrl = "/img/" + fileName;
+        member.setMemberProfileImageUrl(imageUrl);
+
+        return imageUrl;
     }
 }

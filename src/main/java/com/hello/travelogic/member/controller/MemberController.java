@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -78,5 +79,11 @@ public class MemberController {
     }
     
     // 회원 프로필이미지 수정
-
+    @PostMapping("/mypage/profile-image")
+    public ResponseEntity<String> updateProfileImage(@RequestParam("file") MultipartFile file){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = (String) authentication.getPrincipal();
+        String savedUrl = memberService.updateProfileImage(memberId,file);
+        return ResponseEntity.ok(savedUrl);
+    }
 }

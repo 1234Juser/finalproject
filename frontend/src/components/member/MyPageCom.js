@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import MyPageSideBarPage from "../../pages/common/MyPageSideBarPage";
 import {
     containerStyle,
@@ -28,6 +28,9 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
     const [errors, setErrors] = useState({});
     // 포커스 시 border 색 변환용
     const [focus, setFocus] = useState("");
+    const fileInputRef = useRef(null);
+
+
     useEffect(() => {
         setForm(memberData); // memberData 변경시 폼도 갱신
     }, [memberData]);
@@ -108,6 +111,21 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
     };
 
 
+    const handleProfileImageBtnClick = () => {
+        if(fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    //파일선택시
+    const handleChangeProfileImg = (e)=>{
+        const file = e.target.files[0];
+        if(file){
+            onEditProfileImage(file);
+        }
+    };
+
+
     return (
         <div style={containerStyle}>
             {/* 왼쪽: 사이드바만 */}
@@ -126,7 +144,15 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                         />
                         <div>
                             <div style={greetingText}>{memberData.memberName} 님, 환영합니다!</div>
-                            <button style={profileButton} onClick={onEditProfileImage}>프로필 이미지 변경</button>
+                            <button style={profileButton} onClick={handleProfileImageBtnClick}
+                            type = "button">프로필 이미지 변경</button>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                style={{ display: "none" }}
+                                ref={fileInputRef}
+                                onChange={handleChangeProfileImg}
+                            />
                         </div>
                     </div>
                 </div>
