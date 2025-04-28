@@ -39,7 +39,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // /img/** 요청을 upload/img/ 폴더에서 찾아라
         registry.addResourceHandler("/img/**")
-                .addResourceLocations("file:" + new File("upload/img/").getAbsolutePath() + "/");
+                .addResourceLocations("file:" + new File("upload/img/").getAbsolutePath() + "/",
+                        "classpath:/static/img/"
+                );
     }
 }
 
