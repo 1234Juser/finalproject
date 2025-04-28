@@ -34,6 +34,28 @@ function MyPageCon() {
             });
     }, [navigate]);
 
+    //회원정보 수정 핸들러
+    const handleEditInfo = async (form) =>{
+        try{
+            const token = localStorage.getItem("accessToken");
+            await axios.put("/member/mypage/update", form,{
+                headers: token ? { Authorization: `Bearer ${token}` } : {}
+            });
+            alert("개인정보가 수정되었습니다.");
+            //갱신
+            const res = await axios.get("/member/mypage",{
+                headers: token ? { Authorization: `Bearer ${token}` } : {}
+            });
+            setMemberData(res.data);
+            localStorage.setItem("memberName", res.data.memberName);
+        }catch(err){
+            if(err.response && err.response.data) {
+                alert(err.response.data.message); //서버에서 온 에러메시지
+            }else{
+                alert("정보 수정에 실패했습니다.")
+            }
+        }
+    };
     if (error) return <div>{error}</div>;
 
     // 추후 프로필/정보수정 핸들러 바인딩
@@ -41,7 +63,7 @@ function MyPageCon() {
         <MyPageCom
             memberData={memberData}
             onEditProfileImage={() => alert("준비중")}
-            onEditInfo={() => alert("준비중")}
+            onEditInfo={handleEditInfo}
         />
     );
 }
