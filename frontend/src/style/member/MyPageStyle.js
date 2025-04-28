@@ -6,7 +6,7 @@ export const containerStyle = {
 };
 
 export const sidebarStyle = {
-    width: '250px',
+    width: '270px',
     backgroundColor: '#f8f2e9',
     padding: '20px',
     boxSizing: 'border-box',
@@ -120,6 +120,7 @@ export const fieldRow = {
 
 export const editInput = {
     flex: 1,
+    width: "310px",
     fontSize: "15px",
     padding: "8px 32px 8px 12px",
     borderRadius: "7px",

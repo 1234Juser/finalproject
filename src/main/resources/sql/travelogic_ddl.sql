@@ -1,3 +1,16 @@
+USE travelogicdb;
+
+-- 외래키 무시하고 삭제 시작
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 문제되는 테이블 삭제
+DROP TABLE IF EXISTS tbl_product;
+DROP TABLE IF EXISTS tbl_product_country;
+DROP TABLE IF EXISTS tbl_product_theme;
+
+-- 외래키 체크 다시 켜기
+SET FOREIGN_KEY_CHECKS = 1;
+
 DROP TABLE IF EXISTS tbl_review CASCADE;
 DROP TABLE IF EXISTS tbl_payment_cancel CASCADE;
 DROP TABLE IF EXISTS tbl_payment CASCADE;
@@ -94,9 +107,9 @@ CREATE TABLE `tbl_city` (
                             `country_code` INT NOT NULL COMMENT '국가고유코드',
                             `city_uid` VARCHAR(20) NOT NULL COMMENT '도시고유코드',
                             `city_name` VARCHAR(50) NOT NULL COMMENT '도시명',
-                            CONSTRAINT `PK_TBL_CITY` PRIMARY KEY (`city_code`),
-                            CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`)
-);
+                            CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`),
+                            CONSTRAINT pk_city_code PRIMARY KEY (city_code)
+) ENGINE=INNODB COMMENT '도시정보' AUTO_INCREMENT = 1001;
 
 
 CREATE TABLE `tbl_product` (
@@ -121,98 +134,97 @@ CREATE TABLE `tbl_product` (
                                CONSTRAINT `FK_tbl_theme_TO_tbl_product` FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
 );
 
-
 CREATE TABLE tbl_wish_group (
-                                group_code INT NOT NULL AUTO_INCREMENT COMMENT '찜그룹고유번호',
-                                member_code INT NOT NULL COMMENT '회원번호',
-                                group_title VARCHAR(255) NOT NULL COMMENT '찜그룹이름',
-                                wish_count INT NOT NULL DEFAULT 0 COMMENT '찜 담긴 수',
-                                PRIMARY KEY (group_code),
-                                FOREIGN KEY (member_code) REFERENCES tbl_member (member_code)
+    group_code INT NOT NULL AUTO_INCREMENT COMMENT '찜그룹고유번호',
+    member_code INT NOT NULL COMMENT '회원번호',
+    group_title VARCHAR(255) NOT NULL COMMENT '찜그룹이름',
+    wish_count INT NOT NULL DEFAULT 0 COMMENT '찜 담긴 수',
+    PRIMARY KEY (group_code),
+    FOREIGN KEY (member_code) REFERENCES tbl_member (member_code)
 );
 
-
 CREATE TABLE tbl_wish (
-                          wish_code INT NOT NULL AUTO_INCREMENT COMMENT '찜고유번호',
-                          group_code INT NOT NULL COMMENT '찜그룹고유번호',
-                          product_code INT NOT NULL COMMENT '상품고유번호',
-                          member_code INT NOT NULL COMMENT '회원번호',
-                          PRIMARY KEY (wish_code),
-                          FOREIGN KEY (group_code) REFERENCES tbl_wish_group (group_code),
-                          FOREIGN KEY (product_code) REFERENCES tbl_product (product_code),
-                          FOREIGN KEY (member_code) REFERENCES tbl_member (member_code)
+    wish_code INT NOT NULL AUTO_INCREMENT COMMENT '찜고유번호',
+    group_code INT NOT NULL COMMENT '찜그룹고유번호',
+    product_code INT NOT NULL COMMENT '상품고유번호',
+    member_code INT NOT NULL COMMENT '회원번호',
+    PRIMARY KEY (wish_code),
+    FOREIGN KEY (group_code) REFERENCES tbl_wish_group (group_code),
+    FOREIGN KEY (product_code) REFERENCES tbl_product (product_code),
+    FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
+    UNIQUE KEY unique_wish (member_code, product_code)
 );
 
 CREATE TABLE tbl_option (
-                            option_code INT NOT NULL AUTO_INCREMENT COMMENT '옵션고유번호',
-                            product_code INT NOT NULL COMMENT '투어상품 고유번호',
-                            reservation_date DATE NULL COMMENT '선택된 예약 날짜',
-                            adult_count INT NOT NULL COMMENT '기본(성인) 수량',
-                            child_count INT NULL COMMENT '아동 수량',
-                            PRIMARY KEY (option_code),
-                            FOREIGN KEY (product_code) REFERENCES tbl_product (product_code)
+    option_code INT NOT NULL AUTO_INCREMENT COMMENT '옵션고유번호',
+    product_code INT NOT NULL COMMENT '투어상품 고유번호',
+    reservation_date DATE NULL COMMENT '선택된 예약 날짜',
+    adult_count INT NOT NULL COMMENT '기본(성인) 수량',
+    child_count INT NULL COMMENT '아동 수량',
+    PRIMARY KEY (option_code),
+    FOREIGN KEY (product_code) REFERENCES tbl_product (product_code)
 );
 
 
 CREATE TABLE tbl_order (
-                           order_code INT NOT NULL AUTO_INCREMENT COMMENT '예약고유번호',
-                           product_code INT NOT NULL COMMENT '투어상품 고유번호',
-                           option_code INT NOT NULL COMMENT '옵션고유번호',
-                           member_code INT NOT NULL COMMENT '예약자 정보',
-                           booking_uid VARCHAR(50) NOT NULL COMMENT '고객용예약번호',
-                           order_adult_price INT NOT NULL COMMENT '주문 당시 성인단가',
-                           order_child_price INT NULL COMMENT '주문 당시 아동단가',
-                           total_price INT NOT NULL COMMENT '총금액',
-                           order_date DATETIME NOT NULL COMMENT '주문확정시간',
-                           order_status ENUM('SCHEDULED', 'COMPLETED', 'CANCELED') NOT NULL DEFAULT 'SCHEDULED' COMMENT '예정/완료/취소',
-                           PRIMARY KEY (order_code),
-                           FOREIGN KEY (product_code) REFERENCES tbl_product (product_code),
-                           FOREIGN KEY (option_code) REFERENCES tbl_option (option_code),
-                           FOREIGN KEY (member_code) REFERENCES tbl_member (member_code)
+    order_code INT NOT NULL AUTO_INCREMENT COMMENT '예약고유번호',
+    product_code INT NOT NULL COMMENT '투어상품 고유번호',
+    option_code INT NOT NULL COMMENT '옵션고유번호',
+    member_code INT NOT NULL COMMENT '예약자 정보',
+    booking_uid VARCHAR(50) NOT NULL COMMENT '고객용예약번호',
+    order_adult_price INT NOT NULL COMMENT '주문 당시 성인단가',
+    order_child_price INT NULL COMMENT '주문 당시 아동단가',
+    total_price INT NOT NULL COMMENT '총금액',
+    order_date DATETIME NOT NULL COMMENT '주문확정시간',
+    order_status ENUM('SCHEDULED', 'COMPLETED', 'CANCELED') NOT NULL DEFAULT 'SCHEDULED' COMMENT '예정/완료/취소',
+    PRIMARY KEY (order_code),
+    FOREIGN KEY (product_code) REFERENCES tbl_product (product_code),
+    FOREIGN KEY (option_code) REFERENCES tbl_option (option_code),
+    FOREIGN KEY (member_code) REFERENCES tbl_member (member_code)
 );
 
 
 CREATE TABLE tbl_payment (
-                             payment_code INT NOT NULL AUTO_INCREMENT COMMENT '결제고유번호',
-                             member_code INT NOT NULL COMMENT '결제자 정보',
-                             order_code INT NOT NULL COMMENT '예약고유번호',
-                             payment_method VARCHAR(50) NOT NULL COMMENT '카드/무통장',
-                             payment_brand VARCHAR(50) NOT NULL COMMENT '카드사, 페이 브랜드',
-                             payment_time DATETIME NOT NULL COMMENT '결제한 날',
-                             payment_amount INT NOT NULL COMMENT '결제총금액',
-                             payment_status ENUM('COMPLETED', 'CANCELED') NOT NULL DEFAULT 'COMPLETED' COMMENT '완료/취소',
-                             imp_uid VARCHAR(255) NOT NULL COMMENT '아임포트에서 부여한 거래ID',
-                             merchant_uid VARCHAR(255) NOT NULL COMMENT '아임포트 결제고유ID',
-                             receipt_url VARCHAR(500) NULL COMMENT '영수증url',
-                             PRIMARY KEY (payment_code),
-                             FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
-                             FOREIGN KEY (order_code) REFERENCES tbl_order (order_code)
+    payment_code INT NOT NULL AUTO_INCREMENT COMMENT '결제고유번호',
+    member_code INT NOT NULL COMMENT '결제자 정보',
+    order_code INT NOT NULL COMMENT '예약고유번호',
+    payment_method VARCHAR(50) NOT NULL COMMENT '카드/무통장',
+    payment_brand VARCHAR(50) NOT NULL COMMENT '카드사, 페이 브랜드',
+    payment_time DATETIME NOT NULL COMMENT '결제한 날',
+    payment_amount INT NOT NULL COMMENT '결제총금액',
+    payment_status ENUM('COMPLETED', 'CANCELED') NOT NULL DEFAULT 'COMPLETED' COMMENT '완료/취소',
+    imp_uid VARCHAR(255) NOT NULL COMMENT '아임포트에서 부여한 거래ID',
+    merchant_uid VARCHAR(255) NOT NULL COMMENT '아임포트 결제고유ID',
+    receipt_url VARCHAR(500) NULL COMMENT '영수증url',
+    PRIMARY KEY (payment_code),
+    FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
+    FOREIGN KEY (order_code) REFERENCES tbl_order (order_code)
 );
 
 
 CREATE TABLE tbl_payment_cancel (
-                                    cancel_code INT NOT NULL AUTO_INCREMENT COMMENT '취소고유번호',
-                                    payment_code INT NOT NULL COMMENT '결제고유번호',
-                                    cancel_time DATETIME NOT NULL COMMENT '취소일시',
-                                    cancel_amount INT NOT NULL COMMENT '취소금액',
-                                    pg_tid VARCHAR(500) NULL,
-                                    cancel_receipt_url VARCHAR(255) NULL COMMENT '취소매출전표URL',
-                                    PRIMARY KEY (cancel_code),
-                                    FOREIGN KEY (payment_code) REFERENCES tbl_payment (payment_code)
+    cancel_code INT NOT NULL AUTO_INCREMENT COMMENT '취소고유번호',
+    payment_code INT NOT NULL COMMENT '결제고유번호',
+    cancel_time DATETIME NOT NULL COMMENT '취소일시',
+    cancel_amount INT NOT NULL COMMENT '취소금액',
+    pg_tid VARCHAR(500) NULL,
+    cancel_receipt_url VARCHAR(255) NULL COMMENT '취소매출전표URL',
+    PRIMARY KEY (cancel_code),
+    FOREIGN KEY (payment_code) REFERENCES tbl_payment (payment_code)
 );
 
 CREATE TABLE tbl_review (
-                            review_code INT NOT NULL AUTO_INCREMENT COMMENT '리뷰고유번호',
-                            member_code INT NOT NULL COMMENT '회원고유번호',
-                            order_code INT NOT NULL COMMENT '예약정보',
-                            review_rating TINYINT NOT NULL COMMENT '상품평점',
-                            review_content TEXT NULL COMMENT '리뷰내용(Toast UI Editor)',
-                            review_date DATETIME NOT NULL COMMENT '리뷰작성일',
-                            review_pic VARCHAR(255) NULL COMMENT '리뷰이미지',
-                            review_status ENUM('ACTIVE', 'DELETE BY ADMIN') NOT NULL DEFAULT 'ACTIVE' COMMENT '활성화, 관리자에 의한 삭제',
-                            PRIMARY KEY (review_code),
-                            FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
-                            FOREIGN KEY (order_code) REFERENCES tbl_order (order_code)
+    review_code INT NOT NULL AUTO_INCREMENT COMMENT '리뷰고유번호',
+    member_code INT NOT NULL COMMENT '회원고유번호',
+    order_code INT NOT NULL COMMENT '예약정보',
+    review_rating TINYINT NOT NULL CHECK (review_rating BETWEEN 1 AND 5) COMMENT '상품평점',
+    review_content TEXT NULL COMMENT '리뷰내용',
+    review_date DATETIME NOT NULL COMMENT '리뷰작성일',
+    review_pic VARCHAR(255) NULL COMMENT '리뷰이미지',
+    review_status ENUM('ACTIVE', 'DELETE BY ADMIN') NOT NULL DEFAULT 'ACTIVE' COMMENT '활성화, 관리자에 의한 삭제',
+    PRIMARY KEY (review_code),
+    FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
+    FOREIGN KEY (order_code) REFERENCES tbl_order (order_code)
 );
 
 
