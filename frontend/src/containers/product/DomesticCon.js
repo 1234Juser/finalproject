@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import DomesticCom from "../components/DomesticCom";
-import {getProductsList} from "../service/ProductService";
+import DomesticCom from "../../components/product/DomesticCom";
+import {getDomList, getProductsList} from "../../service/ProductService";
 
 const DomesticCon = () => {
 
-    const [products, setProducts] = useState([]);
+    const [domestic , setDomestic] = useState([]);
 
     useEffect(() => {
-        getProductsList()
+        getDomList()
             .then( data => {
                 console.log("data : ", data)
-                setProducts(data);
+                setDomestic(data);
             })
             .catch((err) => console.error(err))
     }, []);
@@ -18,7 +18,7 @@ const DomesticCon = () => {
 
     return (
         <>
-          <DomesticCom products={products}/>
+          <DomesticCom domestic={domestic}/>
         </>
     );
 };
