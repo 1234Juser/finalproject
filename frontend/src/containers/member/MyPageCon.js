@@ -28,7 +28,7 @@ function MyPageCon() {
                     setError("로그인이 만료되었습니다. 다시 로그인해주세요.");
                     setTimeout(() => navigate("/login"), 2000); // 2초 뒤 로그인 페이지로 이동
                 } else {
-                    setError("마이페이지 정보를 불러오지 못했습니다.");
+                    setError("마이페이지 정보를 불러오지 못했습니다. 다시 로그인해주세요");
                 }
                 setMemberData(null);
             });
@@ -56,13 +56,39 @@ function MyPageCon() {
             }
         }
     };
+
+    const handleEditProfileImage = async (file) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await axios.post("/member/mypage/profile-image", formData, {
+                headers: {
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+
+            alert("프로필 이미지가 변경되었습니다!");
+            // 새 프로필 이미지 URL 받아오기 + 저장
+            const imageUrl = res.data;
+            setMemberData((data) => ({ ...data, memberProfileImageUrl: imageUrl }));
+            localStorage.setItem("memberProfileImageUrl", imageUrl);
+
+            // 프로필 이미지 로컬 스토리지 반영
+        } catch (err) {
+            alert("프로필 이미지 변경에 실패했습니다.");
+        }
+    };
+
     if (error) return <div>{error}</div>;
 
     // 추후 프로필/정보수정 핸들러 바인딩
     return (
         <MyPageCom
             memberData={memberData}
-            onEditProfileImage={() => alert("준비중")}
+            onEditProfileImage={handleEditProfileImage}
             onEditInfo={handleEditInfo}
         />
     );

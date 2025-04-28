@@ -2,7 +2,10 @@ package com.hello.travelogic.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.io.File;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -31,6 +34,12 @@ public class WebConfig implements WebMvcConfigurer {
         // 쿠키나 인증 정보(세션, 토큰 등)를 포함한 요청을 허용합니다.
         // 보통 로그인 유지나 인증이 필요한 API 요청에 사용되며,
         // 클라이언트 측 fetch/axios 요청 시 `{ withCredentials: true }` 설정이 함께 필요합니다.
+    }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // /img/** 요청을 upload/img/ 폴더에서 찾아라
+        registry.addResourceHandler("/img/**")
+                .addResourceLocations("file:" + new File("upload/img/").getAbsolutePath() + "/");
     }
 }
 
