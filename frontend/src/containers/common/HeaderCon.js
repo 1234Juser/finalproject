@@ -1,7 +1,8 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import { useEffect, useState } from "react";
+import HeaderCom from "../../components/common/HeaderCom";
 
-function HeaderCom() {
+function HeaderCon() {
     
     const navigate = useNavigate();
     const location = useLocation();
@@ -50,4 +51,4 @@ function HeaderCom() {
     )
 }
 
-export default HeaderCom;
+export default HeaderCon;

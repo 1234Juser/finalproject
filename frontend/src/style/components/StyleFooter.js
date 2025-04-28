@@ -9,6 +9,8 @@ const FooterContainer = styled.footer`
   position: relative; 
   bottom: 0;
   width: 100%;
+  margin-top: 48px;
+
 `;
 
 // 푸터 내용 Wrapper (가로 정렬 및 여백 설정)
