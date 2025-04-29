@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import LoginCom from "../../components/member/LoginCom";
 import Modal from "../../components/common/Modal";
 import FindIdCon from "../member/FindIdCon";
+import FindPwMethodSelectCom from "../../components/member/FindPwMethodSelectCom";
+import FindPwCon from "./FindPwCon";
 
 
 function LoginCon(){
@@ -12,6 +14,9 @@ function LoginCon(){
     const [errorMsg, setErrorMsg] = useState("");
     const navigate = useNavigate();
     const [showFindId, setShowFindId] = useState(false);
+    const [showFindPwMethod, setShowFindPwMethod] = useState(false);
+    const [showFindPw, setShowFindPw] = useState(false);
+
 
     // 디버깅용: 비밀번호 입력될 때마다 출력
     useEffect(() => {
@@ -64,7 +69,7 @@ function LoginCon(){
             onSubmit={handleSubmit}
             errorMsg={errorMsg}
             onClickFindId={()=> setShowFindId(true)}
-            onClickFindPw={()=> alert("준비중입니다.")}
+            onClickFindPw={()=> setShowFindPwMethod(true)}
             onClickRegister={()=> navigate("/register")}
         />
     {showFindId && (
@@ -72,6 +77,22 @@ function LoginCon(){
             <FindIdCon onClose={() => setShowFindId(false)}/>
         </Modal>
             )}
+    {showFindPwMethod && (
+        <FindPwMethodSelectCom
+            onSelectMethod={method =>{
+                if(method==="default"){
+                    setShowFindPwMethod(false);
+                    setShowFindPw(true);
+                }
+            }}
+            onClose={()=> setShowFindPwMethod(false)}
+            />
+    )}
+    {showFindPw &&(
+                <Modal onClose={()=> setShowFindPw(false)}>
+                    <FindPwCon onClose={()=> setShowFindPw(false)}/>
+                </Modal>
+    )}
         </>
     );
 }

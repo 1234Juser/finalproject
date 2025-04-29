@@ -7,6 +7,9 @@ import {
     FindIdTitle,
     FindIdForm,
     FindIdInputBox,
+    FindIdLabelBox,
+    FindIdLabelIconUser,
+    FindIdLabelIconMail,
     FindIdLabel,
     FindIdInput,
     FindIdButton,
@@ -30,9 +33,10 @@ function FindIdCom({ onClose }) {
         }
         setLoading(true);
         try {
-            const resp = await axios.post("/member/find-id",  {
-                memberName : name,
-                memberEmail : email } );
+            const resp = await axios.post("/member/find-id", {
+                memberName: name,
+                memberEmail: email
+            });
             if (resp.data?.memberId) {
                 setResult(`회원님의 아이디는 [${resp.data.memberId}] 입니다.`);
             } else {
@@ -51,7 +55,10 @@ function FindIdCom({ onClose }) {
             <FindIdTitle>아이디 찾기</FindIdTitle>
             <FindIdForm onSubmit={handleSubmit}>
                 <FindIdInputBox>
-                    <FindIdLabel htmlFor="findid-name">이름</FindIdLabel>
+                    <FindIdLabelBox>
+                        <FindIdLabelIconUser />
+                        <FindIdLabel htmlFor="findid-name">이름</FindIdLabel>
+                    </FindIdLabelBox>
                     <FindIdInput
                         id="findid-name"
                         type="text"
@@ -62,7 +69,10 @@ function FindIdCom({ onClose }) {
                     />
                 </FindIdInputBox>
                 <FindIdInputBox>
-                    <FindIdLabel htmlFor="findid-email">이메일</FindIdLabel>
+                    <FindIdLabelBox>
+                        <FindIdLabelIconMail />
+                        <FindIdLabel htmlFor="findid-email">이메일</FindIdLabel>
+                    </FindIdLabelBox>
                     <FindIdInput
                         id="findid-email"
                         type="email"

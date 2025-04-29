@@ -103,4 +103,11 @@ public class MemberController {
         FindIdResponseDTO response = memberService.findId(dto);
         return ResponseEntity.ok(response);
     }
+
+    //비밀번호찾기(첫번째방법)
+    @PostMapping("/find-password")
+    public ResponseEntity<FindPasswordResponseDTO> findPassword(@RequestBody FindPasswordRequestDTO dto){
+        FindPasswordResponseDTO response = memberService.findPassword(dto);
+        return ResponseEntity.ok(response);
+    }
 }
