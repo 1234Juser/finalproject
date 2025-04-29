@@ -1,10 +1,11 @@
 import React from "react";
-import LoginCon from "../../containers/member/LoginCon"; // 경로나 구조에 따라 import 수정
+import LoginCon from "../../containers/member/LoginCon";
 
 function LoginPage() {
     return (
         <div className="main-content">
-            <LoginCon />
+                    <LoginCon />
+
         </div>
     );
 }

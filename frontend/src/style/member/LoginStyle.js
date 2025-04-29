@@ -49,5 +49,25 @@ export const Button = styled.button`
     font-weight: bold;
   margin-top: 8px;
     cursor: pointer;
+`;
 
+export const ActionRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+`;
+
+export const TextButton = styled.button`
+  background: none;
+  border: none;
+  color: #496af2;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  &:hover {
+    color: #2046ba;
+    text-decoration: underline;
+  }
 `;

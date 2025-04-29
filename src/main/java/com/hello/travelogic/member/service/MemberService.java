@@ -245,4 +245,13 @@ public class MemberService {
         memberRepository.save(member);
 
     }
+    //아이디찾기
+    public FindIdResponseDTO findId(FindIdRequestDTO dto) {
+        MemberEntity member = memberRepository.findByMemberNameAndMemberEmail(dto.getMemberName(), dto.getMemberEmail())
+                .orElseThrow(()-> new EntityNotFoundException("일치하는 정보 없음"));
+
+        FindIdResponseDTO response = new FindIdResponseDTO();
+        response.setMemberId(member.getMemberId());
+        return response;
+    }
 }
