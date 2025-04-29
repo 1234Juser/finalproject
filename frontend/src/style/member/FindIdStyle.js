@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import { FaUserAlt, FaIdBadge, FaEnvelope } from "react-icons/fa";
 
-// 폼 컨테이너(남김)
+// 폼 컨테이너
 export const FindIdFormContainer = styled.div`
     width: 330px;
     background: #fff;
@@ -9,7 +10,7 @@ export const FindIdFormContainer = styled.div`
     box-shadow: 0 6px 32px rgba(0,0,0,0.07);
 `;
 
-// 타이틀(변경X)
+// 타이틀
 export const FindIdTitle = styled.h2`
     margin-bottom: 16px;
     font-size: 1.25rem;
@@ -25,20 +26,37 @@ export const FindIdForm = styled.form`
     flex-direction: column;
 `;
 
-// 입력 박스 (LoginStyle FormItem과 max한 스타일 맞춤)
 export const FindIdInputBox = styled.div`
     margin: 16px 0;
     display: flex;
     flex-direction: column;
 `;
 
-// 라벨 (LoginStyle Label 참고)
-export const FindIdLabel = styled.label`
+export const FindIdLabelBox = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-bottom: 6px;
+`;
+
+export const FindIdLabelIconUser = styled(FaUserAlt)`
+  color: #a4bdfc;
+  font-size: 1.18em;
+`;
+export const FindIdLabelIconId = styled(FaIdBadge)`
+  color: #a4bdfc;
+  font-size: 1.13em;
+`;
+export const FindIdLabelIconMail = styled(FaEnvelope)`
+  color: #a4bdfc;
+  font-size: 1.13em;
+`;
+// -------------------------------------------------------------------- //
+
+export const FindIdLabel = styled.label`
     font-weight: bold;
 `;
 
-// 인풋 (LoginStyle Input 참고)
 export const FindIdInput = styled.input`
     width: 100%;
     padding: 10px;
@@ -49,14 +67,12 @@ export const FindIdInput = styled.input`
     outline: none;
 `;
 
-// 에러 메시지 (LoginStyle ErrorMsg 참고)
 export const ErrorMsg = styled.div`
     color: red;
     margin-bottom: 12px;
     text-align: center;
 `;
 
-// 아이디 찾기 버튼 (LoginStyle Button 참고)
 export const FindIdButton = styled.button`
     width: 100%;
     padding: 12px;
@@ -74,7 +90,6 @@ export const FindIdButton = styled.button`
     }
 `;
 
-// 결과 박스, 기타는 기존 유지
 export const ResultBox = styled.div`
     margin-top: 19px;
     padding: 13px 0;
@@ -86,7 +101,6 @@ export const ResultBox = styled.div`
     font-size: 1.07rem;
 `;
 
-// 상대 컨테이너(변경X)
 export const FindIdRelativeContainer = styled(FindIdFormContainer)`
     position: relative;
 `;
@@ -106,7 +120,6 @@ export const FindIdCloseIconBtn = styled.button`
     }
 `;
 
-// 닫기 버튼 (기존 스타일 살림)
 export const FindIdCloseBtn = styled.button`
     padding: 11px;
     background: #fff;
