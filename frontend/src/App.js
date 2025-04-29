@@ -1,6 +1,6 @@
 import './App.css';
 import {Route, Routes} from "react-router-dom";
-import DomesticCon from "./containers/DomesticCon";
+import DomesticPage from './pages/product/DomesticPage';
 import RegisterPage from "./pages/member/RegisterPage";
 import MainPage from "./pages/MainPage";
 import LoginPage from "./pages/member/LoginPage";
@@ -8,6 +8,9 @@ import MyPagePage from "./pages/member/MyPagePage";
 import FooterCom from './components/common/FooterCom';
 import HeaderCon from "./containers/common/HeaderCon";
 import AdminMyPagePage from "./pages/member/AdminMyPagePage";
+import InternationalPage from './pages/product/InternationalPage';
+import ProductPage from './pages/product/ProductPage';
+import ProductDetailPage from './pages/product/ProductDetailPage';
 import WithdrawlPage from "./pages/member/WithdrawlPage";
 
 function App() {
@@ -27,7 +30,14 @@ function App() {
 
               {/*<Route path="/myreservation" element={<MyReservationPage />} />*/}
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
-            <Route path="/domestic" element={<DomesticCon />} />
+            <Route path="/domestic" element={<DomesticPage/>}/>
+              <Route path="/international" element={<InternationalPage />} />
+              <Route path="/products">
+                <Route path="country" element={<ProductPage />} />
+                <Route path="city" element={<ProductPage />} />
+                <Route path=":productUid" element={<ProductDetailPage/>} />
+              </Route>
+              
         </Routes>
         <FooterCom/>
       </div>

@@ -8,7 +8,7 @@ function NavCom({roles = []}) {
         <StyledNav>
             <ul className="nav">
                 <li><a href="/domestic">국내</a></li>
-                <li>해외</li>
+                <li><a href="/international">해외</a></li>
                 <li>투어/티켓</li>
                 <li>이심</li>
                 <li>더보기</li>

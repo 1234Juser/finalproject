@@ -245,4 +245,36 @@ public class MemberService {
         memberRepository.save(member);
 
     }
+    //아이디찾기
+    public FindIdResponseDTO findId(FindIdRequestDTO dto) {
+        MemberEntity member = memberRepository.findByMemberNameAndMemberEmail(dto.getMemberName(), dto.getMemberEmail())
+                .orElseThrow(()-> new EntityNotFoundException("일치하는 정보 없음"));
+
+        FindIdResponseDTO response = new FindIdResponseDTO();
+        response.setMemberId(member.getMemberId());
+        return response;
+    }
+    //비밀번호찾기(첫번째방법)
+    @Transactional
+    public FindPasswordResponseDTO findPassword(FindPasswordRequestDTO dto) {
+        MemberEntity member = memberRepository.findByMemberNameAndMemberIdAndMemberEmail(
+                dto.getMemberName(), dto.getMemberId(), dto.getMemberEmail()
+        ).orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+        String tempPassword = generateRandomPassword(6);
+        member.setMemberPassword(passwordEncoder.encode(tempPassword));
+        memberRepository.save(member);
+        return new FindPasswordResponseDTO(tempPassword);
+    }
+    //랜덤6자리
+    private String generateRandomPassword(int length) {
+       String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+       StringBuilder sb = new StringBuilder();
+       for(int i = 0; i < length; i++) {
+           int index = (int)(Math.random() * chars.length());
+           sb.append(chars.charAt(index));
+       }
+       return sb.toString();
+    }
+
+
 }
