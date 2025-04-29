@@ -103,4 +103,25 @@ const getProductsByCity = async (cityCode) => {
 
 }
 
-export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, getProductsByCountry, getProductsByCity};
+
+// 상품 상세 데이터 가져오는 함수
+const getProductDetail = async (productUid) => {
+    try {
+        console.log("productUid : ", productUid);
+        const response = await fetch(`${path}/products/${productUid}`, {
+            method : "GET"
+        });
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("백엔드로부터 받은 data : ", data);
+        return data;
+    } catch (error) {
+        console.error("상품 상세 데이터 조회 중 에러 발생 : ", error);
+        throw error;
+    }
+}
+
+
+export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, getProductsByCountry, getProductsByCity, getProductDetail};

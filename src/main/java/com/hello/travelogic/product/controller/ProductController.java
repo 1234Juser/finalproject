@@ -40,4 +40,12 @@ public class ProductController {
         log.debug("get products by city code : {}", cityCode);
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCity(cityCode));
     }
+
+
+    // 투어 상품 상세 페이지
+    @GetMapping("/{productUid}")
+    public ResponseEntity getProductDetail(@PathVariable("productUid") String productUid) {
+        log.debug("get product detail : {}", productUid);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByUid(productUid));
+    }
 }

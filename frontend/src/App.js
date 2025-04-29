@@ -10,6 +10,7 @@ import HeaderCon from "./containers/common/HeaderCon";
 import AdminMyPagePage from "./pages/member/AdminMyPagePage";
 import InternationalPage from './pages/product/InternationalPage';
 import ProductPage from './pages/product/ProductPage';
+import ProductDetailPage from './pages/product/ProductDetailPage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               <Route path="/products">
                 <Route path="country" element={<ProductPage />} />
                 <Route path="city" element={<ProductPage />} />
+                <Route path=":productUid" element={<ProductDetailPage/>} />
               </Route>
               
         </Routes>
