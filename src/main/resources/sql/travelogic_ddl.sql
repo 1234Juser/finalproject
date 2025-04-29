@@ -92,10 +92,12 @@ CREATE TABLE `tbl_country` (
 CREATE TABLE `tbl_city` (
                             `city_code` INT AUTO_INCREMENT NOT NULL COMMENT '도시id',
                             `country_code` INT NOT NULL COMMENT '국가고유코드',
+                            `region_code` INT NOT NULL COMMENT '지역코드',  -- ALTER TABLE 문의 기능을 통합
                             `city_uid` VARCHAR(20) NOT NULL COMMENT '도시고유코드',
                             `city_name` VARCHAR(50) NOT NULL COMMENT '도시명',
                             CONSTRAINT `PK_TBL_CITY` PRIMARY KEY (`city_code`),
-                            CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`)
+                            CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`),
+                            CONSTRAINT `FK_tbl_region_TO_tbl_city_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`)
 );
 
 
