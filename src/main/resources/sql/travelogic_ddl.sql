@@ -78,6 +78,13 @@ CREATE TABLE IF NOT EXISTS tbl_member_role
     CONSTRAINT fk_authority_code FOREIGN KEY (authority_code) REFERENCES tbl_authority (authority_code)
 ) ENGINE=INNODB COMMENT '회원별권한';
 
+-- 4. 구글 smtp 인증코드 테이블 (tbl_password_reset_code)
+CREATE TABLE tbl_password_reset_code (
+                                         auth_id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '인증기본 키 ',
+                                         member_email VARCHAR(30) NOT NULL COMMENT '인증번호요청한이메일',
+                                         auth_code VARCHAR(10) NOT NULL COMMENT '발급된 인증 코드',
+                                         expired_at DATETIME NOT NULL COMMENT '인증번호 만료 시간'
+);
 
 CREATE TABLE `tbl_region` (
                               `region_code` INT AUTO_INCREMENT NOT NULL COMMENT '지역 id',
