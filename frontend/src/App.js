@@ -31,6 +31,7 @@ function App() {
               <Route path="/international" element={<InternationalPage />} />
               <Route path="/products">
                 <Route path="country" element={<ProductPage />} />
+                <Route path="city" element={<ProductPage />} />
               </Route>
               
         </Routes>

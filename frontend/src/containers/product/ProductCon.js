@@ -1,44 +1,39 @@
 import { useEffect, useState } from "react";
 import ProductCom from "../../components/product/ProductCom";
-import {getProductsByCountry} from "../../service/ProductService";
+import {getProductsByCity, getProductsByCountry} from "../../service/ProductService";
 import { useSearchParams } from "react-router-dom";
 
 function ProductCon(){
 
     const [products, setProducts] = useState([]);
 
-    const [serchParams, setSearchParams] = useSearchParams(); // 이전 페이지에서 전달된 쿼리 파라미터 읽기
+    const [searchParams] = useSearchParams(); // 이전 페이지에서 전달된 쿼리 파라미터 읽기
+    const countryCode = searchParams.get("countryCode");
+    const cityCode = searchParams.get("cityCode");
 
-
-    // const handleCityOnClick = async (cityCode) => {
-    //     console.log("일본 클릭했는ㄷ ㅔ ", cityCode);
-    //     await getProductsByCity(cityCode)
-    //     .then(data => {
-    //         console.log("cityCode 받기 : ", cityCode);
-    //         console.log("도시별 투어 목록 리스트 : ", data);
-    //         setProducts(data);
-    //     })
-    //     .catch((err) => console.log(err));
-    // }
-
-    // const setSortParams = () => {
-        
-    // }
-    const countryCode = serchParams.get("countryCode"); //
+    console.log("searchParams: ", searchParams);
     console.log("searchParams countryCode: ", countryCode);
-
-
+    console.log("searchParams cityCode: ", cityCode);
 
     useEffect( () => {
-        if (countryCode) { // countryCode가 null이 아닐 경우만 API 호출
+        if (countryCode) {
+            // countryCode가 있을 경우 국가 기반 상품 조회
             getProductsByCountry(countryCode)
+                .then((data) => {
+                    console.log("국가별 투어 상품 리스트: ", data);
+                    setProducts(data);
+                })
+                .catch((err) => console.error("상품 조회 오류 (국가):", err));
+        } else if (cityCode) {
+            // cityCode가 있을 경우 도시 기반 상품 조회
+            getProductsByCity(cityCode)
                 .then((data) => {
                     console.log("도시별 투어 상품 리스트: ", data);
                     setProducts(data);
                 })
-                .catch((err) => console.error("상품 조회 오류:", err));
+                .catch((err) => console.error("상품 조회 오류 (도시):", err));
         }
-    }, [countryCode])
+    }, [countryCode, cityCode])
 
     console.log("products----->", products);
 
