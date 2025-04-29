@@ -11,6 +11,7 @@ import AdminMyPagePage from "./pages/member/AdminMyPagePage";
 import InternationalPage from './pages/product/InternationalPage';
 import ProductPage from './pages/product/ProductPage';
 import ProductDetailPage from './pages/product/ProductDetailPage';
+import WithdrawlPage from "./pages/member/WithdrawlPage";
 
 function App() {
   return (
@@ -23,8 +24,9 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               {/*<Route path="/" element={<IndexPage />} />*/}
           {/*<Route path="/like" element={<LikePage />} />*/}
-          <Route path="/mypage" element={<MyPagePage />} />
+              <Route path="/mypage" element={<MyPagePage />} />
               <Route path="/adminmypage" element={<AdminMyPagePage />} />
+              <Route path="/mypage/withdrawl" element={<WithdrawlPage />} />
 
               {/*<Route path="/myreservation" element={<MyReservationPage />} />*/}
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}

@@ -1,3 +1,5 @@
+USE travelogicdb;
+
 -- 1. 회원정보 테이블 (tbl_member)
 INSERT INTO tbl_member (member_name, member_id, member_password, member_email, member_phone, member_registerdate, member_enddate, member_endstatus, social_type, social_account_id, social_account_ci)
 VALUES
@@ -172,26 +174,36 @@ INSERT INTO tbl_product_theme (pt_id, product_code, theme_code) VALUES
 
 
 INSERT INTO tbl_wish_group (member_code, group_title, wish_count) VALUES
-                                                                      (1, '파리', 12),
-                                                                      (1, '도쿄', 8),
-                                                                      (1, '뉴욕', 15),
-                                                                      (2, '바르셀로나', 5),
-                                                                      (2, '시드니', 9),
-                                                                      (3, '로마', 13);
+    (1, '파리', 1),
+    (1, '도쿄', 1),
+    (1, '뉴욕', 1),
+    (2, '서울', 1),
+    (2, '도쿄', 1),
+    (2, '로마', 1),
+    (2, '강릉', 1),
+    (2, '뉴욕', 1),
+    (2, '부산', 1),
+    (2, '제주', 1),
+    (3, '서울', 1),
+    (3, '부산', 1),
+    (3, '제주', 1),
+    (3, '로마', 1);
 
 INSERT INTO tbl_wish (member_code, group_code, product_code) VALUES
-                                                                 (1, 1, 1),
-                                                                 (1, 2, 1),
-                                                                 (1, 3, 1),
-                                                                 (1, 1, 2),
-                                                                 (1, 2, 3),
-                                                                 (1, 3, 3),
-                                                                 (2, 1, 4),
-                                                                 (2, 2, 4),
-                                                                 (2, 3, 5),
-                                                                 (2, 1, 5),
-                                                                 (3, 2, 6),
-                                                                 (3, 3, 6);
+    (1, 1, 8),
+    (1, 2, 6),
+    (1, 3, 10),
+    (2, 4, 1),
+    (2, 5, 6),
+    (2, 6, 9),
+    (2, 7, 4),
+    (2, 8, 10),
+    (2, 9, 2),
+    (2, 10, 3),
+    (3, 11, 1),
+    (3, 12, 2),
+    (3, 13, 3),
+    (3, 14, 9);
 
 INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count) VALUES
                                                                                       (1, '2025-05-20', 2, NULL),
@@ -287,3 +299,5 @@ INSERT INTO tbl_notification (
       (3, 1, '예약하신 투어 상품의 일정이 확정되었습니다.', false, '2025-04-23 11:00:00'),
       (4, 3, '회원님의 리뷰에 답글이 달렸습니다.', true, '2025-04-21 17:20:00'),
       (5, 1, '새로운 이벤트가 시작되었습니다! 지금 확인해보세요.', false, '2025-04-24 09:10:00');
+
+COMMIT;
