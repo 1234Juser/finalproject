@@ -6,7 +6,9 @@ import {
     Label,
     Input,
     ErrorMsg,
-    Button
+    Button,
+    ActionRow,
+    TextButton
 } from "../../style/member/LoginStyle";
 
 function LoginCom({
@@ -15,7 +17,10 @@ function LoginCom({
                       onChangeId,
                       onChangePassword,
                       onSubmit,
-                      errorMsg
+                      errorMsg,
+                      onClickFindId,
+                      onClickFindPw,
+                      onClickRegister,
                   }) {
     return (
         <LoginFormContainer>
@@ -44,6 +49,12 @@ function LoginCom({
                 {errorMsg && <ErrorMsg>{errorMsg}</ErrorMsg>}
                 <Button type="submit">로그인</Button>
             </Form>
+            <ActionRow>
+                <TextButton type="button" onClick={onClickFindId}>아이디 찾기</TextButton>
+                <TextButton type="button" onClick={onClickFindPw}>비밀번호 찾기</TextButton>
+                <TextButton type="button" onClick={onClickRegister}>회원가입</TextButton>
+            </ActionRow>
+
         </LoginFormContainer>
     );
 }

@@ -96,4 +96,11 @@ public class MemberController {
         memberService.withdrawMember(memberId, password);
         return ResponseEntity.ok("회원 탈퇴가 처리되었습니다.");
     }
+
+    //아이디찾기
+    @PostMapping("/find-id")
+    public ResponseEntity<FindIdResponseDTO> findId(@RequestBody FindIdRequestDTO dto){
+        FindIdResponseDTO response = memberService.findId(dto);
+        return ResponseEntity.ok(response);
+    }
 }
