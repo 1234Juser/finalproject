@@ -8,14 +8,13 @@ const DomesticCom = ({domestic, cityVisible, onRegionClick, selectedRegion}) => 
 
     // const navigate = useNavigate();
 
-
     return (
         <>
             <h3> 전체 투어 상품 목록 조회 </h3>
             {/*<HeaderCom/>*/}
             {domestic.map((d, index) => (
                 <div key={index}>
-            
+                          
                         {d.regionName} ({d.regionType})
                         <br/>
                     <button onClick={() => onRegionClick(d.regionCode)}>

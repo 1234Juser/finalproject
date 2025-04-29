@@ -3,6 +3,7 @@ import DomesticCom from "../../components/product/DomesticCom";
 import {getDomList, getCitiesByRegion} from "../../service/ProductService";
 import { useNavigate } from 'react-router-dom';
 
+
 const DomesticCon = () => {
 
     const [domestic , setDomestic] = useState([]);
