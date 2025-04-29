@@ -19,10 +19,17 @@ public class CityController {
     @Autowired
     private final CityService cityService;
 
-    // 도시 목록 불러오는 API
+    // 국가별 도시 목록 불러오기
     @GetMapping("/cities/{countryCode}")
     public ResponseEntity getCitiesBycountryCode(@PathVariable("countryCode") Long countryCode) {
         log.debug("get cities by country code : {}", countryCode);
         return ResponseEntity.status(HttpStatus.OK).body(cityService.getCitiesByCountry(countryCode));
+    }
+
+    // 권역별 도시 목록 불러오기 (국내여행)
+    @GetMapping("/cities/region/{regionCode}")
+    public ResponseEntity getCitiesByRegionCode(@PathVariable("regionCode") Long regionCode) {
+        log.debug("get cities by region code : {}", regionCode);
+        return ResponseEntity.status(HttpStatus.OK).body(cityService.getCitiesByRegion(regionCode));
     }
 }

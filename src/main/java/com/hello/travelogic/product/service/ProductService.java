@@ -9,6 +9,7 @@ import com.hello.travelogic.product.dto.RegionDTO;
 import com.hello.travelogic.product.repo.CityRepo;
 import com.hello.travelogic.product.repo.CountryRepo;
 import com.hello.travelogic.product.repo.ProductRepo;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,5 +78,15 @@ public class ProductService {
         log.info("productEntityList : {}", productEntityList);
         log.info("productList : {}", productList);
         return productList;
+    }
+
+    public ProductDTO getProductsByUid(String productUid) {
+
+        ProductEntity productEntity = productRepo.findByProductUid(productUid);
+        log.debug("productEntity : {}", productEntity);
+        if(productEntity != null) {
+            return new ProductDTO(productEntity);
+        }
+            return null;
     }
 }

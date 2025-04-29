@@ -22,6 +22,10 @@ public class CityEntity {
     @JoinColumn(name = "country_code", nullable = false)
     private CountryEntity countryCode;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_code", nullable = false)
+    private RegionEntity regionCode;
+
     @Column(name = "city_uid", nullable = false, length = 20)
     private String cityUid;
 
