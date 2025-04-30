@@ -77,8 +77,8 @@ public class WishService {
 
         return wishRepo.findByGroup_GroupCode(groupCode)
                 .stream()
-                       .map(WishDTO::new)
-                       .collect(Collectors.toList());
+                .map(WishDTO::new)
+                .collect(Collectors.toList());
     }
 
     // 찜 등록취소 동시버전
