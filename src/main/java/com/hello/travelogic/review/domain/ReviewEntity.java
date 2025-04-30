@@ -9,8 +9,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_review")
@@ -38,7 +41,7 @@ public class ReviewEntity {
 
     @NotNull
     @Column( name = "review_rating", nullable = false )
-    private int reviewRating;
+    private Integer reviewRating;
 
     @Size(min = 10, max = 500, message = "리뷰는 10자 이상 500자 이하로 작성해주세요.")
     @Column( name = "review_content", nullable = true, columnDefinition = "TEXT")
@@ -46,9 +49,9 @@ public class ReviewEntity {
 
     @NotNull
     @Column( name = "review_date", nullable = false)
-    private LocalDate reviewDate;
+    private LocalDateTime reviewDate;
 
-    @Column( name = "review_pic", length = 255 )
+    @Column( name = "review_pic", length = 255, nullable = false )
     private String reviewPic;
 
     @NotNull
@@ -66,11 +69,13 @@ public class ReviewEntity {
         this.reviewStatus = review.getReviewStatus();
     }
 
+    private static final Logger log = LoggerFactory.getLogger(ReviewEntity.class);
+
     @PrePersist
     public void prePersist() {
-        this.reviewDate = this.reviewDate == null ? LocalDate.now() : this.reviewDate;
+        this.reviewDate = this.reviewDate == null ? LocalDateTime.now() : this.reviewDate;
+        log.debug("prePersist 호출됨 - 기존 reviewPic: {}", this.reviewPic);
         if (this.reviewPic == null || this.reviewPic.equals("")) {
-            reviewPic = null;
         }
     }
 }

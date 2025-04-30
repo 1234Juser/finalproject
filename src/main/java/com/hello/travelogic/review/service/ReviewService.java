@@ -3,15 +3,14 @@ package com.hello.travelogic.review.service;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.order.domain.OrderEntity;
-import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.review.domain.ReviewEntity;
 import com.hello.travelogic.review.domain.ReviewStatus;
 import com.hello.travelogic.review.dto.ReviewDTO;
 import com.hello.travelogic.review.repo.ReviewRepo;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -36,9 +35,20 @@ public class ReviewService {
     private final MemberRepository memberRepo;
     private final OrderRepo orderRepo;
 
-    public List<ReviewDTO> getReviewsByProductCode(long productCode) {
+//    final String DIR = "upload/review/";
+//    private static final String UPLOAD_DIR = "C:/Users/hi/Desktop/hello_travelogic/upload/review/";
+    final String DIR = "C:/Users/hi/Desktop/hello_travelogic/upload/review/";
 
-        return reviewRepo.findByOrder_Product_ProductCode(productCode)
+    public List<ReviewDTO> getReviewsByProductCode(long productCode, String sortOption) {
+        List<ReviewEntity> entities;
+
+        if ("rating".equalsIgnoreCase(sortOption)) {
+            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewRatingDesc(productCode); // 평점 높은순
+        } else {
+            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
+        }
+
+        return entities
                 .stream()
                 .map(ReviewDTO::new)
                 .collect(Collectors.toList());
@@ -48,108 +58,116 @@ public class ReviewService {
 
         return reviewRepo.findByMemberMemberCodeAndOrderOrderCode(memberCode, orderCode)
                 .map(ReviewDTO::new)
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("리뷰 없음"));
     }
 
     public List<ReviewDTO> getAllReviews() {
 
-        return reviewRepo.findAll()
+        return reviewRepo.findAll(Sort.by(Sort.Direction.DESC, "reviewDate"))
+                .stream()
+                .map(ReviewDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReviewDTO> getReviewsByProductCodeForAdmin(long productCode) {
+        return reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode)
                 .stream()
                 .map(ReviewDTO::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void writeReview(long memberCode, long orderCode, int reviewRating, String reviewContent, String reviewDate, MultipartFile file) {
-
-        MemberEntity member = memberRepo.findByMemberCode(memberCode)
-                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
-        OrderEntity order = orderRepo.findByOrderCode(orderCode)
-                .orElseThrow(() -> new NoSuchElementException("주문이 존재하지 않습니다."));
-
-        if (order.getOrderStatus() != OrderStatus.COMPLETED) {
-            throw new IllegalStateException("상품 이용이 완료된 회원만 리뷰를 작성할 수 있습니다.");
-//            return 0;
-        }
-        if (order.isReviewed()) {
-            throw new IllegalStateException("이미 리뷰를 작성한 주문입니다.");
-        }
-
-        String filePath = null;
-        if (file != null && !file.isEmpty()) {
-            // 파일 저장 메서드 호출 (ex. S3 또는 서버 디렉토리 업로드)
-            filePath = saveFile(file);
-        }
-
-        order.setReviewed(true);
-
-        ReviewEntity review = new ReviewEntity();
-        review.setMember(member);
-        review.setOrder(order);
-        review.setReviewRating(reviewRating);
-        review.setReviewContent(reviewContent);
-        review.setReviewPic(filePath);
-        review.setReviewDate(LocalDate.now());
-        review.setReviewStatus(ReviewStatus.ACTIVE);
-
-        reviewRepo.save(review);
-        orderRepo.save(order);
-//        return 1;
-    }
-
-    private String saveFile(MultipartFile file) {
-
+    public int writeReview(ReviewDTO reviewDTO, MultipartFile file) {
+        int result = 0;
         try {
-            String uploadFolder = new File("upload/review/").getAbsolutePath();
-            File uploadDir = new File(uploadFolder);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
+            // 초기화
+            String reviewPic = null;
+
+            if (file != null && !file.isEmpty()) {
+                log.debug("파일 이름: {}", file.getOriginalFilename());
+                log.debug("file == null? {}", file == null);
+                if (file != null) {
+                    log.debug("file.isEmpty()? {}", file.isEmpty());
+                    log.debug("file.getOriginalFilename(): {}", file.getOriginalFilename());
+                }
+                // 랜덤한 새로운 이름으로 파일을 저장하겠다~
+                reviewPic = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+                reviewDTO.setReviewPic(reviewPic);
+
+                Path path = Paths.get(DIR + reviewPic);
+                Files.createDirectories(path.getParent());
+                file.transferTo(path);
+                log.debug("파일 저장 완료: {}", reviewPic);
+            } else {
+                reviewDTO.setReviewPic(null);
+                log.warn("파일이 전달되지 않았습니다.");
             }
+            log.debug("파일 저장 후 reviewPic: {}", reviewDTO.getReviewPic());
 
-            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-//            String savePath = "/upload/review/" + fileName;
-            String savePath = uploadFolder + File.separator + fileName;
+            reviewDTO.setReviewDate(LocalDateTime.now());
+            reviewDTO.setReviewStatus(ReviewStatus.ACTIVE);
 
-//            String savePath = uploadFolder + fileName;
-            file.transferTo(new File(savePath));
-//            return savePath;
-//            return "/review/" + fileName;
-            return "/review/" + fileName;
-        } catch (IOException e) {
+            log.debug("memberCode: {}", reviewDTO.getMemberCode());
+            log.debug("orderCode: {}", reviewDTO.getOrderCode());
+
+            // MemberEntity와 OrderEntity를 DB에서 조회
+            MemberEntity member = memberRepo.findById(reviewDTO.getMemberCode())
+                    .orElseThrow(() -> new RuntimeException("Member not found"));
+            OrderEntity order = orderRepo.findById(reviewDTO.getOrderCode())
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+
+            // ReviewEntity 객체 생성
+            ReviewEntity reviewEntity = new ReviewEntity(reviewDTO, member, order);
+
+            reviewRepo.save(reviewEntity);
+            log.debug("DB에 저장된 리뷰: reviewPic = {}", reviewEntity.getReviewPic());
+
+            result = 1;
+        } catch (Exception e) {
+            log.error("리뷰 작성 중 오류 발생", e);
             e.printStackTrace();
-            return null; // 저장 실패 시 null 반환
         }
+        return result;
     }
 
-    @Transactional
-    public ReviewDTO modifyReview(long reviewCode, @Valid ReviewDTO reviewDTO, MultipartFile file) {
+    public String modifyReview (Long reviewCode, ReviewDTO reviewDTO, MultipartFile file) {
 
         ReviewEntity review = reviewRepo.findById(reviewCode)
-                .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 리뷰가 존재하지 않습니다."));
 
-        if (review.getReviewStatus() != ReviewStatus.ACTIVE) {
-            throw new IllegalStateException("활성 상태의 리뷰만 수정할 수 있습니다.");
+        // 수정 가능한 시간인지 확인
+        if (review.getReviewDate().plusHours(48).isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("리뷰는 작성 후 48시간 이내에만 수정할 수 있습니다.");
         }
 
+        // 수정 가능한 항목만 입력한다.
+        review.setReviewRating(reviewDTO.getReviewRating());
+        review.setReviewContent(reviewDTO.getReviewContent());
+
         if (file != null && !file.isEmpty()) {
-            // 새 파일 업로드
-            String newFilePath = saveFile(file);
-            // 기존 파일 삭제
-            if (newFilePath != null) {
-                deleteFile(review.getReviewPic());
-                review.setReviewPic(newFilePath);
+//            String newPic = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+//            Path path = Paths.get("upload/review/" + newPic);
+            try {
+                // 기존 파일이 존재하고 "nan" 같은 값이 아니라면 삭제
+                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+                    // 기존 파일 경로
+                    Path existingFilePath = Paths.get("upload/review/" + review.getReviewPic());
+                    // 기존 파일 삭제
+                    Files.deleteIfExists(existingFilePath);
+                }
+                String newFileName = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+                Path newFilePath = Paths.get("upload/review/" + newFileName);
+                Files.createDirectories(newFilePath.getParent());  // 디렉토리 없으면 생성
+                file.transferTo(newFilePath);
+                review.setReviewPic(newFileName);
+            } catch (IOException e) {
+                throw new RuntimeException("파일 저장 중 오류 발생", e);
             }
         }
 
-        review.setReviewRating(reviewDTO.getReviewRating());
-        review.setReviewContent(reviewDTO.getReviewContent());
-//        review.setReviewPic(reviewDTO.getReviewPic());
-        review.setReviewDate(LocalDate.now()); // 수정일자로 업데이트
-
+        // 수정 후 저장
         reviewRepo.save(review);
-
-        return new ReviewDTO(review);
-//        return new ReviewDTO(reviewRepo.save(review));
+        return "수정 성공";
     }
 
     private void deleteFile(String filePath) {
@@ -169,6 +187,11 @@ public class ReviewService {
         ReviewEntity review = reviewRepo.findById(reviewCode)
                 .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다."));
 
+        if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+            String fullPath = "C:/Users/hi/Desktop/hello_travelogic/upload/review/" + review.getReviewPic();
+            deleteFile(fullPath);
+        }
+
         OrderEntity order = review.getOrder();
 
         review.setOrder(null); // order_code = null로 만들기
@@ -181,12 +204,34 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteByAdmin(long reviewCode) {
+    public void deleteReviewByAdmin(long reviewCode) {
 
         ReviewEntity review = reviewRepo.findById(reviewCode)
                 .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다."));
 
-        review.setReviewContent("관리자에 의해 삭제된 리뷰입니다.");
         review.setReviewStatus(ReviewStatus.DELETE_BY_ADMIN);
+        review.setReviewContent("관리자에 의해 삭제된 리뷰입니다.");
+
+        if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+            String fullPath = "C:/Users/hi/Desktop/hello_travelogic/upload/review/" + review.getReviewPic();
+            deleteFile(fullPath);
+            review.setReviewPic(null); // DB에서도 이미지 제거
+        }
+
+        reviewRepo.save(review);
+    }
+
+    //파일 다운로드
+    public byte[] getImage(String reviewPic) {
+
+        // 로컬버전
+        Path filePath = Paths.get(DIR + reviewPic);
+        byte[] imageBytes = {0};
+        try {
+            imageBytes = Files.readAllBytes(filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imageBytes;
     }
 }
