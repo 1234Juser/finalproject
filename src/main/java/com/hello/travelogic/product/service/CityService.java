@@ -23,14 +23,14 @@ public class CityService {
     private final CityRepo cityRepo;
     private final RegionRepo regionRepo;
 
-    public List<CityDTO> getCitiesByCountry(Long countryCode) {
+    public List<CityDTO> getCitiesByCountry(Long countryId) {
 
-        // countryCode에 해당하는 CountryEntity 먼저 조회
-        CountryEntity countryEntity = countryRepo.findByCountryCode(countryCode);
+        // countryId 해당하는 CountryEntity 먼저 조회
+        CountryEntity countryEntity = countryRepo.findByCountryId(countryId);
         log.info("countryEntity : {}", countryEntity);
 
         // CountryEntity로 도시 목록 가져오기
-        List<CityEntity> cityEntityList = cityRepo.findByCountryCode(countryEntity);
+        List<CityEntity> cityEntityList = cityRepo.findBycountryId(countryEntity);
         List<CityDTO> cityByCountry = null;
         if(cityEntityList.size() != 0) {
             cityByCountry = cityEntityList.stream().map( city -> new CityDTO(city)).toList();

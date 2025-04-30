@@ -18,7 +18,7 @@ public class CountryController {
     @Autowired
     private final CountryService countryService;
 
-    // regionCode로 국가 목록 반환
+    // regionCode로 국가 목록 반환 (해외여행용)
     @GetMapping("/{regionCode}")
     public ResponseEntity getCountryByRegionCode(@PathVariable Long regionCode) {
         log.debug("regionCode : {}", regionCode);

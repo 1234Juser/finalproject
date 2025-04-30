@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.controller;
 
+import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +27,19 @@ public class ProductController {
     }
 
 
-    // countryCode에 해당하는 투어 상품 조회
+    // countryId에 해당하는 투어 상품 조회
     @GetMapping("/country")
-    public ResponseEntity getProductsByCountry(@RequestParam("countrycode") Long countryCode) {
-        log.debug("get products by country code : {}", countryCode);
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCountry(countryCode));
+    public ResponseEntity getProductsByCountry(@RequestParam("country_id") Long countryId) {
+        log.debug("get products by country ID : {}", countryId);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCountry(countryId));
     }
 
 
-    // cityCode에 해당하는 투어 상품 조회
+    // cityId에 해당하는 투어 상품 조회
     @GetMapping("/city")
-    public ResponseEntity getProductsByCity(@RequestParam("citycode") Long cityCode) {
-        log.debug("get products by city code : {}", cityCode);
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCity(cityCode));
+    public ResponseEntity getProductsByCity(@RequestParam("city_id") Long cityId) {
+        log.debug("get products by city ID : {}", cityId);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCity(cityId));
     }
 
 
@@ -47,5 +48,15 @@ public class ProductController {
     public ResponseEntity getProductDetail(@PathVariable("productUid") String productUid) {
         log.debug("get product detail : {}", productUid);
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByUid(productUid));
+    }
+
+
+    // 상품 등록
+    @PostMapping("/register")
+    public ResponseEntity registerProduct(@RequestBody ProductDTO productDTO) {
+        log.debug("register product : {}", productDTO);
+        int result = productService.registerProduct(productDTO);
+        log.debug("registerProduct result : {}", result);
+        return ResponseEntity.status(HttpStatus.CREATED).body("등록 성공");
     }
 }

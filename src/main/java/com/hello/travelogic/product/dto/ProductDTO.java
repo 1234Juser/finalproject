@@ -15,8 +15,8 @@ public class ProductDTO {
 
     private Long productCode;
     private String productUid;
-    private Long countryCode;
-    private Long cityCode;
+    private Long countryId;
+    private Long cityId;
     private Long themeCode;
     private String productTitle;
     private String productContent;
@@ -33,8 +33,8 @@ public class ProductDTO {
     public ProductDTO(ProductEntity productDTO) {
         this.productCode = productDTO.getProductCode();
         this.productUid = productDTO.getProductUid();
-        this.countryCode = productDTO.getCountryCode().getCountryCode();
-        this.cityCode = productDTO.getCityCode().getCityCode();
+        this.countryId = productDTO.getCountryId().getCountryId();
+        this.cityId = productDTO.getCityId().getCityId();
         this.themeCode = productDTO.getThemeCode().getThemeCode();
         this.productTitle = productDTO.getProductTitle();
         this.productContent = productDTO.getProductContent();

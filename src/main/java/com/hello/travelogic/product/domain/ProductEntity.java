@@ -1,10 +1,8 @@
 package com.hello.travelogic.product.domain;
 
+import com.hello.travelogic.product.dto.ProductDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class ProductEntity {
 
@@ -27,12 +26,12 @@ public class ProductEntity {
     private String productUid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_code", nullable = false)
-    private CountryEntity countryCode;  // 국가 1 - 상품 N 관계
+    @JoinColumn(name = "country_id", nullable = false)
+    private CountryEntity countryId;  // 국가 1 - 상품 N 관계
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_code", nullable = false)
-    private CityEntity cityCode;        // 도시 1 - 상품 N 관계
+    @JoinColumn(name = "city_id", nullable = false)
+    private CityEntity cityId;        // 도시 1 - 상품 N 관계
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_code")
@@ -77,6 +76,26 @@ public class ProductEntity {
     @OneToMany(mappedBy = "productCode", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();
 
+
+    public ProductEntity(ProductDTO productDTO) {
+        this.productCode = productDTO.getProductCode();
+        this.productUid = productDTO.getProductUid();
+//        this.countryCode = productDTO.getCountryCode(); // 서비스에서 CountryEntity 매핑
+//        this.cityCode = productDTO.getCityCode();       // 서비스에서 CityEntity 매핑
+//        this.themeCode = productDTO.getThemeCode();     // 서비스에서 ThemeEntity 매핑
+        this.productTitle = productDTO.getProductTitle();
+        this.productContent = productDTO.getProductContent();
+        this.productAdult = productDTO.getProductAdult();
+        this.productChild = productDTO.getProductChild();
+//        this.productStartDate = productDTO.getProductStartDate();     // 서비스에서 타입 전환하여 매핑
+//        this.productEndDate = productDTO.getProductEndDate();         //          〃
+        this.productMinParticipants = productDTO.getProductMinParticipants();
+        this.productMaxParticipants = productDTO.getProductMaxParticipants();
+        this.productStatus = productDTO.getProductStatus(); // Enum 매핑 필요
+        this.productThumbnail = productDTO.getProductThumbnail();
+        this.productType = productDTO.getProductType();     // Enum 매핑 필요
+//        this.productThemes = productDTO.getProductThemes(); // 연관 엔티티 리스트 매핑 필요
+    }
 
     public enum ProductStatus {
         ON_SALE,
