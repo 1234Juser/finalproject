@@ -77,8 +77,8 @@ public class WishService {
 
         return wishRepo.findByGroup_GroupCode(groupCode)
                 .stream()
-                       .map(WishDTO::new)
-                       .collect(Collectors.toList());
+                .map(WishDTO::new)
+                .collect(Collectors.toList());
     }
 
     // 찜 등록취소 동시버전
@@ -100,7 +100,7 @@ public class WishService {
 
         log.info("상품 이름: {}", product.getProductTitle());
 
-        CityEntity city = product.getCityCode();
+        CityEntity city = product.getCityId();
         if (city == null) {
             log.error("city 정보가 null입니다. productCode: {}", productCode);
             throw new IllegalStateException("상품에 연결된 도시 정보가 없습니다.");
@@ -141,7 +141,7 @@ public class WishService {
         List<WishEntity> wishList = wishRepo.findByMember_MemberCode(memberCode);
 
         Set<String> cityNames = wishList.stream()
-                .map(w -> w.getProduct().getCityCode().getCityName())
+                .map(w -> w.getProduct().getCityId().getCityName())
                 .collect(Collectors.toSet());
 
         for (String cityName : cityNames) {

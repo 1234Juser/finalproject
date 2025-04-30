@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 public class PaymentDTO {
 
+    private long paymentCode;
     private long memberCode;
     private long orderCode;
     private String paymentMethod;
@@ -27,8 +28,9 @@ public class PaymentDTO {
     private String receiptUrl;
 
     public PaymentDTO(PaymentEntity entity) {
-        this.memberCode = entity.getMemberCode();
-        this.orderCode = entity.getOrderCode();
+        this.paymentCode = entity.getPaymentCode();
+        this.memberCode = entity.getMember().getMemberCode();
+        this.orderCode = entity.getOrder().getOrderCode();
         this.paymentMethod = entity.getPaymentMethod();
         this.paymentBrand = entity.getPaymentBrand();
         this.paymentTime = entity.getPaymentTime();
