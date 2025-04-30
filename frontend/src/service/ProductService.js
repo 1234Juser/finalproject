@@ -13,7 +13,6 @@ const getDomList = async () => {
     const response = await fetch(`${path}/domestic`, {
         method : "GET"
     });
-    // console.log("response--->" , response);
     return response.json();
 }
 
@@ -31,7 +30,6 @@ const getCountryList = async (regionCode) => {
     const response = await fetch(`${path}/country/${regionCode}`, {
         method : "GET"
     });
-    console.log("response--->" , response);
     return response.json();
 }
 
@@ -42,43 +40,88 @@ const getCitiesByCountry = async (countryCode) => {
     const response = await fetch(`${path}/cities/${countryCode}`, {
         method : "GET"
     })
-    console.log("response--->" , response);
     if (!response.ok) {
-        throw new Error(`Error! status: ${response.status}`); // 요청 실패 시 에러 출력
+        throw new Error(`Error! status: ${response.status}`); 
     }
     return response.json();
 }
 
+
+// 권역별 도시 데이터 가져오는 함수
+const getCitiesByRegion = async (regionCode) => {
+    try {
+        const response = await fetch(`${path}/cities/region/${regionCode}`, {
+            method : "GET"
+        })
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`); 
+        }
+        return response.json();
+
+    } catch (error) {
+        console.error("도시 조회 중 에러 발생 : ", error);
+        throw error;
+    }
+}
 
 
 // 국가별 투어 상품 데이터 가져오는 함수
 const getProductsByCountry = async (countryCode) => {
-    console.log("요청 받은 cityCode : ", countryCode);
-    const response = await fetch(`${path}/products/country?countrycode=${countryCode}`, {
-        method : "GET"
-    });
-    console.log("getProductsByCity response data:::: : ", response.data);
-    if (!response.ok) {
-        throw new Error(`Error! status: ${response.status}`); // 요청 실패 시 에러 출력
+    try {
+        console.log("요청 받은 cityCode : ", countryCode);
+        const response = await fetch(`${path}/products/country?countrycode=${countryCode}`, {
+            method : "GET"
+        });
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`); 
+        }
+        return response.json();
+
+    } catch (error) {
+        console.error("국가별 투어 상품 데이터 조회 중 에러 발생 : ", error);
+        throw error;
     }
-
-    return response.json();
 }
-
 
 
 // 도시별 투어 상품 데이터 가져오는 함수
 const getProductsByCity = async (cityCode) => {
-    console.log("요청 받은 cityCode : ", cityCode);
-    const response = await fetch(`${path}/products/city?citycode=${cityCode}`, {
-        method : "GET"
-    });
-    console.log("getProductsByCity response data:::: : ", response.data);
-    if (!response.ok) {
-        throw new Error(`Error! status: ${response.status}`); // 요청 실패 시 에러 출력
+    try {
+        console.log("요청 받은 cityCode : ", cityCode);
+        const response = await fetch(`${path}/products/city?citycode=${cityCode}`, {
+            method : "GET"
+        });
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("도시별 투어 상품 데이터 조회 중 에러 발생 : ", error);
+        throw error;
     }
 
-    return response.json();
 }
 
-export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getProductsByCountry, getProductsByCity};
+
+// 상품 상세 데이터 가져오는 함수
+const getProductDetail = async (productUid) => {
+    try {
+        console.log("productUid : ", productUid);
+        const response = await fetch(`${path}/products/${productUid}`, {
+            method : "GET"
+        });
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("백엔드로부터 받은 data : ", data);
+        return data;
+    } catch (error) {
+        console.error("상품 상세 데이터 조회 중 에러 발생 : ", error);
+        throw error;
+    }
+}
+
+
+export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, getProductsByCountry, getProductsByCity, getProductDetail};

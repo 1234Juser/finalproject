@@ -20,6 +20,7 @@ DROP TABLE IF EXISTS tbl_wish CASCADE;
 DROP TABLE IF EXISTS tbl_wish_group CASCADE;
 DROP TABLE IF EXISTS `tbl_product_theme` CASCADE;
 DROP TABLE IF EXISTS `tbl_product` CASCADE;
+DROP TABLE IF EXISTS `tbl_theme` CASCADE;
 DROP TABLE IF EXISTS `tbl_city` CASCADE;
 DROP TABLE IF EXISTS `tbl_country` CASCADE;
 DROP TABLE IF EXISTS `tbl_theme` CASCADE;
@@ -106,18 +107,20 @@ CREATE TABLE `tbl_country` (
                                `region_code` INT NOT NULL COMMENT '지역 고유번호',
                                `country_uid` VARCHAR(20) NOT NULL COMMENT '국가고유코드',
                                `country_name` VARCHAR(20) NOT NULL COMMENT '국가명',
-                               CONSTRAINT `PK_TBL_COUNTRY` PRIMARY KEY (`country_code`),
-                               CONSTRAINT `FK_tbl_region_TO_tbl_country_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`)
-);
+                               CONSTRAINT `FK_tbl_region_TO_tbl_country_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`),
+                               CONSTRAINT PK_TBL_COUNTRY PRIMARY KEY (country_code)
+) ENGINE=INNODB COMMENT '국가정보' AUTO_INCREMENT = 01;
+
 CREATE TABLE `tbl_city` (
                             `city_code` INT AUTO_INCREMENT NOT NULL COMMENT '도시id',
                             `country_code` INT NOT NULL COMMENT '국가고유코드',
+                            `region_code` INT NOT NULL COMMENT '지역코드',  -- ALTER TABLE 문의 기능을 통합
                             `city_uid` VARCHAR(20) NOT NULL COMMENT '도시고유코드',
                             `city_name` VARCHAR(50) NOT NULL COMMENT '도시명',
                             CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`),
+                            CONSTRAINT `FK_tbl_region_TO_tbl_city_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`),
                             CONSTRAINT pk_city_code PRIMARY KEY (city_code)
-) ENGINE=INNODB COMMENT '도시정보' AUTO_INCREMENT = 1001;
-
+) ENGINE=INNODB COMMENT '도시정보' AUTO_INCREMENT = 0101;
 
 CREATE TABLE `tbl_product` (
                                `product_code` INT AUTO_INCREMENT NOT NULL COMMENT '투어상품 id',
@@ -184,6 +187,7 @@ CREATE TABLE tbl_order (
     total_price INT NOT NULL COMMENT '총금액',
     order_date DATETIME NOT NULL COMMENT '주문확정시간',
     order_status ENUM('SCHEDULED', 'COMPLETED', 'CANCELED') NOT NULL DEFAULT 'SCHEDULED' COMMENT '예정/완료/취소',
+    is_reviewed TINYINT NOT NULL DEFAULT 0 COMMENT '리뷰 작성 여부',
     PRIMARY KEY (order_code),
     FOREIGN KEY (product_code) REFERENCES tbl_product (product_code),
     FOREIGN KEY (option_code) REFERENCES tbl_option (option_code),
@@ -228,7 +232,7 @@ CREATE TABLE tbl_review (
     review_content TEXT NULL COMMENT '리뷰내용',
     review_date DATETIME NOT NULL COMMENT '리뷰작성일',
     review_pic VARCHAR(255) NULL COMMENT '리뷰이미지',
-    review_status ENUM('ACTIVE', 'DELETE BY ADMIN') NOT NULL DEFAULT 'ACTIVE' COMMENT '활성화, 관리자에 의한 삭제',
+    review_status ENUM('ACTIVE', 'DELETE_BY_ADMIN') NOT NULL DEFAULT 'ACTIVE' COMMENT '활성화, 관리자에 의한 삭제',
     PRIMARY KEY (review_code),
     FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
     FOREIGN KEY (order_code) REFERENCES tbl_order (order_code)
@@ -326,3 +330,5 @@ CREATE TABLE `tbl_notification` (
                                     CONSTRAINT `PK_TBL_NOTIFICATION` PRIMARY KEY (`noti_id`),
                                     CONSTRAINT `FK_tbl_member_TO_tbl_notification_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
 );
+
+commit;
