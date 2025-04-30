@@ -15,9 +15,9 @@ function FindPwMethodSelectCom({ onSelectMethod, onClose }) {
                         <Icon1 />
                         <span>기본 정보로<br/> 찾기</span>
                     </MethodBtn>
-                    <MethodBtn onClick={() => onSelectMethod("phone")}>
+                    <MethodBtn onClick={() => onSelectMethod("email-auth")}>
                         <Icon2 />
-                        <span>휴대폰 인증<br/>으로 찾기</span>
+                        <span>이메일 인증<br/>으로 찾기</span>
                     </MethodBtn>
                 </MethodRow>
                 <BottomCloseBtn onClick={onClose}>닫기</BottomCloseBtn>

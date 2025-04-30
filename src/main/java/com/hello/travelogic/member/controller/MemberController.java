@@ -110,4 +110,29 @@ public class MemberController {
         FindPasswordResponseDTO response = memberService.findPassword(dto);
         return ResponseEntity.ok(response);
     }
+
+    //비밀번호찾기(두번째방법) : 인증코드 발송
+    @PostMapping("/find-password/mail-auth")
+    public ResponseEntity<?> sendPasswordResetEmail(@RequestBody FindPasswordAuthRequestDTO dto){
+        boolean result = memberService.sendPasswordResetAuthCode(dto);
+        if(result){
+            return ResponseEntity.ok().body("인증번호가 발송되었습니다.");
+        }else{
+            return ResponseEntity.badRequest().body("입력하신 정보와 일치하는 회원이 없습니다");
+        }
+    }
+
+    //2) 인증코드 확인
+    @PostMapping("/find-password/verify-code")
+    public ResponseEntity<?> verifyEmailAuthCode(@RequestBody EmailAuthVerifyRequestDTO dto){
+        boolean success = memberService.verifyAuthCode(dto.getMemberEmail(), dto.getAuthCode());
+        return ResponseEntity.ok(success);
+    }
+
+    //3. 비밀번호 변경
+    @PostMapping("/find-password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequestDTO dto){
+        boolean changed = memberService.resetPassword(dto);
+        return ResponseEntity.ok(changed);
+    }
 }
