@@ -102,23 +102,26 @@ CREATE TABLE `tbl_theme` (
 );
 
 CREATE TABLE `tbl_country` (
-                               `country_code` INT AUTO_INCREMENT NOT NULL COMMENT '국가id',
+                               `country_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '국가id',
+                               `country_code` INT NOT NULL UNIQUE COMMENT '국가코드',
                                `region_code` INT NOT NULL COMMENT '지역 고유번호',
                                `country_uid` VARCHAR(20) NOT NULL COMMENT '국가고유코드',
                                `country_name` VARCHAR(20) NOT NULL COMMENT '국가명',
                                CONSTRAINT `FK_tbl_region_TO_tbl_country_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`),
-                               CONSTRAINT PK_TBL_COUNTRY PRIMARY KEY (country_code)
+                               CONSTRAINT PK_TBL_COUNTRY PRIMARY KEY (country_id)
 ) ENGINE=INNODB COMMENT '국가정보' AUTO_INCREMENT = 01;
 
 CREATE TABLE `tbl_city` (
-                            `city_code` INT AUTO_INCREMENT NOT NULL COMMENT '도시id',
-                            `country_code` INT NOT NULL COMMENT '국가고유코드',
-                            `region_code` INT NOT NULL COMMENT '지역코드',  -- ALTER TABLE 문의 기능을 통합
+                            `city_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '도시id',
+                            `city_code` varchar(4)  NOT NULL UNIQUE COMMENT '도시코드',
+                            `country_id` INT NOT NULL COMMENT '국가고유코드',
+                            `region_code` INT NOT NULL COMMENT '지역코드',
                             `city_uid` VARCHAR(20) NOT NULL COMMENT '도시고유코드',
                             `city_name` VARCHAR(50) NOT NULL COMMENT '도시명',
-                            CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`),
+                            `city_name_kr` varchar(50) not null comment '도시명(한국)',
+                            CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_id`) REFERENCES `tbl_country` (`country_id`),
                             CONSTRAINT `FK_tbl_region_TO_tbl_city_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`),
-                            CONSTRAINT pk_city_code PRIMARY KEY (city_code)
+                            CONSTRAINT pk_city_id PRIMARY KEY (city_id)
 ) ENGINE=INNODB COMMENT '도시정보' AUTO_INCREMENT = 0101;
 
 CREATE TABLE `tbl_product` (

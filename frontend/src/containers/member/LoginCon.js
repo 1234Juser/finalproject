@@ -43,11 +43,12 @@ function LoginCon(){
             });
 
             console.log("로그인 응답:", response.data);
-            const {accessToken, memberName, memberProfileImageUrl, roles} = response.data;
+            const {accessToken, memberName, memberProfileImageUrl, roles, memberCode} = response.data;
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("memberName", memberName);
             localStorage.setItem("memberProfileImageUrl", memberProfileImageUrl);
             localStorage.setItem("roles", JSON.stringify(roles));
+            localStorage.setItem("memberCode", memberCode);
 
             //로그인 성공시 메인페이지로 이동
             navigate("/");

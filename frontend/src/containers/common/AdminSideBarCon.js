@@ -4,7 +4,7 @@ import React,{useState} from "react";
 const adminMenuList = [
     { label: "개인정보조회", path: "/adminmypage" },
     { label: "회원정보조회", path: "/admin/reservations" },
-    { label: "상품관리", path: "/admin/contents" },
+    { label: "상품관리", path: "/adminmypage/product" },
     { label: "예약관리", path: "/admin/manage/order/all",
     subMenu:[
         {label: "전체조회", path: "/admin/order/all"},

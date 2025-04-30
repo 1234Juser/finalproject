@@ -20,10 +20,10 @@ public class CityController {
     private final CityService cityService;
 
     // 국가별 도시 목록 불러오기
-    @GetMapping("/cities/{countryCode}")
-    public ResponseEntity getCitiesBycountryCode(@PathVariable("countryCode") Long countryCode) {
-        log.debug("get cities by country code : {}", countryCode);
-        return ResponseEntity.status(HttpStatus.OK).body(cityService.getCitiesByCountry(countryCode));
+    @GetMapping("/cities/{countryId}")
+    public ResponseEntity getCitiesBycountryCode(@PathVariable("countryId") Long countryId) {
+        log.debug("get cities by country code : {}", countryId);
+        return ResponseEntity.status(HttpStatus.OK).body(cityService.getCitiesByCountry(countryId));
     }
 
     // 권역별 도시 목록 불러오기 (국내여행)
