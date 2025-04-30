@@ -17,6 +17,7 @@ public class CityDTO {
     private Long regionCode;
     private String cityUid;
     private String cityName;
+    private String cityNameKR;
 
     public CityDTO(CityEntity cityDTO) {
         this.cityId = cityDTO.getCityId();
@@ -25,5 +26,6 @@ public class CityDTO {
         this.regionCode = cityDTO.getRegionCode().getRegionCode();
         this.cityUid = cityDTO.getCityUid();
         this.cityName = cityDTO.getCityName();
+        this.cityNameKR = cityDTO.getCityNameKR();
     }
 }

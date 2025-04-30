@@ -35,4 +35,7 @@ public class CityEntity {
 
     @Column(name = "city_name", nullable = false, length = 20)
     private String cityName;
+
+    @Column(name = "city_name_kr", nullable = false)
+    private String cityNameKR;
 }
