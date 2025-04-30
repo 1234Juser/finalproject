@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,6 +33,11 @@ public class RegionController {
         return ResponseEntity.status(HttpStatus.OK).body(regionService.getRegionByType("INTERNATIONAL"));
     }
 
-
+    // region_type에 따른 권역 조회
+    @GetMapping("/region/{regionType}")
+    public ResponseEntity getRegionByType(@PathVariable String regionType) {
+        log.debug("get region by type : {}", regionType);
+        return ResponseEntity.status(HttpStatus.OK).body(regionService.getRegionByType(regionType));
+    }
 
 }
