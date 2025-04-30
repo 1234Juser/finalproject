@@ -12,6 +12,8 @@ import InternationalPage from './pages/product/InternationalPage';
 import ProductPage from './pages/product/ProductPage';
 import ProductDetailPage from './pages/product/ProductDetailPage';
 import WithdrawlPage from "./pages/member/WithdrawlPage";
+import RegisterMethodSelectPage from "./pages/member/RegisterMethodSelectPage";
+import KakaoCallbackPage from "./pages/member/KakaoCallbackPage";
 
 function App() {
   return (
@@ -20,8 +22,10 @@ function App() {
 
           <Routes>
               <Route path="/" element={<MainPage />} />
+              <Route path="/registerselect" element={<RegisterMethodSelectPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
               {/*<Route path="/" element={<IndexPage />} />*/}
           {/*<Route path="/like" element={<LikePage />} />*/}
               <Route path="/mypage" element={<MyPagePage />} />

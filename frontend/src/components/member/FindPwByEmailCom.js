@@ -21,7 +21,7 @@ function FindPwByEmailCom({ input, onInputChange, sending, sendDone, onSendAuth,
         <PwModalBox>
             <PwClose aria-label="닫기" onClick={onClose}>×</PwClose>
             <PwTitle>
-                <PwLabelIconKey /> 이메일 인증으로 비밀번호 찾기
+                <PwLabelIconKey /> 비밀번호 찾기
             </PwTitle>
             <PwDesc>
                 회원정보를 입력하면 <b>이메일 인증번호</b>를 보내 드려요.

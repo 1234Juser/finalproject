@@ -73,7 +73,7 @@ function LoginCon(){
                 errorMsg={errorMsg}
                 onClickFindId={()=> setShowFindId(true)}
                 onClickFindPw={()=> setShowFindPwMethod(true)}
-                onClickRegister={()=> navigate("/register")}
+                onClickRegister={()=> navigate("/registerselect")}
             />
             {showFindId && (
                 <Modal onClose={()=> setShowFindId(false)}>
