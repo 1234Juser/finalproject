@@ -8,8 +8,8 @@ function ProductCon(){
     const [products, setProducts] = useState([]);
 
     const [searchParams] = useSearchParams(); // 이전 페이지에서 전달된 쿼리 파라미터 읽기
-    const countryId = searchParams.get("countryId");
-    const cityId = searchParams.get("cityId");
+    const countryId = searchParams.get("country_id");
+    const cityId = searchParams.get("city_id");
 
     console.log("searchParams: ", searchParams);
     console.log("searchParams countryId: ", countryId);

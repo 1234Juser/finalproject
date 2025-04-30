@@ -46,14 +46,14 @@ const InternationalCon = () => {
 
     // console.log("country 확인---->", country);
 
-    // 버튼 클릭 시 countryCode 불러오는 함수
-    const onClickHandler = async (countryCode) => {
-        console.log("일본 클릭했을 때 countryCode: ", countryCode);
+    // 버튼 클릭 시 countryId 불러오는 함수
+    const onClickHandler = async (countryId) => {
+        console.log("일본 클릭했을 때 countryCode: ", countryId);
 
         // 해당 countryCode에 포함된 도시들 요청
-        await getCitiesByCountry(countryCode)
+        await getCitiesByCountry(countryId)
         .then(data => {
-            console.log(`${countryCode}에 해당하는 도시들: `, data);
+            console.log(`${countryId}에 해당하는 도시들: `, data);
             setCities(data); // 도시 리스트 상태 업데이트
         })
         .catch((err) => console.error("도시 조회 오류:", err));
@@ -87,8 +87,8 @@ const InternationalCon = () => {
                                 {/* <Link to="/products"> */}
                                 {/* <Link to={`/product/city?citycode=${cityCode}`}> */}
                                 <button onClick={() => {
-                                    onClickHandler(c.countryCode)
-                                    navigate(`/products/country?countryCode=${c.countryCode}`)
+                                    onClickHandler(c.countryId)
+                                    navigate(`/products/country?country_id=${c.countryId}`)
                                 }}
                                 >
                                     {c.countryName}

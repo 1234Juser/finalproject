@@ -69,7 +69,7 @@ const getCitiesByRegion = async (regionCode) => {
 const getProductsByCountry = async (countryId) => {
     try {
         console.log("요청 받은 countryId : ", countryId);
-        const response = await fetch(`${path}/products/country?countryId=${countryId}`, {
+        const response = await fetch(`${path}/products/country?country_id=${countryId}`, {
             method : "GET"
         });
         if (!response.ok) {
@@ -88,7 +88,7 @@ const getProductsByCountry = async (countryId) => {
 const getProductsByCity = async (cityId) => {
     try {
         console.log("요청 받은 cityId : ", cityId);
-        const response = await fetch(`${path}/products/city?cityId=${cityId}`, {
+        const response = await fetch(`${path}/products/city?city_id=${cityId}`, {
             method : "GET"
         });
         if (!response.ok) {
