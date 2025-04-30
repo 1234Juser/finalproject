@@ -99,30 +99,37 @@ public class ProductService {
     public int registerProduct(ProductDTO productDTO) {
         int result = 1;
         try {
-
+            // 1. 입력 받은 데이터 유효성 검증 및 엔티티 매핑
             CountryEntity country = countryRepo.findById(productDTO.getCountryId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 국가 코드입니다."));
+            log.info("country : {}" , country);
 
             CityEntity city = cityRepo.findById(productDTO.getCityId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 도시 코드입니다."));
+            log.info("city : {}" , city);
 
             ThemeEntity theme = themeRepo.findById(productDTO.getThemeCode())
                     .orElse(null);       // nullable 가능 (themeCode는 nullable)
+            log.info("theme : {}" , theme);
 
-            // 날짜 타입 변환 (String → LocalDate)
+
+            // 2. 날짜 검증 - 날짜 타입 변환 (String → LocalDate)
             LocalDate startDate = LocalDate.parse(productDTO.getProductStartDate());
+            log.info("startDate : {}" , startDate);
             LocalDate today = LocalDate.now();      // 시스템에서 오늘 날짜 가져오기
+            log.info("today : {}" , today);
             if (startDate.isBefore(today)) {
                 throw new IllegalArgumentException("시작 날짜는 오늘 혹은 이후 날짜여야 합니다.");
             }
 
             LocalDate endDate = LocalDate.parse(productDTO.getProductEndDate());
+            log.info("endDate : {}" , endDate);
             if (endDate.isBefore(startDate)) {
                 throw new IllegalArgumentException("끝 날짜는 시작 날짜 이후여야 합니다.");
             }
 
 
-            // 도시별 productUid 생성 로직
+            // 3. 도시별 productUid 생성 로직
             String cityName = cityRepo.findCityNameByCityId(productDTO.getCityId());    // 도시 이름 조회 (예:"SEOUL")
             log.info("cityname : {}" , cityName);
             String prefix = cityName.toUpperCase().replaceAll("\\s+", "");      // 대문자 변환 + 공백제거
@@ -133,6 +140,12 @@ public class ProductService {
             log.info("newUid : {}" , newUid);
 
 
+            // 4. productCode 생성 로직 (숫자를 단순히 자동 증가되도록 설정)
+             Long newProductCode = productRepo.findMaxProductCode().orElse(0L) + 1; // 최대 product_code + 1
+            log.info("newProductCode : {}" , newProductCode);
+
+
+            // 5. productEntity 생성 및 설정
             ProductEntity productE = new ProductEntity(productDTO);
             productE.setCountryId(country);
             productE.setCityId(city);
@@ -140,8 +153,10 @@ public class ProductService {
             productE.setProductStartDate(startDate);
             productE.setProductEndDate(endDate);
             productE.setProductUid(newUid);
+            productE.setProductCode(newProductCode); // 생성된 product_code 설정
 
 
+            // 6. 데이터 저장
             productRepo.save(productE);
             log.info("registerProduct : {} ", productE);
         } catch (Exception e) {

@@ -30,4 +30,8 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     String findCityNameByCityId(@Param("cityCode") String cityCode);
     // UID 갯수 cityId
     Long countByProductUidStartingWith(String prefix);
+
+    // productCode의 최댓값 찾기
+    @Query("SELECT MAX(p.productCode) FROM ProductEntity p")
+    Optional<Long> findMaxProductCode();
 }

@@ -34,7 +34,7 @@ const getCountryList = async (regionCode) => {
 }
 
 
-// 국가별 도시 데이터 가져오는 함수
+// 국가별 도시 데이터 가져오는 함수 (해외여행용)
 const getCitiesByCountry = async (countryCode) => {
 
     const response = await fetch(`${path}/cities/${countryCode}`, {
@@ -47,7 +47,7 @@ const getCitiesByCountry = async (countryCode) => {
 }
 
 
-// 권역별 도시 데이터 가져오는 함수
+// 권역별 도시 데이터 가져오는 함수 (국내여행용)
 const getCitiesByRegion = async (regionCode) => {
     try {
         const response = await fetch(`${path}/cities/region/${regionCode}`, {
@@ -124,4 +124,56 @@ const getProductDetail = async (productUid) => {
 }
 
 
-export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, getProductsByCountry, getProductsByCity, getProductDetail};
+// 상품 등록 함수
+const ProductRegist = async (formData) => {
+    try {
+        const response = await fetch(`${path}/products/register`, {
+            method : "POST",
+            headers : {
+                'Content-Type' : 'application/json',
+            },
+            body : JSON.stringify(formData),
+        })
+        console.log("response", response);
+
+        if( response.ok) {
+            const result = await response.json();
+            alert(`등록 성공 : ${result.message}`);
+        } else {
+            const errorData = await response.json();
+            alert(`등록 실패: ${errorData.message}`);
+        }
+
+    } catch (error) {
+        console.error("등록 에러 발생 !!!", error);
+        
+    }
+}
+
+
+// ------------- 관리자 페이지 내 상품 등록용 함수
+// 권역 데이터 불러오기
+const getRegions = async (regionType) => {
+    try {
+        console.log("regionType : ", regionType);
+        const response = await fetch(`${path}/region/${regionType}`, {
+            method : "GET"
+        });
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("백엔드로부터 받은 data : ", data);
+        return data;
+    } catch (error) {
+        console.error("권역 데이터 조회 중 에러 발생 : ", error);
+        throw error;
+    }
+}
+
+
+export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
+    getProductsByCountry, getProductsByCity, getProductDetail,
+    ProductRegist,
+    getRegions,
+};
