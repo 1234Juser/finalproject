@@ -8,32 +8,32 @@ function ProductCon(){
     const [products, setProducts] = useState([]);
 
     const [searchParams] = useSearchParams(); // 이전 페이지에서 전달된 쿼리 파라미터 읽기
-    const countryCode = searchParams.get("countryCode");
-    const cityCode = searchParams.get("cityCode");
+    const countryId = searchParams.get("countryId");
+    const cityId = searchParams.get("cityId");
 
     console.log("searchParams: ", searchParams);
-    console.log("searchParams countryCode: ", countryCode);
-    console.log("searchParams cityCode: ", cityCode);
+    console.log("searchParams countryId: ", countryId);
+    console.log("searchParams cityId: ", cityId);
 
     useEffect( () => {
-        if (countryCode) {
-            // countryCode가 있을 경우 국가 기반 상품 조회
-            getProductsByCountry(countryCode)
+        if (countryId) {
+            // countryId가 있을 경우 국가 기반 상품 조회
+            getProductsByCountry(countryId)
                 .then((data) => {
                     console.log("국가별 투어 상품 리스트: ", data);
                     setProducts(data);
                 })
                 .catch((err) => console.error("상품 조회 오류 (국가):", err));
-        } else if (cityCode) {
-            // cityCode가 있을 경우 도시 기반 상품 조회
-            getProductsByCity(cityCode)
+        } else if (cityId) {
+            // cityId가 있을 경우 도시 기반 상품 조회
+            getProductsByCity(cityId)
                 .then((data) => {
                     console.log("도시별 투어 상품 리스트: ", data);
                     setProducts(data);
                 })
                 .catch((err) => console.error("상품 조회 오류 (도시):", err));
         }
-    }, [countryCode, cityCode])
+    }, [countryId, cityId])
 
     console.log("products----->", products);
 

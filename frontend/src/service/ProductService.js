@@ -66,10 +66,10 @@ const getCitiesByRegion = async (regionCode) => {
 
 
 // 국가별 투어 상품 데이터 가져오는 함수
-const getProductsByCountry = async (countryCode) => {
+const getProductsByCountry = async (countryId) => {
     try {
-        console.log("요청 받은 cityCode : ", countryCode);
-        const response = await fetch(`${path}/products/country?countrycode=${countryCode}`, {
+        console.log("요청 받은 countryId : ", countryId);
+        const response = await fetch(`${path}/products/country?countryId=${countryId}`, {
             method : "GET"
         });
         if (!response.ok) {
@@ -85,10 +85,10 @@ const getProductsByCountry = async (countryCode) => {
 
 
 // 도시별 투어 상품 데이터 가져오는 함수
-const getProductsByCity = async (cityCode) => {
+const getProductsByCity = async (cityId) => {
     try {
-        console.log("요청 받은 cityCode : ", cityCode);
-        const response = await fetch(`${path}/products/city?citycode=${cityCode}`, {
+        console.log("요청 받은 cityId : ", cityId);
+        const response = await fetch(`${path}/products/city?cityId=${cityId}`, {
             method : "GET"
         });
         if (!response.ok) {
