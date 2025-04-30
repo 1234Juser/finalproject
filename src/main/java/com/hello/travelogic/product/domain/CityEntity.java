@@ -15,12 +15,16 @@ import lombok.Setter;
 public class CityEntity {
 
     @Id
-    @Column(name = "city_code", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "city_id", nullable = false)
+    private Long cityId;
+
+    @Column(name = "city_code", nullable = false, unique = true)
     private Long cityCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_code", nullable = false)
-    private CountryEntity countryCode;
+    @JoinColumn(name = "country_id", nullable = false)
+    private CountryEntity countryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_code", nullable = false)

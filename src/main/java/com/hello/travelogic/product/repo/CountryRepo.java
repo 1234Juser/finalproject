@@ -11,6 +11,6 @@ public interface CountryRepo extends JpaRepository<CountryEntity, Long> {
     // regionCode 필드를 기준으로 국가 조회
     List<CountryEntity> findByRegionCode(RegionEntity regionCode);
 
-    // countryCode 필드를 기준으로 국가 조회(CityService용)
-    CountryEntity findByCountryCode(Long countryCode);
+    // countryId 필드를 기준으로 국가 조회(CityService용)
+    CountryEntity findByCountryId(Long countryId);
 }

@@ -11,12 +11,14 @@ import lombok.*;
 @ToString
 public class CountryDTO {
 
+    private Long countryId;
     private Long countryCode;
     private Long regionCode;       // RegionEntity 대신 ID만
     private String countryUid;
     private String countryName;
 
     public CountryDTO(CountryEntity countryDTO) {
+        this.countryId = countryDTO.getCountryId();
         this.countryCode = countryDTO.getCountryCode();
         this.regionCode = countryDTO.getRegionCode().getRegionCode();
         this.countryUid = countryDTO.getCountryUid();
