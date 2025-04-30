@@ -32,17 +32,12 @@ public class WishGroupEntity {
     @Column(name = "group_title", nullable = false, length = 255)
     private String groupTitle;
 
-//    @NotNull
-//    @Column(name = "wish_count", nullable = false)
-//    private int wishCount = 0;
-
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishEntity> wishes = new ArrayList<>();
 
     public WishGroupEntity(MemberEntity member, String groupTitle) {
         this.member = member;
         this.groupTitle = groupTitle;
-//        this.wishCount = 0;
     }
 
     @Transient

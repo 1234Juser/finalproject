@@ -19,7 +19,7 @@ public class WishGroupDTO {
         this.groupCode = entity.getGroupCode();
         this.memberCode = entity.getMember().getMemberCode();  // Entity에서 memberCode 꺼냄
         this.groupTitle = entity.getGroupTitle();
-//        this.wishCount = entity.getWishes().size();
+
         this.wishCount = entity.getWishCount();
     }
 }
