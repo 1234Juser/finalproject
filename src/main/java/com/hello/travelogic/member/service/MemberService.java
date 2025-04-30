@@ -3,14 +3,20 @@ package com.hello.travelogic.member.service;
 import com.hello.travelogic.member.domain.AuthorityEntity;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.domain.MemberRoleEntity;
+import com.hello.travelogic.member.domain.PasswordResetAuthCodeEntity;
 import com.hello.travelogic.member.dto.*;
 import com.hello.travelogic.member.repository.AuthorityRepository;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.member.repository.MemberRoleRepository;
+import com.hello.travelogic.member.repository.PasswordResetAuthCodeRepository;
 import com.hello.travelogic.utils.JwtUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,8 +37,10 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final AuthorityRepository authorityRepository;
     private final MemberRoleRepository memberRoleRepository;
+    private final PasswordResetAuthCodeRepository passwordResetAuthCodeRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final JavaMailSender mailSender;
 
     @Transactional
     public void signup(MemberDTO memberDTO) {
@@ -85,8 +95,13 @@ public class MemberService {
         MemberEntity member = memberRepository.findByMemberId(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("해당아이디가 존재하지않습니다."));
 
+        if ("Y".equals(member.getMemberEndstatus())) {
+            throw new RuntimeException("탈퇴한 회원은 로그인할 수 없습니다.");
+        }
+
+
         if (!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())) {
-            throw new IllegalArgumentException("비밀번호가 맞지 않습니다.");
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         // 1. roles를 먼저 추출
 
@@ -222,4 +237,140 @@ public class MemberService {
 
         return imageUrl;
     }
+
+    //회원탈퇴
+    @Transactional
+    public void withdrawMember(String memberId, String password) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(()-> new EntityNotFoundException("회원이 존재하지 않습니다."));
+
+        //비밀번호 검증
+        if(!passwordEncoder.matches(password, member.getMemberPassword())){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        member.setMemberEndstatus("Y");
+        member.setMemberEnddate(LocalDateTime.now());
+
+        memberRepository.save(member);
+
+    }
+    //아이디찾기
+    public FindIdResponseDTO findId(FindIdRequestDTO dto) {
+        MemberEntity member = memberRepository.findByMemberNameAndMemberEmail(dto.getMemberName(), dto.getMemberEmail())
+                .orElseThrow(()-> new EntityNotFoundException("일치하는 정보 없음"));
+
+        FindIdResponseDTO response = new FindIdResponseDTO();
+        response.setMemberId(member.getMemberId());
+        return response;
+    }
+    //비밀번호찾기(첫번째방법)
+    @Transactional
+    public FindPasswordResponseDTO findPassword(FindPasswordRequestDTO dto) {
+        MemberEntity member = memberRepository.findByMemberNameAndMemberIdAndMemberEmail(
+                dto.getMemberName(), dto.getMemberId(), dto.getMemberEmail()
+        ).orElseThrow(() -> new EntityNotFoundException("일치하는 회원이 없습니다."));
+        String tempPassword = generateRandomPassword(6);
+        member.setMemberPassword(passwordEncoder.encode(tempPassword));
+        memberRepository.save(member);
+        return new FindPasswordResponseDTO(tempPassword);
+    }
+    //랜덤6자리
+    private String generateRandomPassword(int length) {
+       String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+       StringBuilder sb = new StringBuilder();
+       for(int i = 0; i < length; i++) {
+           int index = (int)(Math.random() * chars.length());
+           sb.append(chars.charAt(index));
+       }
+       return sb.toString();
+    }
+
+    // 비밀번호 찾기(두번째 방법)
+    // 1. 이메일로 인증번호 발송
+    public boolean sendPasswordResetAuthCode(FindPasswordAuthRequestDTO dto) {
+        //1. 회원 db에 해당 이메일이 존재하는지 확인
+        Optional<MemberEntity> memberOpt = memberRepository.findByMemberNameAndMemberIdAndMemberEmail(
+                dto.getMemberName(), dto.getMemberId(), dto.getMemberEmail());
+        if(memberOpt.isEmpty()) {
+            return false;
+        }
+        //2. 인증코드 생성
+        String code = generateCode();
+        // 인증번호는 Redis, DB or 임시 Map에 보관 필요
+        //3. 인증코드 엔티티빌드
+        PasswordResetAuthCodeEntity entity = PasswordResetAuthCodeEntity.builder()
+                .memberEmail(dto.getMemberEmail())
+                .authCode(code)
+                .expiredAt(LocalDateTime.now().plusMinutes(5))
+                .build();
+        //4. 저장(이메일 중복 시 update 실행)
+        passwordResetAuthCodeRepository.save(entity);
+
+        // 5.인증번호 발송
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(dto.getMemberEmail());
+        message.setSubject("[여행로직] 비밀번호 변경 인증번호");
+        message.setText("인증번호: " + code);
+        mailSender.send(message);
+
+        // 인증코드 저장 로직 필요!
+        return true;
+    }
+    // 2.인증번호 검증 + 성공 시 삭제
+    @Transactional
+    public boolean verifyAuthCode(String memberEmail, String authCode) {
+        PasswordResetAuthCodeEntity entity =
+                passwordResetAuthCodeRepository.findTopByMemberEmailOrderByExpiredAtDesc(memberEmail)
+                        .orElse(null);
+
+        // 없는 경우 or 만료된 경우 false
+        if (entity == null || entity.getExpiredAt().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        // 인증번호 일치 여부 확인
+        if (!entity.getAuthCode().equals(authCode)) {
+            return false;
+        }
+        // 인증성공 → 인증코드 삭제
+        passwordResetAuthCodeRepository.delete(entity);
+        // 또는 passwordResetAuthCodeRepository.deleteByMemberEmailAndAuthCode(memberEmail, authCode);
+
+        return true;
+    }
+
+
+    //3. 비밀번호 변경
+    public boolean resetPassword(PasswordResetRequestDTO dto) {
+        Optional<MemberEntity> memberOpt = memberRepository.findByMemberId(dto.getMemberId());
+        if(memberOpt.isEmpty()) {
+            return false;
+        }
+        MemberEntity member = memberOpt.get();
+
+        //이메일 일치여부
+        if(!member.getMemberEmail().equals(dto.getMemberEmail())) {
+            return false;
+        }
+        // 비밀번호 암호화 후 변경
+        member.setMemberPassword(passwordEncoder.encode(dto.getNewPassword()));
+        memberRepository.save(member);
+        return true;
+    }
+
+    private String generateCode() {
+        int len = 6;
+        String chars = "0123456789";
+        StringBuilder code = new StringBuilder();
+        Random r = new Random();
+        for (int i = 0; i < len; i++) code.append(chars.charAt(r.nextInt(chars.length())));
+        return code.toString();
+    }
+
+    //만료된 인증번호 삭제
+    @Scheduled(cron = "0 */10 * * * *") // 10분마다 실행
+    @Transactional
+    public void deleteExpiredAuthCodes() {
+        passwordResetAuthCodeRepository.deleteByExpiredAtBefore(LocalDateTime.now());
+    }
+
 }

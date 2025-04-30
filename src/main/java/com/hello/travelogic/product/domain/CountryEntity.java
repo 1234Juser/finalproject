@@ -15,7 +15,11 @@ import lombok.Setter;
 public class CountryEntity {
 
     @Id
-    @Column(name = "country_code", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "country_id", nullable = false)
+    private Long countryId;
+
+    @Column(name = "country_code", nullable = false, unique = true)
     private Long countryCode;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,27 +1,62 @@
 package com.hello.travelogic.product.controller;
 
+import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     private final ProductService productService;
 
-
-    @GetMapping("/products")
+    // 투어 상품 전체 조회
+    @GetMapping("")
     public ResponseEntity getProducts() {
         log.debug("get products 요청");
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts());
+    }
+
+
+    // countryId에 해당하는 투어 상품 조회
+    @GetMapping("/country")
+    public ResponseEntity getProductsByCountry(@RequestParam("country_id") Long countryId) {
+        log.debug("get products by country ID : {}", countryId);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCountry(countryId));
+    }
+
+
+    // cityId에 해당하는 투어 상품 조회
+    @GetMapping("/city")
+    public ResponseEntity getProductsByCity(@RequestParam("city_id") Long cityId) {
+        log.debug("get products by city ID : {}", cityId);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCity(cityId));
+    }
+
+
+    // 투어 상품 상세 페이지
+    @GetMapping("/{productUid}")
+    public ResponseEntity getProductDetail(@PathVariable("productUid") String productUid) {
+        log.debug("get product detail : {}", productUid);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByUid(productUid));
+    }
+
+
+    // 상품 등록
+    @PostMapping("/register")
+    public ResponseEntity registerProduct(@RequestBody ProductDTO productDTO) {
+        log.debug("register product : {}", productDTO);
+        int result = productService.registerProduct(productDTO);
+        log.debug("registerProduct result : {}", result);
+        return ResponseEntity.status(HttpStatus.CREATED).body("등록 성공");
     }
 }

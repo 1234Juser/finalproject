@@ -229,12 +229,13 @@ INSERT INTO tbl_wish (member_code, group_code, product_code) VALUES
     (3, 14, 9);
 
 INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count) VALUES
-                                                                                      (1, '2025-05-20', 2, NULL),
-                                                                                      (2, '2025-04-08', 2, 3),
-                                                                                      (3, '2025-06-15', 1, 1),
-                                                                                      (4, '2025-04-23', 1, 1),
-                                                                                      (5, '2025-04-23', 1, 1),
-                                                                                      (9, '2025-04-28', 1, 1);
+(1, '2025-05-20', 2, NULL),
+(2, '2025-04-08', 2, 3),
+(3, '2025-06-15', 1, 1),
+(4, '2025-04-23', 1, 1),
+(5, '2025-04-23', 1, 1),
+(9, '2025-04-28', 1, 1);
+
 
 INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, order_adult_price, order_child_price, total_price, order_date, order_status, is_reviewed) VALUES
 -- 일반상품: 아동 분리 없음
@@ -248,13 +249,12 @@ INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, orde
 (9, 6, 3, 'RSV20250401-06', 80000, 50000, 130000, '2025-04-06 12:05:33', 'COMPLETED', 0);
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
-                                                                                                                                                                       (1, 1, '카드', '삼성카드', '2025-04-01 10:23:45', 240000, 'COMPLETED', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
-                                                                                                                                                                       (1, 2, '무통장', '신한카드', '2025-04-02 14:10:12', 310000, 'COMPLETED', 'imp_1234567891', 'RSV20250401-02', 'https://receipt.url/2'),
-                                                                                                                                                                       (1, 3, '카드', '국민카드', '2025-04-03 09:05:33', 130000, 'CANCELED', 'imp_1234567892', 'RSV20250401-03', 'https://receipt.url/3'),
-                                                                                                                                                                       (2, 4, '카드', '롯데카드', '2025-04-03 10:05:33', 130000, 'COMPLETED', 'imp_1234567893', 'RSV20250401-04', 'https://receipt.url/4'),
-                                                                                                                                                                       (3, 5, '카드', '우리카드', '2025-04-04 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-05', 'https://receipt.url/5'),
-                                                                                                                                                                       (3, 6, '카드', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-06', 'https://receipt.url/6');
-
+    (1, 1, '카드', '삼성카드', '2025-04-01 10:23:45', 240000, 'COMPLETED', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
+    (1, 2, '무통장', '신한카드', '2025-04-02 14:10:12', 310000, 'COMPLETED', 'imp_1234567891', 'RSV20250401-02', 'https://receipt.url/2'),
+    (1, 3, '카드', '국민카드', '2025-04-03 09:05:33', 130000, 'CANCELED', 'imp_1234567892', 'RSV20250401-03', 'https://receipt.url/3'),
+    (2, 4, '카드', '롯데카드', '2025-04-03 10:05:33', 130000, 'COMPLETED', 'imp_1234567893', 'RSV20250401-04', 'https://receipt.url/4'),
+    (3, 5, '카드', '우리카드', '2025-04-04 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-05', 'https://receipt.url/5'),
+    (3, 6, '카드', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-06', 'https://receipt.url/6');
 
 INSERT INTO tbl_payment_cancel (payment_code, cancel_time, cancel_amount, pg_tid, cancel_receipt_url) VALUES
     (3, '2025-04-04 11:35:20', 130000, 'pg_cancel_9876543210', 'https://receipt.url/cancel/3');

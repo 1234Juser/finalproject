@@ -2,6 +2,7 @@ package com.hello.travelogic.member.controller;
 
 import com.hello.travelogic.member.dto.*;
 import com.hello.travelogic.member.service.MemberService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,5 +86,53 @@ public class MemberController {
         String memberId = (String) authentication.getPrincipal();
         String savedUrl = memberService.updateProfileImage(memberId,file);
         return ResponseEntity.ok(savedUrl);
+    }
+    //회원탈퇴
+    @PutMapping("/withdraw")
+    public ResponseEntity<String> withdraw(@RequestBody Map<String, String> payload){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = (String) authentication.getPrincipal();
+        String password = payload.get("password");
+        memberService.withdrawMember(memberId, password);
+        return ResponseEntity.ok("회원 탈퇴가 처리되었습니다.");
+    }
+
+    //아이디찾기
+    @PostMapping("/find-id")
+    public ResponseEntity<FindIdResponseDTO> findId(@RequestBody FindIdRequestDTO dto){
+        FindIdResponseDTO response = memberService.findId(dto);
+        return ResponseEntity.ok(response);
+    }
+
+    //비밀번호찾기(첫번째방법)
+    @PostMapping("/find-password")
+    public ResponseEntity<FindPasswordResponseDTO> findPassword(@RequestBody FindPasswordRequestDTO dto){
+        FindPasswordResponseDTO response = memberService.findPassword(dto);
+        return ResponseEntity.ok(response);
+    }
+
+    //비밀번호찾기(두번째방법) : 인증코드 발송
+    @PostMapping("/find-password/mail-auth")
+    public ResponseEntity<?> sendPasswordResetEmail(@RequestBody FindPasswordAuthRequestDTO dto){
+        boolean result = memberService.sendPasswordResetAuthCode(dto);
+        if(result){
+            return ResponseEntity.ok().body("인증번호가 발송되었습니다.");
+        }else{
+            return ResponseEntity.badRequest().body("입력하신 정보와 일치하는 회원이 없습니다");
+        }
+    }
+
+    //2) 인증코드 확인
+    @PostMapping("/find-password/verify-code")
+    public ResponseEntity<?> verifyEmailAuthCode(@RequestBody EmailAuthVerifyRequestDTO dto){
+        boolean success = memberService.verifyAuthCode(dto.getMemberEmail(), dto.getAuthCode());
+        return ResponseEntity.ok(success);
+    }
+
+    //3. 비밀번호 변경
+    @PostMapping("/find-password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequestDTO dto){
+        boolean changed = memberService.resetPassword(dto);
+        return ResponseEntity.ok(changed);
     }
 }
