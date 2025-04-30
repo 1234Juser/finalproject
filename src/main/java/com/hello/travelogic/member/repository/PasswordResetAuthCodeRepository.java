@@ -3,6 +3,7 @@ package com.hello.travelogic.member.repository;
 import com.hello.travelogic.member.domain.PasswordResetAuthCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PasswordResetAuthCodeRepository extends JpaRepository<PasswordResetAuthCodeEntity, Long> {
@@ -12,5 +13,8 @@ public interface PasswordResetAuthCodeRepository extends JpaRepository<PasswordR
 
     // 특정 이메일+코드 조합 삭제하고 싶다면 이렇게도 가능
     void deleteByMemberEmailAndAuthCode(String memberEmail, String authCode);
+
+    void deleteByExpiredAtBefore(LocalDateTime dateTime);
+
 }
 

@@ -72,7 +72,8 @@ function FindPwByEmailCom({ input, onInputChange, sending, sendDone, onSendAuth,
                         disabled={sendDone}
                     />
                 </PwInputRow>
-                {success && <div style={{ color: "#20c997", fontWeight: "bold", fontSize: "1.03rem", marginTop: "14px" }}>{success}</div>}
+                {success && (<div style={{ color: "#20c997", fontWeight: "bold", fontSize: "1.03rem", marginTop: "14px" }}
+                dangerouslySetInnerHTML={{__html:success}}></div>)}
                 {error && <PwError>{error}</PwError>}
                 <PwSubmit type="submit" disabled={sending || sendDone}>
                     {sending ? "전송중..." : "이메일로 인증번호 받기"}

@@ -8,7 +8,8 @@ export const PwModalBox = styled.div`
     border-radius: 20px;
     box-shadow: 0 10px 28px rgba(62,103,201,0.18);
     max-width: 390px;
-    width: 100%;
+    max-width: 390px;
+    width: 390px;
     margin: 32px auto;
     padding: 42px 32px 30px 32px;
     box-sizing: border-box;

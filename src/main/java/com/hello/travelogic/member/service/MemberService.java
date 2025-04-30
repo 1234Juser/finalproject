@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -364,4 +365,12 @@ public class MemberService {
         for (int i = 0; i < len; i++) code.append(chars.charAt(r.nextInt(chars.length())));
         return code.toString();
     }
+
+    //만료된 인증번호 삭제
+    @Scheduled(cron = "0 */10 * * * *") // 10분마다 실행
+    @Transactional
+    public void deleteExpiredAuthCodes() {
+        passwordResetAuthCodeRepository.deleteByExpiredAtBefore(LocalDateTime.now());
+    }
+
 }

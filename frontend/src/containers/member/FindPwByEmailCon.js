@@ -47,7 +47,7 @@ function FindPwByEmailCon({ onClose }) {
                 memberEmail: input.email,
             });
             setSendDone(true);
-            setSuccess("인증코드가 발송되었습니다. 메일을 확인해 주세요!");
+            setSuccess("인증코드가 발송되었습니다.<br /> 메일을 확인해 주세요!");
             setTimeout(() => {
                 setStep("code");
             }, 1000);
@@ -112,8 +112,8 @@ function FindPwByEmailCon({ onClose }) {
             setPwError("비밀번호가 일치하지 않습니다.");
             return;
         }
-        if (pw.length < 8 || !/[0-9]/.test(pw) || !/[a-zA-Z]/.test(pw)){
-            setPwError("비밀번호는 8자 이상, 영문+숫자를 포함해야 합니다.");
+        if (pw.length < 4 || !/[0-9]/.test(pw) || !/[a-zA-Z]/.test(pw)){
+            setPwError("비밀번호는 4자 이상, 영문+숫자를 포함해야 합니다.");
             return;
         }
         setPwSubmitting(true);
