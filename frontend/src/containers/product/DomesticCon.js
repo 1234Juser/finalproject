@@ -60,7 +60,7 @@ const DomesticCon = () => {
                                 {/* <Link to={`/product/city?citycode=${cityCode}`}> */}
                                 <button onClick={() => {
                                     // onClickHandler(c.countryCode)
-                                    navigate(`/products/city?cityCode=${c.cityCode}`)
+                                    navigate(`/products/city?city_id=${c.cityId}`)
                                 }}
                                 >
                                     {c.cityName}

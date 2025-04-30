@@ -11,17 +11,21 @@ import lombok.*;
 @ToString
 public class CityDTO {
 
+    private Long cityId;
     private Long cityCode;
-    private Long countryCode;
+    private Long countryId;
     private Long regionCode;
     private String cityUid;
     private String cityName;
+    private String cityNameKR;
 
     public CityDTO(CityEntity cityDTO) {
+        this.cityId = cityDTO.getCityId();
         this.cityCode = cityDTO.getCityCode();
-        this.countryCode = cityDTO.getCountryCode().getCountryCode();
+        this.countryId = cityDTO.getCountryId().getCountryCode();
         this.regionCode = cityDTO.getRegionCode().getRegionCode();
         this.cityUid = cityDTO.getCityUid();
         this.cityName = cityDTO.getCityName();
+        this.cityNameKR = cityDTO.getCityNameKR();
     }
 }
