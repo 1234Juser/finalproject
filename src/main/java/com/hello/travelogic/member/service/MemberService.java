@@ -120,7 +120,7 @@ public class MemberService {
         if (profileUrl == null || profileUrl.isEmpty()) {
             profileUrl = "/img/default-profile.jpg"; // static 폴더 기준 경로로 작성
         }
-        return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles, member.getMemberCode());
+        return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles, member.getMemberCode(), null);
 
     }
 
@@ -135,6 +135,7 @@ public class MemberService {
                 .memberPhone(member.getMemberPhone())
                 .memberProfileImageUrl(member.getMemberProfileImageUrl())
                 .memberPassword("***") // 보안상 필요시 마스킹처리
+                .socialType(member.getSocialType())
                 .build();
     }
 

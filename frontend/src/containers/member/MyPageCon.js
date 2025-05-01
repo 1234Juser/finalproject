@@ -56,7 +56,7 @@ function MyPageCon() {
             }
         }
     };
-
+    //프로필이미지수정
     const handleEditProfileImage = async (file) => {
         try {
             const token = localStorage.getItem("accessToken");
@@ -82,6 +82,27 @@ function MyPageCon() {
         }
     };
 
+    const handleKakaoUnlink = async () => {
+        if(!window.confirm("카카오 연동을 해제하시겠습니까?")) return;
+        const token = localStorage.getItem("accessToken");
+        const kakaoToken = localStorage.getItem("kakaoAccessToken");
+        console.log("Unlink 시도. kakaoAccessToken=", kakaoToken);
+        try{
+            await axios.post("/oauth/kakao/unlink",
+                {accessToken: kakaoToken,}
+                ,{
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            alert("카카오 연동이 해제되었습니다.");
+            //토큰 삭제 및 로그인 이동
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("kakaoAccessToken");
+            navigate("/login");
+        }catch(err){
+            alert("카카오 연동 해제에 실패했습니다.");
+        };
+    }
+
     if (error) return <div>{error}</div>;
 
     // 추후 프로필/정보수정 핸들러 바인딩
@@ -90,6 +111,7 @@ function MyPageCon() {
             memberData={memberData}
             onEditProfileImage={handleEditProfileImage}
             onEditInfo={handleEditInfo}
+            onKakaoUnlink = {handleKakaoUnlink}
         />
     );
 }

@@ -168,7 +168,57 @@ public class KaKaoOAuthService {
                 .memberPassword("")
                 .build();
 
-        return memberService.login(loginRequest);
+        LoginResponseDTO responseDTO = memberService.login(loginRequest);
+        responseDTO.setKakaoAccessToken(accessToken); // 카카오 accessToken값을 DTO에 넣는다
+        return responseDTO;
+
+    }
+
+    //카카오 연동해제
+    public void kakaoUnlink(String memberId, String accessToken) {
+        System.out.println("Received Kakao AccessToken: " + accessToken);
+
+        // 1. 입력받은 memberId로 현재 사용자 조회
+        Optional<MemberEntity> optionalMember = memberRepository.findByMemberId(memberId);
+        if (optionalMember.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        }
+        MemberEntity member = optionalMember.get();
+        // 2. 카카오 계정과의 연동 해제 처리
+        if (accessToken != null && !accessToken.trim().isEmpty()) {
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.setBearerAuth(accessToken);
+                headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+                // 카카오 unlink는 body 없이도 동작하나, 빈 MultiValueMap을 주는 것이 더 안전
+                MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+
+                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+                ResponseEntity<String> response = restTemplate.postForEntity(
+                        "https://kapi.kakao.com/v1/user/unlink", request, String.class
+                );
+                log.info("카카오 unlink API 응답: {}", response.getBody());
+            } catch (Exception ex) {
+                log.warn("카카오 unlink API 호출 실패 : {}", ex.getMessage());
+                // 실패 시 예외 던져서 트랜잭션 전체 롤백 하도록(권장)
+                throw new RuntimeException("카카오 unlink 실패: " + ex.getMessage());
+            }
+        } else {
+            log.info("accessToken이 없어 카카오 unlink API는 호출하지 않습니다.");
+            // 토큰 없으면 연동 해제도 못 하니까 여기서 예외 발생 권장
+            throw new IllegalArgumentException("카카오 엑세스 토큰이 없습니다.");
+        }
+
+
+        // (API 성공시에만 DB 탈퇴/연동 해제)
+        member.setSocialType(null);
+        member.setSocialAccountId(null);
+        member.setMemberEnddate(LocalDateTime.now());
+        member.setMemberEndstatus("Y");
+        memberRepository.save(member);
 
     }
 }
