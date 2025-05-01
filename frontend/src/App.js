@@ -26,7 +26,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
           <Route path="/wish/groups/:memberCode" element={<WishGroupPage />} />
-          <Route path="/wish/list" element={<WishListPage />} />
+          <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
               <Route path="/mypage">
                 <Route path="" element={<MyPagePage />} />
                 <Route path="withdrawl" element={<WithdrawlPage />} />

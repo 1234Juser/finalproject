@@ -32,16 +32,23 @@ public class WishGroupEntity {
     @Column(name = "group_title", nullable = false, length = 255)
     private String groupTitle;
 
+    @Column(name = "wish_count", nullable = false)
+    private int wishCount = 0;
+
+    @Column(name = "thumbnail", length = 255)
+    private String thumbnail;
+
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishEntity> wishes = new ArrayList<>();
 
-    public WishGroupEntity(MemberEntity member, String groupTitle) {
+    public WishGroupEntity(MemberEntity member, String groupTitle, String thumbnail) {
         this.member = member;
         this.groupTitle = groupTitle;
+        this.thumbnail = thumbnail;
     }
 
     @Transient
-    public int getWishCount() {
+    public int calculateWishCount() {
         return wishes != null ? wishes.size() : 0;
     }
 }
