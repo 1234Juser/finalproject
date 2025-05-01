@@ -19,5 +19,8 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     Optional<MemberEntity> findByMemberNameAndMemberIdAndMemberEmail(String memberName, String memberId, String memberEmail);
     //소셜로그인(카카오)
     Optional<MemberEntity> findBySocialTypeAndSocialAccountId(String socialType, Integer socialAccountId);
+    //소셜로그인(구글)
+    Optional<MemberEntity> findByMemberEmail(String email);
+
 
 }

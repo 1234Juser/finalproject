@@ -16,6 +16,7 @@ import RegisterMethodSelectPage from "./pages/member/RegisterMethodSelectPage";
 import KakaoCallbackPage from "./pages/member/KakaoCallbackPage";
 // import ProductRegPage from './pages/product/ProductRegPage';
 import WishGroupPage from "./pages/wish/WishGroupPage";
+import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
 // import WishListPage from "./pages/wish/WishListPage";
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
+              <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
               {/*<Route path="/" element={<IndexPage />} />*/}
           {/*<Route path="/like" element={<LikePage />} />*/}
               
@@ -36,8 +38,8 @@ function App() {
               {/*<Route path="/myreservation" element={<MyReservationPage />} />*/}
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
           <Route path="/wish/groups/:memberCode" element={<WishGroupPage />} />
-          <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
-              <Route path="/mypage">
+          {/*<Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />*/}
+              <Route path="/mypage">e
                 <Route path="" element={<MyPagePage />} />
                 <Route path="withdrawl" element={<WithdrawlPage />} />
               </Route>
