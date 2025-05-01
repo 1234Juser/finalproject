@@ -14,9 +14,9 @@ import ProductDetailPage from './pages/product/ProductDetailPage';
 import WithdrawlPage from "./pages/member/WithdrawlPage";
 import RegisterMethodSelectPage from "./pages/member/RegisterMethodSelectPage";
 import KakaoCallbackPage from "./pages/member/KakaoCallbackPage";
-import ProductRegPage from './pages/product/ProductRegPage';
+// import ProductRegPage from './pages/product/ProductRegPage';
 import WishGroupPage from "./pages/wish/WishGroupPage";
-import WishListPage from "./pages/wish/WishListPage";
+// import WishListPage from "./pages/wish/WishListPage";
 
 function App() {
   return (
@@ -43,7 +43,7 @@ function App() {
               </Route>
               <Route path="/adminmypage">
                 <Route path="" element={<AdminMyPagePage />} />
-                <Route path="product" element={<ProductRegPage/>} />
+                {/*<Route path="product" element={<ProductRegPage/>} />*/}
               </Route>
             <Route path="/domestic" element={<DomesticPage/>}/>
               <Route path="/international" element={<InternationalPage />} />

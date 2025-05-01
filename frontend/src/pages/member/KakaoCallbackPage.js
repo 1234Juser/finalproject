@@ -15,7 +15,7 @@ function KakaoCallbackPage() {
         if (localStorage.getItem(codeFlagKey) === "complete" || localStorage.getItem(codeFlagKey) === "processing") {
             return;
         }
-        // 이제부터 처리 시작!
+        // 이제부터 처리 시작
         localStorage.setItem(codeFlagKey, "processing");
 
         // 1. 스프링 부트 백엔드로 인증 코드 전달
@@ -27,11 +27,13 @@ function KakaoCallbackPage() {
                         accessToken,
                         memberName,
                         memberProfileImageUrl,
+                        kakaoAccessToken,
                         roles
                     } = res.data;
 
                     // 3. JWT와 유저정보 저장 (ex. localStorage)
                     localStorage.setItem("accessToken", accessToken);
+                    localStorage.setItem("kakaoAccessToken", kakaoAccessToken);
                     localStorage.setItem("memberName", memberName);
                     localStorage.setItem("memberProfileImageUrl", memberProfileImageUrl);
                     localStorage.setItem("roles", JSON.stringify(roles));
