@@ -21,6 +21,7 @@ public class ReviewDTO {
 
     private long reviewCode;
     private long memberCode;
+    private long productCode;
     private long orderCode;
     private Integer reviewRating;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -34,6 +35,7 @@ public class ReviewDTO {
     public ReviewDTO(ReviewEntity entity) {
         this.reviewCode = entity.getReviewCode();
         this.memberCode = entity.getMember().getMemberCode();
+        this.productCode = entity.getProduct().getProductCode();
         this.orderCode = entity.getOrder().getOrderCode();
         this.reviewRating = entity.getReviewRating();
         this.reviewDate = entity.getReviewDate();

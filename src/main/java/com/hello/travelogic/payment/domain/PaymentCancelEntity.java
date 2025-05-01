@@ -40,13 +40,13 @@ public class PaymentCancelEntity {
 
     @Null
     @Column(name = "cancel_receipt_url", nullable = true)
-    private String canceReceiptUrl;
+    private String cancelReceiptUrl;
 
     public PaymentCancelEntity(PaymentCancelDTO dto, PaymentEntity payment) {
         this.payment = payment;
         this.cancelTime = dto.getCancelTime();
         this.cancelAmount = dto.getCancelAmount();
         this.pgTid = dto.getPgTid();
-        this.canceReceiptUrl = dto.getCanceReceiptUrl();
+        this.cancelReceiptUrl = dto.getCancelReceiptUrl();
     }
 }
