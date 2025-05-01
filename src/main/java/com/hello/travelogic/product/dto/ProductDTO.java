@@ -29,6 +29,7 @@ public class ProductDTO {
     private ProductEntity.ProductStatus productStatus;
     private String productThumbnail;
     private ProductEntity.ProductType productType;
+    private int reviewCount;
 
     public ProductDTO(ProductEntity productDTO) {
         this.productCode = productDTO.getProductCode();
@@ -47,5 +48,6 @@ public class ProductDTO {
         this.productStatus = productDTO.getProductStatus();
         this.productThumbnail = productDTO.getProductThumbnail();
         this.productType = productDTO.getProductType();
+        this.reviewCount = productDTO.getReviewCount();
     }
 }

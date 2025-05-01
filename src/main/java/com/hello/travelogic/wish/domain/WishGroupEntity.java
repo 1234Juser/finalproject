@@ -32,7 +32,7 @@ public class WishGroupEntity {
     @Column(name = "group_title", nullable = false, length = 255)
     private String groupTitle;
 
-    @Column(name = "wish_count", nullable = false)
+    @Column(name = "wish_count", nullable = false, columnDefinition = "INT DEFAULT 0")
     private int wishCount = 0;
 
     @Column(name = "thumbnail", length = 255)

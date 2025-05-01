@@ -29,13 +29,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
-              {/*<Route path="/" element={<IndexPage />} />*/}
-          {/*<Route path="/like" element={<LikePage />} />*/}
-              
-
-              {/*<Route path="/myreservation" element={<MyReservationPage />} />*/}
-          {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
-          <Route path="/wish/groups/:memberCode" element={<WishGroupPage />} />
+          <Route path="/wish/groups" element={<WishGroupPage />} />
           <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
               <Route path="/mypage">
                 <Route path="" element={<MyPagePage />} />

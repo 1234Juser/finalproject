@@ -13,7 +13,7 @@ function NavCom({roles = []}) {
                 <li>더보기</li>
             </ul>
             <ul className="nav">
-                <li><a href={`/wish/groups/${memberCode}`}>찜 목록</a></li>
+                <li><a href="/wish/groups">찜 목록</a></li>
                 <li>
                     {isAdmin ? (
                         <a href="/adminmypage">관리자 마이페이지</a>
