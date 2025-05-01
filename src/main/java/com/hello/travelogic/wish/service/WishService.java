@@ -113,7 +113,15 @@ public class WishService {
                 .findByGroupTitleAndMember_MemberCode(cityName, memberCode)
                 .orElseGet(() -> {
                     // 없으면 자동 생성
-                    WishGroupEntity newGroup = new WishGroupEntity(member, cityName);
+                    List<WishEntity> wishList = wishRepo.findByMember_MemberCode(memberCode);
+
+                    String thumbnail = wishList.stream()
+                            .filter(w -> w.getProduct().getCityId().getCityName().equals(cityName))
+                            .map(w -> w.getProduct().getProductThumbnail())
+                            .findFirst()
+                            .orElse(product.getProductThumbnail());
+
+                    WishGroupEntity newGroup = new WishGroupEntity(member, cityName, thumbnail);
                     return wishGroupRepo.save(newGroup);
                 });
 
@@ -148,7 +156,13 @@ public class WishService {
             // 동일한 이름의 그룹이 이미 있는지 확인
             boolean exists = wishGroupRepo.existsByGroupTitleAndMember_MemberCode(cityName, memberCode);
             if (!exists) {
-                WishGroupEntity newGroup = new WishGroupEntity(member, cityName);
+                String thumbnail = wishList.stream()
+                        .filter(w -> w.getProduct().getCityId().getCityName().equals(cityName))
+                        .map(w -> w.getProduct().getProductThumbnail())
+                        .findFirst()
+                        .orElse("/img/group/default-thumbnail.jpg");
+
+                WishGroupEntity newGroup = new WishGroupEntity(member, cityName, thumbnail);
                 wishGroupRepo.save(newGroup);
             }
         }
