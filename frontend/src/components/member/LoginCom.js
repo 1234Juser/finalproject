@@ -10,6 +10,50 @@ import {
     ActionRow,
     TextButton
 } from "../../style/member/LoginStyle";
+import styled from "styled-components";
+import kakaoLoginImg from "../../components/member/img/kakao_login.png";
+
+const KakaoBtnWrap = styled.div`
+    width: 100%;
+    max-width: 340px;
+    position: relative;
+    display: flex; justify-content: center;
+    margin: 16px auto 0 auto;
+    &:before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        background: #fae10044;
+        z-index: 0;
+        filter: blur(6px);
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    &:hover:before {
+        opacity: 1;
+        filter: blur(10px);
+    }
+`;
+
+const KakaoBtn = styled.img`
+    cursor: pointer;
+    width: 100%;
+    max-width: 340px;
+    height: 48px;             
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #fae100;
+    background: #fffbe7;
+    box-shadow: 0 2px 14px 0 #fae10050;
+    transition: box-shadow 0.16s, filter 0.18s;
+    position: relative;
+    z-index: 1;
+    &:hover {
+        box-shadow: 0 6px 24px 0 #fae10070;
+        filter: brightness(0.96);
+    }
+`;
 
 function LoginCom({
                       memberId,
@@ -21,6 +65,8 @@ function LoginCom({
                       onClickFindId,
                       onClickFindPw,
                       onClickRegister,
+                      onClickKakao
+
                   }) {
     return (
         <LoginFormContainer>
@@ -48,6 +94,9 @@ function LoginCom({
                 </FormItem>
                 {errorMsg && <ErrorMsg>{errorMsg}</ErrorMsg>}
                 <Button type="submit">로그인</Button>
+                <KakaoBtnWrap>
+                    <KakaoBtn src={kakaoLoginImg} alt="카카오로 로그인" onClick={onClickKakao} />
+                </KakaoBtnWrap>
             </Form>
             <ActionRow>
                 <TextButton type="button" onClick={onClickFindId}>아이디 찾기</TextButton>
