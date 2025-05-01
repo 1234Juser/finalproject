@@ -72,9 +72,22 @@ public class ProductEntity {
     @Column(name = "product_type", nullable = false)
     private ProductType productType;
 
-    // 양방향 매핑
-    @OneToMany(mappedBy = "productCode", cascade = CascadeType.ALL, orphanRemoval = true)
+    // 양방향 매핑 ("product"는 ProductThemeEntity에서 @ManyToOne ProductEntity의 필드명)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();
+
+
+    // Optimistic Locking을 위한 Version 칼럼
+//    @Version
+//    @Column(name = "version")
+//    private int version;
+    @PrePersist
+    public void perPersist() {
+        if(this.productThumbnail == null || this.productThumbnail.equals("")) {
+            productThumbnail = "nan";
+        }
+    }
+
 
 
     public ProductEntity(ProductDTO productDTO) {
