@@ -54,9 +54,13 @@ public class ProductController {
     // 상품 등록
     @PostMapping("/register")
     public ResponseEntity registerProduct(@RequestBody ProductDTO productDTO) {
-        log.debug("register product : {}", productDTO);
+        log.debug("상품 등록 요청 registerProduct 메서드....... : {}", productDTO);
         int result = productService.registerProduct(productDTO);
         log.debug("registerProduct result : {}", result);
-        return ResponseEntity.status(HttpStatus.CREATED).body("등록 성공");
+        if (result == 1) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("상품이 성공적으로 등록되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 등록에 실패했습니다.");
+        }
     }
 }

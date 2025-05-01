@@ -51,7 +51,7 @@ public class ReviewEntity {
     @Column( name = "review_date", nullable = false)
     private LocalDateTime reviewDate;
 
-    @Column( name = "review_pic", length = 255, nullable = false )
+    @Column( name = "review_pic", length = 255, nullable = true )
     private String reviewPic;
 
     @NotNull
