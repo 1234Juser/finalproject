@@ -10,41 +10,45 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-    @Entity
-    @Table(name = "tbl_wish_group")
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString(exclude = "member")
-    public class WishGroupEntity {
+@Entity
+@Table(name = "tbl_wish_group")
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = "member")
+public class WishGroupEntity {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "group_code", nullable = false)
-        private Long groupCode;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "group_code", nullable = false)
+    private Long groupCode;
 
-        @NotNull
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "member_code", nullable = false)
-        private MemberEntity member;    // 회원1 - 상품N
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_code", nullable = false)
+    private MemberEntity member;    // 회원1 - 상품N
 
-        @NotNull
-        @Column(name = "group_title", nullable = false, length = 255)
-        private String groupTitle;
+    @NotNull
+    @Column(name = "group_title", nullable = false, length = 255)
+    private String groupTitle;
 
-        @Column(name = "wish_count", nullable = false)
-        private int wishCount = 0;
+    @Column(name = "wish_count", nullable = false)
+    private int wishCount = 0;
 
-        @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-        private List<WishEntity> wishes = new ArrayList<>();
+    @Column(name = "thumbnail", length = 255)
+    private String thumbnail;
 
-        public WishGroupEntity(MemberEntity member, String groupTitle) {
-            this.member = member;
-            this.groupTitle = groupTitle;
-        }
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishEntity> wishes = new ArrayList<>();
 
-        @Transient
-        public int calculateWishCount() {
-            return wishes != null ? wishes.size() : 0;
-        }
+    public WishGroupEntity(MemberEntity member, String groupTitle, String thumbnail) {
+        this.member = member;
+        this.groupTitle = groupTitle;
+        this.thumbnail = thumbnail;
     }
+
+    @Transient
+    public int calculateWishCount() {
+        return wishes != null ? wishes.size() : 0;
+    }
+}
