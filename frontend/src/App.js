@@ -16,6 +16,9 @@ import RegisterMethodSelectPage from "./pages/member/RegisterMethodSelectPage";
 import KakaoCallbackPage from "./pages/member/KakaoCallbackPage";
 // import ProductRegPage from './pages/product/ProductRegPage';
 import WishGroupPage from "./pages/wish/WishGroupPage";
+import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
+import WishListPage from "./pages/wish/WishListPage";
+
 // import WishListPage from "./pages/wish/WishListPage";
 
 function App() {
