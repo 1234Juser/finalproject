@@ -40,8 +40,6 @@ function App() {
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
               <Route path="/wish/groups" element={<WishGroupPage />} />
               <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
-                <Route path="/wish/groups" element={<WishGroupPage />} />
-                <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
 
 
               {/*  회원마이페이지*/}
