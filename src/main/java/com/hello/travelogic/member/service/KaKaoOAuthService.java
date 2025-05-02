@@ -161,7 +161,13 @@ public class KaKaoOAuthService {
                 return responseDTO;
             } else {
                 // (2) 이미 활성 상태면
-                throw new IllegalStateException("이미 해당 카카오 계정으로 가입된 회원이 존재합니다.");
+                LoginRequestDTO loginRequest = LoginRequestDTO.builder()
+                        .memberId("kakao_" + kakaoId)
+                        .memberPassword("")
+                        .build();
+                LoginResponseDTO responseDTO = memberService.login(loginRequest);
+                responseDTO.setKakaoAccessToken(accessToken);
+                return responseDTO;
             }
         } else {
             // 2. 카카오 계정이 처음이라면, 이메일로 중복 회원 여부 추가 체크
