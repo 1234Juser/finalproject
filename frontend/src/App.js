@@ -16,6 +16,9 @@ import RegisterMethodSelectPage from "./pages/member/RegisterMethodSelectPage";
 import KakaoCallbackPage from "./pages/member/KakaoCallbackPage";
 // import ProductRegPage from './pages/product/ProductRegPage';
 import WishGroupPage from "./pages/wish/WishGroupPage";
+import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
+import WishListPage from "./pages/wish/WishListPage";
+
 // import WishListPage from "./pages/wish/WishListPage";
 
 function App() {
@@ -39,14 +42,14 @@ function App() {
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
           <Route path="/wish/groups/:memberCode" element={<WishGroupPage />} />
           {/*<Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />*/}
+                <Route path="/wish/groups" element={<WishGroupPage />} />
+                <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
 
 
               {/*  회원마이페이지*/}
               <Route path="/mypage">
                 <Route path="" element={<MyPagePage />} />
                 <Route path="withdrawl" element={<WithdrawlPage />} />
-                <Route path="/wish/groups" element={<WishGroupPage />} />
-                <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
               </Route>
               {/*관리자마이페이지*/}
               <Route path="/adminmypage">
