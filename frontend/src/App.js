@@ -21,6 +21,7 @@ import WishListPage from "./pages/wish/WishListPage";
 import {ToastContainer} from "react-toastify";
 import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
 import AdminMemberListPage from "./pages/member/AdminMemberListPage";
+import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 
 function App() {
   return (
@@ -47,10 +48,11 @@ function App() {
               </Route>
               
               {/*관리자마이페이지*/}
-              <Route path="/adminmypage">
-                <Route path="" element={<AdminMyPagePage />} />
+              <Route path="/adminmypage" element={<AdminMyPagePage />} />
+              <Route path="/admin">
                 <Route path="memberSearch" element={<AdminMemberListPage />} />
-                <Route path="product" element={<ProductRegPage/>} />
+                <Route path="productAll" element={<ProductAllAdminPage/>}/>
+                <Route path="productReg" element={<ProductRegPage/>} />
               </Route>
 
               <Route path="/domestic" element={<DomesticPage/>}/>
