@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +59,6 @@ public class MemberService {
                 .memberEndstatus("N")
                 .socialType(memberDTO.getSocialType())
                 .socialAccountId(memberDTO.getSocialAccountId())
-                .socialAccountCi(memberDTO.getSocialAccountCi())
                 .build();
 
         MemberEntity savedMember = memberRepository.save(memberEntity);
@@ -100,14 +96,21 @@ public class MemberService {
         }
 
 
-        if (!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        // 소셜 로그인(카카오 등)은 비밀번호 체크를 하지 않음
+        if (member.getSocialType() == null || member.getSocialType().isEmpty()) {
+            // 일반회원만 비밀번호 검사
+            if (!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())) {
+                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            }
         }
         // 1. roles를 먼저 추출
 
-        List<String> roles = member.getRoles().stream()
+        List<String> roles = Optional.ofNullable(member.getRoles())
+                .orElse(Collections.emptySet()) // null이면 빈 Set으로 대체
+                .stream()
                 .map(role -> role.getAuthority().getAuthorityName())
                 .collect(Collectors.toList());
+
         // 2. roles를 담아 token 생성
 
         String token = jwtUtil.generateToken(member.getMemberId(), roles);
@@ -117,7 +120,7 @@ public class MemberService {
         if (profileUrl == null || profileUrl.isEmpty()) {
             profileUrl = "/img/default-profile.jpg"; // static 폴더 기준 경로로 작성
         }
-        return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles);
+        return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles, member.getMemberCode(), null);
 
     }
 
@@ -132,6 +135,7 @@ public class MemberService {
                 .memberPhone(member.getMemberPhone())
                 .memberProfileImageUrl(member.getMemberProfileImageUrl())
                 .memberPassword("***") // 보안상 필요시 마스킹처리
+                .socialType(member.getSocialType())
                 .build();
     }
 

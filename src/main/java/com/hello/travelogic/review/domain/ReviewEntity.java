@@ -2,6 +2,7 @@ package com.hello.travelogic.review.domain;
 
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
+import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.review.dto.ReviewDTO;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -9,8 +10,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_review")
@@ -32,13 +36,18 @@ public class ReviewEntity {
     private MemberEntity member;     // 회원1 - 리뷰N
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_code", nullable = false)
+    private ProductEntity product;   // 상품1 - 리뷰N
+
+    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_code", nullable = false)
     private OrderEntity order;      // 주문1 - 리뷰1
 
     @NotNull
     @Column( name = "review_rating", nullable = false )
-    private int reviewRating;
+    private Integer reviewRating;
 
     @Size(min = 10, max = 500, message = "리뷰는 10자 이상 500자 이하로 작성해주세요.")
     @Column( name = "review_content", nullable = true, columnDefinition = "TEXT")
@@ -46,9 +55,9 @@ public class ReviewEntity {
 
     @NotNull
     @Column( name = "review_date", nullable = false)
-    private LocalDate reviewDate;
+    private LocalDateTime reviewDate;
 
-    @Column( name = "review_pic", length = 255 )
+    @Column( name = "review_pic", length = 255, nullable = true )
     private String reviewPic;
 
     @NotNull
@@ -58,6 +67,7 @@ public class ReviewEntity {
 
     public ReviewEntity(ReviewDTO review, MemberEntity member, OrderEntity order) {
         this.member = member;
+        this.product = order.getProduct();
         this.order = order;
         this.reviewRating = review.getReviewRating();
         this.reviewDate = review.getReviewDate();
@@ -66,11 +76,13 @@ public class ReviewEntity {
         this.reviewStatus = review.getReviewStatus();
     }
 
+    private static final Logger log = LoggerFactory.getLogger(ReviewEntity.class);
+
     @PrePersist
     public void prePersist() {
-        this.reviewDate = this.reviewDate == null ? LocalDate.now() : this.reviewDate;
+        this.reviewDate = this.reviewDate == null ? LocalDateTime.now() : this.reviewDate;
+        log.debug("prePersist 호출됨 - 기존 reviewPic: {}", this.reviewPic);
         if (this.reviewPic == null || this.reviewPic.equals("")) {
-            reviewPic = null;
         }
     }
 }

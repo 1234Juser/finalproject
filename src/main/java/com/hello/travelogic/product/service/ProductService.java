@@ -10,6 +10,8 @@ import com.hello.travelogic.product.repo.CountryRepo;
 import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.product.repo.ThemeRepo;
 import com.hello.travelogic.utils.FileUploadUtils;
+import com.hello.travelogic.review.repo.ReviewRepo;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class ProductService {
     private CountryRepo countryRepo;
     @Autowired
     private ThemeRepo themeRepo;
+    @Autowired
+    private ReviewRepo reviewRepo;
 
     // 모든 Products 조회
     public List<ProductDTO> getProducts() {
@@ -215,6 +219,15 @@ public class ProductService {
             return ProductEntity.ProductType.SILVER;
         }
         throw new IllegalArgumentException("알 수 없는 테마 코드: " + themeCode);
+    }
+
+    // 리뷰 작성/삭제 시 reviewcount만 업데이트
+    public void updateReviewCount(Long productCode) {
+        int count = reviewRepo.countByProduct_ProductCode(productCode);
+
+        ProductEntity product = productRepo.findById(productCode).orElseThrow();
+        product.setReviewCount(count);
+        productRepo.save(product);
     }
 
 }

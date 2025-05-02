@@ -34,4 +34,10 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     // productCode의 최댓값 찾기
     @Query("SELECT MAX(p.productCode) FROM ProductEntity p")
     Optional<Long> findMaxProductCode();
+
+    // 리뷰 평균내기
+//    @Query("SELECT AVG(r.reviewRating) FROM ReviewEntity r WHERE r.product.productCode = :productCode")
+//    Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
+    @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_code = :productCode", nativeQuery = true)
+    Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
 }

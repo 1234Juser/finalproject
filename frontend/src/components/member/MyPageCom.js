@@ -17,10 +17,10 @@ import {
     iconWrapper
 } from '../../style/member/MyPageStyle';
 import { FaUser, FaPhone, FaLock, FaEnvelope, FaIdCard} from "react-icons/fa6";
+import { SiKakaotalk} from "react-icons/si";
 
 
-
-function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
+function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink }) {
 
     const [editMode, setEditMode] = useState(false);
     const [form, setForm] = useState(memberData);
@@ -30,9 +30,9 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
     const [focus, setFocus] = useState("");
     const fileInputRef = useRef(null);
 
-
     useEffect(() => {
         setForm(memberData); // memberData 변경시 폼도 갱신
+        console.log(memberData); // socialType 존재여부/값 확인
     }, [memberData]);
 
     useEffect(() => {
@@ -48,7 +48,8 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
 
 
     if (!memberData) return <div>로딩중...</div>;
-
+    //카카오 소셜로그인 여부
+    const isKakaoUser = memberData?.socialType === "kakao";
 
     // 마스킹 처리
     const phoneMasked = memberData.memberPhone?.replace(/(\d{3})\d{2,3}(\d{3,4})/, '$1****$2');
@@ -143,7 +144,26 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                             style={profileImageStyle}
                         />
                         <div>
-                            <div style={greetingText}>{memberData.memberName} 님, 환영합니다!</div>
+                            <div style={greetingText}>{memberData.memberName} 님, 환영합니다!
+                                {/*카카오 연동뱃지*/}
+                                {isKakaoUser &&(
+                                    <span style={{
+                                        marginLeft: 10,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        background: "#fee500",
+                                        color: "#181600",
+                                        borderRadius: "12px",
+                                        fontWeight: "bold",
+                                        fontSize: "15px",
+                                        padding: "2px 12px",
+                                        gap: "6px"
+                                    }}>
+                                        <SiKakaotalk style={{ fontSize: "18px" }} />
+                                        카카오로그인 연동중인 계정
+                                    </span>
+                                )}
+                            </div>
                             <button style={profileButton} onClick={handleProfileImageBtnClick}
                             type = "button">프로필 이미지 변경</button>
                             <input
@@ -178,6 +198,16 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo }) {
                     </div>
                     <div>
                         <button style={profileButton} onClick={handleEditClick}>개인정보 수정</button>
+                    </div>
+
+                    <div>
+                        {isKakaoUser && (
+                            <button style={{...profileButton, background: "#fee500", color:"#181600", marginTop: 12}}
+                                    onClick={onKakaoUnlink}
+                                    type="button">
+                                카카오 연동 해제
+                            </button>
+                            )}
                     </div>
                 </section>
 
