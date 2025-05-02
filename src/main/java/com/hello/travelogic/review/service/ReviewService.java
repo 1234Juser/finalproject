@@ -4,6 +4,8 @@ import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.repo.OrderRepo;
+import com.hello.travelogic.product.domain.ProductEntity;
+import com.hello.travelogic.product.service.ProductService;
 import com.hello.travelogic.review.domain.ReviewEntity;
 import com.hello.travelogic.review.domain.ReviewStatus;
 import com.hello.travelogic.review.dto.ReviewDTO;
@@ -34,8 +36,9 @@ public class ReviewService {
     private final ReviewRepo reviewRepo;
     private final MemberRepository memberRepo;
     private final OrderRepo orderRepo;
+    private final ProductService productService;
 
-//    final String DIR = "upload/review/";
+    //    final String DIR = "upload/review/";
 //    private static final String UPLOAD_DIR = "C:/Users/hi/Desktop/hello_travelogic/upload/review/";
     final String DIR = "C:/Users/hi/Desktop/hello_travelogic/upload/review/";
 
@@ -45,7 +48,10 @@ public class ReviewService {
         if ("rating".equalsIgnoreCase(sortOption)) {
             entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewRatingDesc(productCode); // 평점 높은순
         } else {
-            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
+            // order_code 타고 찾은 product_code
+//            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
+            // product_code가 직접 FK로 들어온 거로 수정 한 후
+            entities = reviewRepo.findByProduct_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
         }
 
         return entities
@@ -70,7 +76,10 @@ public class ReviewService {
     }
 
     public List<ReviewDTO> getReviewsByProductCodeForAdmin(long productCode) {
-        return reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode)
+        // order_code 타고 찾은 product_code
+//        return reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode)
+        // product_code가 직접 FK로 들어온 거로 수정 한 후
+        return reviewRepo.findByProduct_ProductCodeOrderByReviewDateDesc(productCode)
                 .stream()
                 .map(ReviewDTO::new)
                 .collect(Collectors.toList());
@@ -121,6 +130,9 @@ public class ReviewService {
 
             reviewRepo.save(reviewEntity);
             log.debug("DB에 저장된 리뷰: reviewPic = {}", reviewEntity.getReviewPic());
+
+            // review_count 갱신
+            productService.updateReviewCount(reviewEntity.getProduct().getProductCode());
 
             result = 1;
         } catch (Exception e) {
@@ -192,6 +204,8 @@ public class ReviewService {
             deleteFile(fullPath);
         }
 
+        // 리뷰 삭제전에 미리 주문번호와 상품번호 확보
+        ProductEntity product = review.getProduct();
         OrderEntity order = review.getOrder();
 
         review.setOrder(null); // order_code = null로 만들기
@@ -201,6 +215,8 @@ public class ReviewService {
         orderRepo.save(order);
 
         reviewRepo.delete(review);
+
+        productService.updateReviewCount(product.getProductCode());
     }
 
     @Transactional
