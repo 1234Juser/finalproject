@@ -17,7 +17,7 @@ const adminMenuList = [
             {label: "상품별조회", path: "/admin/manage/review/by-product"}
     ]
     },
-    { label: "이벤트관리", path: "/admin/event" },
+    { label: "이벤트관리", path: "/adminmypage/event" },
     { label: "FAQ관리", path: "/admin/event" },
     { label: "1:1문의관리(채팅)", path: "/admin/event" }
 ];

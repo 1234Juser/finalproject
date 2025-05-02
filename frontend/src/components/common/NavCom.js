@@ -9,7 +9,7 @@ function NavCom({roles = []}) {
             <ul className="nav">
                 <li><a href="/domestic">국내</a></li>
                 <li><a href="/international">해외</a></li>
-                <li>투어/티켓</li>
+                <li><a href="/event">이벤트</a></li>
                 <li>더보기</li>
             </ul>
             <ul className="nav">
