@@ -23,9 +23,8 @@ public interface WishRepo extends JpaRepository<WishEntity, Long> {
     // 선택 회원이 찜한 상품 목록 가져오기(상품의 FK값 city_code에서 city_name 확인 목적)
     List<WishEntity> findByMember_MemberCode(long memberCode);
 
-//    WishEntity findByGroup_GroupCode(long groupCode);
-//
-//    List<WishEntity> findAllByGroupCode(long groupCode);
-//
-//    WishEntity findByGroupCodeAndProductCode(long groupCode, long productCode);
+    // 상품 상세페이지에서 특정 사용자가 찜 등록한 상품인지 정보 가져오기
+    boolean existsByMember_MemberCodeAndProduct_ProductCode(Long memberCode, Long productCode);
+
+    Optional<WishEntity> findByMember_MemberCodeAndProduct_ProductCode(Long memberCode, Long productCode);
 }

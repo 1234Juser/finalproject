@@ -1,5 +1,6 @@
 import './App.css';
 import {Route, Routes} from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
 import DomesticPage from './pages/product/DomesticPage';
 import RegisterPage from "./pages/member/RegisterPage";
 import MainPage from "./pages/MainPage";
@@ -16,10 +17,10 @@ import RegisterMethodSelectPage from "./pages/member/RegisterMethodSelectPage";
 import KakaoCallbackPage from "./pages/member/KakaoCallbackPage";
 // import ProductRegPage from './pages/product/ProductRegPage';
 import WishGroupPage from "./pages/wish/WishGroupPage";
+import WishListPage from "./pages/wish/WishListPage";
+import {ToastContainer} from "react-toastify";
 import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
 import WishListPage from "./pages/wish/WishListPage";
-
-// import WishListPage from "./pages/wish/WishListPage";
 
 function App() {
   return (
@@ -34,14 +35,9 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
               <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
-
-
-              {/*<Route path="/like" element={<LikePage />} />*/}
-
-              {/*<Route path="/myreservation" element={<MyReservationPage />} />*/}
           {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
-          <Route path="/wish/groups/:memberCode" element={<WishGroupPage />} />
-          {/*<Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />*/}
+              <Route path="/wish/groups" element={<WishGroupPage />} />
+              <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
                 <Route path="/wish/groups" element={<WishGroupPage />} />
                 <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
 
@@ -66,7 +62,9 @@ function App() {
               </Route>
 
         </Routes>
-        <FooterCom/>
+          <FooterCom/>
+          {/* 토스트 창 : 찜하기 완료 후 사용 */}
+          <ToastContainer position="top-center" autoClose={2000} />
       </div>
   );
 }

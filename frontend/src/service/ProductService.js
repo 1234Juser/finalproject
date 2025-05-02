@@ -107,8 +107,9 @@ const getProductsByCity = async (cityId) => {
 // 상품 상세 데이터 가져오는 함수
 const getProductDetail = async (productUid) => {
     try {
+        const memberCode = Number(localStorage.getItem("memberCode"));
         console.log("productUid : ", productUid);
-        const response = await fetch(`${path}/products/${productUid}`, {
+        const response = await fetch(`${path}/products/${productUid}?memberCode=${memberCode}`, {
             method : "GET"
         });
         if (!response.ok) {
@@ -179,10 +180,33 @@ const ProductRegist = async (formData) => {
     }
 }
 
+const toggleWish = async (product) => {
+    try {
+        const memberCode = Number(localStorage.getItem("memberCode"));
+        const response = await fetch(`/wish/toggle/${product.productCode}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ memberCode })
+        });
+
+        if (!response.ok) {
+            throw new Error(`찜 요청 실패: ${response.status}`);
+        }
+
+        const data = await response.text(); // 응답이 "LIKED" 또는 "UNLIKED" 문자열일 경우
+        console.log("찜 응답:", data);
+        return data;
+    } catch (error) {
+        console.error("찜 토글 실패", error.message);
+        throw error;
+    }
+};
 
 export {
     getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
     getProductsByCountry, getProductsByCity, getProductDetail,
     ProductRegist,
-    getRegions, getThemes,
+    getRegions, getThemes, toggleWish
 };
