@@ -49,6 +49,9 @@ public class MemberEntity {
     @Column(name="member_endstatus", length = 20, nullable = false)
     private String memberEndstatus = "N";
 
+    @Column(name="admin_active", length = 20)
+    private String adminActive;
+
     @Column(name="social_type", length=255)
     private String socialType;
 

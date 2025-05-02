@@ -91,6 +91,8 @@ public class MemberService {
         MemberEntity member = memberRepository.findByMemberId(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("해당아이디가 존재하지않습니다."));
 
+
+
         if ("Y".equals(member.getMemberEndstatus())) {
             throw new RuntimeException("탈퇴한 회원은 로그인할 수 없습니다.");
         }
@@ -376,5 +378,45 @@ public class MemberService {
     public void deleteExpiredAuthCodes() {
         passwordResetAuthCodeRepository.deleteByExpiredAtBefore(LocalDateTime.now());
     }
+    //관리자마이페이지회원전체정보조회
+    public List<MemberAllDTO> getAllMembers() {
+        List<MemberEntity> allMembers = memberRepository.findAll();
+        return allMembers.stream()
+                .map(member -> {
+                    Set<String> roleNames = member.getRoles().stream()
+                            .map(role -> role.getAuthority().getAuthorityName())
+                            .collect(Collectors.toSet());
+                    return new MemberAllDTO(
+                            member.getMemberCode(),
+                            member.getMemberName(),
+                            member.getMemberId(),
+                            member.getMemberEmail(),
+                            member.getMemberPhone(),
+                            member.getMemberProfileImageUrl(),
+                            member.getSocialType(),
+                            member.getSocialAccountId(),
+                            member.getMemberRegisterdate(),
+                            member.getMemberEnddate(),
+                            member.getMemberEndstatus(),
+                            roleNames
+                    );
+                })
+                .collect(Collectors.toList());
+    }
 
+    //관리자마이페이지회원상태변경
+    @Transactional
+    public void updateMemberEndstatus(String memberId, String newStatus) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(()-> new RuntimeException("해당 회원 없음"));
+        member.setMemberEndstatus(newStatus);
+
+        //활성화/비활성화
+        if("Y".equals(newStatus)) {
+            member.setAdminActive("N"); //비활성화상태(관리자의권한)
+        }else{
+            member.setAdminActive("Y"); //다시활성화
+        }
+        memberRepository.save(member);
+    }
 }
