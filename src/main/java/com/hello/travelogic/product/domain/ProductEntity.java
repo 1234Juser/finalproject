@@ -72,9 +72,25 @@ public class ProductEntity {
     @Column(name = "product_type", nullable = false)
     private ProductType productType;
 
-    // 양방향 매핑
-    @OneToMany(mappedBy = "productCode", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "review_count", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int reviewCount = 0;
+
+    // 양방향 매핑 ("product"는 ProductThemeEntity에서 @ManyToOne ProductEntity의 필드명)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();
+
+
+    // Optimistic Locking을 위한 Version 칼럼
+//    @Version
+//    @Column(name = "version")
+//    private int version;
+    @PrePersist
+    public void perPersist() {
+        if(this.productThumbnail == null || this.productThumbnail.equals("")) {
+            productThumbnail = "nan";
+        }
+    }
+
 
 
     public ProductEntity(ProductDTO productDTO) {
@@ -95,6 +111,7 @@ public class ProductEntity {
         this.productThumbnail = productDTO.getProductThumbnail();
         this.productType = productDTO.getProductType();     // Enum 매핑 필요
 //        this.productThemes = productDTO.getProductThemes(); // 연관 엔티티 리스트 매핑 필요
+        this.reviewCount = productDTO.getReviewCount();
     }
 
     public enum ProductStatus {

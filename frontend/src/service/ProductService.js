@@ -35,9 +35,9 @@ const getCountryList = async (regionCode) => {
 
 
 // 국가별 도시 데이터 가져오는 함수 (해외여행용)
-const getCitiesByCountry = async (countryCode) => {
-
-    const response = await fetch(`${path}/cities/${countryCode}`, {
+const getCitiesByCountry = async (countryId) => {
+    console.log("여기서 countryId 확인----->", countryId);
+    const response = await fetch(`${path}/cities/${countryId}`, {
         method : "GET"
     })
     if (!response.ok) {
@@ -124,33 +124,6 @@ const getProductDetail = async (productUid) => {
 }
 
 
-// 상품 등록 함수
-const ProductRegist = async (formData) => {
-    try {
-        const response = await fetch(`${path}/products/register`, {
-            method : "POST",
-            headers : {
-                'Content-Type' : 'application/json',
-            },
-            body : JSON.stringify(formData),
-        })
-        console.log("response", response);
-
-        if( response.ok) {
-            const result = await response.json();
-            alert(`등록 성공 : ${result.message}`);
-        } else {
-            const errorData = await response.json();
-            alert(`등록 실패: ${errorData.message}`);
-        }
-
-    } catch (error) {
-        console.error("등록 에러 발생 !!!", error);
-        
-    }
-}
-
-
 // ------------- 관리자 페이지 내 상품 등록용 함수
 // 권역 데이터 불러오기
 const getRegions = async (regionType) => {
@@ -172,8 +145,44 @@ const getRegions = async (regionType) => {
 }
 
 
-export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
+// 테마 목록 불러오기
+const getThemes = async () => {
+        const response = await fetch(`${path}/themes`, {
+            method : "GET"
+        });
+        return response.json();
+}
+
+
+// 상품 등록 함수
+const ProductRegist = async (formData) => {
+    try {
+        const response = await fetch(`${path}/products/register`, {
+            method : "POST",
+            // headers: { 'Content-Type': 'multipart/form-data' },
+            // body : JSON.stringify(formData),
+            body : formData
+        })
+        console.log("response", response);
+
+        if( response.ok) {
+            const result = await response.json();
+            alert(`등록 성공 : ${result.message}`);
+        } else {
+            const errorData = await response.json();
+            alert(`등록 실패: ${errorData.message}`);
+        }
+
+    } catch (error) {
+        console.error("등록 에러 발생 !!!", error);
+        
+    }
+}
+
+
+export {
+    getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
     getProductsByCountry, getProductsByCity, getProductDetail,
     ProductRegist,
-    getRegions,
+    getRegions, getThemes,
 };

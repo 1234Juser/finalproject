@@ -41,6 +41,8 @@ function HeaderCon() {
         localStorage.removeItem("memberName");
         localStorage.removeItem("memberProfileImageUrl");
         localStorage.removeItem("roles");
+        localStorage.removeItem("memberCode");
+        localStorage.clear();
         setIsLoggedIn(false);
         setMemberName("");
         setProfileImg("/img/default-profile.jpg");
@@ -58,6 +60,7 @@ function HeaderCon() {
             return;
         }
         navigate("/");
+        // window.location.href = "/";
     };
 
     return (

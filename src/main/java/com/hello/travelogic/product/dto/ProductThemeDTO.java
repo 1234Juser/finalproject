@@ -18,7 +18,7 @@ public class ProductThemeDTO {
 
     public ProductThemeDTO(ProductThemeEntity productThemeDTO) {
         this.ptId = productThemeDTO.getPtId();
-        this.productCode = productThemeDTO.getProductCode().getProductCode();
+        this.productCode = productThemeDTO.getProduct().getProductCode();
         this.themeCode = productThemeDTO.getThemeCode().getThemeCode();
     }
 }

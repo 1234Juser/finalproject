@@ -5,6 +5,8 @@ import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.repo.ProductRepo;
+import com.hello.travelogic.review.repo.ReviewRepo;
+import com.hello.travelogic.review.service.ReviewService;
 import com.hello.travelogic.wish.domain.WishEntity;
 import com.hello.travelogic.wish.domain.WishGroupEntity;
 import com.hello.travelogic.wish.dto.WishDTO;
@@ -29,6 +31,7 @@ public class WishService {
     private final WishGroupRepo wishGroupRepo;
     private final ProductRepo productRepo;
     private final MemberRepository memberRepo;
+    private final ReviewRepo reviewRepo;
 
     // 위시 그룹 조회
     public List<WishGroupDTO> getGroups(long memberCode) {
@@ -42,10 +45,21 @@ public class WishService {
     // 특정 위시 그룹의 상품 조회
     public List<WishDTO> getItemsByGroupCode(long groupCode) {
 
-        return wishRepo.findByGroup_GroupCode(groupCode)
-                .stream()
-                .map(WishDTO::new)
-                .collect(Collectors.toList());
+//        return wishRepo.findByGroup_GroupCode(groupCode)
+//                .stream()
+//                .map(WishDTO::new)
+//                .collect(Collectors.toList());
+        // 리뷰 숫자와 평점 추가
+        List<WishEntity> entities = wishRepo.findByGroup_GroupCode(groupCode);
+        System.out.println("그룹코드: " + groupCode);
+        return entities.stream().map(entity -> {
+            WishDTO dto = new WishDTO(entity);
+            Long productCode = entity.getProduct().getProductCode();
+            System.out.println("조회된 찜 수: " + entities.size());
+            Double avg = reviewRepo.findAvgRatingByProductCode(productCode);
+            dto.setReviewAvg(avg != null ? avg : 0.0);
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     // 위시 그룹 삭제

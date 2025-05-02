@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -53,12 +54,17 @@ public class ProductController {
 
     // 상품 등록
     @PostMapping("/register")
-    public ResponseEntity registerProduct(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity registerProduct(@ModelAttribute ProductDTO productDTO,
+                                          @RequestParam("productThumbnail") MultipartFile productThumbnail) {
+        log.debug("파일 이름 찍히는지 확인 : " + productThumbnail.getOriginalFilename() );
+        log.debug("DTO 데이터 확인,,,,," + productDTO.toString());
         log.debug("상품 등록 요청 registerProduct 메서드....... : {}", productDTO);
-        int result = productService.registerProduct(productDTO);
+        int result = productService.registerProduct(productDTO, productThumbnail);
         log.debug("registerProduct result : {}", result);
         if (result == 1) {
             return ResponseEntity.status(HttpStatus.CREATED).body("상품이 성공적으로 등록되었습니다.");
+        } else if (result == -1) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("충돌 발생: 데이터를 다시 확인해 주세요.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 등록에 실패했습니다.");
         }

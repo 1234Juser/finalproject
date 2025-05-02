@@ -1,17 +1,24 @@
 package com.hello.travelogic.product.service;
 
-import com.hello.travelogic.product.domain.*;
+import com.hello.travelogic.product.domain.CityEntity;
+import com.hello.travelogic.product.domain.CountryEntity;
+import com.hello.travelogic.product.domain.ProductEntity;
+import com.hello.travelogic.product.domain.ThemeEntity;
 import com.hello.travelogic.product.dto.ProductDTO;
-import com.hello.travelogic.product.dto.RegionDTO;
 import com.hello.travelogic.product.repo.CityRepo;
 import com.hello.travelogic.product.repo.CountryRepo;
 import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.product.repo.ThemeRepo;
+import com.hello.travelogic.utils.FileUploadUtils;
+import com.hello.travelogic.review.repo.ReviewRepo;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class ProductService {
 
     @Autowired
@@ -29,6 +37,8 @@ public class ProductService {
     private CountryRepo countryRepo;
     @Autowired
     private ThemeRepo themeRepo;
+    @Autowired
+    private ReviewRepo reviewRepo;
 
     // 모든 Products 조회
     public List<ProductDTO> getProducts() {
@@ -96,7 +106,8 @@ public class ProductService {
 
 
     // 상품 등록
-    public int registerProduct(ProductDTO productDTO) {
+    @Transactional
+    public int registerProduct(ProductDTO productDTO, MultipartFile productThumbnail) {
         int result = 1;
         try {
             // 1. 입력 받은 데이터 유효성 검증 및 엔티티 매핑
@@ -139,11 +150,18 @@ public class ProductService {
             String newUid = prefix + String.format("%03d", count + 1);      // 새로운 UID 만들기
             log.info("newUid : {}" , newUid);
 
-
+/*
             // 4. productCode 생성 로직 (숫자를 단순히 자동 증가되도록 설정)
              Long newProductCode = productRepo.findMaxProductCode().orElse(0L) + 1; // 최대 product_code + 1
             log.info("newProductCode : {}" , newProductCode);
+*/
 
+            // 4. 썸네일 파일 저장 및 DTO에 파일명 생성
+            if (productThumbnail != null && !productThumbnail.isEmpty()) {
+                String thumbnailfileName = FileUploadUtils.saveNewFile(productThumbnail);
+                log.debug("저장된 썸네일 파일명 : {}", thumbnailfileName);
+                productDTO.setProductThumbnail(thumbnailfileName); // DTO에 파일명 설정
+            }
 
             // 5. productEntity 생성 및 설정
             ProductEntity productE = new ProductEntity(productDTO);
@@ -153,15 +171,20 @@ public class ProductService {
             productE.setProductStartDate(startDate);
             productE.setProductEndDate(endDate);
             productE.setProductUid(newUid);
-            productE.setProductCode(newProductCode); // 생성된 product_code 설정
-
+            productE.setProductThumbnail(productE.getProductThumbnail());     // ← DTO에 설정된 파일명 사용!!
+//            productE.setProductCode(newProductCode); // 생성된 product_code 설정
 
             // 6. 데이터 저장
             productRepo.save(productE);
-            log.info("registerProduct : {} ", productE);
+            log.info("productEntity 생성 및 설정.... productE 확인,,, : {} ", productE);
+
+        } catch (ObjectOptimisticLockingFailureException e) {
+            log.debug("낙관적 잠금 충돌 발생: {}", e.getMessage(), e);       // 충돌 상태를 구체적으로 반환
+            result = -1;
         } catch (Exception e) {
             result = 0;
-            e.printStackTrace();
+//            e.printStackTrace();
+            log.debug("상품 등록 중 오류 발생: {}", e.getMessage(), e);
         }
 
         return result;
@@ -186,6 +209,15 @@ public class ProductService {
             return ProductEntity.ProductType.SILVER;
         }
         throw new IllegalArgumentException("알 수 없는 테마 코드: " + themeCode);
+    }
+
+    // 리뷰 작성/삭제 시 reviewcount만 업데이트
+    public void updateReviewCount(Long productCode) {
+        int count = reviewRepo.countByProduct_ProductCode(productCode);
+
+        ProductEntity product = productRepo.findById(productCode).orElseThrow();
+        product.setReviewCount(count);
+        productRepo.save(product);
     }
 
 }

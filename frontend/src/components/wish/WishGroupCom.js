@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
+import emptyImage from "../../style/empty/empty-list.jpeg"
 
 const StyleLikeBlock = styled.div`
     display: flex;
@@ -8,6 +9,12 @@ const StyleLikeBlock = styled.div`
 const StyleContentWrap = styled.div`
     width: 70%;
     max-width: 1200px;
+`;
+const TitleWrapper = styled.div`
+    height: 100px;               // 원하는 높이
+    display: flex;
+    justify-content: center;    // 가로 중앙
+    align-items: center;        // 세로 중앙
 `;
 const ListTitle = styled.h2`
     font-size: 24px;
@@ -50,25 +57,39 @@ const SavedCount = styled.p`
 
 function WishGroupCom({ groups, onSelect, onDeleteGroup }) {
     const navigate = useNavigate();
+    const hasNoGroups = !groups || groups.length === 0;
     // <ThumbImg />클릭시 해당 그룹에 담긴 위시상품들 리스트 페이지로 이동한다.
     const selectClick = (group) => {
-        navigate(`/wish/groups/${group.code}/items`);
+        navigate(`/wish/groups/${group.groupCode}/items`);
     }
+
     return(
         <>
             <StyleLikeBlock>
                 <StyleContentWrap>
-                    <div>
+                    <TitleWrapper>
                         <ListTitle>찜 그룹</ListTitle>
-                    </div>
-                    <div>
+                    </TitleWrapper>
+                        {hasNoGroups ? (
+                            <div style={{ textAlign: "center", padding: "4rem 2rem" }}>
+                                <img
+                                    src={emptyImage}
+                                    alt="찜 그룹 없음"
+                                    style={{ width: "180px", marginBottom: "1.5rem", opacity: 0.7 }}
+                                />
+                                <p style={{ padding: "2rem", color: "#888", textAlign: "center" }}>
+                                    아직 생성된 찜 그룹이 없어요.<br />
+                                    상품을 찜하면 자동으로 그룹이 생겨요!
+                                </p>
+                            </div>
+                        ) : (
                         <GridWrap>
-                            {groups.map(group => (
+                            {groups && groups.map(group => (
                                 <div key={group.groupCode} style={{ marginBottom: "1rem" }} className="group-item">
                                     <LikeCard>
                                         <ThumbImg src={group.imageUrl} style={{cursor: 'pointer'}}
                                                   alt="찜 이미지"
-                                                  onClick={() => onSelect(group.groupCode)} />
+                                                  onClick={() => navigate(`/wish/groups/${group.groupCode}/items`)} />
                                     </LikeCard>
                                     <CardTitle>{group.groupTitle}</CardTitle>
                                     <SavedCount>{group.wishCount}개 저장됨</SavedCount>
@@ -76,7 +97,7 @@ function WishGroupCom({ groups, onSelect, onDeleteGroup }) {
                                 </div>
                             ))}
                         </GridWrap>
-                    </div>
+                            )}
                 </StyleContentWrap>
             </StyleLikeBlock>
         </>
