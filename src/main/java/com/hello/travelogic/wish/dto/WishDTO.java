@@ -20,6 +20,8 @@ public class WishDTO {
     private double reviewAvg;
     private int productAdult;
 
+    private String productUid;
+
     public WishDTO(WishEntity entity) {
         this.wishCode = entity.getWishCode();
         this.memberCode = entity.getMember().getMemberCode();
@@ -29,5 +31,6 @@ public class WishDTO {
         this.productThumbnail = entity.getProduct().getProductThumbnail();
         this.reviewCount = entity.getProduct().getReviewCount();
         this.productAdult = entity.getProduct().getProductAdult();
+        this.productUid = entity.getProduct().getProductUid();
     }
 }

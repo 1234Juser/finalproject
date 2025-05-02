@@ -35,9 +35,9 @@ const getCountryList = async (regionCode) => {
 
 
 // 국가별 도시 데이터 가져오는 함수 (해외여행용)
-const getCitiesByCountry = async (countryCode) => {
-
-    const response = await fetch(`${path}/cities/${countryCode}`, {
+const getCitiesByCountry = async (countryId) => {
+    console.log("여기서 countryId 확인----->", countryId);
+    const response = await fetch(`${path}/cities/${countryId}`, {
         method : "GET"
     })
     if (!response.ok) {
@@ -107,8 +107,9 @@ const getProductsByCity = async (cityId) => {
 // 상품 상세 데이터 가져오는 함수
 const getProductDetail = async (productUid) => {
     try {
+        const memberCode = Number(localStorage.getItem("memberCode"));
         console.log("productUid : ", productUid);
-        const response = await fetch(`${path}/products/${productUid}`, {
+        const response = await fetch(`${path}/products/${productUid}?memberCode=${memberCode}`, {
             method : "GET"
         });
         if (!response.ok) {
@@ -120,33 +121,6 @@ const getProductDetail = async (productUid) => {
     } catch (error) {
         console.error("상품 상세 데이터 조회 중 에러 발생 : ", error);
         throw error;
-    }
-}
-
-
-// 상품 등록 함수
-const ProductRegist = async (formData) => {
-    try {
-        const response = await fetch(`${path}/products/register`, {
-            method : "POST",
-            headers : {
-                'Content-Type' : 'application/json',
-            },
-            body : JSON.stringify(formData),
-        })
-        console.log("response", response);
-
-        if( response.ok) {
-            const result = await response.json();
-            alert(`등록 성공 : ${result.message}`);
-        } else {
-            const errorData = await response.json();
-            alert(`등록 실패: ${errorData.message}`);
-        }
-
-    } catch (error) {
-        console.error("등록 에러 발생 !!!", error);
-        
     }
 }
 
@@ -172,8 +146,68 @@ const getRegions = async (regionType) => {
 }
 
 
-export {getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
+// 테마 목록 불러오기
+const getThemes = async () => {
+        const response = await fetch(`${path}/themes`, {
+            method : "GET"
+        });
+        return response.json();
+}
+
+
+// 상품 등록 함수
+const ProductRegist = async (formData) => {
+    try {
+        const response = await fetch(`${path}/products/register`, {
+            method : "POST",
+            // headers: { 'Content-Type': 'multipart/form-data' },
+            // body : JSON.stringify(formData),
+            body : formData
+        })
+        console.log("response", response);
+
+        if( response.ok) {
+            const result = await response.json();
+            alert(`등록 성공 : ${result.message}`);
+        } else {
+            const errorData = await response.json();
+            alert(`등록 실패: ${errorData.message}`);
+        }
+
+    } catch (error) {
+        console.error("등록 에러 발생 !!!", error);
+        
+    }
+}
+
+const toggleWish = async (product) => {
+    try {
+        const memberCode = Number(localStorage.getItem("memberCode"));
+        const response = await fetch(`/wish/toggle/${product.productCode}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ memberCode })
+        });
+
+        if (!response.ok) {
+            throw new Error(`찜 요청 실패: ${response.status}`);
+        }
+
+        const data = await response.text(); // 응답이 "LIKED" 또는 "UNLIKED" 문자열일 경우
+        console.log("찜 응답:", data);
+        return data;
+    } catch (error) {
+        console.error("찜 토글 실패", error.message);
+        throw error;
+    }
+};
+
+
+export {
+    getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
     getProductsByCountry, getProductsByCity, getProductDetail,
     ProductRegist,
-    getRegions,
+    getRegions, getThemes, toggleWish
 };

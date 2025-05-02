@@ -55,13 +55,8 @@ const SavedCount = styled.p`
     margin: 0 10px 10px 10px;
 `;
 
-function WishGroupCom({ groups, onSelect, onDeleteGroup }) {
-    const navigate = useNavigate();
+function WishGroupCom({ groups, onClickGroup, onDeleteGroup }) {
     const hasNoGroups = !groups || groups.length === 0;
-    // <ThumbImg />클릭시 해당 그룹에 담긴 위시상품들 리스트 페이지로 이동한다.
-    const selectClick = (group) => {
-        navigate(`/wish/groups/${group.groupCode}/items`);
-    }
 
     return(
         <>
@@ -87,9 +82,11 @@ function WishGroupCom({ groups, onSelect, onDeleteGroup }) {
                             {groups && groups.map(group => (
                                 <div key={group.groupCode} style={{ marginBottom: "1rem" }} className="group-item">
                                     <LikeCard>
-                                        <ThumbImg src={group.imageUrl} style={{cursor: 'pointer'}}
+                                        <ThumbImg src={group.imageUrl}
+                                                  style={{cursor: 'pointer'}}
                                                   alt="찜 이미지"
-                                                  onClick={() => navigate(`/wish/groups/${group.groupCode}/items`)} />
+                                                  onClick={() => onClickGroup(group.groupCode)}
+                                        />
                                     </LikeCard>
                                     <CardTitle>{group.groupTitle}</CardTitle>
                                     <SavedCount>{group.wishCount}개 저장됨</SavedCount>

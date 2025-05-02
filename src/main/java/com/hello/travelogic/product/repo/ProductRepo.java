@@ -22,7 +22,8 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     Optional<ProductEntity> findByProductCode(long productCode);
 
 
-    ProductEntity findByProductUid(String productUid);
+//    ProductEntity findByProductUid(String productUid);
+    Optional<ProductEntity> findByProductUid(String productUid);
 
     // 인텔리제이꺼임
     // 도시 이름 조회
@@ -36,8 +37,6 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     Optional<Long> findMaxProductCode();
 
     // 리뷰 평균내기
-//    @Query("SELECT AVG(r.reviewRating) FROM ReviewEntity r WHERE r.product.productCode = :productCode")
-//    Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
     @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_code = :productCode", nativeQuery = true)
     Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
 }

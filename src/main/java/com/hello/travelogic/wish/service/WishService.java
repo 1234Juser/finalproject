@@ -45,10 +45,6 @@ public class WishService {
     // 특정 위시 그룹의 상품 조회
     public List<WishDTO> getItemsByGroupCode(long groupCode) {
 
-//        return wishRepo.findByGroup_GroupCode(groupCode)
-//                .stream()
-//                .map(WishDTO::new)
-//                .collect(Collectors.toList());
         // 리뷰 숫자와 평점 추가
         List<WishEntity> entities = wishRepo.findByGroup_GroupCode(groupCode);
         System.out.println("그룹코드: " + groupCode);
@@ -140,7 +136,7 @@ public class WishService {
                 });
 
         // 이미 찜한 상품인지 확인
-        Optional<WishEntity> existingWish = wishRepo.findByGroup_GroupCodeAndProduct_ProductCode(group.getGroupCode(), productCode);
+        Optional<WishEntity> existingWish = wishRepo.findByMember_MemberCodeAndProduct_ProductCode(memberCode, productCode);
 
         if (existingWish.isPresent()) {
             // 찜 취소
