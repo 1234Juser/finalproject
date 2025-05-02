@@ -53,7 +53,7 @@ public class MemberEntity {
     private String socialType;
 
     @Column(name="social_account_id")
-    private Integer socialAccountId;
+    private Long socialAccountId;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     private Set<MemberRoleEntity> roles = new HashSet<>();

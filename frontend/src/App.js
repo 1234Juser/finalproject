@@ -31,6 +31,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
               <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
+
               {/*<Route path="/" element={<IndexPage />} />*/}
           {/*<Route path="/like" element={<LikePage />} />*/}
               

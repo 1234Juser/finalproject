@@ -32,6 +32,7 @@ function KakaoCallbackPage() {
                     } = res.data;
 
                     // 3. JWT와 유저정보 저장 (ex. localStorage)
+                    localStorage.setItem("loginType", "kakao");
                     localStorage.setItem("accessToken", accessToken);
                     localStorage.setItem("kakaoAccessToken", kakaoAccessToken);
                     localStorage.setItem("memberName", memberName);

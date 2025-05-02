@@ -78,14 +78,16 @@ const KakaoBtn = styled.img`
     border: 2px solid #fae100;
     background: #fffbe7;
     box-shadow: 0 2px 14px 0 #fae10050;
-    transition: box-shadow 0.16s, filter 0.18s;
+    transition: box-shadow 0.16s, filter 0.18s, transform 0.13s; // transform transition 추가
     position: relative;
     z-index: 1;
     &:hover {
         box-shadow: 0 6px 24px 0 #fae10070;
         filter: brightness(0.96);
+        transform: translateY(-2px) scale(1.03); // 일반 회원가입과 동일
     }
 `;
+
 
 
 const Tip = styled.div`
@@ -127,14 +129,16 @@ const GoogleBtn = styled.img`
     border: 2px solid #e0e0e0;
     background: #fff;
     box-shadow: 0 2px 14px 0 #e0e0e060;
-    transition: box-shadow 0.16s, filter 0.18s;
+    transition: box-shadow 0.16s, filter 0.18s, transform 0.13s; // transform transition 추가
     position: relative;
     z-index: 1;
     &:hover {
         box-shadow: 0 6px 24px 0 #bdbdbd90;
         filter: brightness(0.97);
+        transform: translateY(-2px) scale(1.03); // 일반 회원가입과 동일
     }
 `;
+
 
 
 
@@ -158,12 +162,10 @@ function RegisterMethodSelectCom() {
             `redirect_uri=${encodeURIComponent(GOOGLE_REDIRECT_URI)}&` +
             `scope=openid%20email%20profile&` +
             `access_type=offline&` +
-            `prompt=consent`;
+            `prompt=login`;
 
         window.location.href = oauthUrl;
     };
-
-
 
     return (
         <Wrapper>

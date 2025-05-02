@@ -59,59 +59,76 @@ public class GoogleOAuthService {
     @Transactional
     public LoginResponseDTO googleLogin(String code) {
         // 1. access token 발급
-        String accessToken = getAccessToken(code);
+        String googleAccessToken = getAccessToken(code);
 
         // 2. 유저 정보
-        GoogleUser googleUser = getUserInfo(accessToken);
+        GoogleUser googleUser = getUserInfo(googleAccessToken);
 
         // 3. DB 조회/회원가입
-        MemberEntity member = memberRepository.findByMemberEmail(googleUser.email())
-                .orElseGet(() -> {
-                    // 신규 회원가입
-                    MemberEntity newMember = MemberEntity.builder()
-                            .memberName(googleUser.name())
-                            .memberEmail(googleUser.email())
-                            .memberId("google_" + googleUser.sub()) // sub는 memberId에만 사용
-                            .memberRegisterdate(LocalDateTime.now())
-                            .memberProfileImageUrl(googleUser.picture())
-                            .memberEndstatus("N")
-                            .socialType("google")
-                            .socialAccountId(null) // 여기서 null로 설정
-                            .build();
-                    MemberEntity saved = memberRepository.save(newMember);
+        // 기존 회원 여부 (탈퇴 회원 포함하여 조회)
+        MemberEntity member = memberRepository.findByMemberEmail(googleUser.email()).orElse(null);
 
-                    // 권한 설정: "ROLE_USER" 추가 (같은 위치)
-                    AuthorityEntity userAuthority = authorityRepository.findByAuthorityName("ROLE_USER");
-                    if (userAuthority == null) {
-                        throw new RuntimeException("ROLE_USER 권한이 없습니다.");
-                    }
-                    MemberRoleEntity memberRole = MemberRoleEntity.builder()
-                            .id(new MemberRoleEntity.MemberRoleId(saved.getMemberCode(), userAuthority.getAuthorityCode()))
-                            .member(saved)
-                            .authority(userAuthority)
-                            .build();
-                    memberRoleRepository.save(memberRole);
+        if (member != null) {
+            if ("Y".equals(member.getMemberEndstatus())) {
+                // 탈퇴 계정 재가입 처리
+                member.setMemberEndstatus("N");
+                member.setMemberEnddate(null);
+                member.setMemberRegisterdate(LocalDateTime.now()); // 재가입 시점으로 갱신
+                // 개인정보, 사진 등도 구글 최신 정보로 갱신
+                member.setMemberName(googleUser.name());
+                member.setMemberProfileImageUrl(googleUser.picture());
+                member.setSocialType("google");
+                member.setMemberId("google_" + googleUser.sub());
+                // 필요시 memberRole 추가 등 복구 처리
+                memberRepository.save(member);
+            } else {
+                // 기존 활성 회원: 정보 업데이트만 수행
+                member.setMemberName(googleUser.name());
+                member.setMemberProfileImageUrl(googleUser.picture());
+                member.setSocialType("google");
+                member.setMemberId("google_" + googleUser.sub());
+                memberRepository.save(member);
+            }
+        } else {
+            // 신규 회원 (기존과 동일)
+            member = MemberEntity.builder()
+                    .memberName(googleUser.name())
+                    .memberEmail(googleUser.email())
+                    .memberId("google_" + googleUser.sub())
+                    .memberRegisterdate(LocalDateTime.now())
+                    .memberProfileImageUrl(googleUser.picture())
+                    .memberEndstatus("N")
+                    .socialType("google")
+                    .build();
+            member = memberRepository.save(member);
+            // 권한 추가
+            AuthorityEntity userAuthority = authorityRepository.findByAuthorityName("ROLE_USER");
+            MemberRoleEntity memberRole = MemberRoleEntity.builder()
+                    .id(new MemberRoleEntity.MemberRoleId(member.getMemberCode(), userAuthority.getAuthorityCode()))
+                    .member(member)
+                    .authority(userAuthority)
+                    .build();
+            memberRoleRepository.save(memberRole);
+        }
 
-                    return saved;
-                });
-
-        // 4. 역할 세팅 (권한 로드 방식은 상황에 맞춰 바꿔주세요)
         List<String> roles = List.of("ROLE_USER");
         String jwt = jwtUtil.generateToken(member.getMemberId(), roles);
 
         return new LoginResponseDTO(
-                jwt,
+                jwt,                    // 서비스 JWT - accessToken (localStorage의 accessToken)
                 member.getMemberName(),
                 member.getMemberProfileImageUrl(),
                 roles,
                 member.getMemberCode(),
-                null
+                null,                   // 6. kakaoAccessToken은 null (구글이니까)
+                googleAccessToken       // googleAccessToken (localStorage의 googleAccessToken)
         );
+
     }
 
-
-
-    /** 구글 OAuth - Authorization Code로 Access Token 요청 */
+    /**
+     * 구글 OAuth - Authorization Code로 Access Token 요청
+     */
     private String getAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -133,7 +150,9 @@ public class GoogleOAuthService {
         return body.getString("access_token");
     }
 
-    /** 구글 액세스 토큰으로 사용자 정보 가져오기 */
+    /**
+     * 구글 액세스 토큰으로 사용자 정보 가져오기
+     */
     private GoogleUser getUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -166,9 +185,36 @@ public class GoogleOAuthService {
 
     }
 
+    //구굴로그인 연동해제
+    @Transactional
+    public void unlinkSocialAccount(String googleAccessToken, String bearerToken) {
+        // 1. 구글 액세스 토큰 만료(연결 해제)
+        if (googleAccessToken != null && !googleAccessToken.isEmpty()) {
+            try {
+                String revokeUrl = "https://accounts.google.com/o/oauth2/revoke?token=" + googleAccessToken;
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.postForEntity(revokeUrl, null, String.class);
+            } catch (Exception e) {
+                // 이미 만료된 토큰 등은 무시
+            }
+        }
 
-    /** 구글 사용자 객체 */
-    record GoogleUser(String sub, String name, String email, String picture) {}
+        // JWT에서 사용자 식별 정보 추출 (예: memberId)
+        String memberId = jwtUtil.getMemberIdFromToken(bearerToken.replace("Bearer ", ""));
+        MemberEntity member = memberRepository.findByMemberId(memberId).orElse(null);
+
+        if (member != null) {
+            // DB 업데이트(소셜 타입 등 필드 제거)
+            member.setSocialType(null);
+            member.setSocialAccountId(null);
+            member.setMemberEndstatus("Y");
+            member.setMemberEnddate(LocalDateTime.now());
+            memberRepository.save(member);
+        }
+      }
+        /** 구글 사용자 객체 */
+        record GoogleUser(String sub, String name, String email, String picture) {
+    }
 }
 
 

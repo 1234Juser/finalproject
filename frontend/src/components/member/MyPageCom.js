@@ -18,9 +18,11 @@ import {
 } from '../../style/member/MyPageStyle';
 import { FaUser, FaPhone, FaLock, FaEnvelope, FaIdCard} from "react-icons/fa6";
 import { SiKakaotalk} from "react-icons/si";
+import { FaGoogle } from "react-icons/fa6";   // 구글 아이콘 추가
 
 
-function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink }) {
+
+function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink, onGoogleUnlink }) {
 
     const [editMode, setEditMode] = useState(false);
     const [form, setForm] = useState(memberData);
@@ -50,6 +52,8 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink 
     if (!memberData) return <div>로딩중...</div>;
     //카카오 소셜로그인 여부
     const isKakaoUser = memberData?.socialType === "kakao";
+    const isGoogleUser = memberData?.socialType === "google"; // 구글 소셜 여부
+
 
     // 마스킹 처리
     const phoneMasked = memberData.memberPhone?.replace(/(\d{3})\d{2,3}(\d{3,4})/, '$1****$2');
@@ -163,6 +167,25 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink 
                                         카카오로그인 연동중인 계정
                                     </span>
                                 )}
+                                {/* 구글 연동뱃지 */}
+                                {isGoogleUser && (
+                                    <span style={{
+                                        marginLeft: 10,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        background: "#fff",
+                                        color: "#181600",
+                                        borderRadius: "12px",
+                                        fontWeight: "bold",
+                                        fontSize: "15px",
+                                        border: "1px solid #dadce0",
+                                        padding: "2px 12px",
+                                        gap: "6px"
+                                    }}>
+                                    <FaGoogle style={{ fontSize: "18px", color: "#ea4335" }} />
+                                    구글로그인 연동중인 계정
+                                </span>
+                                )}
                             </div>
                             <button style={profileButton} onClick={handleProfileImageBtnClick}
                             type = "button">프로필 이미지 변경</button>
@@ -208,6 +231,14 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink 
                                 카카오 연동 해제
                             </button>
                             )}
+                        {isGoogleUser && (
+                            <button
+                                style={{...profileButton, background: "#fff", color: "#ea4335", border: "1px solid #dadce0", marginTop: 12}}
+                                onClick={onGoogleUnlink}
+                                type="button">
+                                구글 연동 해제
+                            </button>
+                        )}
                     </div>
                 </section>
 

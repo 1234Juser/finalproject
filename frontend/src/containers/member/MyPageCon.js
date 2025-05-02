@@ -81,7 +81,7 @@ function MyPageCon() {
             alert("프로필 이미지 변경에 실패했습니다.");
         }
     };
-
+    //카카오연동해제
     const handleKakaoUnlink = async () => {
         if(!window.confirm("카카오 연동을 해제하시겠습니까?")) return;
         const token = localStorage.getItem("accessToken");
@@ -97,11 +97,44 @@ function MyPageCon() {
             //토큰 삭제 및 로그인 이동
             localStorage.removeItem("accessToken");
             localStorage.removeItem("kakaoAccessToken");
-            navigate("/login");
+            navigate("/");
         }catch(err){
             alert("카카오 연동 해제에 실패했습니다.");
         };
     }
+    //구글로그인 연동해제
+    const handleGoogleUnlink = async () => {
+        if(!window.confirm("구글 연동을 해제하시겠습니까?")) return;
+        const token = localStorage.getItem("accessToken");
+        const googleToken = localStorage.getItem("googleAccessToken"); // 로그인시 저장해야 함
+        try {
+            await axios.post("/oauth/google/unlink",
+                { accessToken: googleToken },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert("구글 연동이 해제되었습니다.");
+            // 연동 토큰 및 jwt 삭제 및 로그인 이동
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("googleAccessToken");
+            // 구글 계정도 완전히 로그아웃 (팝업 또는 현재창 이동 방식 중 택1)
+            // 1) 팝업으로 로그아웃
+            const logoutWindow = window.open(
+                "https://accounts.google.com/Logout",
+                "_blank",
+                "width=500,height=600"
+            );
+            // 2) 또는, 직접 이동시키고 싶다면
+            // window.location.href = "https://accounts.google.com/Logout";
+            // 그리고 메인으로 이동
+            setTimeout(() => {
+                if (logoutWindow) logoutWindow.close(); // 팝업창 닫기
+                // 앱 메인 이동
+                navigate("/");
+            }, 1200); // 로그아웃 약간의 대기 필요
+        } catch (err) {
+            alert("구글 연동 해제에 실패했습니다.");
+        }
+    };
 
     if (error) return <div>{error}</div>;
 
@@ -112,6 +145,7 @@ function MyPageCon() {
             onEditProfileImage={handleEditProfileImage}
             onEditInfo={handleEditInfo}
             onKakaoUnlink = {handleKakaoUnlink}
+            onGoogleUnlink={handleGoogleUnlink}
         />
     );
 }
