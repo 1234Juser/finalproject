@@ -20,8 +20,8 @@ import WishGroupPage from "./pages/wish/WishGroupPage";
 import WishListPage from "./pages/wish/WishListPage";
 import {ToastContainer} from "react-toastify";
 import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
-import WishListPage from "./pages/wish/WishListPage";
 import AdminMemberListPage from "./pages/member/AdminMemberListPage";
+
 // import WishListPage from "./pages/wish/WishListPage";
 
 function App() {
