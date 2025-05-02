@@ -102,7 +102,7 @@ const Right = styled.div`
     justify-content: flex-end;
 `;
 
-function WishListCom({ wishList, onDeleteWish, selectedGroupCode, groupTitle }) {
+function WishListCom({ wishList, onDeleteWish, selectedGroupCode, groupTitle, onClickProduct }) {
     if (!selectedGroupCode) {
         return <p style={{ padding: "2rem" }}>선택된 그룹이 없어요. 먼저 그룹을 선택해주세요.</p>;
     }
@@ -127,7 +127,10 @@ function WishListCom({ wishList, onDeleteWish, selectedGroupCode, groupTitle }) 
                             </Left>
                             <Center>
                                 <div>
-                            <Title>{item.productTitle || `상품코드 ${item.productCode}`}</Title>
+                            <Title onClick={() => onClickProduct(item.productUid)}
+                                    style={{ cursor: "pointer" }}>
+                            {item.productTitle || `상품코드 ${item.productCode}`}
+                            </Title>
                                     <p style={{ fontSize: "13px", color: "#999", marginTop: "0.3rem" }}>
                                         ⭐ {item.reviewAvg?.toFixed(1) || "0.0"}점 ({item.reviewCount ?? 0}개)
                                     </p>
