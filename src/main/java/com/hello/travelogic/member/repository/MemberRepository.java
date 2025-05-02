@@ -18,6 +18,9 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     //비밀번호찾기
     Optional<MemberEntity> findByMemberNameAndMemberIdAndMemberEmail(String memberName, String memberId, String memberEmail);
     //소셜로그인(카카오)
-    Optional<MemberEntity> findBySocialTypeAndSocialAccountId(String socialType, Integer socialAccountId);
+    Optional<MemberEntity> findBySocialTypeAndSocialAccountId(String socialType,  Long socialAccountId);
+    //소셜로그인(구글)
+    Optional<MemberEntity> findByMemberEmail(String email);
+
 
 }

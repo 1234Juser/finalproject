@@ -2,6 +2,8 @@ import {useLocation, useNavigate} from "react-router-dom";
 import { useEffect, useState } from "react";
 import HeaderCom from "../../components/common/HeaderCom";
 
+
+
 function HeaderCon() {
     
     const navigate = useNavigate();
@@ -33,6 +35,8 @@ function HeaderCon() {
 
 
     const handleLogout = () => {
+        const loginType = localStorage.getItem("loginType");
+        localStorage.removeItem("loginType");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("memberName");
         localStorage.removeItem("memberProfileImageUrl");
@@ -42,6 +46,19 @@ function HeaderCon() {
         setIsLoggedIn(false);
         setMemberName("");
         setProfileImg("/img/default-profile.jpg");
+        // 구글 로그아웃도 같이 실행
+        if(loginType === "google") {
+            const logoutWindow = window.open(
+                "https://accounts.google.com/Logout",
+                "_blank",
+                "width=500,height=600"
+            );
+            setTimeout(() => {
+                if(logoutWindow) logoutWindow.close();
+                navigate("/");
+            }, 1000);
+            return;
+        }
         navigate("/");
         // window.location.href = "/";
     };
@@ -49,7 +66,6 @@ function HeaderCon() {
     return (
         <>
             <HeaderCom isLoggedIn={isLoggedIn} profileImg={profileImg} handleLogout={handleLogout} memberName={memberName} />
-            
         </>
     )
 }

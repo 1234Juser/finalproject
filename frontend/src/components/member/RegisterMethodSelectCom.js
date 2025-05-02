@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import kakaoLoginImg from "../../components/member/img/kakao_login.png";
+import googleLoginImg from "../../components/member/img/google_login.png";
 
 const Wrapper = styled.div`
     display: flex;
@@ -77,27 +78,16 @@ const KakaoBtn = styled.img`
     border: 2px solid #fae100;
     background: #fffbe7;
     box-shadow: 0 2px 14px 0 #fae10050;
-    transition: box-shadow 0.16s, filter 0.18s;
+    transition: box-shadow 0.16s, filter 0.18s, transform 0.13s; // transform transition 추가
     position: relative;
     z-index: 1;
     &:hover {
         box-shadow: 0 6px 24px 0 #fae10070;
         filter: brightness(0.96);
+        transform: translateY(-2px) scale(1.03); // 일반 회원가입과 동일
     }
 `;
 
-const GoogleBtn = styled.div`
-    width: 270px; height: 48px;
-    background: #e0e0e0;
-    color: #8a8a8a;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 12px;
-    font-size: 16px; font-weight: 700;
-    cursor: not-allowed;
-    opacity: 0.54;
-    box-shadow: 0 2px 10px 0 #cccccc30;
-    letter-spacing: 0.2px;
-`;
 
 
 const Tip = styled.div`
@@ -124,6 +114,33 @@ const MethodBox = styled.div`
     align-items: center;
 `;
 
+const GoogleBtnWrap = styled.div`
+    width: 270px;
+    position: relative;
+    display: flex; justify-content: center;
+    margin-bottom: 4px;
+`;
+
+const GoogleBtn = styled.img`
+    cursor: pointer;
+    width: 270px;
+    height: 48px;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    background: #fff;
+    box-shadow: 0 2px 14px 0 #e0e0e060;
+    transition: box-shadow 0.16s, filter 0.18s, transform 0.13s; // transform transition 추가
+    position: relative;
+    z-index: 1;
+    &:hover {
+        box-shadow: 0 6px 24px 0 #bdbdbd90;
+        filter: brightness(0.97);
+        transform: translateY(-2px) scale(1.03); // 일반 회원가입과 동일
+    }
+`;
+
+
+
 
 function RegisterMethodSelectCom() {
     const navigate = useNavigate();
@@ -132,9 +149,23 @@ function RegisterMethodSelectCom() {
     const handleKakaoLogin = () => {
         window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=14194a0a23cf74ec0bc6c0b2ba676489&redirect_uri=http://localhost:3000/oauth/kakao/callback&prompt=login`
             .replace(/\s+/g, '');
-
-
     }
+    // 구글 로그인 redirect
+    const handleGoogleLogin = () => {
+        const GOOGLE_CLIENT_ID = "981822033334-r6u3d855k6gds83h9dtd8p327m6bfcu3.apps.googleusercontent.com";
+        const GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth/google/callback";
+
+        const oauthUrl =
+            `https://accounts.google.com/o/oauth2/v2/auth?` +
+            `response_type=code&` +
+            `client_id=${GOOGLE_CLIENT_ID}&` +
+            `redirect_uri=${encodeURIComponent(GOOGLE_REDIRECT_URI)}&` +
+            `scope=openid%20email%20profile&` +
+            `access_type=offline&` +
+            `prompt=login`;
+
+        window.location.href = oauthUrl;
+    };
 
     return (
         <Wrapper>
@@ -145,7 +176,13 @@ function RegisterMethodSelectCom() {
                 <KakaoBtnWrap>
                     <KakaoBtn src={kakaoLoginImg} alt="카카오로 시작하기" onClick={handleKakaoLogin} />
                 </KakaoBtnWrap>
-                <GoogleBtn>구글 계정(준비중)</GoogleBtn>
+                <GoogleBtnWrap>
+                    <GoogleBtn
+                        src={googleLoginImg}
+                        alt="구글로 시작하기"
+                        onClick={handleGoogleLogin}
+                    />
+                </GoogleBtnWrap>
             </ButtonGroup>
             <Tip>
                 원하는 방식으로 회원가입 및 로그인이 가능합니다.<br/>

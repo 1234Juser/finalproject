@@ -17,7 +17,7 @@ public class MemberDTO {
 
     // 소셜 로그인 관련
     private String socialType;
-    private Integer socialAccountId;
+    private Long socialAccountId;
 
 
     // DTO에는 권한 목록 등은 포함하지 않음.
