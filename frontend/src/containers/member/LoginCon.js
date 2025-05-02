@@ -49,6 +49,8 @@ function LoginCon(){
             localStorage.setItem("memberProfileImageUrl", memberProfileImageUrl);
             localStorage.setItem("roles", JSON.stringify(roles));
             localStorage.setItem("memberCode", memberCode);
+            localStorage.setItem("loginType", "local");
+
 
             //로그인 성공시 메인페이지로 이동
             navigate("/");
@@ -68,6 +70,22 @@ function LoginCon(){
         window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=14194a0a23cf74ec0bc6c0b2ba676489&redirect_uri=http://localhost:3000/oauth/kakao/callback&prompt=login`
             .replace(/\s+/g, '');
     }
+    // 구글 로그인 핸들러 추가
+    const handleGoogleLogin = () => {
+        const googleClientId = "981822033334-r6u3d855k6gds83h9dtd8p327m6bfcu3.apps.googleusercontent.com";
+        const redirectUri = "http://localhost:3000/oauth/google/callback";
+        const scope = "profile email";
+        const authUrl =
+            `https://accounts.google.com/o/oauth2/v2/auth` +
+            `?client_id=${googleClientId}` +
+            `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+            `&response_type=code` +
+            `&scope=${encodeURIComponent(scope)}` +
+            `&access_type=offline` +
+            `&prompt=login`;
+        window.location.href = authUrl;
+    };
+
 
 
     return (
@@ -83,6 +101,7 @@ function LoginCon(){
                 onClickFindPw={()=> setShowFindPwMethod(true)}
                 onClickRegister={()=> navigate("/registerselect")}
                 onClickKakao={handleKakaoLogin}
+                onClickGoogle={handleGoogleLogin}
             />
             {showFindId && (
                 <Modal onClose={()=> setShowFindId(false)}>

@@ -15,12 +15,13 @@ import lombok.Setter;
 public class ProductThemeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pt_id", nullable = false)
     private Long ptId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_code", nullable = false)
-    private ProductEntity productCode;
+    private ProductEntity product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_code", nullable = false)

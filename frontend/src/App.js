@@ -19,6 +19,8 @@ import KakaoCallbackPage from "./pages/member/KakaoCallbackPage";
 import WishGroupPage from "./pages/wish/WishGroupPage";
 import WishListPage from "./pages/wish/WishListPage";
 import {ToastContainer} from "react-toastify";
+import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
+import WishListPage from "./pages/wish/WishListPage";
 
 function App() {
   return (
@@ -27,20 +29,30 @@ function App() {
 
           <Routes>
               <Route path="/" element={<MainPage />} />
+              {/*회원가입/로그인*/}
               <Route path="/registerselect" element={<RegisterMethodSelectPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
-          <Route path="/wish/groups" element={<WishGroupPage />} />
-          <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
+              <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
+          {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
+              <Route path="/wish/groups" element={<WishGroupPage />} />
+              <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
+                <Route path="/wish/groups" element={<WishGroupPage />} />
+                <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
+
+
+              {/*  회원마이페이지*/}
               <Route path="/mypage">
                 <Route path="" element={<MyPagePage />} />
                 <Route path="withdrawl" element={<WithdrawlPage />} />
               </Route>
+              {/*관리자마이페이지*/}
               <Route path="/adminmypage">
                 <Route path="" element={<AdminMyPagePage />} />
                 {/*<Route path="product" element={<ProductRegPage/>} />*/}
               </Route>
+
             <Route path="/domestic" element={<DomesticPage/>}/>
               <Route path="/international" element={<InternationalPage />} />
               <Route path="/products">

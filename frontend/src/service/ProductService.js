@@ -204,7 +204,6 @@ const toggleWish = async (product) => {
     }
 };
 
-
 export {
     getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
     getProductsByCountry, getProductsByCity, getProductDetail,

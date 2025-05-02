@@ -9,7 +9,7 @@ import com.hello.travelogic.product.repo.CityRepo;
 import com.hello.travelogic.product.repo.CountryRepo;
 import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.product.repo.ThemeRepo;
-//import com.hello.travelogic.utils.FileUploadUtils;
+import com.hello.travelogic.utils.FileUploadUtils;
 import com.hello.travelogic.review.repo.ReviewRepo;
 import com.hello.travelogic.wish.repo.WishRepo;
 import jakarta.persistence.EntityNotFoundException;
@@ -177,11 +177,11 @@ public class ProductService {
 */
 
             // 4. 썸네일 파일 저장 및 DTO에 파일명 생성
-//            if (productThumbnail != null && !productThumbnail.isEmpty()) {
-//                String thumbnailfileName = FileUploadUtils.saveNewFile(productThumbnail);
-//                log.debug("저장된 썸네일 파일명 : {}", thumbnailfileName);
-//                productDTO.setProductThumbnail(thumbnailfileName); // DTO에 파일명 설정
-//            }
+            if (productThumbnail != null && !productThumbnail.isEmpty()) {
+                String thumbnailfileName = FileUploadUtils.saveNewFile(productThumbnail);
+                log.debug("저장된 썸네일 파일명 : {}", thumbnailfileName);
+                productDTO.setProductThumbnail(thumbnailfileName); // DTO에 파일명 설정
+            }
 
             // 5. productEntity 생성 및 설정
             ProductEntity productE = new ProductEntity(productDTO);

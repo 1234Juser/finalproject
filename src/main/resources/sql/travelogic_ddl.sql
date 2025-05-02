@@ -43,7 +43,7 @@ CREATE TABLE tbl_member
 (
     member_code INT AUTO_INCREMENT NOT NULL COMMENT '회원번호',
     member_name VARCHAR(20) NOT NULL COMMENT '이름',
-    member_id VARCHAR(20) NOT NULL UNIQUE COMMENT '아이디',
+    member_id VARCHAR(255) NOT NULL UNIQUE COMMENT '아이디',
     member_password VARCHAR(255) NULL COMMENT '비밀번호(소셜로그인은비밀번호x)',
     member_email VARCHAR(30) NOT NULL UNIQUE COMMENT '이메일',
     member_phone VARCHAR(20) NOT NULL COMMENT '연락처',
