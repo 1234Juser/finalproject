@@ -18,6 +18,7 @@ public class LoginResponseDTO {
     private List<String> roles;        // 권한 리스트 전달
     private Long memberCode;
     private String kakaoAccessToken;
+    private String googleAccessToken;
 
     //필요시 추가 정보 반환가능
 }

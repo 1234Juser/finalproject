@@ -12,7 +12,14 @@ function WishCon({memberCode, groupCode}) {
     const isGroupView = !groupCode;
     const isListView = !!groupCode && !isNaN(parseInt(groupCode, 10));
     const selectedGroup = groups.find(group => group.groupCode === selectedGroupCode);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
+    // <ThumbImg />클릭시 해당 그룹에 담긴 위시상품들 리스트 페이지로 이동한다.
+    const handleClickGroup = (groupCode) => {
+        navigate(`/wish/groups/${groupCode}/items`);
+    };
+    const handleClickProduct = (productUid) => {
+        navigate(`/products/${productUid}`);
+    };
 
     useEffect(() => {
         if (!memberCode || isNaN(memberCode)) return;
@@ -82,7 +89,7 @@ function WishCon({memberCode, groupCode}) {
     <>
         {isGroupView && (<WishGroupCom
             groups={groups}
-            onSelect={handleGroupClick}
+            onClickGroup={handleClickGroup}
             onDeleteGroup={handleDeleteGroup}
         />)}
         {isListView && (<WishListCom
@@ -91,6 +98,7 @@ function WishCon({memberCode, groupCode}) {
             onDeleteWish={handleDeleteWish}
             selectedGroupCode={selectedGroupCode}
             groupTitle={selectedGroup?.groupTitle}
+            onClickProduct={handleClickProduct}
         />)}
     </>
     );

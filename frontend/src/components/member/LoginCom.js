@@ -12,6 +12,7 @@ import {
 } from "../../style/member/LoginStyle";
 import styled from "styled-components";
 import kakaoLoginImg from "../../components/member/img/kakao_login.png";
+import googleLoginImg from "./img/google_login.png";
 
 const KakaoBtnWrap = styled.div`
     width: 100%;
@@ -55,6 +56,49 @@ const KakaoBtn = styled.img`
     }
 `;
 
+const GoogleBtnWrap = styled.div`
+    width: 100%;
+    max-width: 340px;
+    position: relative;
+    display: flex; justify-content: center;
+    margin: 12px auto 0 auto;
+    &:before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        background: #ffffff44;
+        z-index: 0;
+        filter: blur(6px);
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    &:hover:before {
+        opacity: 1;
+        filter: blur(10px);
+    }
+`;
+
+const GoogleBtn = styled.img`
+    cursor: pointer;
+    width: 100%;
+    max-width: 340px;
+    height: 48px;             
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #4285f4;
+    background: #fff;
+    box-shadow: 0 2px 14px 0 #4285f430;
+    transition: box-shadow 0.16s, filter 0.18s;
+    position: relative;
+    z-index: 1;
+    &:hover {
+        box-shadow: 0 6px 24px 0 #4285f470;
+        filter: brightness(0.96);
+    }
+`;
+
+
 function LoginCom({
                       memberId,
                       memberPassword,
@@ -65,8 +109,8 @@ function LoginCom({
                       onClickFindId,
                       onClickFindPw,
                       onClickRegister,
-                      onClickKakao
-
+                      onClickKakao,
+                      onClickGoogle
                   }) {
     return (
         <LoginFormContainer>
@@ -97,6 +141,10 @@ function LoginCom({
                 <KakaoBtnWrap>
                     <KakaoBtn src={kakaoLoginImg} alt="카카오로 로그인" onClick={onClickKakao} />
                 </KakaoBtnWrap>
+                <GoogleBtnWrap>
+                    <GoogleBtn src={googleLoginImg} alt="구글로 로그인" onClick={onClickGoogle} />
+                </GoogleBtnWrap>
+
             </Form>
             <ActionRow>
                 <TextButton type="button" onClick={onClickFindId}>아이디 찾기</TextButton>

@@ -11,6 +11,7 @@ import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.product.repo.ThemeRepo;
 import com.hello.travelogic.utils.FileUploadUtils;
 import com.hello.travelogic.review.repo.ReviewRepo;
+import com.hello.travelogic.wish.repo.WishRepo;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +43,8 @@ public class ProductService {
     private ThemeRepo themeRepo;
     @Autowired
     private ReviewRepo reviewRepo;
+    @Autowired
+    private WishRepo wishRepo;
 
     // 모든 Products 조회
     public List<ProductDTO> getProducts() {
@@ -95,12 +100,27 @@ public class ProductService {
     }
 
     // productUid를 기반으로 투어 상품 조회
-    public ProductDTO getProductsByUid(String productUid) {
+    public ProductDTO getProductsByUid(String productUid, Long memberCode) {
 
-        ProductEntity productEntity = productRepo.findByProductUid(productUid);
-        log.debug("productEntity : {}", productEntity);
-        if(productEntity != null) {
-            return new ProductDTO(productEntity);
+//        ProductEntity productEntity = productRepo.findByProductUid(productUid);
+//        log.debug("productEntity : {}", productEntity);
+//        if(productEntity != null) {
+        // 찜 여부 확인 기능 추가하면서 수정
+        Optional<ProductEntity> optional = productRepo.findByProductUid(productUid);
+        if (optional.isPresent()) {
+            ProductEntity product = optional.get();
+            log.debug("productEntity : {}", product);
+
+            boolean isWished = wishRepo.existsByMember_MemberCodeAndProduct_ProductCode(
+                    memberCode, product.getProductCode()
+            );
+            log.debug("isWished: {}", isWished);
+
+            // DTO로 변환하고 찜 상태 세팅
+            ProductDTO dto = new ProductDTO(product);
+            dto.setWished(isWished);
+
+            return dto;
         }
             return null;
     }
@@ -230,4 +250,20 @@ public class ProductService {
         productRepo.save(product);
     }
 
+    public ProductDTO getProductDetail(String productUid, Long memberCode) {
+        ProductEntity product = productRepo.findByProductUid(productUid)
+                .orElseThrow(() -> new NoSuchElementException("상품 없음"));
+
+        log.info("찜 여부 체크: memberCode={}, productCode={}", memberCode, product.getProductCode());
+
+        boolean isWished = wishRepo.existsByMember_MemberCodeAndProduct_ProductCode(memberCode, product.getProductCode());
+
+        log.info("찜 여부 결과: {}", isWished);
+
+        ProductDTO dto = new ProductDTO(product);
+
+        dto.setWished(isWished);
+
+        return dto;
+    }
 }

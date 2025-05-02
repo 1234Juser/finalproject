@@ -25,6 +25,8 @@ export const initialState = {
         };
       case 'RESET':
         return initialState;
+      case "TOGGLE_WISH":
+        return { ...state, isWished: action.payload };
       default:
         return state;
     }

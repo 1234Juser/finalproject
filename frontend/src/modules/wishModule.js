@@ -19,13 +19,7 @@ const reducer = (state, action) => {
             return { ...state, loading: action.data };
         case "SET_ERROR":
             return { ...state, error: action.data };
-        // case "LOADING":
-        //     return {...state, loading : true, error : null};
-        // case "FINISHED" :
-        //     return {...state, loading : false, error : null};
-        // case "ERROR" :
-        //     return {...state, loading : false, error : action.error};
-        // default :
+        default :
             return state;
     }
 }

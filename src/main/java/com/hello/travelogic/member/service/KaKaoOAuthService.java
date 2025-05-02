@@ -122,56 +122,155 @@ public class KaKaoOAuthService {
         }
         AuthorityEntity userAuthority = authorityRepository.findByAuthorityName("ROLE_USER");
 
-        Optional<MemberEntity> optionalMember = memberRepository.findBySocialTypeAndSocialAccountId("kakao", kakaoId.intValue());
-        MemberEntity newMember;
-        if (optionalMember.isEmpty()) {
-            newMember = MemberEntity.builder()
-                    .memberName(nickname)
-                    .memberId("kakao_" + kakaoId)
-                    .memberEmail(email)
-                    .memberPassword("")
-                    .memberRegisterdate(LocalDateTime.now())
-                    .memberEndstatus("N")
-                    .socialType("kakao")
-                    .socialAccountId(kakaoId.intValue())
-                    .memberProfileImageUrl(profileImageUrl)
-                    .build();
-            newMember = memberRepository.save(newMember);
+        // 1. 카카오 소셜타입+ID로 먼저 회원 찾기
+        Optional<MemberEntity> optionalMember = memberRepository.findBySocialTypeAndSocialAccountId("kakao", kakaoId);
+
+        if (optionalMember.isPresent()) {
+            MemberEntity member = optionalMember.get();
+            if (!"Y".equals(member.getAdminActive())) {
+                    throw new RuntimeException("관리자에 의해 비활성화된 계정입니다.");
+                }
+            // (1) 탈퇴 상태면 재활성
+            if ("Y".equals(member.getMemberEndstatus())) {
+                updateMemberAsRejoinedFromKakao(member, nickname, email, profileImageUrl, kakaoId);
+                member = memberRepository.save(member);
+
+                // 권한 체크 및 부여
+                boolean alreadyHasRole = member.getRoles() != null &&
+                        member.getRoles().stream()
+                                .anyMatch(role ->
+                                        role.getAuthority() != null &&
+                                                role.getAuthority().getAuthorityCode().equals(userAuthority.getAuthorityCode())
+                                );
+                if (!alreadyHasRole) {
+                    MemberRoleEntity.MemberRoleId roleId = new MemberRoleEntity.MemberRoleId(
+                            member.getMemberCode(),
+                            userAuthority.getAuthorityCode()
+                    );
+                    MemberRoleEntity memberRole = MemberRoleEntity.builder()
+                            .id(roleId)
+                            .member(member)
+                            .authority(userAuthority)
+                            .build();
+                    memberRoleRepository.save(memberRole);
+                }
+
+                LoginRequestDTO loginRequest = LoginRequestDTO.builder()
+                        .memberId("kakao_" + kakaoId)
+                        .memberPassword("")
+                        .build();
+                LoginResponseDTO responseDTO = memberService.login(loginRequest);
+                responseDTO.setKakaoAccessToken(accessToken);
+                return responseDTO;
+            } else {
+                // (2) 이미 활성 상태면
+                LoginRequestDTO loginRequest = LoginRequestDTO.builder()
+                        .memberId("kakao_" + kakaoId)
+                        .memberPassword("")
+                        .build();
+                LoginResponseDTO responseDTO = memberService.login(loginRequest);
+                responseDTO.setKakaoAccessToken(accessToken);
+                return responseDTO;
+            }
         } else {
-            newMember = optionalMember.get();
-        }
+            // 2. 카카오 계정이 처음이라면, 이메일로 중복 회원 여부 추가 체크
+            Optional<MemberEntity> emailCheckMember = memberRepository.findByMemberEmail(email);
+            if (emailCheckMember.isPresent()) {
+                MemberEntity member = emailCheckMember.get();
+                // (a) 카카오+탈퇴 상태: 재가입 허용
+                if ("Y".equals(member.getMemberEndstatus()) && "kakao".equalsIgnoreCase(member.getSocialType())) {
+                    updateMemberAsRejoinedFromKakao(member, nickname, email, profileImageUrl, kakaoId);
+                    member = memberRepository.save(member);
 
-        boolean alreadyHasRole = newMember.getRoles() != null &&
-                newMember.getRoles().stream()
-                        .anyMatch(role ->
-                                role.getAuthority() != null &&
-                                        role.getAuthority().getAuthorityCode().equals(userAuthority.getAuthorityCode())
+                    // 권한 체크 및 부여
+                    boolean alreadyHasRole = member.getRoles() != null &&
+                            member.getRoles().stream()
+                                    .anyMatch(role ->
+                                            role.getAuthority() != null &&
+                                                    role.getAuthority().getAuthorityCode().equals(userAuthority.getAuthorityCode())
+                                    );
+                    if (!alreadyHasRole) {
+                        MemberRoleEntity.MemberRoleId roleId = new MemberRoleEntity.MemberRoleId(
+                                member.getMemberCode(),
+                                userAuthority.getAuthorityCode()
                         );
+                        MemberRoleEntity memberRole = MemberRoleEntity.builder()
+                                .id(roleId)
+                                .member(member)
+                                .authority(userAuthority)
+                                .build();
+                        memberRoleRepository.save(memberRole);
+                    }
 
-        if (!alreadyHasRole) {
-            MemberRoleEntity.MemberRoleId roleId = new MemberRoleEntity.MemberRoleId(
-                    newMember.getMemberCode(),
-                    userAuthority.getAuthorityCode()
-            );
+                    LoginRequestDTO loginRequest = LoginRequestDTO.builder()
+                            .memberId("kakao_" + kakaoId)
+                            .memberPassword("")
+                            .build();
+                    LoginResponseDTO responseDTO = memberService.login(loginRequest);
+                    responseDTO.setKakaoAccessToken(accessToken);
+                    return responseDTO;
+                } else {
+                    // (b) 활성회원이거나, 일반/구글 계정 사용자는 중복 에러
+                    throw new IllegalStateException("이미 해당 이메일로 가입된 회원이 존재합니다. 카카오 계정만 연동/재가입 할 수 있습니다.");
+                }
+            } else {
+                // 3. 정말 신규라면 신규회원 생성
+                MemberEntity newMember = MemberEntity.builder()
+                        .memberName(nickname)
+                        .memberId("kakao_" + kakaoId)
+                        .memberEmail(email)
+                        .memberPassword("")
+                        .memberRegisterdate(LocalDateTime.now())
+                        .memberEndstatus("N")
+                        .socialType("kakao")
+                        .socialAccountId(kakaoId)
+                        .memberProfileImageUrl(profileImageUrl)
+                        .build();
+                newMember = memberRepository.save(newMember);
 
-            MemberRoleEntity memberRole = MemberRoleEntity.builder()
-                    .id(roleId)
-                    .member(newMember)
-                    .authority(userAuthority)
-                    .build();
+                // 권한 체크 및 부여
+                boolean alreadyHasRole = newMember.getRoles() != null &&
+                        newMember.getRoles().stream()
+                                .anyMatch(role ->
+                                        role.getAuthority() != null &&
+                                                role.getAuthority().getAuthorityCode().equals(userAuthority.getAuthorityCode())
+                                );
+                if (!alreadyHasRole) {
+                    MemberRoleEntity.MemberRoleId roleId = new MemberRoleEntity.MemberRoleId(
+                            newMember.getMemberCode(),
+                            userAuthority.getAuthorityCode()
+                    );
+                    MemberRoleEntity memberRole = MemberRoleEntity.builder()
+                            .id(roleId)
+                            .member(newMember)
+                            .authority(userAuthority)
+                            .build();
+                    memberRoleRepository.save(memberRole);
+                }
 
-            memberRoleRepository.save(memberRole);
+                LoginRequestDTO loginRequest = LoginRequestDTO.builder()
+                        .memberId("kakao_" + kakaoId)
+                        .memberPassword("")
+                        .build();
+                LoginResponseDTO responseDTO = memberService.login(loginRequest);
+                responseDTO.setKakaoAccessToken(accessToken);
+                return responseDTO;
+            }
         }
+    }
 
-        LoginRequestDTO loginRequest = LoginRequestDTO.builder()
-                .memberId("kakao_" + kakaoId)
-                .memberPassword("")
-                .build();
-
-        LoginResponseDTO responseDTO = memberService.login(loginRequest);
-        responseDTO.setKakaoAccessToken(accessToken); // 카카오 accessToken값을 DTO에 넣는다
-        return responseDTO;
-
+    // ---- 유틸 메서드 (Service 내 private static 등으로 선언) ----
+    private void updateMemberAsRejoinedFromKakao (
+            MemberEntity member, String nickname, String email, String profileImageUrl, Long kakaoId){
+        member.setMemberEndstatus("N");
+        member.setMemberEnddate(null);
+        member.setMemberRegisterdate(LocalDateTime.now());
+        // 아래 정보 모두 갱신
+        member.setMemberName(nickname);
+        member.setMemberEmail(email);
+        member.setMemberProfileImageUrl(profileImageUrl);
+        member.setSocialType("kakao");
+        member.setSocialAccountId(kakaoId);
     }
 
     //카카오 연동해제
@@ -214,8 +313,8 @@ public class KaKaoOAuthService {
 
 
         // (API 성공시에만 DB 탈퇴/연동 해제)
-        member.setSocialType(null);
-        member.setSocialAccountId(null);
+//        member.setSocialType(null);
+//        member.setSocialAccountId(null);
         member.setMemberEnddate(LocalDateTime.now());
         member.setMemberEndstatus("Y");
         memberRepository.save(member);

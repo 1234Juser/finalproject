@@ -46,9 +46,13 @@ public class ProductController {
 
     // 투어 상품 상세 페이지
     @GetMapping("/{productUid}")
-    public ResponseEntity getProductDetail(@PathVariable("productUid") String productUid) {
+    public ResponseEntity<ProductDTO> getProductDetail(@PathVariable("productUid") String productUid,
+                                         @RequestParam("memberCode") Long memberCode) {
         log.debug("get product detail : {}", productUid);
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByUid(productUid));
+        log.debug("memberCode: {}", memberCode);
+        ProductDTO dto = productService.getProductDetail(productUid, memberCode);
+//        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByUid(productUid));
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
 
