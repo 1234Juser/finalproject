@@ -157,25 +157,27 @@ const getThemes = async () => {
 
 // 상품 등록 함수
 const ProductRegist = async (formData) => {
+    // console.log("여기서 formData 확인========>", formData)
     try {
         const response = await fetch(`${path}/products/register`, {
             method : "POST",
+            body : formData
             // headers: { 'Content-Type': 'multipart/form-data' },
             // body : JSON.stringify(formData),
-            body : formData
         })
-        console.log("response", response);
+        console.log("응답 확인------>", response);
 
         if( response.ok) {
-            const result = await response.json();
-            alert(`등록 성공 : ${result.message}`);
+            const result = await response.text();
+            return { ok: true, message: result };
         } else {
-            const errorData = await response.json();
-            alert(`등록 실패: ${errorData.message}`);
+            const errorData = await response.json();  // 실패시 JSON 응답 처리
+            return { ok: false, message: errorData.message };
         }
 
     } catch (error) {
         console.error("등록 에러 발생 !!!", error);
+        return { ok: false, message: "등록 중 오류가 발생했습니다." };
         
     }
 }
