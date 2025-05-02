@@ -1,13 +1,14 @@
 import ProductRegCom from "../../components/product/ProductRegCom";
 import {useState, useEffect} from "react";
 import { ProductRegist, getRegions, getCountryList, getCitiesByRegion, getCitiesByCountry, getThemes } from "../../service/ProductService";
+import { useNavigate } from "react-router-dom";
 
 function ProductRegCon() {
 
     // 오늘 날짜를 'YYYY-MM-DD' 형식으로 가져오기
     const today = new Date().toISOString().split("T")[0];
     
-    const [formData, setFormData] = useState({
+    const [formInput, setFormInput] = useState({
         productTitle: "",
         productContent: "",
         productAdult: "",
@@ -18,8 +19,8 @@ function ProductRegCon() {
         productMaxParticipants: "",
         productStatus: null,
         productType: null,
-        // regionCode : "",
-        // regionId : "",
+        productThumbnail : null,
+        regionCode : "",
         countryId: "",
         cityId: "",
         themeCode: "",
@@ -28,27 +29,26 @@ function ProductRegCon() {
     const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [themes, setThemes] = useState([]);
+    const [uploadedFile, setUploadedFile] = useState(null);
+
+    const navigate = useNavigate();
 
 
     // 권역, 국가, 도시, 테마 데이터 불러오기
     useEffect(() => {
-        // console.log("regions 확인-------", regions);
-        console.log("-------formData 변경 확인하기-------", formData);
+        console.log("-------formInput 변경 확인하기-------", formInput);
         getThemes()
         .then( data => {
-            // console.log("테마 불러오고 data확인 -----> : ", data)
             setThemes(data);
         })
         .catch((err) => console.error(err))
-        // getRegions();
-        // fetchThemes();
-    }, [formData]);
+    }, [formInput]);
 
 
-    // formData 상태 관리
+    // formInput 상태 관리
     const handleFormChange = (name, value) => {
-        setFormData({
-            ...formData,
+        setFormInput({
+            ...formInput,
             [name]: value,
         });
     };
@@ -60,12 +60,11 @@ function ProductRegCon() {
             const data = await getRegions(regionType);
             setRegions(data);
             setCities([]);
-            setFormData((prev) => ({
+            setFormInput((prev) => ({
                 ...prev,
                 regionType,
-                regionId: "",
-                countryId: null,
-                cityId: null,
+                countryId: "",
+                cityId: "",
             }));
         } catch (error) {
             console.error("여행 유형 선택 시 권역 불러오기 실패: ", error);
@@ -80,10 +79,9 @@ function ProductRegCon() {
             const data = await getCitiesByRegion(regionCode);
             // console.log("getCitiesByRegion 받아오는 함수 결과", data);
             setCities(data);
-            setFormData((prev) => ({
+            setFormInput((prev) => ({
                 ...prev,
                 regionCode,
-                regionId: "",
                 countryId: "",
                 cityId: "",
             }));
@@ -100,10 +98,10 @@ function ProductRegCon() {
             const data = await getCountryList(regionCode);
             // console.log("getCountryList 받아오는 함수 결과", data);
             setCountries(data);
-            setFormData((prev) => ({
+            setFormInput((prev) => ({
                 ...prev,
                 regionCode,
-                regionId: "",
+                // regionId: "",
                 countryId: "",
                 cityId: "",
             }));
@@ -120,9 +118,9 @@ function ProductRegCon() {
             const data = await getCitiesByCountry(countryId);
             // console.log("getCitiesByCountry 받아오는 함수 결과", data);
             setCities(data);
-            setFormData((prev) => ({
+            setFormInput((prev) => ({
                 ...prev,
-                regionId: "",
+                // regionId: "",
                 countryId,
                 cityId: "",
             }));
@@ -132,93 +130,74 @@ function ProductRegCon() {
     }
 
 
-    // 도시 선택시 cityId를 formData에 저장
+    // 도시 선택시 cityId를 formInput에 저장
     const handleCityIdChange = (cityId) => {
         // console.log("여기서 cityId 확인...", cityId);
-        setFormData((prev) => ({
+        if (formInput.regionType === "DOMESTIC") {
+        setFormInput((prev) => ({
             ...prev,
+            countryId : 1,  // 대한민국
             cityId,
         }))
+        } else {
+            setFormInput((prev) => ({
+                ...prev,
+                cityId,
+            }));
+        }
     }
 
 
     // 테마 데이터 불러오기
     const handleThemesChange = (themeCode) => {
         // console.log("여기서 themeCode 확인...", themeCode);
-        setFormData((prev) => ({
+        setFormInput((prev) => ({
             ...prev,
             themeCode,
         }))
     }
 
 
+    // 파일 업로드 시 파일 이름은 formInput에, 실제 파일은 uploadedFile로 분리 저장
+    const handleFileSelect = (file) => {
+        // file : >>File 객체<< 그 자체임
+        if (file) {
+        setUploadedFile(file);
+        setFormInput((prev) => ({
+            ...prev,
+            productThumbnail: file.name,
+        }));
+        }
+    };
+
+
     const onSubmit = async (e) => {
         e.preventDefault(); 
 
-        
-        const formData = new FormData(e.target);
+        const formData = new FormData();
+        formData.append("productDTO", new Blob(
+            [JSON.stringify(formInput)], 
+            { 
+                type: "application/json" 
+            })
+        );
 
-        for (let pair of formData.entries()) {
-            console.log(pair[0], pair[1]); // 이게 다 나와야 정상
-        }
-    
-        
-        const file = formData.get("productThumbnail");
-        console.log("file 객체 확인...", file);
+        console.log("여기까지 formInput확인 : ", formInput);
 
-        if (file && file.name) {
-            console.log("업로드한 파일 이름:", file.name);
+        if (uploadedFile) {
+            formData.append("productThumbnail", uploadedFile);
         } else {
-            console.log("파일이 선택되지 않았습니다.");
+            console.warn("파일이 선택되지 않았어요!");
         }
 
-        console.log("폼 데이터:", formData);
         const res = await ProductRegist(formData);
-        console.log("register : ", res);
 
         if( res.ok) {
-            alert(await res.text());
-            // navigate("/");
+            alert(res.message);
+            navigate("/adminmypage");
         }else {
-            console.error("상품 등록 실패:", res);
+            console.error("상품 등록 실패:", res.message);
         }
-
-        console.log("register : ", res);
-
-        // try {
-        //     await ProductRegist(formData);
-        // } catch (error) {
-        //     console.error("상품 등록 실패:", error);
-        // }
-
-        /*
-                const form = e.target; // 폼 데이터를 다룸
-                const formData = {
-                    productTitle: form.productTitle.value,
-                    productContent: form.productContent.value,
-                    productAdult: form.productAdult.value,
-                    productChild: form.productChild.value,
-                    productStartDate: form.productStartDate.value,
-                    productEndDate: form.productEndDate.value,
-                    productMinParticipants: form.productMinParticipants.value,
-                    productMaxParticipants: form.productMaxParticipants.value,
-                    productStatus: form.productStatus.value,
-                    productType: form.productType.value,
-                    // File 업로드가 포함된 경우 필요 시 처리
-                    // productThumbnailFile: form.productThumbnailFile.files[0]
-                    countryId: form.countryId.value,
-                    cityId: form.cityId.value,
-                    themeCode: form.themeCode.value,
-
-                };
-
-                try {
-                    // ProductService에 등록 API 호출
-                    await ProductRegist(formData);
-                } catch (error) {
-                    console.error("상품 등록 중 에러 발생: ", error);
-                }
-        */
     };
 
 
@@ -229,9 +208,9 @@ function ProductRegCon() {
                 countries={countries}
                 cities={cities}
                 themes={themes}
-                formData={formData}
+                formInput={formInput}
                 today={today}
-                onChange={handleFormChange}
+                handleFormChange={handleFormChange}
                 onSubmit={onSubmit}
                 onRegionTypeChange={handleRegionTypeChange}
                 onCountryIdChange={handleCountryIdChange}
@@ -239,6 +218,8 @@ function ProductRegCon() {
                 onIntlCityIdChange={handleIntlCityIdChange}
                 handleCityIdChange={handleCityIdChange}
                 handleThemesChange={handleThemesChange}
+                handleFileSelect ={handleFileSelect}
+                
             />
 
             {/*<ProductRegCom onSubmit={onSubmit}*/}

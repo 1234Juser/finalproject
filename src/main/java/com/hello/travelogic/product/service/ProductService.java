@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -104,6 +105,7 @@ public class ProductService {
     // 상품 등록
     @Transactional
     public int registerProduct(ProductDTO productDTO, MultipartFile productThumbnail) {
+        log.debug("서비스에서 productDTO 확인 : {}", productDTO);
         int result = 1;
         try {
             // 1. 입력 받은 데이터 유효성 검증 및 엔티티 매핑
@@ -159,6 +161,13 @@ public class ProductService {
                 productDTO.setProductThumbnail(thumbnailfileName); // DTO에 파일명 설정
             }
 
+            log.debug("productThumbnail : {}", productThumbnail);
+            log.debug("productThumbnail.getOriginalFilename() : {}", productThumbnail.getOriginalFilename());
+            log.debug("productThumbnail.getSize() : {}", productThumbnail.getSize());
+            log.debug("productThumbnail.getContentType() : {}", productThumbnail.getContentType());
+            log.debug("productThumbnail.isEmpty() : {}", productThumbnail.isEmpty());
+
+
             // 5. productEntity 생성 및 설정
             ProductEntity productE = new ProductEntity(productDTO);
             productE.setCountryId(country);
@@ -169,6 +178,7 @@ public class ProductService {
             productE.setProductUid(newUid);
             productE.setProductThumbnail(productE.getProductThumbnail());     // ← DTO에 설정된 파일명 사용!!
 //            productE.setProductCode(newProductCode); // 생성된 product_code 설정
+
 
             // 6. 데이터 저장
             productRepo.save(productE);
