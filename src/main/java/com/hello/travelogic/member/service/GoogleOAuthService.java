@@ -69,6 +69,10 @@ public class GoogleOAuthService {
         MemberEntity member = memberRepository.findByMemberEmail(googleUser.email()).orElse(null);
 
         if (member != null) {
+            // 관리자 비활성화 계정인지 우선 체크
+            if (!"Y".equals(member.getAdminActive())) {
+                throw new RuntimeException("관리자에 의해 비활성화된 계정입니다."); // 혹은 CustomException
+            }
             if ("Y".equals(member.getMemberEndstatus())) {
                 // 탈퇴 계정 재가입 처리
                 member.setMemberEndstatus("N");

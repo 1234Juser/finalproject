@@ -53,6 +53,7 @@ CREATE TABLE tbl_member
     member_endstatus VARCHAR(20) NOT NULL DEFAULT 'N' COMMENT '탈퇴여부',
     social_type VARCHAR(255) NULL COMMENT '소셜종류(카카오, 구글)',
     social_account_id INT NULL COMMENT '서비스 내 사용자 식별자 (계정 ID 역할)',
+    admin_active VARCHAR(20) NULL COMMENT '관리자활성권한',
     CONSTRAINT pk_member_code PRIMARY KEY (member_code)
 ) ENGINE=INNODB COMMENT '회원정보' AUTO_INCREMENT = 1;
 
