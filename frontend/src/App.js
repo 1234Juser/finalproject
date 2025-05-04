@@ -23,7 +23,7 @@ import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
 import AdminMemberListPage from "./pages/member/AdminMemberListPage";
 import EventListPage from "./pages/event/EventListPage";
 import EventRegisterPage from "./pages/event/EventRegisterPage";
-import EventDetailPage from "./pages/event/EventDetailPage";
+import EventDetailPage from "./pages/event/EventDetailPage";r
 import AdminBookingPage from "./pages/reservation/AdminBookingPage";
 import MyBookingPage from "./pages/reservation/MyBookingPage";
 // import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
@@ -51,8 +51,8 @@ function App() {
               
               {/*  회원마이페이지*/}
               <Route path="/mypage">
-                <Route path="" element={<MyPagePage />} />
-                <Route path="withdrawl" element={<WithdrawlPage />} />
+                  <Route path="" element={<MyPagePage />} />
+                  <Route path="withdrawl" element={<WithdrawlPage />} />
               </Route>
               <Route path="/my/reservations" element={<MyBookingPage />} />
 

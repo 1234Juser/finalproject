@@ -321,11 +321,11 @@ INSERT INTO tbl_review (member_code, product_code, order_code, review_rating, re
     (3, 5, 5, 4, '재밌었음. 나중에 또오겠음.', '2025-04-24 09:15:00', NULL, 'ACTIVE');
 
 -- 4. 이벤트 테이블 (tbl_event)
-INSERT INTO tbl_event (event_title, event_content, event_img, event_status)
+INSERT INTO tbl_event (event_title, event_content, event_img, event_status,event_startdate, event_enddate)
 VALUES
-    ('이벤트 1', '첫 번째 이벤트 내용', '/images/event1.jpg', '진행중'),
-    ('이벤트 2', '두 번째 이벤트 내용', '/images/event2.jpg', '진행중'),
-    ('이벤트 3', '세 번째 이벤트 내용', '/images/event3.jpg', '종료');
+    ('이벤트 1', '첫 번째 이벤트 내용', '/images/event1.jpg', '진행중', NOW(), '2025-04-25 10:00:00'),
+    ('이벤트 2', '두 번째 이벤트 내용', '/images/event2.jpg', '진행중', NOW(),'2025-05-25 10:00:00'),
+    ('이벤트 3', '세 번째 이벤트 내용', '/images/event3.jpg', '종료', NOW(),'2025-06-25 10:00:00');
 
 -- 5. FAQ 테이블 (tbl_faq)
 INSERT INTO tbl_faq (faq_title, faq_content)
