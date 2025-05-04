@@ -27,10 +27,14 @@ public class ReservationController {
     }
 
     // 로그인 회원의 예약 조회
-    @GetMapping("/mypage/reservations/list/{memberCode}")
-    public ResponseEntity getMyBookingList(@PathVariable Long memberCode,
-                                        @RequestParam(value="start", defaultValue = "0") int start) {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.getMyBookingList(memberCode, start));
+    @GetMapping("/my/reservations/recent/{memberCode}")
+    public ResponseEntity<?> getRecentOrders(@PathVariable Long memberCode) {
+        return ResponseEntity.ok(orderService.getRecentOrders(memberCode));
+    }
+
+    @GetMapping("/my/reservations/old/{memberCode}")
+    public ResponseEntity<?> getOldOrders(@PathVariable Long memberCode) {
+        return ResponseEntity.ok(orderService.getOldOrders(memberCode));
     }
 
     // 예약 상태 실시간 반영(reservationDate이 지난날이 되면 orderStatus가 SCHEDULED에서 COMPLETED로)
@@ -43,14 +47,14 @@ public class ReservationController {
     // 한 주문건만 예약 취소가 아니라 관리자는 여러 건의 주문을 동시에 취소 할 수 있어야 하기에
     // Patch가 아닌 Post
     @PostMapping("/admin/booking/cancel")
-    public ResponseEntity<?> cancelSelectedOrders(@RequestBody List<Long> orderCodeList) {
+    public ResponseEntity cancelSelectedOrders(@RequestBody List<Long> orderCodeList) {
         orderService.cancelOrdersByAdmin(orderCodeList);
         return ResponseEntity.ok("선택한 예약이 취소되었습니다.");
     }
 
     // 일반사용자가 한 건의 예약을 취소
-    @PatchMapping("/mypage/reservations/{orderCode}/cancel")
-    public ResponseEntity<?> cancelReservationByUser(@PathVariable Long orderCode) {
+    @PatchMapping("/my/reservations/cancel/{orderCode}")
+    public ResponseEntity cancelMyReservation(@PathVariable Long orderCode) {
         orderService.cancelOrderByMember(orderCode);
         return ResponseEntity.ok("예약이 취소되었습니다.");
     }

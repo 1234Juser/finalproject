@@ -170,17 +170,17 @@ INSERT INTO tbl_product (
       ('PARIS002', 04, 17, 3, '파리 미술관 투어', '세계적인 파리 미술관을 방문하는 예술 투어',
        250000, 125000, '2025-07-01', '2025-07-31', 1, 8, 'ON_SALE', '/img/empty/empty-list.jpeg', 0),
       ('ROME002', 05, 18, 1, '로마 고대 유적 투어', '로마의 콜로세움, 포로 로마노 등 고대 유적을 탐험',
-       220000, 110000, '2025-08-01', '2025-08-31', 3, 12, 'ON_SALE', 'rome_ancient.jpg', 0),
+       220000, 110000, '2025-08-01', '2025-08-31', 3, 12, 'ON_SALE', '/img/empty/empty-list.jpeg', 0),
       ('NEWYORK002', 06, 19, 2, '뉴욕 뮤지컬 투어', '브로드웨이 뮤지컬 관람 및 뉴욕 문화 체험',
-       280000, 140000, '2025-09-01', '2025-09-30', 1, 10, 'ON_SALE', 'newyork_musical.jpg', 0),
+       280000, 140000, '2025-09-01', '2025-09-30', 1, 10, 'ON_SALE', '/img/empty/empty-list.jpeg', 0),
       ('MALE001', 07, 20, 4, '몰디브 해양 액티비티', '몰디브의 아름다운 바다에서 즐기는 액티비티 투어',
-       350000, 200000, '2025-10-01', '2025-10-31', 4, 15, 'ON_SALE', 'male_activity.jpg', 0),
+       350000, 200000, '2025-10-01', '2025-10-31', 4, 15, 'ON_SALE', '/img/empty/empty-list.jpeg', 0),
       ('SYDNEY001', 08, 21, 5, '시드니 오페라 하우스 투어', '시드니 오페라 하우스와 하버 브릿지를 탐방',
-       200000, 100000, '2025-11-01', '2025-11-30', 2, 10, 'ON_SALE', 'sydney_opera.jpg', 0),
+       200000, 100000, '2025-11-01', '2025-11-30', 2, 10, 'ON_SALE', '/img/empty/empty-list.jpeg', 0),
       ('DUBAI001', 09, 22, 6, '두바이 럭셔리 쇼핑 투어', '두바이의 럭셔리 쇼핑몰과 랜드마크를 방문',
-       300000, 150000, '2025-12-01', '2025-12-31', 3, 12, 'ON_SALE', 'dubai_shopping.jpg', 0),
+       300000, 150000, '2025-12-01', '2025-12-31', 3, 12, 'ON_SALE', '/img/empty/empty-list.jpeg', 0),
       ('CAPETOWN001', 10, 23, 4, '케이프타운 자연 투어', '케이프타운의 아름다운 자연 경관을 감상',
-       220000, 110000, '2025-05-01', '2025-05-31', 2, 8, 'ON_SALE', 'capetown_nature.jpg', 0);
+       220000, 110000, '2025-05-01', '2025-05-31', 2, 8, 'ON_SALE', '/img/empty/empty-list.jpeg', 0);
 
 
 INSERT INTO tbl_product_theme (pt_id, product_code, theme_code) VALUES
@@ -251,7 +251,18 @@ INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count
 (9, '2025-04-28', 1, 1);
 
 INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count) VALUES
-(8, '2025-04-29', 1, 1);
+(8, '2025-04-29', 1, 1),
+(27, '2025-04-29', 1, 1),
+(27, '2025-04-29', 1, 1),
+# 10
+(27, '2025-04-29', 1, 1),
+(27, '2025-04-29', 1, 1),
+(27, '2025-04-29', 1, 1),
+(21, '2025-04-29', 1, 1),
+(27, '2025-04-29', 1, 1),
+(21, '2025-05-29', 1, 1),
+# 16
+(27, '2025-06-29', 1, 1);
 
 
 INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, order_adult_price, order_child_price, total_price, order_date, order_status, is_reviewed) VALUES
@@ -266,7 +277,18 @@ INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, orde
 (9, 6, 3, 'RSV20250401-06', 80000, 50000, 130000, '2025-04-06 12:05:33', 'COMPLETED', 0);
 
 INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, order_adult_price, order_child_price, total_price, order_date, order_status, is_reviewed) VALUES
-(8, 7, 1, 'RSV20250401-07', 80000, 50000, 130000, '2025-04-27 12:05:33', 'SCHEDULED', 0);
+(8, 7, 1, 'RSV20250401-07', 80000, 50000, 130000, '2025-04-06 12:05:33', 'SCHEDULED', 0),
+(27, 8, 4, 'RSV20250401-08', 80000, 50000, 130000, '2025-04-07 17:05:33', 'COMPLETED', 0),
+(27, 9, 3, 'RSV20250401-09', 80000, 50000, 130000, '2025-04-08 12:05:33', 'COMPLETED', 0),
+# 10
+(27, 10, 2, 'RSV20250401-10', 80000, 50000, 130000, '2025-04-09 12:05:33', 'CANCELED', 0),
+(27, 11, 1, 'RSV20250401-11', 80000, 50000, 130000, '2025-04-10 12:05:33', 'COMPLETED', 0),
+(27, 12, 3, 'RSV20250401-12', 80000, 50000, 130000, '2025-04-11 12:05:33', 'COMPLETED', 0),
+(21, 13, 3, 'RSV20250401-13', 80000, 50000, 130000, '2025-04-12 12:05:33', 'CANCELED', 0),
+(27, 14, 2, 'RSV20250401-14', 80000, 50000, 130000, '2025-04-13 12:05:33', 'COMPLETED', 0),
+(21, 15, 3, 'RSV20250401-15', 80000, 50000, 130000, '2025-04-14 12:05:33', 'SCHEDULED', 0),
+#16
+(27, 16, 3, 'RSV20250401-16', 80000, 50000, 130000, '2025-05-03 12:05:33', 'SCHEDULED', 0);
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
     (1, 1, '카드', '삼성카드', '2025-04-01 10:23:45', 240000, 'COMPLETED', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
@@ -274,10 +296,21 @@ INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand,
     (1, 3, '카드', '국민카드', '2025-04-03 09:05:33', 130000, 'CANCELED', 'imp_1234567892', 'RSV20250401-03', 'https://receipt.url/3'),
     (2, 4, '카드', '롯데카드', '2025-04-03 10:05:33', 130000, 'COMPLETED', 'imp_1234567893', 'RSV20250401-04', 'https://receipt.url/4'),
     (3, 5, '카드', '우리카드', '2025-04-04 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-05', 'https://receipt.url/5'),
-    (3, 6, '카드', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-06', 'https://receipt.url/6');
+    (3, 6, '카드', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567895', 'RSV20250401-06', 'https://receipt.url/6');
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
-    (1, 7, '카드', '비씨카드', '2025-04-27 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-07', 'https://receipt.url/7');
+    (1, 7, '카드', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567896', 'RSV20250401-07', 'https://receipt.url/7'),
+    (4, 8, '카드', '비씨카드', '2025-04-07 17:05:33', 130000, 'COMPLETED', 'imp_1234567897', 'RSV20250401-08', 'https://receipt.url/8'),
+    (3, 9, '카드', '비씨카드', '2025-04-08 12:05:33', 130000, 'COMPLETED', 'imp_1234567898', 'RSV20250401-09', 'https://receipt.url/9'),
+    # 10
+    (2, 10, '카드', '비씨카드', '2025-04-09 12:05:33', 130000, 'CANCELED', 'imp_1234567899', 'RSV20250401-10', 'https://receipt.url/10'),
+    (1, 11, '카드', '비씨카드', '2025-04-10 12:05:33', 130000, 'COMPLETED', 'imp_1234567900', 'RSV20250401-11', 'https://receipt.url/11'),
+    (3, 12, '카드', '비씨카드', '2025-04-11 12:05:33', 130000, 'COMPLETED', 'imp_1234567901', 'RSV20250401-12', 'https://receipt.url/12'),
+    (3, 13, '카드', '비씨카드', '2025-04-12 12:05:33', 130000, 'CANCELED', 'imp_1234567902', 'RSV20250401-13', 'https://receipt.url/13'),
+    (2, 14, '카드', '비씨카드', '2025-04-13 12:05:33', 130000, 'COMPLETED', 'imp_1234567903', 'RSV20250401-14', 'https://receipt.url/14'),
+    (3, 15, '카드', '비씨카드', '2025-04-14 12:05:33', 130000, 'COMPLETED', 'imp_1234567904', 'RSV20250401-15', 'https://receipt.url/15'),
+    # 16
+    (3, 16, '카드', '비씨카드', '2025-05-03 12:05:33', 130000, 'COMPLETED', 'imp_1234567905', 'RSV20250401-16', 'https://receipt.url/16');
 
 INSERT INTO tbl_payment_cancel (payment_code, cancel_time, cancel_amount, pg_tid, cancel_receipt_url) VALUES
     (3, '2025-04-04 11:35:20', 130000, 'pg_cancel_9876543210', 'https://receipt.url/cancel/3');

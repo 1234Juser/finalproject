@@ -23,9 +23,9 @@ import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
 import AdminMemberListPage from "./pages/member/AdminMemberListPage";
 import EventListPage from "./pages/event/EventListPage";
 import EventRegisterPage from "./pages/event/EventRegisterPage";
-import EventDetailPage from "./pages/event/EventDetailPage";
-// import WishListPage from "./pages/wish/WishListPage";
+import EventDetailPage from "./pages/event/EventDetailPage";r
 import AdminBookingPage from "./pages/reservation/AdminBookingPage";
+import MyBookingPage from "./pages/reservation/MyBookingPage";
 // import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 
 function App() {
@@ -39,16 +39,13 @@ function App() {
               <Route path="/event/register" element={<EventRegisterPage />} />
               <Route path="/event/:id" element={<EventDetailPage />} />
 
-
-
-                
               {/*회원가입/로그인*/}
               <Route path="/registerselect" element={<RegisterMethodSelectPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
               <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
-              {/*<Route path="/myreview" element={<MyReviewPage />} />*/}
+              {/*<Route path="/my/review" element={<MyReviewPage />} />*/}
               <Route path="/wish/groups" element={<WishGroupPage />} />
               <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
               
@@ -56,12 +53,9 @@ function App() {
               <Route path="/mypage">
                   <Route path="" element={<MyPagePage />} />
                   <Route path="withdrawl" element={<WithdrawlPage />} />
-
-
-
               </Route>
-              <Route path="/admin/booking" element={<AdminBookingPage />} />
-              
+              <Route path="/my/reservations" element={<MyBookingPage />} />
+
               {/*관리자마이페이지*/}
               <Route path="/adminmypage" element={<AdminMyPagePage />} />
               <Route path="/admin">
@@ -69,6 +63,7 @@ function App() {
                 {/*<Route path="productAll" element={<ProductAllAdminPage/>}/>*/}
                 <Route path="productReg" element={<ProductRegPage/>} />
               </Route>
+              <Route path="/admin/booking" element={<AdminBookingPage />} />
 
               <Route path="/domestic" element={<DomesticPage/>}/>
               <Route path="/international" element={<InternationalPage />} />
