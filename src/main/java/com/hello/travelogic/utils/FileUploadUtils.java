@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +19,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FileUploadUtils {
 
-    private static final String DIR = "upload/product/";
 
     private final ProductRepo productRepo;
 
@@ -34,7 +34,13 @@ public class FileUploadUtils {
         System.out.println("fileName = " + fileName);
 
 
-        Path path = Paths.get(DIR + fileName);      // 파일 저장 경로 설정
+        // OR System.getProperty("user.dir")
+        String baseDir = System.getProperty("user.home") + File.separator + "Desktop"
+                + File.separator + "hello_travelogic" + File.separator + "upload"
+                + File.separator + "product" + File.separator;
+
+
+        Path path = Paths.get(baseDir + fileName);      // 파일 저장 경로 설정
         Files.createDirectories(path.getParent());      // 디렉토리 없으면 생성함
 
         System.out.println("path = " + path);
