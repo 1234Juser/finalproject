@@ -21,6 +21,10 @@ import WishListPage from "./pages/wish/WishListPage";
 import {ToastContainer} from "react-toastify";
 import GoogleCallbackPage from "./pages/member/GoogleCallbackPage";
 import AdminMemberListPage from "./pages/member/AdminMemberListPage";
+import EventListPage from "./pages/event/EventListPage";
+import EventRegisterPage from "./pages/event/EventRegisterPage";
+import EventDetailPage from "./pages/event/EventDetailPage";
+// import WishListPage from "./pages/wish/WishListPage";
 import AdminBookingPage from "./pages/reservation/AdminBookingPage";
 // import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 
@@ -31,6 +35,12 @@ function App() {
 
           <Routes>
               <Route path="/" element={<MainPage />} />
+              <Route path="/event" element={<EventListPage/>}/>
+              <Route path="/event/register" element={<EventRegisterPage />} />
+              <Route path="/event/:id" element={<EventDetailPage />} />
+
+
+
                 
               {/*회원가입/로그인*/}
               <Route path="/registerselect" element={<RegisterMethodSelectPage />} />
@@ -44,8 +54,11 @@ function App() {
               
               {/*  회원마이페이지*/}
               <Route path="/mypage">
-                <Route path="" element={<MyPagePage />} />
-                <Route path="withdrawl" element={<WithdrawlPage />} />
+                  <Route path="" element={<MyPagePage />} />
+                  <Route path="withdrawl" element={<WithdrawlPage />} />
+
+
+
               </Route>
               <Route path="/admin/booking" element={<AdminBookingPage />} />
               

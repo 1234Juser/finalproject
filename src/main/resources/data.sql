@@ -18,6 +18,24 @@ VALUES
 ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 2),  -- user03: USER
 ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2);  -- user04: USER
 
+-- 이벤트 데이터 중복삭제
+DELETE FROM tbl_event;
+INSERT INTO tbl_event (event_title, event_content, event_img, event_status, event_startdate, event_enddate)
+VALUES
+    ('기본 이벤트', '기본 이벤트입니다.', 'event/default_event.jpg', '진행중', NOW(), '2025-06-30 23:59:59'),
+    ('기본 이벤트2', '기본 이벤트입니다2.', 'event/default_event.jpg', '진행중', NOW(), '2026-06-30 23:59:59'),
+    ('기본 이벤트3', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트4', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트5', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트6', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트7', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트8', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트9', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트10', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59');
+
 INSERT INTO tbl_region (region_code, region_uid, region_name, region_type)
 VALUES
 (1,'SEOULGYEONGGI', '서울/경기/강원/충청', 'DOMESTIC'),

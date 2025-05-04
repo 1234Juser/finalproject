@@ -49,7 +49,7 @@ function KakaoCallbackPage() {
                     // 실패 시 처리
                     // 실패 시 플래그 제거(재시도 가능하도록)
                     localStorage.removeItem(codeFlagKey);
-                    alert("카카오 로그인 실패!");
+                    alert("카카오 로그인 실패! 정지된계정일수도 있으니 고객선터에 문의바랍니다");
                     navigate("/login");
                 });
     }, [code, navigate]);

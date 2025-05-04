@@ -6,20 +6,21 @@ import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.review.repo.ReviewRepo;
-import com.hello.travelogic.review.service.ReviewService;
 import com.hello.travelogic.wish.domain.WishEntity;
 import com.hello.travelogic.wish.domain.WishGroupEntity;
 import com.hello.travelogic.wish.dto.WishDTO;
 import com.hello.travelogic.wish.dto.WishGroupDTO;
 import com.hello.travelogic.wish.repo.WishGroupRepo;
 import com.hello.travelogic.wish.repo.WishRepo;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
