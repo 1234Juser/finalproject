@@ -12,13 +12,14 @@ import java.time.LocalDate;
 @ToString
 public class OptionDTO {
 
+    private long optionCode;
     private long productCode;
     private LocalDate reservationDate;
     private int adultCount;
     private Integer childCount;
 
     public OptionDTO(OptionEntity entity) {
-        this.productCode = entity.getProductCode();
+        this.productCode = entity.getProduct().getProductCode();
         this.reservationDate = entity.getReservationDate();
         this.adultCount = entity.getAdultCount();
         this.childCount = entity.getChildCount();
