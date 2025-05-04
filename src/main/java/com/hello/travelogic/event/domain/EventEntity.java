@@ -2,6 +2,9 @@ package com.hello.travelogic.event.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="tbl_event")
@@ -28,6 +31,12 @@ public class EventEntity {
 
     @Column(name = "event_status", nullable = false, length=10, columnDefinition = "VARCHAR(10) COMMENT '진행 상태'")
     private String eventStatus;
+
+    @Column(name="event_startdate", nullable=false)
+    private LocalDateTime eventStartdate;
+
+    @Column(name="event_enddate", nullable=false)
+    private LocalDateTime eventEnddate;
 
 
 

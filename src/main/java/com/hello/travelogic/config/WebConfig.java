@@ -42,6 +42,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + new File("upload/img/").getAbsolutePath() + "/",
                         "classpath:/static/img/"
                 );
+        //이벤트사진
+        registry.addResourceHandler("/events/**")
+                .addResourceLocations("file:" + new File("upload/events/").getAbsolutePath() + "/");
         // 리뷰 사진 저장
         registry.addResourceHandler("/review/**")
                 .addResourceLocations("file:" + new File("upload/review/").getAbsolutePath() + "/");

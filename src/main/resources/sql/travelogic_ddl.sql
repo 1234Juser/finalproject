@@ -252,7 +252,9 @@ CREATE TABLE tbl_event (
                            event_title VARCHAR(50) NOT NULL COMMENT '제목',
                            event_content VARCHAR(255) NOT NULL COMMENT '내용',
                            event_img VARCHAR(255) NOT NULL COMMENT '이미지 파일 경로',
-                           event_status VARCHAR(10) NOT NULL COMMENT '진행 상태'
+                           event_status VARCHAR(10) NOT NULL COMMENT '진행 상태',
+                           event_startdate DATE NOT NULL COMMENT '이벤트 시작날짜',
+                           event_enddate DATE NOT NULL COMMENT '이벤트 종료날짜'
 )ENGINE=INNODB COMMENT '이벤트';
 
 CREATE TABLE tbl_faq (
