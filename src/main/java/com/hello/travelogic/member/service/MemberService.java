@@ -113,7 +113,7 @@ public class MemberService {
 
         // 2. roles를 담아 token 생성
 
-        String token = jwtUtil.generateToken(member.getMemberId(), roles);
+        String token = jwtUtil.generateToken(member.getMemberId(), roles, member.getMemberCode());
 
         // 3. 프로필 이미지가 없으면 기본 이미지 사용
         String profileUrl = member.getMemberProfileImageUrl();
