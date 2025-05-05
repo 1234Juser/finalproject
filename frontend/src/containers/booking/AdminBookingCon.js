@@ -6,11 +6,14 @@ import {initialState, reservationReducer} from "../../modules/reservationModule"
 function AdminBookingCon(){
     const [state, dispatch] = useReducer(reservationReducer, initialState);
     const [selectedOrders, setSelectedOrders] = useState([]);
-    const [isChecked, setIsChecked] = useState(false);
+    const [start, setStart] = useState(1);
+    const onClick = (start) => {
+        setStart(start);
+    }
 
     useEffect(() => {
         dispatch({ type: "LOADING" });
-        fetchAllReservations()
+        fetchAllReservations(start)
             .then(data => {
                 console.log("API 응답 확인:", data);
                 dispatch({ type: "FETCH_SUCCESS", payload: data })
@@ -19,7 +22,7 @@ function AdminBookingCon(){
                 console.error("예약 조회 실패:", err.message);
                 dispatch({ type: "FETCH_ERROR", payload: err.message });
             });
-    }, []);
+    }, [start]);
 
     const { reservations, loading, currentPage, totalPages } = state;
 
@@ -65,6 +68,7 @@ function AdminBookingCon(){
             selectedOrders={selectedOrders}
             onCheck={handleCheck}
             onSubmit={handleSubmit}
+            onClick={onClick}
         />
     </>
     )

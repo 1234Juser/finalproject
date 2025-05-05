@@ -39,11 +39,44 @@ const StyledTable = styled.table`
         background-color: #f5f5f5;
     }
 `;
+const DivWrap = styled.div`
+    margin : auto;
+    width : 70%;
+    border-top : 1px solid gray;
+`;
+// 페이지 버튼들이 모인 구역
+const DivPage = styled.div`
+    margin-top : 20px;
+    text-align : center;
+`;
+// 페이지 버튼 낱개들
+const SpanPage = styled.span`
+    width : 30px;
+    display : inline-block;
+    cursor : pointer;
+`;
 
-function AdminBookingCom({ reservations, loading, currentPage, totalPages, selectedOrders, onCheck, onSubmit }){
+function AdminBookingCom({ reservations, loading, currentPage, totalPages, selectedOrders, onCheck, onSubmit, onClick }){
 
     console.log("reservations", reservations);
     const isEmpty = !Array.isArray(reservations) || reservations.length === 0;
+    let number = []
+
+    if (totalPages > 0) {
+        for(let i = 1; i <= totalPages; i++) {
+            number.push(
+                <SpanPage
+                    key={i}
+                    onClick={() => onClick(i)}
+                    style={{ fontWeight: currentPage === i ? "bold" : "normal" }}
+                >
+                    {i}
+                </SpanPage>
+            )
+        }
+        number.push(<b key={totalPages + 1}>({currentPage}/{totalPages})</b>);
+    }
+
         return (
             <>
                 <StyleBookingBlock>
@@ -51,6 +84,7 @@ function AdminBookingCom({ reservations, loading, currentPage, totalPages, selec
                         <TitleWrapper>
                             <ListTitle>예약 관리</ListTitle>
                         </TitleWrapper>
+                        <DivWrap>
                         <StyledForm onSubmit={onSubmit}>
                         <div style={{ textAlign: "right", marginBottom: "10px" }}>
                             <button type="submit">선택한 예약 취소</button>
@@ -104,10 +138,14 @@ function AdminBookingCom({ reservations, loading, currentPage, totalPages, selec
                         </StyledTable>
                         </StyledForm>
                         {!loading && reservations && reservations.length > 0 && (
-                            <div style={{marginTop: "1rem"}}>
-                                페이지: {currentPage} / {totalPages}
-                            </div>
+                            <>
+                                <div style={{marginTop: "1rem"}}>
+                                    페이지: {currentPage} / {totalPages}
+                                </div>
+                                <DivPage>{number}</DivPage>
+                            </>
                         )}
+                        </DivWrap>
                     </StyleContentWrap>
                 </StyleBookingBlock>
             </>)

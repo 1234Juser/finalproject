@@ -8,7 +8,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@Table(name = "tbl_wish")
+@Table(
+        name = "tbl_wish",
+        uniqueConstraints = @UniqueConstraint(
+                name = "unique_wish",  // 제약 조건 이름
+                columnNames = {"member_code", "product_code"}
+        )
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

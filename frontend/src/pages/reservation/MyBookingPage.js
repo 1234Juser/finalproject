@@ -1,10 +1,10 @@
 import MyBookingCon from "../../containers/booking/MyBookingCon";
 
-function MySchedulePage() {
+function MyBookingPage() {
 
     return(
     <>
         <MyBookingCon />
     </>)
 }
-export default MySchedulePage
+export default MyBookingPage

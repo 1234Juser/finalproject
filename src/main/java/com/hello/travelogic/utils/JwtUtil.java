@@ -25,7 +25,7 @@ public class JwtUtil {
     }
 
 
-    public String generateToken(String memberId, List<String> roles
+    public String generateToken(String memberId, List<String> roles, Long memberCode
     ) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
@@ -33,6 +33,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(memberId)
                 .claim("roles", roles)
+                .claim("memberCode", memberCode)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -49,6 +50,16 @@ public class JwtUtil {
         return claims.getSubject();
     }
 
+    // long타입 멤버코드용
+    public Long getMemberCodeFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey()) // 새 메서드
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.get("memberCode", Long.class);
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
@@ -58,4 +69,11 @@ public class JwtUtil {
         }
     }
 
+    public Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 }

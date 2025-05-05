@@ -12,12 +12,12 @@ const adminMenuList = [
     },
     { label: "전체예약관리", path: "/admin/booking",
     subMenu:[
-        {label: "상품별조회", path: "/admin/order/by-product"}
+        {label: "상품별조회", path: "/admin/booking/by-product"}
     ]
     },
     { label: "전체리뷰관리", path: "/admin/review",
     subMenu:[
-            {label: "상품별조회", path: "/admin/manage/review/by-product"}
+            {label: "상품별조회", path: "/admin/review/by-product"}
     ]
     },
     { label: "이벤트관리", path: "/adminmypage/event" },
