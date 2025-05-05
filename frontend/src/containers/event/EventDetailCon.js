@@ -24,11 +24,24 @@ function EventDetailCon() {
         navigate(`/event/edit/${id}`, { state: { event } });
     };
 
+    const handleDelete = async () => {
+        if (window.confirm("이벤트를 정말 삭제하시겠습니까?")) {
+            try {
+                await axios.delete(`/event/${id}`);
+                alert("이벤트가 삭제되었습니다.");
+                navigate("/event"); // 목록 페이지 등으로 이동
+            } catch (e) {
+                alert("삭제에 실패했습니다.");
+            }
+        }
+    };
+
     return (
         <EventDetailCom
             event={event}
             onBack={handleBack}
             onEdit={handleEdit}
+            onDelete={handleDelete}
         />
     );
 }

@@ -6,8 +6,8 @@ import {
     Period,
     DetailImage,
     DescArea,
-    EditButton
-
+    EditButton,
+    DeleteButton
 } from "../../style/event/EventDetailStyle";
 
 function isAdmin() {
@@ -16,7 +16,7 @@ function isAdmin() {
 }
 
 
-function EventDetailCom({ event, onBack, onEdit }) {
+function EventDetailCom({ event, onBack, onEdit, onDelete }) {
     if (!event) {
         return <EventDetailWrapper>이벤트 정보를 불러올 수 없습니다.</EventDetailWrapper>;
     }
@@ -43,9 +43,10 @@ function EventDetailCom({ event, onBack, onEdit }) {
         <EventDetailWrapper>
             <BackButton onClick={onBack}>{"< 목록으로"}</BackButton>
             {isAdmin() && (
-                <EditButton onClick={onEdit}>
-                    수정
-                </EditButton>
+                <>
+                    <EditButton onClick={onEdit}>수정</EditButton>
+                    <DeleteButton onClick={onDelete}>삭제</DeleteButton>
+                </>
             )}
             <div style={{marginBottom: 8}}>
                 <StatusBadge type={badgeType}>

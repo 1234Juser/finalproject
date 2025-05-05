@@ -56,19 +56,19 @@ export const StatusBadge = styled.span`
     font-size: 14.5px;
     font-weight: 700;
     color: ${({type}) =>
-    type === "진행중" ? "#fff" :
-        type === "예정" ? "#fff" :
-            "#b7cad8"
-};
+            type === "진행중" ? "#fff" :
+                    type === "예정" ? "#fff" :
+                            "#b7cad8"
+    };
     padding: 7px 21px;
     margin-right: 12px;
     margin-top: 2px;
     margin-bottom: 6px;
     border-radius: 30px;
     background: ${({type}) =>
-    type === "진행중" ? Palette.mainGradient :
-        type === "예정" ? "linear-gradient(90deg,#68d6fc,#36abc9)" :
-            "linear-gradient(90deg,#e5edfb,#c2dae7)"};
+            type === "진행중" ? Palette.mainGradient :
+                    type === "예정" ? "linear-gradient(90deg,#68d6fc,#36abc9)" :
+                            "linear-gradient(90deg,#e5edfb,#c2dae7)"};
     box-shadow: 0 2px 8px #b3e7fc55;
 `;
 
@@ -102,14 +102,15 @@ export const DescArea = styled.pre`
     box-shadow: 0 2px 23px 0 #6abceb1b;
 `;
 
+
 export const EditButton = styled.button`
     position: absolute;
     top: 40px;
-    right: 40px;
-    background: linear-gradient(90deg, #36abc9, #198dbb); // 등록 버튼과 동일 gradient
+    right: 120px;  
+    background: linear-gradient(90deg, #36abc9, #198dbb);
     color: #fff;
     border: none;
-    padding: 9px 22px;
+    padding: 9px 20px;
     border-radius: 22px;
     font-weight: 780;
     font-size: 1rem;
@@ -124,10 +125,38 @@ export const EditButton = styled.button`
         transform: translateY(-2px) scale(1.05);
     }
     @media (max-width: 600px) {
-        right: 16px;
+        right: 88px; 
         top: 20px;
-        padding: 7px 15px;
+        padding: 7px 12px;
         font-size: 0.97rem;
     }
 `;
 
+export const DeleteButton = styled.button`
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background: linear-gradient(90deg, #e35d83, #ef717a);
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 22px;
+    font-weight: 780;
+    font-size: 1rem;
+    box-shadow: 0 3px 16px #e47a9226;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    transition: background .16s, box-shadow .16s, transform .13s;
+    z-index: 10;
+    &:hover {
+        background: linear-gradient(90deg, #ef717a, #e35d83);
+        box-shadow: 0 6px 18px #e47a9236;
+        transform: translateY(-2px) scale(1.05);
+    }
+    @media (max-width: 600px) {
+        right: 16px;
+        top: 20px;
+        padding: 7px 12px;
+        font-size: 0.97rem;
+    }
+`;
