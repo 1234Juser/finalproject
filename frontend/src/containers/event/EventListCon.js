@@ -61,7 +61,7 @@ function EventListCon() {
         if (newTab === "진행중" && ongoingPage !== 0) {
             setOngoingPage(0);
         }
-        if (newTab === "완료" && finishedPage !== 0) {
+        if (newTab === "종료" && finishedPage !== 0) {
             setFinishedPage(0);
         }
         // setTab 이후 useEffect에서 알아서 처리됨

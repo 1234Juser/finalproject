@@ -106,37 +106,6 @@ public class OrderService {
     public OrderDTO getOrder(Long orderCode) {
         OrderEntity order = orderRepo.findById(orderCode)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-//        OptionEntity option = optionRepo.findById(dto.getOptionCode())
-//                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
-        return new OrderDTO(order);
-    }
-
-    @Transactional(readOnly = true)
-    public List<OrderDTO> getOrdersByMemberCode(Long memberCode) {
-
-        MemberEntity member = memberRepo.findById(memberCode)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-
-        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
-        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
-
-        return orderPage.getContent().stream()
-                .map(OrderDTO::new)
-                .collect(Collectors.toList());
-    }
-
-//    @Transactional(readOnly = true)
-//    public List<OrderDTO> getOrdersByUsername(String username) {
-//        MemberEntity member = memberRepo.findByMemberId(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
-//
-//        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
-//        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
-//
-//        return orderPage.getContent().stream()
-//                .map(OrderDTO::new)
-//                .collect(Collectors.toList());
-//    }
 
     @Transactional
     public int updateOrderStatusIfCompleted(Long orderCode) {

@@ -5,10 +5,18 @@ import {
     StatusBadge,
     Period,
     DetailImage,
-    DescArea
+    DescArea,
+    EditButton
+
 } from "../../style/event/EventDetailStyle";
 
-function EventDetailCom({ event, onBack }) {
+function isAdmin() {
+    const roles = JSON.parse(localStorage.getItem("roles") || "[]");
+    return roles.includes("ROLE_ADMIN");
+}
+
+
+function EventDetailCom({ event, onBack, onEdit }) {
     if (!event) {
         return <EventDetailWrapper>이벤트 정보를 불러올 수 없습니다.</EventDetailWrapper>;
     }
@@ -34,6 +42,11 @@ function EventDetailCom({ event, onBack }) {
     return (
         <EventDetailWrapper>
             <BackButton onClick={onBack}>{"< 목록으로"}</BackButton>
+            {isAdmin() && (
+                <EditButton onClick={onEdit}>
+                    수정
+                </EditButton>
+            )}
             <div style={{marginBottom: 8}}>
                 <StatusBadge type={badgeType}>
                     {badgeType}

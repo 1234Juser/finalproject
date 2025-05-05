@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
                 // 모든 경로에 대해 CORS 설정을 적용합니다.
                 // 즉, /api/**, /login, /member 등 모든 컨트롤러 URL 경로가 대상입니다.
 
-                .allowedOriginPatterns("*")
+                .allowedOriginPatterns("http://localhost:3000")
                 // 어떤 Origin(출처, 주소)이든 접근을 허용합니다.
                 // 예: http://localhost:3000 (React 개발 서버), http://myfrontend.com 등
                 // "allowedOrigins()" 대신 "allowedOriginPatterns()"을 사용한 이유는

@@ -106,11 +106,14 @@ const getProductsByCity = async (cityId) => {
 
 // 상품 상세 데이터 가져오는 함수
 const getProductDetail = async (productUid) => {
+    const token = localStorage.getItem("accessToken");
     try {
-        const memberCode = Number(localStorage.getItem("memberCode"));
         console.log("productUid : ", productUid);
-        const response = await fetch(`${path}/products/${productUid}?memberCode=${memberCode}`, {
-            method : "GET"
+        const response = await fetch(`${path}/products/${productUid}`, {
+            method : "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
         if (!response.ok) {
             throw new Error(`Error! status: ${response.status}`);
@@ -184,13 +187,14 @@ const ProductRegist = async (formData) => {
 
 const toggleWish = async (product) => {
     try {
-        const memberCode = Number(localStorage.getItem("memberCode"));
+        const token = localStorage.getItem("accessToken");
         const response = await fetch(`/wish/toggle/${product.productCode}`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({ memberCode })
+            body: JSON.stringify({})
         });
 
         if (!response.ok) {

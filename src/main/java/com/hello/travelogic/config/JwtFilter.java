@@ -1,6 +1,7 @@
 package com.hello.travelogic.config;
 
 import com.hello.travelogic.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 토큰 검증
         if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
+
             String memberId = jwtUtil.getMemberIdFromToken(jwt);
             List<String> roles = jwtUtil.getRolesFromToken(jwt);
 
@@ -47,6 +49,15 @@ public class JwtFilter extends OncePerRequestFilter {
                     .collect(Collectors.toList());
 
 //            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+
+            // role 동적
+            Claims claims = jwtUtil.getAllClaimsFromToken(jwt);
+            String memberId = claims.getSubject();
+            List<String> roles = claims.get("roles", List.class);
+
+            List<SimpleGrantedAuthority> authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(memberId, null, authorities);

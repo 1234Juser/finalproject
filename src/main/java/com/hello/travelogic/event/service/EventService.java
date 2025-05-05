@@ -80,5 +80,52 @@ public class EventService {
             return eventRepository.save(event);
 
         }
+
+    //이벤트수정
+    public EventEntity updateEvent(Integer id, String eventTitle, String eventContent, MultipartFile eventImg, String eventStartdate, String eventEnddate, String eventStatus) {
+        EventEntity event = eventRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("이벤트를 찾을 수 없습니다: " + id));
+
+        event.setEventTitle(eventTitle);
+        event.setEventContent(eventContent);
+        event.setEventStartdate(LocalDate.parse(eventStartdate).atStartOfDay());
+        event.setEventEnddate(LocalDate.parse(eventEnddate).atStartOfDay());
+        event.setEventStatus(eventStatus);
+
+        if (eventImg != null && !eventImg.isEmpty()) {
+            // 기존 파일 삭제
+            if (event.getEventImg() != null) {
+                String projectRoot = System.getProperty("user.dir");
+                Path oldImagePath = Paths.get(projectRoot, "upload", "events", event.getEventImg());
+                try {
+                    Files.deleteIfExists(oldImagePath);
+                } catch (IOException e) {
+                    // 실패해도 치명적이지 않으면 로그만 남기고 넘어가도 됨
+                }
+            }
+            // 파일 확장자 추출
+            String originalName = eventImg.getOriginalFilename();
+            String ext = "";
+            if (originalName != null && originalName.contains(".")) {
+                ext = originalName.substring(originalName.lastIndexOf('.'));
+            }
+            // UUID로 파일명 생성
+            String imgFileName = UUID.randomUUID() + ext;
+            // 프로젝트 루트 기준 절대 경로로 저장
+            String projectRoot = System.getProperty("user.dir");
+            Path imagePath = Paths.get(projectRoot, "upload", "events", imgFileName);
+            try {
+                Files.createDirectories(imagePath.getParent());
+                eventImg.transferTo(imagePath.toFile());
+                event.setEventImg(imgFileName); // 새 이미지 파일명으로 갱신
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 저장 실패", e);
+            }
+        }
+
+
+        return eventRepository.save(event);
     }
+
+}
 

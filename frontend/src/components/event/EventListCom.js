@@ -8,7 +8,7 @@ import {
 // 탭 이름 목록
 const tabList = [
     { key: "진행중", label: "진행중인 이벤트" },
-    { key: "완료", label: "완료된 이벤트" }
+    { key: "종료", label: "종료된 이벤트" }
 ];
 
 function EventListCom({
@@ -85,5 +85,4 @@ function EventListCom({
         </EventListWrapper>
     );
 }
-
 export default EventListCom;

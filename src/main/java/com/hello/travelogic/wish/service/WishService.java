@@ -61,11 +61,18 @@ public class WishService {
 
     // 위시 그룹 삭제
     @Transactional
-    public boolean deleteGroup(long groupCode) {
+    public boolean deleteGroup(long groupCode, long memberCode) {
 
         Optional<WishGroupEntity> group = wishGroupRepo.findByGroupCode(groupCode); // 그룹을 찾음
+        log.debug("삭제 시도 groupCode: {}, memberCode: {}", groupCode, memberCode);
+        log.debug("group.isPresent(): {}", group.isPresent());
         if (group.isPresent()) {
+            log.debug("찾은 그룹의 memberCode: {}", group.get().getMember().getMemberCode());
             WishGroupEntity groupE = group.get();
+
+            if (group.get().getMember().getMemberCode() != memberCode) {
+                throw new SecurityException("해당 그룹에 대한 권한이 없습니다.");
+            }
 
             // 그룹이 있으면 삭제
             wishGroupRepo.delete(groupE);
@@ -101,6 +108,9 @@ public class WishService {
 
         MemberEntity member = memberRepo.findByMemberCode(memberCode)
                 .orElseThrow(() -> new NoSuchElementException("회원 없음"));
+
+        log.warn("새 그룹 생성됨 - memberCode: {}", memberCode);
+        log.warn("member 객체 null 여부: {}", member == null);
 
         log.info("===== 찜 등록 시도 =====");
         log.info("memberCode: {}", dto.getMemberCode());
@@ -180,7 +190,12 @@ public class WishService {
     }
 
     @Transactional
-    public void updateWishCounts() {
-        wishGroupRepo.updateWishCountByQuery();
+    public void updateWishCounts(Long memberCode) {
+        List<WishGroupEntity> groups = wishGroupRepo.findByMember_MemberCode(memberCode);
+        for (WishGroupEntity group : groups) {
+            group.setWishCount(group.calculateWishCount());
+        }
+//        wishGroupRepo.updateWishCountByQuery();
+        wishGroupRepo.saveAll(groups);
     }
 }

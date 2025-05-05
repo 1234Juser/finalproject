@@ -18,10 +18,17 @@ function EventDetailCon() {
         navigate(-1);
     };
 
+    const handleEdit = () =>{
+        //event 데이터와 함께 수정폼
+        //eventRegister/edit/123 과같이 id와 stat전달
+        navigate(`/event/edit/${id}`, { state: { event } });
+    };
+
     return (
         <EventDetailCom
             event={event}
             onBack={handleBack}
+            onEdit={handleEdit}
         />
     );
 }

@@ -86,5 +86,4 @@ public class JwtUtil {
 
         return claims.get("roles", List.class);
     }
-
 }
