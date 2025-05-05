@@ -18,7 +18,25 @@ VALUES
 ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 2),  -- user03: USER
 ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2);  -- user04: USER
 
-INSERT INTO tbl_region (region_code, region_uid, region_name, region_type)
+-- 이벤트 데이터 중복삭제
+DELETE FROM tbl_event;
+INSERT INTO tbl_event (event_title, event_content, event_img, event_status, event_startdate, event_enddate)
+VALUES
+    ('기본 이벤트', '기본 이벤트입니다.', 'event/default_event.jpg', '진행중', NOW(), '2025-06-30 23:59:59'),
+    ('기본 이벤트2', '기본 이벤트입니다2.', 'event/default_event.jpg', '진행중', NOW(), '2026-06-30 23:59:59'),
+    ('기본 이벤트3', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트4', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트5', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트6', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트7', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트8', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트9', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트10', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
+    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59');
+
+INSERT IGNORE INTO tbl_region (region_code, region_uid, region_name, region_type)
 VALUES
 (1,'SEOULGYEONGGI', '서울/경기/강원/충청', 'DOMESTIC'),
 (2,'BUSANGYEONGSANG', '부산/경상/전라', 'DOMESTIC'),
@@ -30,7 +48,7 @@ VALUES
 (8,'AFRICA', '아프리카', 'INTERNATIONAL');
 
 
-INSERT INTO tbl_country (country_code, region_code, country_uid, country_name) VALUES
+INSERT IGNORE INTO tbl_country (country_code, region_code, country_uid, country_name) VALUES
 (01,4, 'KR01', '대한민국'),
  (02,4, 'JP02', '일본'),
 (03,4, 'TH03', '태국'),
@@ -43,7 +61,7 @@ INSERT INTO tbl_country (country_code, region_code, country_uid, country_name) V
 (10,8, 'ZA10', '남아프리카공화국');
 
 
-INSERT INTO tbl_city (city_code, country_id, city_uid, city_name, city_name_kr, region_code) VALUES
+INSERT IGNORE INTO tbl_city (city_code, country_id, city_uid, city_name, city_name_kr, region_code) VALUES
 (0101, 01, 'SEOUL0101', 'SEOUL', '서울', 1),
 (0102, 01, 'BUSAN0102', 'BUSAN', '부산', 2),
 (0103, 01, 'JEJU0103', 'JEJU', '제주', 3),
@@ -68,7 +86,7 @@ INSERT INTO tbl_city (city_code, country_id, city_uid, city_name, city_name_kr, 
 (0901, 09, 'DUBAI0901', 'DUBAI', '두바이', 4),
 (1001, 10, 'CAPE_TOWN1001', 'CAPETOWN', '케이프타운', 8);
 
-INSERT INTO tbl_theme (theme_code, theme_uid, theme_name) VALUES
+INSERT IGNORE INTO tbl_theme (theme_code, theme_uid, theme_name) VALUES
 (1,'THEME_001', 'TOUR'),
 (2,'THEME_002', 'GOLF'),
 (3,'THEME_003', 'CRUISE'),
@@ -76,7 +94,7 @@ INSERT INTO tbl_theme (theme_code, theme_uid, theme_name) VALUES
 (5,'THEME_005', 'HONEYMOON'),
 (6,'THEME_006', 'SILVER');
 
-INSERT INTO tbl_product (
+INSERT IGNORE INTO tbl_product (
     product_uid, country_id, city_id, theme_code,
     product_title, product_content, product_adult, product_child,
     product_start_date, product_end_date, product_min_participants,
@@ -147,7 +165,7 @@ INSERT INTO tbl_product (
        220000, 110000, '2025-05-01', '2025-05-31', 2, 8, 'ON_SALE', 'capetown_nature.jpg', 'TOUR', 0);
 
 
-INSERT INTO tbl_product_theme (pt_id, product_code, theme_code) VALUES
+INSERT IGNORE INTO tbl_product_theme (pt_id, product_code, theme_code) VALUES
                                                                     (1, 1, 1),    -- 서울 시티 투어 -> TOUR
                                                                     (2, 2, 2),    -- 부산 골프 리조트 투어 -> GOLF
                                                                     (3, 3, 3),    -- 제주 크루즈 투어 -> CRUISE

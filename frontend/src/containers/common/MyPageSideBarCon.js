@@ -3,8 +3,8 @@ import React,{useState} from "react";
 
 const menuList = [
     { label: "개인정보조회", path: "/mypage" },
-    { label: "예약내역", path: "/mypage/reservations" },
-    { label: "나의 리뷰", path: "/mypage/review" },
+    { label: "예약내역", path: "/my/reservations" },
+    { label: "나의 리뷰", path: "/my/review" },
     { label: "나의 커뮤니티글", path: "/mypage/community" },
     { label: "이벤트 조회", path: "/mypage/event" },
     { label: "FAQ조회", path: "/mypage/faq" },

@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -36,7 +38,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // 회원 관련 엔드포인트는 인증 없이 허용
                         .requestMatchers("/member/**").permitAll()
@@ -44,6 +47,9 @@ public class SecurityConfig {
                         // 마이페이지는 인증 필요
                         .requestMatchers("/member/mypage").authenticated()
                         .requestMatchers("/member/adminmypage").hasRole("ADMIN")
+                        .requestMatchers("/wish/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
 
                         // 그 외 모두 허용
                         .anyRequest().permitAll()
