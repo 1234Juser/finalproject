@@ -48,6 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/member/mypage").authenticated()
                         .requestMatchers("/member/adminmypage").hasRole("ADMIN")
                         .requestMatchers("/wish/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
 
                         // 그 외 모두 허용
                         .anyRequest().permitAll()

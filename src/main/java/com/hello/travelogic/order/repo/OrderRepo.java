@@ -42,11 +42,11 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
 //    List<OrderEntity> findAll()
 
     // 6개월 이내 주문만 보기
-    @Query("SELECT o FROM OrderEntity o WHERE o.member = :member AND o.option.reservationDate >= :cutoffDate ORDER BY o.orderDate DESC")
+    @Query("SELECT o FROM OrderEntity o JOIN FETCH o.option WHERE o.member = :member AND o.option.reservationDate >= :cutoffDate ORDER BY o.orderDate DESC")
     List<OrderEntity> findRecentOrders(@Param("member") MemberEntity member, @Param("cutoffDate") LocalDate cutoffDate);
 
     // 더 이전 주문 보기
-    @Query("SELECT o FROM OrderEntity o WHERE o.member = :member AND o.option.reservationDate < :cutoffDate ORDER BY o.orderDate DESC")
+    @Query("SELECT o FROM OrderEntity o JOIN FETCH o.option WHERE o.member = :member AND o.option.reservationDate < :cutoffDate ORDER BY o.orderDate DESC")
     List<OrderEntity> findOldOrders(@Param("member") MemberEntity member, @Param("cutoffDate") LocalDate cutoffDate);
 
 }

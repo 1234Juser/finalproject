@@ -40,9 +40,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 토큰 검증
         if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
-//            String memberId = jwtUtil.getMemberIdFromToken(jwt);
-//
+
+            String memberId = jwtUtil.getMemberIdFromToken(jwt);
+            List<String> roles = jwtUtil.getRolesFromToken(jwt);
+
+            var authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new) // "ROLE_ADMIN" 그대로 사용
+                    .collect(Collectors.toList());
+
 //            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+
             // role 동적
             Claims claims = jwtUtil.getAllClaimsFromToken(jwt);
             String memberId = claims.getSubject();

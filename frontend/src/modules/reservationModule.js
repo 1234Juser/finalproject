@@ -32,8 +32,15 @@ function reservationReducer(state, action) {
         case "ADD_OLD_RESERVATIONS":
             return {
                 ...state,
-                reservations: [...state.reservations, ...action.payload]
+                reservations: [
+                    ...state.reservations,
+                    ...action.payload.filter(newRes =>
+                        !state.reservations.some(existing => existing.orderCode === newRes.orderCode)
+                    )
+                ]
             };
+        case 'CANCEL_RESERVATION_ERROR':
+            return { ...state, error: action.payload };
         case 'FETCH_ERROR':
             return { ...state, error: action.payload, loading: false };
         case 'LOADING':
