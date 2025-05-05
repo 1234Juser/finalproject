@@ -100,7 +100,6 @@ public class EventService {
                 try {
                     Files.deleteIfExists(oldImagePath);
                 } catch (IOException e) {
-                    // 실패해도 치명적이지 않으면 로그만 남기고 넘어가도 됨
                 }
             }
             // 파일 확장자 추출
