@@ -21,7 +21,7 @@ function AdminSideBarCom({ menuList, activeIdx, setActiveIdx }) {
                     const isActive = location.pathname === menu.path;
                     const hasSub = !!menu.subMenu;
                     return (
-                        <div key={menu.path}>
+                        <div key={i}>
                             <div // 메인 메뉴
                                 style={{
                                     ...linkStyle,

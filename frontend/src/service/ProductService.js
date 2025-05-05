@@ -128,7 +128,7 @@ const getProductDetail = async (productUid) => {
 }
 
 
-// ------------- 관리자 페이지 내 상품 등록용 함수
+// ------------- 관리자 페이지 내 상품 관리용 함수
 // 권역 데이터 불러오기
 const getRegions = async (regionType) => {
     try {
@@ -160,15 +160,11 @@ const getThemes = async () => {
 
 // 상품 등록 함수
 const ProductRegist = async (formData) => {
-    // console.log("여기서 formData 확인========>", formData)
     try {
         const response = await fetch(`${path}/products/register`, {
             method : "POST",
             body : formData
-            // headers: { 'Content-Type': 'multipart/form-data' },
-            // body : JSON.stringify(formData),
         })
-        console.log("응답 확인------>", response);
 
         if( response.ok) {
             const result = await response.text();
@@ -185,6 +181,46 @@ const ProductRegist = async (formData) => {
     }
 }
 
+// 수정용 데이터 불러오기
+const getProductModify = async (productUid) => {
+    try {
+        const response = await fetch(`${path}/products/admin/${productUid}`, {
+            method : "GET"
+        });
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("데이터 불러오기 실패!! : ", error);
+        throw error;
+    }
+}
+
+// 수정하기
+const setProductModify = async (productUid, formData) => {
+    try {
+        const response = await fetch(`${path}/products/admin/${productUid}`, {
+            method: "PUT",
+            body: formData
+        });
+        console.log("전송 formData 확인-------". formData);
+        if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log("전송 데이터 확인=----->", result);
+        return result;
+    } catch (error) {
+        console.error("수정 실패 ㅠㅠ다시 확인하세요 : ", error);
+        throw error;
+    }
+}
+
+
+//  ------------- 상품 관련 부가 기능 함수
+// 찜 추가하기
 const toggleWish = async (product) => {
     try {
         const token = localStorage.getItem("accessToken");
@@ -214,5 +250,5 @@ export {
     getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
     getProductsByCountry, getProductsByCity, getProductDetail,
     ProductRegist,
-    getRegions, getThemes, toggleWish
+    getRegions, getThemes, toggleWish, getProductModify, setProductModify
 };

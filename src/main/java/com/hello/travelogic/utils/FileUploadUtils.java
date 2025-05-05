@@ -20,8 +20,6 @@ import java.util.UUID;
 public class FileUploadUtils {
 
 
-    private final ProductRepo productRepo;
-
     public static String saveNewFile(MultipartFile file) throws IOException {
 
         String fileName = null;
@@ -35,11 +33,8 @@ public class FileUploadUtils {
 
 
         // OR System.getProperty("user.dir")
-        String baseDir = System.getProperty("user.home") + File.separator + "Desktop"
-                + File.separator + "hello_travelogic" + File.separator + "upload"
-                + File.separator + "product" + File.separator;
-
-
+        String baseDir = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "product" + File.separator;
+        
         Path path = Paths.get(baseDir + fileName);      // 파일 저장 경로 설정
         Files.createDirectories(path.getParent());      // 디렉토리 없으면 생성함
 

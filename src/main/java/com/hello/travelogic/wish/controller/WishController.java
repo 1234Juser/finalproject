@@ -1,5 +1,6 @@
 package com.hello.travelogic.wish.controller;
 
+
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.wish.dto.WishDTO;
 import com.hello.travelogic.wish.dto.WishGroupDTO;
