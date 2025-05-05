@@ -70,7 +70,7 @@ public class OrderService {
     }
 
     // 로그인 된 회원의 주문내역 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<OrderDTO> getRecentOrders(long memberCode) {
         MemberEntity member = memberRepo.findById(memberCode).orElseThrow();
         LocalDate cutoff = LocalDate.now().minusMonths(6);
@@ -79,7 +79,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<OrderDTO> getOldOrders(long memberCode) {
         MemberEntity member = memberRepo.findById(memberCode).orElseThrow();
         LocalDate cutoff = LocalDate.now().minusMonths(6);
@@ -167,10 +167,19 @@ public class OrderService {
     }
 
     @Transactional
-    public void cancelOrderByMember(Long orderCode) {
+    public void cancelOrderByMember(Long orderCode, Long memberCode) {
 
         OrderEntity order = orderRepo.findById(orderCode)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-        order.setOrderStatus(OrderStatus.CANCELED);
+        if (!order.getMember().getMemberCode().equals(memberCode)) {
+            throw new SecurityException("본인의 예약만 취소할 수 있습니다.");
+        }
+        if (order.getOrderStatus() != OrderStatus.SCHEDULED) {
+            throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
+        }
+        if (order.getOrderStatus() == OrderStatus.SCHEDULED) {
+            order.setOrderStatus(OrderStatus.CANCELED);
+            orderRepo.save(order);
+        }
     }
 }

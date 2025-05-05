@@ -6,79 +6,80 @@ import {initialState, reservationReducer} from "../../modules/reservationModule"
 function MyBookingCon(){
     const [selectedTab, setSelectedTab] = useState(0);
     const [state, dispatch] = useReducer(reservationReducer, initialState);
-    const [memberCode] = useState(Number(localStorage.getItem("memberCode")));
     const [showMoreSchedule, setShowMoreSchedule] = useState(true);
     const [showMoreComplete, setShowMoreComplete] = useState(true);
     const [showMoreCancel, setShowMoreCancel] = useState(true);
-    const [showMoreAvailable, setShowMoreAvailable] = useState(true); // 일단 true로 설정
-    const [oldReservations, setOldReservations] = useState([]); // 6개월 전 주문 담을 곳
-    // const [currentPage, setCurrentPage] = useState(0);
-    // const onPageClick = (currentPage) => {
-    //     setCurrentPage(currentPage);
-    // }
 
     useEffect(() => {
-        // const member = JSON.parse(localStorage.getItem("member") || "{}");
-        // const memberCode = member?.memberCode;
-        // //혹은
-        // const memberCode = Number(localStorage.getItem("memberCode"));
-        console.log("로그인된 memberCode:", memberCode);
-        if (!memberCode || isNaN(memberCode)) {
-            console.error("로그인 정보가 없습니다.");
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            alert("로그인이 필요합니다.");
             return;
         }
-        async function loadRecent() {
-            dispatch({ type: "LOADING" });
+        if (token) {
+            // let memberCode = null;
             try {
-                const data = await fetchRecentReservations(memberCode);
-                dispatch({ type: "FETCH_SUCCESS", payload: data });
-            } catch (err) {
-                dispatch({ type: "FETCH_ERROR", payload: err.message });
-            }
-        }
-        loadRecent();
-    }, [memberCode]);
-        // const parsedCode = Number(localStorage.getItem("memberCode"));
-        // if (!parsedCode || isNaN(parsedCode)) {
-        //     console.error("로그인 정보 없음");
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const memberCode = payload.memberCode;
+                // if (memberCode) {
+                //     console.log("memberCode from token:", memberCode);
+                //     localStorage.setItem("memberCode", memberCode);
+                // }
+                if (!memberCode || isNaN(memberCode)) {
+                    console.error("유효하지 않은 memberCode");
+                    alert("로그인 정보가 유효하지 않습니다.");
+                    return;
+                }
+                console.log("로그인된 memberCode:", memberCode);
+            // } catch (e) {
+            //     console.error("토큰 파싱 실패", e);
+            //     return;
+            // }
+
+    // useEffect(() => {
+        // console.log("로그인된 memberCode:", memberCode);
+        // if (!memberCode || isNaN(memberCode)) {
+        //     console.error("로그인 정보가 없습니다.");
         //     return;
         // }
-        // async function loadAllPages(memberCode) {
-        //     let page = 0;
-        //     let allData = [];
-        //     let totalPages = 1;
-        //
-        //     while (page < totalPages) {
-        //         const res = await fetchMyReservations(memberCode, page);
-        //         allData = allData.concat(res.list);
-        //         totalPages = res.totalPages;
-        //         page++;
-        //     }
-        //
-        //     dispatch({ type: "FETCH_SUCCESS", payload: { list: allData } });
-        // }
-    //     async function loadData() {
-    //         dispatch({ type: "LOADING" });
+        // const loadRecent = async () => {
+            dispatch({ type: "LOADING" });
+            fetchRecentReservations()
+                .then(data => {
+                    dispatch({ type: "FETCH_SUCCESS", payload: data });
+                })
+                .catch((err) => {
+                    console.error("예약 조회 실패:", err.message);
+                    dispatch({ type: "FETCH_ERROR", payload: err.message });
+                });
+            } catch (e) {
+                console.error("토큰 파싱 실패", e);
+                alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
+            }
+        } else {
+            alert("로그인이 필요합니다.");
+        }
+    }, []);
     //         try {
-    //             const data = await fetchMyReservations(memberCode);
-    //             console.log("불러온 예약 데이터:", data);
-    //             // const data = await fetchMyReservations(parsedCode);
+    //             const data = await fetchRecentReservations();
     //             dispatch({ type: "FETCH_SUCCESS", payload: data });
     //         } catch (err) {
+    //             console.error("예약 조회 실패:", err.message);
     //             dispatch({ type: "FETCH_ERROR", payload: err.message });
     //         }
     //     }
-    //     loadData();
-    // }, []);
+    //     loadRecent();
+    // }, [memberCode]);
 
     const handleLoadOldForSchedule = async () => {
         try {
-            const oldData = await fetchOldReservations(memberCode);
+            const oldData = await fetchOldReservations();
             if (oldData.length > 0) {
                 dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             } else {
                 alert("더 이상 불러올 예약이 없습니다.");
                 setShowMoreSchedule(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
+                // setShowMore(false);
             }
         } catch (err) {
             console.error("6개월 이전 예약 불러오기 실패", err);
@@ -86,7 +87,7 @@ function MyBookingCon(){
     };
     const handleLoadOldForComplete = async () => {
         try {
-            const oldData = await fetchOldReservations(memberCode);
+            const oldData = await fetchOldReservations();
             if (oldData.length > 0) {
                 dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             } else {
@@ -99,7 +100,7 @@ function MyBookingCon(){
     };
     const handleLoadOldForCancel = async () => {
         try {
-            const oldData = await fetchOldReservations(memberCode);
+            const oldData = await fetchOldReservations();
             if (oldData.length > 0) {
                 dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             } else {
@@ -110,47 +111,6 @@ function MyBookingCon(){
             console.error("6개월 이전 예약 불러오기 실패", err);
         }
     };
-    // 통합형 사용하면 버튼이 다 사라져서 나누기로함
-    // const handleLoadOld = async () => {
-    //     try {
-    //         const oldData = await fetchOldReservations(memberCode);
-    //         if (oldData.length > 0) {
-    //             dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
-    //         } else {
-    //             alert("더 이상 불러올 예약이 없습니다.");
-    //             setShowMoreAvailable(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
-    //         }
-    //     } catch (err) {
-    //         console.error("6개월 이전 예약 불러오기 실패", err);
-    //     }
-    // };
-    // const onLoadOldReservations = async () => {
-    //     try {
-    //         const data = await fetchMyOldReservations(memberCode);
-    //         setOldReservations(data);
-    //         dispatch({ type: "ADD_OLD_RESERVATIONS", payload: data }); // reducer가 있다면
-    //         setShowMoreAvailable(false); // 더 보기는 한 번만
-    //     } catch (e) {
-    //         console.error("6개월 전 예약 불러오기 실패", e);
-    //     }
-    // };
-    // const handleLoadOld = async () => {
-    //     try {
-    //         const oldData = await fetchOldReservations(memberCode);
-    //         dispatch({
-    //             type: "FETCH_SUCCESS",
-    //             payload: {
-    //                 list: [...state.reservations, ...oldData.list], // 리스트 병합
-    //                 totalPages: state.totalPages,
-    //                 currentPage: state.currentPage
-    //             }
-    //         });
-    //         setShowOld(true);
-    //     } catch (err) {
-    //         alert("이전 예약을 불러오지 못했습니다.");
-    //         console.error(err);
-    //     }
-    // };
 
     const handleCancel = (orderCode) => {
         console.log("취소 요청 들어온 orderCode:", orderCode);
@@ -172,22 +132,22 @@ function MyBookingCon(){
     }
 
     return(
-    <>
-        <MyBookingCom
-            selectedTab={selectedTab}
-            onChangeTab={(index) => setSelectedTab(index)}
-            reservations={state.reservations}
-            onCancelReservation={handleCancel}
-            // onPageClick={onPageClick}
-            // onLoadOldReservations={handleLoadOld}
-            onLoadOldReservationsForSchedule={handleLoadOldForSchedule}
-            onLoadOldReservationsForComplete={handleLoadOldForComplete}
-            onLoadOldReservationsForCancel={handleLoadOldForCancel}
-            // onLoadOldReservations={onLoadOldReservations}
-            showMoreSchedule={showMoreSchedule}
-            showMoreComplete={showMoreComplete}
-            showMoreCancel={showMoreCancel}
-        />
-    </>)
+        <>
+            <MyBookingCom
+                selectedTab={selectedTab}
+                onChangeTab={(index) => setSelectedTab(index)}
+                reservations={state.reservations}
+                onCancelReservation={handleCancel}
+                onLoadOldReservationsForSchedule={handleLoadOldForSchedule}
+                onLoadOldReservationsForComplete={handleLoadOldForComplete}
+                onLoadOldReservationsForCancel={handleLoadOldForCancel}
+                // onLoadOldReservationsForSchedule={() => handleLoadOld(setShowMoreSchedule)}
+                // onLoadOldReservationsForComplete={() => handleLoadOld(setShowMoreComplete)}
+                // onLoadOldReservationsForCancel={() => handleLoadOld(setShowMoreCancel)}
+                showMoreSchedule={showMoreSchedule}
+                showMoreComplete={showMoreComplete}
+                showMoreCancel={showMoreCancel}
+            />
+        </>)
 }
 export default MyBookingCon;

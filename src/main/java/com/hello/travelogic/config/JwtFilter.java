@@ -8,12 +8,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,9 +40,16 @@ public class JwtFilter extends OncePerRequestFilter {
         // 토큰 검증
         if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
             String memberId = jwtUtil.getMemberIdFromToken(jwt);
+            List<String> roles = jwtUtil.getRolesFromToken(jwt);
+
+            var authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new) // "ROLE_ADMIN" 그대로 사용
+                    .collect(Collectors.toList());
+
+//            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(memberId, null, null);
+                    new UsernamePasswordAuthenticationToken(memberId, null, authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
