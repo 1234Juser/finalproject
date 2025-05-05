@@ -45,7 +45,7 @@ public class OrderService {
     @Transactional
     public Map<String, Object> getAllMemberBookingList(int start) {
 
-        start = start > 0? start -1 : start;
+        start = start > 0 ? start - 1 : start;
 
         int size = 10;
         Pageable pageable = PageRequest.of(start, size, Sort.by(Sort.Order.desc("orderDate")));
@@ -106,6 +106,8 @@ public class OrderService {
     public OrderDTO getOrder(Long orderCode) {
         OrderEntity order = orderRepo.findById(orderCode)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+    }
+
 
     @Transactional
     public int updateOrderStatusIfCompleted(Long orderCode) {
