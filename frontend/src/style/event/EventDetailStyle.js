@@ -101,3 +101,33 @@ export const DescArea = styled.pre`
     white-space: pre-line;
     box-shadow: 0 2px 23px 0 #6abceb1b;
 `;
+
+export const EditButton = styled.button`
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background: linear-gradient(90deg, #36abc9, #198dbb); // 등록 버튼과 동일 gradient
+    color: #fff;
+    border: none;
+    padding: 9px 22px;
+    border-radius: 22px;
+    font-weight: 780;
+    font-size: 1rem;
+    box-shadow: 0 3px 16px #44c0ee26;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    transition: background .16s, box-shadow .16s, transform .13s;
+    z-index: 10;
+    &:hover {
+        background: linear-gradient(90deg, #198dbb, #36abc9);
+        box-shadow: 0 6px 18px #44c0ee36;
+        transform: translateY(-2px) scale(1.05);
+    }
+    @media (max-width: 600px) {
+        right: 16px;
+        top: 20px;
+        padding: 7px 15px;
+        font-size: 0.97rem;
+    }
+`;
+
