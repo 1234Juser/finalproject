@@ -25,6 +25,7 @@ import EventListPage from "./pages/event/EventListPage";
 import EventRegisterPage from "./pages/event/EventRegisterPage";
 import EventDetailPage from "./pages/event/EventDetailPage";
 import AdminBookingPage from "./pages/reservation/AdminBookingPage";
+import EventRegisterCon from "./containers/event/EventRegisterCon";
 import MyBookingPage from "./pages/reservation/MyBookingPage";
 // import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 
@@ -38,6 +39,12 @@ function App() {
               <Route path="/event" element={<EventListPage/>}/>
               <Route path="/event/register" element={<EventRegisterPage />} />
               <Route path="/event/:id" element={<EventDetailPage />} />
+              <Route path="/event/edit/:id" element={<EventRegisterCon />} />
+
+
+
+
+
 
               {/*회원가입/로그인*/}
               <Route path="/registerselect" element={<RegisterMethodSelectPage />} />

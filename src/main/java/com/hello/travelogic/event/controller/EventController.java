@@ -34,8 +34,6 @@ public class EventController {
         return ResponseEntity.ok(eventService.findFinishedEvents(PageRequest.of(page, size)));
     }
 
-
-
     //단일이벤트조회
     @GetMapping("/{id}")
     public ResponseEntity<EventEntity> getEvent(@PathVariable Integer id){
@@ -57,4 +55,22 @@ public class EventController {
         );
         return ResponseEntity.ok(savedEvent);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EventEntity> updateEvent(
+            @PathVariable Integer id,
+            @RequestParam String eventTitle,
+            @RequestParam String eventContent,
+            @RequestParam(value = "eventImg", required = false) MultipartFile eventImg,
+            @RequestParam String eventStartdate,
+            @RequestParam String eventEnddate,
+            @RequestParam String eventStatus
+    ) {
+        EventEntity updatedEvent = eventService.updateEvent(
+                id, eventTitle, eventContent, eventImg, eventStartdate, eventEnddate, eventStatus
+        );
+        return ResponseEntity.ok(updatedEvent);
+    }
+
+
 }

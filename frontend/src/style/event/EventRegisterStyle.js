@@ -159,3 +159,34 @@ export const Select = styled.select`
         background: #eaf6fb;
     }
 `;
+
+export const CancelButton = styled.button`
+    flex: 1;
+    background: #fff;
+    color: #1486ba;
+    border: 2px solid #1486ba;
+    border-radius: 12px;
+    font-size: 1.09rem;
+    font-weight: 700;
+    padding: 15px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.7px;
+    box-shadow: 0 2px 10px #a3e5fa1c;
+    position: relative;
+    transition: background 0.17s, color 0.15s, border 0.15s, box-shadow 0.16s;
+    &:hover {
+        background: #e7f6fb;
+        color: #1976d2;
+        border-color: #1976d2;
+        box-shadow: 0 4px 18px #a1d0f735;
+    }
+    & svg {
+        margin-right: 7px;
+        font-size: 1.22em;
+        vertical-align: middle;
+    }
+`;
+

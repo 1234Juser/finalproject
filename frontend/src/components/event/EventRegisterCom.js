@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import {
     FormWrapper, Title, StyledForm, Label, StyledInput, StyledTextarea,
-    FileInputWrapper, FileLabel, PreviewImg, DateRow, SubmitButton, Select
+    FileInputWrapper, FileLabel, PreviewImg, DateRow, SubmitButton, Select,
+    CancelButton
+
 } from "../../style/event/EventRegisterStyle";
+import {useNavigate} from "react-router-dom";
 
 function EventRegisterCom({ form, onChange, onSubmit }) {
     const [imgPreview, setImgPreview] = useState(null);
+    const navigate = useNavigate();
+
 
     const handleFileChange = (e) => {
         onChange(e);
@@ -16,6 +21,9 @@ function EventRegisterCom({ form, onChange, onSubmit }) {
         } else {
             setImgPreview(null);
         }
+    };
+    const handleCancel = () => {
+        navigate('/event');
     };
 
     return (
@@ -105,9 +113,15 @@ function EventRegisterCom({ form, onChange, onSubmit }) {
                     <option value="종료">종료</option>
                 </Select>
 
-                <SubmitButton type="submit">
-                    등록하기
-                </SubmitButton>
+                <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                    <SubmitButton type="submit" style={{ marginTop: 0, width: "50%" }}>
+                        등록하기
+                    </SubmitButton>
+                    <CancelButton type="button" style={{ width: "50%" }} onClick={handleCancel}>
+                        취소하기
+                    </CancelButton>
+                </div>
+
             </StyledForm>
         </FormWrapper>
     );
