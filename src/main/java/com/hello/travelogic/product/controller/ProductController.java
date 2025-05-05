@@ -2,6 +2,7 @@ package com.hello.travelogic.product.controller;
 
 import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.service.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -82,6 +85,36 @@ public class ProductController {
     }
 
 
+    // 상품 수정 페이지
+    @GetMapping("/admin/{productUid}")
+    public ResponseEntity  getProductToModify(@PathVariable("productUid") String productUid) {
+        log.debug("get product detail : {}", productUid);
+        ProductDTO productDTO = productService.getProductToModify(productUid);
+        
+        if(productDTO != null)
+            return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("일치하는 상품이 없습니다. UID를 다시 확인하세요.");
+    }
+    
+    
     // 상품 수정
-
+    @PutMapping("/admin/{productUid}")
+    public ResponseEntity ProductUpdate(@PathVariable("productUid") String productUid,
+                                                                                @RequestPart("productDTO") ProductDTO productDTO,
+                                                                                @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
+        
+        log.debug ("productUid: {}", productUid);
+        log.debug ("productDTO : {}", productDTO);
+        int result = productService.productUpdate(productUid, productDTO, productThumbnail);
+        
+        if(result == 1) {
+            log.debug ("product update result : {}", result);
+            return ResponseEntity.ok (Map.of ("message", "수정 성공"));
+        }
+        else if (result == 0)
+            return ResponseEntity.status (HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다. 입력 내용을 확인해주세요."));
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "상품 수정 중 오류가 발생했습니다."));
+    }
+    
 }

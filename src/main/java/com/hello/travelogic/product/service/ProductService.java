@@ -22,6 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -54,10 +58,7 @@ public class ProductService {
                 productList = productE.stream().map( product -> new ProductDTO(product)).toList();
 
         }
-        log.info("productE : {}", productE);
-        log.info("productList : {}", productList);
         return productList;
-//        return productRepo.findAll().stream().map( products -> new ProductDTO(products)).toList();
     }
 
 
@@ -85,7 +86,6 @@ public class ProductService {
 
         // countryId를 해당하는 countryEntity 먼저 조회
         CountryEntity countryEntity = countryRepo.findByCountryId(countryId);
-        log.info("countryEntity : {}", countryEntity);
         log.info("countryEntity : {}", countryEntity);
 
         // countryEntity 해당 국가의 투어 상품 조회
@@ -129,34 +129,27 @@ public class ProductService {
     // 상품 등록
     @Transactional
     public int registerProduct(ProductDTO productDTO, MultipartFile productThumbnail) {
-        log.debug("서비스에서 productDTO 확인 : {}", productDTO);
         int result = 1;
         try {
             // 1. 입력 받은 데이터 유효성 검증 및 엔티티 매핑
             CountryEntity country = countryRepo.findById(productDTO.getCountryId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 국가 코드입니다."));
-            log.info("country : {}" , country);
 
             CityEntity city = cityRepo.findById(productDTO.getCityId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 도시 코드입니다."));
-            log.info("city : {}" , city);
 
             ThemeEntity theme = themeRepo.findById(productDTO.getThemeCode())
                     .orElse(null);       // nullable 가능 (themeCode는 nullable)
-            log.info("theme : {}" , theme);
 
 
             // 2. 날짜 검증 - 날짜 타입 변환 (String → LocalDate)
             LocalDate startDate = LocalDate.parse(productDTO.getProductStartDate());
-            log.info("startDate : {}" , startDate);
-            LocalDate today = LocalDate.now();      // 시스템에서 오늘 날짜 가져오기
-            log.info("today : {}" , today);
+            LocalDate today = LocalDate.now();
             if (startDate.isBefore(today)) {
                 throw new IllegalArgumentException("시작 날짜는 오늘 혹은 이후 날짜여야 합니다.");
             }
 
             LocalDate endDate = LocalDate.parse(productDTO.getProductEndDate());
-            log.info("endDate : {}" , endDate);
             if (endDate.isBefore(startDate)) {
                 throw new IllegalArgumentException("끝 날짜는 시작 날짜 이후여야 합니다.");
             }
@@ -164,13 +157,9 @@ public class ProductService {
 
             // 3. 도시별 productUid 생성 로직
             String cityName = cityRepo.findCityNameByCityId(productDTO.getCityId());    // 도시 이름 조회 (예:"SEOUL")
-            log.info("cityname : {}" , cityName);
             String prefix = cityName.toUpperCase().replaceAll("\\s+", "");      // 대문자 변환 + 공백제거
-            log.info("prefix : {}" , prefix);
             Long count = productRepo.countByProductUidStartingWith(prefix);     // "SEOUL%" 로 시작하는 uid 몇 개인지 확인
-            log.info("count : {}" , count);
             String newUid = prefix + String.format("%03d", count + 1);      // 새로운 UID 만들기
-            log.info("newUid : {}" , newUid);
 
 /*
             // 4. productCode 생성 로직 (숫자를 단순히 자동 증가되도록 설정)
@@ -181,15 +170,8 @@ public class ProductService {
             // 4. 썸네일 파일 저장 및 DTO에 파일명 생성
             if (productThumbnail != null && !productThumbnail.isEmpty()) {
                 String thumbnailfileName = FileUploadUtils.saveNewFile(productThumbnail);
-                log.debug("저장된 썸네일 파일명 : {}", thumbnailfileName);
-                productDTO.setProductThumbnail(thumbnailfileName); // DTO에 파일명 설정
+                productDTO.setProductThumbnail(thumbnailfileName);
             }
-
-            log.debug("productThumbnail : {}", productThumbnail);
-            log.debug("productThumbnail.getOriginalFilename() : {}", productThumbnail.getOriginalFilename());
-            log.debug("productThumbnail.getSize() : {}", productThumbnail.getSize());
-            log.debug("productThumbnail.getContentType() : {}", productThumbnail.getContentType());
-            log.debug("productThumbnail.isEmpty() : {}", productThumbnail.isEmpty());
 
 
             // 5. productEntity 생성 및 설정
@@ -209,7 +191,7 @@ public class ProductService {
             log.info("productEntity 생성 및 설정.... productE 확인,,, : {} ", productE);
 
         } catch (ObjectOptimisticLockingFailureException e) {
-            log.debug("낙관적 잠금 충돌 발생: {}", e.getMessage(), e);       // 충돌 상태를 구체적으로 반환
+            log.debug("낙관적 잠금 충돌 발생: {}", e.getMessage(), e);
             result = -1;
         } catch (Exception e) {
             result = 0;
@@ -221,7 +203,7 @@ public class ProductService {
     }
 
 
-    // 예시: themeCode에 따라 productType 설정
+    // themeCode에 따라 productType 설정
     private ProductEntity.ProductType getProductTypeByThemeCode(ThemeEntity themeEntity) {
         Long themeCode = themeEntity.getThemeCode();
 
@@ -241,6 +223,7 @@ public class ProductService {
         throw new IllegalArgumentException("알 수 없는 테마 코드: " + themeCode);
     }
 
+    
     // 리뷰 작성/삭제 시 reviewcount만 업데이트
     public void updateReviewCount(Long productCode) {
         int count = reviewRepo.countByProduct_ProductCode(productCode);
@@ -250,6 +233,8 @@ public class ProductService {
         productRepo.save(product);
     }
 
+    
+    // 상품 상세 페이지
     public ProductDTO getProductDetail(String productUid, Long memberCode) {
         ProductEntity product = productRepo.findByProductUid(productUid)
                 .orElseThrow(() -> new NoSuchElementException("상품 없음"));
@@ -265,5 +250,107 @@ public class ProductService {
         dto.setWished(isWished);
 
         return dto;
+    }
+    
+    
+    // 상품 수정 페이지
+    public ProductDTO getProductToModify ( String productUid ) {
+        
+        Optional<ProductEntity> productEntity = productRepo.findByProductUid(productUid);
+        log.info("상품 productEntity 확인 : {}", productEntity);
+        
+        if(productEntity.isPresent ()) {
+            log.info ("productEntity.get() : {}", productEntity.get());
+            return new ProductDTO(productEntity.get());
+        } else {
+            throw new EntityNotFoundException ("상품을 찾을 수 없습니다. productUid : " + productUid);
+        }
+        
+    }
+    
+    
+    // 상품 수정
+    @Transactional
+    public int productUpdate ( String productUid, ProductDTO productDTO, MultipartFile productThumbnail ) {
+        
+        int result = 1;
+        Optional<ProductEntity> productEOptional  = productRepo.findByProductUid (productUid);
+        log.info ("상품 엔티티 확인 ==== productE : {}" , productEOptional );
+        
+        try {
+            if (productEOptional .isPresent()) {
+                ProductEntity productE = productEOptional .get();
+            
+                // 1. 파일을 재업로드한 경우 실행
+                if (productThumbnail != null && !productThumbnail.isEmpty()) {
+                    
+                    // 1-1. 기존 파일이 존재한다면 삭제
+                    if (productEOptional.get ().getProductThumbnail () != null && !productEOptional.get ().getProductThumbnail ().isEmpty()) {
+                        String oldFileName = productEOptional.get ().getProductThumbnail ();
+                        log.debug ("oldFileName : {}", oldFileName);
+                        
+                        try {
+                            String baseDir = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "product" + File.separator;
+                            
+                            Path path = Paths.get(baseDir + oldFileName);
+                            log.debug ("path : {}", path);
+                            Files.deleteIfExists(path);
+                            
+                        } catch (IOException e) {
+                            log.debug ("파일 삭제 에러" + e.getMessage());
+                            e.printStackTrace();
+                            return -1;
+                        }
+                    }
+                    
+                    // 1-2. 새 파일 저장
+                    try {
+                            String thumbnailfileName = FileUploadUtils.saveNewFile(productThumbnail);
+                            productE.setProductThumbnail(thumbnailfileName);
+                    } catch (IOException e) {
+                            e.printStackTrace ();
+                            return -1;
+                    }
+                    
+                    log.debug (">>>>> 새 파일 저장하고 나서 productDTO 확인하기 : {}", productDTO);
+                    
+                } else {
+                // 2. 파일 재업로드하지 않은 경우 DTO에 담긴 값으로 엔티티 업데이트 및 DTO의 썸네일 이름 유지
+                    productE.setProductTitle(productDTO.getProductTitle());
+                    productE.setProductContent(productDTO.getProductContent());
+                    productE.setProductStartDate(LocalDate.parse (productDTO.getProductStartDate()));
+                    productE.setProductEndDate(LocalDate.parse (productDTO.getProductEndDate()));
+                    productE.setProductAdult(productDTO.getProductAdult());
+                    productE.setProductChild(productDTO.getProductChild());
+                    productE.setProductMinParticipants(productDTO.getProductMinParticipants());
+                    productE.setProductMaxParticipants(productDTO.getProductMaxParticipants());
+                    productE.setProductType(productDTO.getProductType());
+                    productE.setProductStatus(productDTO.getProductStatus());
+                    productE.setProductThumbnail(productDTO.getProductThumbnail());
+                }
+            
+            log.debug (">>>>> 엔티티에 새 파일 저장됨. productE.get ().getProductThumbnail () : {}", productEOptional.get ().getProductThumbnail ());
+                log.debug (">>>>> productE 확인하기 : {}", productE);
+            log.debug (">>>>> 새 파일 저장하고 나서 productDTO 확인하기 : {}", productDTO);
+            log.debug (">>>>>productDTO.getProductThumbnail () : {}", productDTO.getProductThumbnail ());
+            
+            
+            // 3. 데이터 저장
+            productRepo.save(productE);
+            log.info(">>>>>★★ 데이터 저장하고 수정된 productE는: {} ", productE);
+            
+        
+            } else {
+                 // 해당 productUid를 가진 상품이 없는 경우
+                 result = 0;
+            }
+            
+        } catch (Exception e) {
+            result = 0;
+            e.printStackTrace();
+            log.debug("상품 등록 중 오류 발생: {}", e.getMessage(), e);
+    }
+        
+        return result;
     }
 }

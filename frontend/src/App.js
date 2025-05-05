@@ -53,6 +53,7 @@ function App() {
                 <Route path="memberSearch" element={<AdminMemberListPage />} />
                 <Route path="productAll" element={<ProductAllAdminPage/>}/>
                 <Route path="productReg" element={<ProductRegPage/>} />
+                <Route path="productEdit/:productUid" element={<ProductRegPage/>} />
               </Route>
 
               <Route path="/domestic" element={<DomesticPage/>}/>

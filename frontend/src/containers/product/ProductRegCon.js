@@ -1,7 +1,7 @@
 import ProductRegCom from "../../components/product/ProductRegCom";
 import {useState, useEffect} from "react";
-import { ProductRegist, getRegions, getCountryList, getCitiesByRegion, getCitiesByCountry, getThemes } from "../../service/ProductService";
-import { useNavigate } from "react-router-dom";
+import { ProductRegist, getRegions, getCountryList, getCitiesByRegion, getCitiesByCountry, getThemes, getProductModify, setProductModify} from "../../service/ProductService";
+import {useNavigate, useParams} from "react-router-dom";
 
 function ProductRegCon() {
 
@@ -32,17 +32,36 @@ function ProductRegCon() {
     const [uploadedFile, setUploadedFile] = useState(null);
 
     const navigate = useNavigate();
+    const {productUid} = useParams();
+    const isEditPage = !!productUid;        // 수정 페이지일 경우 true
 
 
-    // 권역, 국가, 도시, 테마 데이터 불러오기
+
     useEffect(() => {
         console.log("-------formInput 변경 확인하기-------", formInput);
         getThemes()
-        .then( data => {
-            setThemes(data);
-        })
-        .catch((err) => console.error(err))
-    }, [formInput]);
+            .then( data => {
+                setThemes(data);
+            })
+            .catch((err) => console.error(err))
+
+        // 수정 모드
+        if(productUid) {
+            console.log("isEditPage : ", isEditPage);
+            console.log("productUid : ", productUid);
+            getProductModify(productUid)
+                .then( data => {
+                    console.log("수정용 데이터 불러오기 확인 : ", data);
+                    setFormInput({
+                        ...data,
+                        regionType: "DOMESTIC",        // DTO 필드 추가 필요 ★★
+                        regionCode: 1,                          // data.regionType 및 data.regionCode로 수정할 것 ★★
+                        productThumbnail: data.productThumbnail,
+                    });
+                })
+                .catch(err => console.error(err))
+        }
+    }, []);
 
 
     // formInput 상태 관리
@@ -168,36 +187,52 @@ function ProductRegCon() {
             productThumbnail: file.name,
         }));
         }
+        console.log("업로드 파일 확인 ㅠㅠㅠ", file);
     };
 
 
     const onSubmit = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
 
         const formData = new FormData();
         formData.append("productDTO", new Blob(
-            [JSON.stringify(formInput)], 
-            { 
-                type: "application/json" 
+            [JSON.stringify(formInput)],
+            {
+                type: "application/json"
             })
         );
 
-        console.log("여기까지 formInput확인 : ", formInput);
 
         if (uploadedFile) {
             formData.append("productThumbnail", uploadedFile);
+            console.log("여기서 uploadedFile 확인------------", uploadedFile);
         } else {
-            console.warn("파일이 선택되지 않았어요!");
+            formData.append("productThumbnail", formInput.productThumbnail);
+            console.log("기존 파일 이름만 전송 : ", formInput.productThumbnail)
         }
 
-        const res = await ProductRegist(formData);
+        console.log("여기까지 formInput확인 : ", formInput);
 
-        if( res.ok) {
-            alert(res.message);
-            navigate("/adminmypage");
-        }else {
-            console.error("상품 등록 실패:", res.message);
-        }
+       if (productUid) {
+            // 수정
+           await setProductModify(productUid, formData)
+               .then((data) => {
+                    console.log("전송 데이터 확인 : ", data);
+                    navigate("/admin/productAll");
+                })
+               .catch((err) =>
+                   console.error("수정 실패 : " , err.message))
+        } else {
+            // 등록
+           await ProductRegist(formData)
+               .then((res) => {
+                    alert(res.message);
+                    navigate("/adminmypage");
+               })
+               .catch((err) =>
+                    console.error("상품 등록 실패:", err.message))
+            }
+
     };
 
 
@@ -219,6 +254,7 @@ function ProductRegCon() {
                 handleCityIdChange={handleCityIdChange}
                 handleThemesChange={handleThemesChange}
                 handleFileSelect ={handleFileSelect}
+                isEditPage={isEditPage}
                 
             />
 
