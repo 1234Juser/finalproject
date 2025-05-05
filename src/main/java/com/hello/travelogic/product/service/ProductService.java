@@ -45,10 +45,8 @@ public class ProductService {
     private CountryRepo countryRepo;
     @Autowired
     private ThemeRepo themeRepo;
-    @Autowired
-    private ReviewRepo reviewRepo;
-    @Autowired
-    private WishRepo wishRepo;
+    private final ReviewRepo reviewRepo;
+    private final WishRepo wishRepo;
 
     // 모든 Products 조회
     public List<ProductDTO> getProducts() {

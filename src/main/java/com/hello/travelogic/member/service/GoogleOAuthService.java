@@ -116,7 +116,7 @@ public class GoogleOAuthService {
         }
 
         List<String> roles = List.of("ROLE_USER");
-        String jwt = jwtUtil.generateToken(member.getMemberId(), roles);
+        String jwt = jwtUtil.generateToken(member.getMemberId(), roles, member.getMemberCode());
 
         return new LoginResponseDTO(
                 jwt,                    // 서비스 JWT - accessToken (localStorage의 accessToken)

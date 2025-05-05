@@ -44,7 +44,7 @@ function GoogleCallbackPage() {
             })
             .catch(err => {
                 localStorage.removeItem(codeFlagKey); // 실패 시 플래그 제거(재로그인 허용)
-                alert("구글 로그인 실패");
+                alert("구글 로그인 실패! 정지된계정일수도 있으니 고객선터에 문의바랍니다");
                 navigate("/login");
             });
     }, [location, navigate]);

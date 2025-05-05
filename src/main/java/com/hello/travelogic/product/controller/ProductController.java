@@ -3,6 +3,7 @@ package com.hello.travelogic.product.controller;
 import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
+import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
@@ -22,6 +23,7 @@ public class ProductController {
 
     @Autowired
     private final ProductService productService;
+    private final JwtUtil jwtUtil;
 
     // 투어 상품 전체 조회
     @GetMapping("")
@@ -50,9 +52,9 @@ public class ProductController {
     // 투어 상품 상세 페이지
     @GetMapping("/{productUid}")
     public ResponseEntity<ProductDTO> getProductDetail(@PathVariable("productUid") String productUid,
-                                         @RequestParam("memberCode") Long memberCode) {
+                                                       @RequestHeader("Authorization") String authorizationHeader) {
         log.debug("get product detail : {}", productUid);
-        log.debug("memberCode: {}", memberCode);
+        Long memberCode = jwtUtil.getMemberCodeFromToken(authorizationHeader.replace("Bearer ", ""));
         ProductDTO dto = productService.getProductDetail(productUid, memberCode);
 //        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByUid(productUid));
         return ResponseEntity.status(HttpStatus.OK).body(dto);
