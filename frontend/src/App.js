@@ -27,7 +27,7 @@ import EventDetailPage from "./pages/event/EventDetailPage";
 import AdminBookingPage from "./pages/reservation/AdminBookingPage";
 import EventRegisterCon from "./containers/event/EventRegisterCon";
 import MyBookingPage from "./pages/reservation/MyBookingPage";
-// import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
+import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 
 function App() {
   return (
@@ -68,7 +68,7 @@ function App() {
               <Route path="/adminmypage" element={<AdminMyPagePage />} />
               <Route path="/admin">
                 <Route path="memberSearch" element={<AdminMemberListPage />} />
-                {/*<Route path="productAll" element={<ProductAllAdminPage/>}/>*/}
+                <Route path="productAll" element={<ProductAllAdminPage/>}/>
                 <Route path="productReg" element={<ProductRegPage/>} />
                 <Route path="productEdit/:productUid" element={<ProductRegPage/>} />
               </Route>
