@@ -36,6 +36,7 @@ function App() {
 
           <Routes>
               <Route path="/" element={<MainPage />} />
+              {/*이벤트페이지*/}
               <Route path="/event" element={<EventListPage/>}/>
               <Route path="/event/register" element={<EventRegisterPage />} />
               <Route path="/event/:id" element={<EventDetailPage />} />

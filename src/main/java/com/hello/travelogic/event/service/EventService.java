@@ -123,9 +123,11 @@ public class EventService {
             }
         }
 
-
         return eventRepository.save(event);
     }
-
+    //이벤트 삭제
+    public void deleteEvent(Integer id) {
+        eventRepository.deleteById(id);
+    }
 }
 
