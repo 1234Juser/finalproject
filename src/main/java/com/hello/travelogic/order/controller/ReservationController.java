@@ -13,7 +13,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class ReservationController {
     // 모든 사용자의 예약 조회 + 10개씩 페이징처리
     @GetMapping("/admin/booking")
     public ResponseEntity getAllMemberBookingList(@RequestParam(value="start", defaultValue="0")int start,
+                                                  @RequestParam(value="productCode", required=false)Long productCode,
                                                   Authentication authentication) {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -35,7 +38,13 @@ public class ReservationController {
         if (!isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.getAllMemberBookingList(start));
+        Map<String, Object> result;
+        if (productCode != null) {
+            result = orderService.getReservationsByProduct(productCode, start);
+        } else {
+            result = orderService.getAllMemberBookingList(start);
+        }
+        return ResponseEntity.ok(result);
     }
 
     // 로그인 회원의 예약 조회
@@ -91,5 +100,38 @@ public class ReservationController {
                 .getMemberCode();
         orderService.cancelOrderByMember(orderCode, memberCode);
         return ResponseEntity.ok("예약이 취소되었습니다.");
+    }
+
+    // 관리자의 상품별 필터링
+    @GetMapping("/admin/booking/filter")
+    public ResponseEntity<?> getReservationsByProductCode(
+            @RequestParam(value = "productCode", required = false) Long productCode,
+            @RequestParam(value = "start", defaultValue = "0") int start,
+            Authentication authentication) {
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
+        }
+
+        Map<String, Object> result = orderService.getReservationsByProduct(productCode, start);
+        return ResponseEntity.ok(result);
+    }
+
+    // 필터링 해서 상품별 조회
+    @GetMapping("/admin/booking/products")
+    public ResponseEntity<?> getAllProductListForFilter(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
+        }
+
+        return ResponseEntity.ok(orderService.getProductListForFilter());
     }
 }

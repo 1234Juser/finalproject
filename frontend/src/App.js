@@ -27,65 +27,73 @@ import EventDetailPage from "./pages/event/EventDetailPage";
 import AdminBookingPage from "./pages/reservation/AdminBookingPage";
 import EventRegisterCon from "./containers/event/EventRegisterCon";
 import MyBookingPage from "./pages/reservation/MyBookingPage";
-// import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
+import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
+import FaqListPage from "./pages/faq/FaqListPage";
+import FaqRegisterPage from "./pages/faq/FaqRegisterPage";
+import MyReviewPage from "./pages/review/MyReveiwPage";
+import AdminReviewPage from "./pages/review/AdminReviewPage";
+import AdminBookingByProductPage from "./pages/reservation/AdminBookingByProductPage";
 
 function App() {
-  return (
-      <div className="main-content">
-          <HeaderCon /> {/* 항상 헤더/네비가 상단에 고정 */}
+    return (
+        <div className="main-content">
+            <HeaderCon /> {/* 항상 헤더/네비가 상단에 고정 */}
 
-          <Routes>
-              <Route path="/" element={<MainPage />} />
-              <Route path="/event" element={<EventListPage/>}/>
-              <Route path="/event/register" element={<EventRegisterPage />} />
-              <Route path="/event/:id" element={<EventDetailPage />} />
-              <Route path="/event/edit/:id" element={<EventRegisterCon />} />
+            <Routes>
+                <Route path="/" element={<MainPage />} />
+                {/*이벤트페이지*/}
+                <Route path="/event" element={<EventListPage/>}/>
+                <Route path="/event/register" element={<EventRegisterPage />} />
+                <Route path="/event/:id" element={<EventDetailPage />} />
+                <Route path="/event/edit/:id" element={<EventRegisterCon />} />
+                {/*faq페이지*/}
+                <Route path="/faq" element={<FaqListPage/>}/>
+                <Route path="/faq/register" element={<FaqRegisterPage />} />
 
+                {/*회원가입/로그인*/}
+                <Route path="/registerselect" element={<RegisterMethodSelectPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
+                <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
+                {/*<Route path="/my/review" element={<MyReviewPage />} />*/}
+                <Route path="/wish/groups" element={<WishGroupPage />} />
+                <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
 
+                {/*  회원마이페이지*/}
+                <Route path="/mypage">
+                    <Route path="" element={<MyPagePage />} />
+                    <Route path="withdrawl" element={<WithdrawlPage />} />
+                </Route>
+                <Route path="/my/reservations" element={<MyBookingPage />} />
+                <Route path="/review/write/:orderCode" element={<MyReviewPage />} />
 
+                {/*관리자마이페이지*/}
+                <Route path="/adminmypage" element={<AdminMyPagePage />} />
+                <Route path="/admin">
+                    <Route path="memberSearch" element={<AdminMemberListPage />} />
+                    <Route path="productAll" element={<ProductAllAdminPage/>}/>
+                    <Route path="productReg" element={<ProductRegPage/>} />
+                    <Route path="productEdit/:productUid" element={<ProductRegPage/>} />
+                </Route>
+                <Route path="/admin/booking" element={<AdminBookingPage />} />
+                <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
+                <Route path="/admin/review" element={<AdminReviewPage />} />
 
+                <Route path="/domestic" element={<DomesticPage/>}/>
+                <Route path="/international" element={<InternationalPage />} />
+                <Route path="/products">
+                    <Route path="country" element={<ProductPage />} />
+                    <Route path="city" element={<ProductPage />} />
+                    <Route path=":productUid" element={<ProductDetailPage/>} />
+                </Route>
 
-
-              {/*회원가입/로그인*/}
-              <Route path="/registerselect" element={<RegisterMethodSelectPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
-              <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
-              {/*<Route path="/my/review" element={<MyReviewPage />} />*/}
-              <Route path="/wish/groups" element={<WishGroupPage />} />
-              <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
-
-              {/*  회원마이페이지*/}
-              <Route path="/mypage">
-                  <Route path="" element={<MyPagePage />} />
-                  <Route path="withdrawl" element={<WithdrawlPage />} />
-              </Route>
-              <Route path="/my/reservations" element={<MyBookingPage />} />
-
-              {/*관리자마이페이지*/}
-              <Route path="/adminmypage" element={<AdminMyPagePage />} />
-              <Route path="/admin">
-                <Route path="memberSearch" element={<AdminMemberListPage />} />
-                {/*<Route path="productAll" element={<ProductAllAdminPage/>}/>*/}
-                <Route path="productReg" element={<ProductRegPage/>} />
-              </Route>
-              <Route path="/admin/booking" element={<AdminBookingPage />} />
-
-              <Route path="/domestic" element={<DomesticPage/>}/>
-              <Route path="/international" element={<InternationalPage />} />
-              <Route path="/products">
-                <Route path="country" element={<ProductPage />} />
-                <Route path="city" element={<ProductPage />} />
-                <Route path=":productUid" element={<ProductDetailPage/>} />
-              </Route>
-
-        </Routes>
-          <FooterCom/>
-          {/* 토스트 창 : 찜하기 완료 후 사용 */}
-          <ToastContainer position="top-center" autoClose={2000} />
-      </div>
-  );
+            </Routes>
+            <FooterCom/>
+            {/* 토스트 창 : 찜하기 완료 후 사용 */}
+            <ToastContainer position="top-center" autoClose={2000} />
+        </div>
+    );
 }
 
 export default App;
