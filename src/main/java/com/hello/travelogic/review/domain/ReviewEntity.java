@@ -36,7 +36,7 @@ public class ReviewEntity {
     @JoinColumn(name = "member_code", nullable = false)
     private MemberEntity member;     // 회원1 - 리뷰N
 
-    NotNull
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_code", nullable = false)
     private ProductEntity product;   // 상품1 - 리뷰N
@@ -45,11 +45,6 @@ public class ReviewEntity {
     @OneToOne
     @JoinColumn(name = "option_code", nullable = false)
     private OptionEntity option;    // 옵션1 - 리뷰1
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_code", nullable = false)
-    private ProductEntity product;   // 상품1 - 리뷰N
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
