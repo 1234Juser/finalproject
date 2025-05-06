@@ -1,0 +1,234 @@
+import styled from "styled-components";
+import {useNavigate} from "react-router-dom";
+
+const StyleBookingBlock = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    overflow-x: hidden;
+`;
+const StyleContentWrap = styled.div`
+    //width: 70%;
+    //width: 800px;
+    //max-width: 1200px;
+    width: 100%;
+    max-width: 800px;
+    padding: 0 30px;
+    box-sizing: border-box;
+`;
+const TitleWrapper = styled.div`
+    height: 100px;               // 원하는 높이
+    display: flex;
+    justify-content: center;    // 가로 중앙
+    align-items: center;        // 세로 중앙
+    box-sizing: border-box;
+`;
+const ListTitle = styled.h2`
+    font-size: 24px;
+    margin-bottom: 15px;
+    height: 50px;               // 세로 높이 지정
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+`;
+const GridWrap = styled.div`
+    display: flex;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 2rem;
+    justify-items: center;
+    list-style: none;
+    box-sizing: border-box;
+`;
+const Title = styled.h4`
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+`;
+const Card = styled.div`
+    width: 800px;
+    max-width: 800px;
+    height: auto;
+    //max-height: 300px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: #fff;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    margin: 0 auto 1.5rem;
+    padding: 20px;
+    box-sizing: border-box;
+    //overflow-x: hidden;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+    
+    @media (max-width: 780px) {
+        width: 700px;
+        padding: 1rem;
+    }
+    @media (max-width: 650px) {
+        width: 580px;
+        //padding: 1rem;
+    }
+    @media (max-width: 600px) {
+        width: 500px;
+        //padding: 1rem;
+    }
+`;
+const StyledStatus = styled.h3`
+    color: #008080;
+    margin-top: 10px;
+    margin-left: 10px;
+    box-sizing: border-box;
+`;
+const StyledInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-left: 40px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    
+    div {
+        gap: 30px;
+    }
+`;
+const StyledButton = styled.button`
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 16px;
+    background: #fbeff1;
+    border: 1px solid #fbeff1;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin: 0 2px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    text-align: center;
+    &:hover {
+        background: #f8dbe1;
+    }
+
+    @media (max-width: 550px) {
+        align-items: stretch;
+    }
+`;
+const StyledButtonArea = styled.div`
+    display: flex;
+    justify-content: center;
+    //justify-content: space-between;
+    //margin-top: 1rem;
+    margin-bottom: 5px;
+    gap: 10px;
+    box-sizing: border-box;
+    
+    @media (max-width: 550px) {
+        width: 100%;
+        padding: 1rem;
+        flex-direction: column;
+        align-items: center;
+    }
+`;
+const ThumbImg = styled.img`
+    width: 100%;
+    max-width: 120px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-left: 10px;
+    box-sizing: border-box;
+`;
+const LoadMoreButton = styled.button`
+  padding: 12px 24px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: #ddd;
+  }
+`;
+
+function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, showMoreComplete }) {
+    const completed = (reservations ?? []).filter(res => res.orderStatus === "COMPLETED");
+    console.log("예약 상태들:", reservations.map(r => r.orderStatus));
+    const navigate = useNavigate();
+    const onClickProduct = (productUid) => {
+        navigate(`/products/${productUid}`);
+    };
+
+    if (completed.length === 0) {
+        return <p>종료된 여행이 없습니다.</p>;
+    }
+
+    return(
+    <>
+        <StyleBookingBlock>
+            <StyleContentWrap>
+                <TitleWrapper>
+                    <ListTitle>완료된 여행 목록</ListTitle>
+                </TitleWrapper>
+                <GridWrap>
+                    <ul>
+                        {completed && completed.map(res => {
+                            console.log("res:", res);
+                            return (
+                            <Card key={res.orderCode}>
+                                <StyledStatus>
+                                    예약완료 | <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>
+                                </StyledStatus>
+                                <div style={{ display: "flex", gap: "50px" }}>
+                                    <ThumbImg
+                                        src={res.productThumbnail || "../../style/empty/empty-list.jpeg"}
+                                        alt={res.productTitle}
+                                    />
+                                    <div>
+                                        <Title onClick={() => onClickProduct(res.productUid)}
+                                               style={{ cursor: "pointer" }}>
+                                            {res.productTitle || `상품코드 ${res.productCode}`}
+                                        </Title>
+                                    </div>
+                                </div>
+                                <StyledInfo>
+                                    <div><strong>사용 예정일:</strong> {res.reservationDate}</div>
+                                    <div><strong>성인:</strong> {res.adultCount}, <strong>아동:</strong> {res.childCount ?? 0}</div>
+                                </StyledInfo>
+                                <StyledButtonArea>
+                                    <StyledButton>문의하기</StyledButton>
+                                    {Boolean(res.reviewed) ? (
+                                        <StyledButton onClick={() => navigate(`/review/view/${res.orderCode}`)}>리뷰보기</StyledButton>
+                                        ) : (
+                                        <StyledButton onClick={() => navigate(`/review/write/${res.orderCode}`)}>후기쓰기</StyledButton>
+                                    )}
+                                </StyledButtonArea>
+                            </Card>
+                        )})}
+                    </ul>
+                    {/* 공통 버튼 위치 여기! */}
+                    {showMoreComplete && (
+                        <div style={{ textAlign: "center", margin: "2rem" }}>
+                            <LoadMoreButton onClick={onLoadOldReservations}>
+                                6개월 전 예약 더 보기
+                            </LoadMoreButton>
+                        </div>
+                    )}
+                </GridWrap>
+            </StyleContentWrap>
+        </StyleBookingBlock>
+    </>)
+}
+export default MyCompleteCom;

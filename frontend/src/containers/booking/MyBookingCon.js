@@ -1,0 +1,153 @@
+import MyBookingCom from "../../components/booking/MyBookingCom";
+import {useEffect, useReducer, useState} from "react";
+import {cancelMyReservation, fetchRecentReservations, fetchOldReservations} from "../../service/reservationService";
+import {initialState, reservationReducer} from "../../modules/reservationModule";
+
+function MyBookingCon(){
+    const [selectedTab, setSelectedTab] = useState(0);
+    const [state, dispatch] = useReducer(reservationReducer, initialState);
+    const [showMoreSchedule, setShowMoreSchedule] = useState(true);
+    const [showMoreComplete, setShowMoreComplete] = useState(true);
+    const [showMoreCancel, setShowMoreCancel] = useState(true);
+
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+        if (token) {
+            // let memberCode = null;
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const memberCode = payload.memberCode;
+                // if (memberCode) {
+                //     console.log("memberCode from token:", memberCode);
+                //     localStorage.setItem("memberCode", memberCode);
+                // }
+                if (!memberCode || isNaN(memberCode)) {
+                    console.error("유효하지 않은 memberCode");
+                    alert("로그인 정보가 유효하지 않습니다.");
+                    return;
+                }
+                console.log("로그인된 memberCode:", memberCode);
+            // } catch (e) {
+            //     console.error("토큰 파싱 실패", e);
+            //     return;
+            // }
+
+    // useEffect(() => {
+        // console.log("로그인된 memberCode:", memberCode);
+        // if (!memberCode || isNaN(memberCode)) {
+        //     console.error("로그인 정보가 없습니다.");
+        //     return;
+        // }
+        // const loadRecent = async () => {
+            dispatch({ type: "LOADING" });
+            fetchRecentReservations()
+                .then(data => {
+                    dispatch({ type: "FETCH_SUCCESS", payload: data });
+                })
+                .catch((err) => {
+                    console.error("예약 조회 실패:", err.message);
+                    dispatch({ type: "FETCH_ERROR", payload: err.message });
+                });
+            } catch (e) {
+                console.error("토큰 파싱 실패", e);
+                alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
+            }
+        } else {
+            alert("로그인이 필요합니다.");
+        }
+    }, []);
+    //         try {
+    //             const data = await fetchRecentReservations();
+    //             dispatch({ type: "FETCH_SUCCESS", payload: data });
+    //         } catch (err) {
+    //             console.error("예약 조회 실패:", err.message);
+    //             dispatch({ type: "FETCH_ERROR", payload: err.message });
+    //         }
+    //     }
+    //     loadRecent();
+    // }, [memberCode]);
+
+    const handleLoadOldForSchedule = async () => {
+        try {
+            const oldData = await fetchOldReservations();
+            if (oldData.length > 0) {
+                dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
+            } else {
+                alert("더 이상 불러올 예약이 없습니다.");
+                setShowMoreSchedule(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
+                // setShowMore(false);
+            }
+        } catch (err) {
+            console.error("6개월 이전 예약 불러오기 실패", err);
+        }
+    };
+    const handleLoadOldForComplete = async () => {
+        try {
+            const oldData = await fetchOldReservations();
+            if (oldData.length > 0) {
+                dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
+            } else {
+                alert("더 이상 불러올 예약이 없습니다.");
+                setShowMoreComplete(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
+            }
+        } catch (err) {
+            console.error("6개월 이전 예약 불러오기 실패", err);
+        }
+    };
+    const handleLoadOldForCancel = async () => {
+        try {
+            const oldData = await fetchOldReservations();
+            if (oldData.length > 0) {
+                dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
+            } else {
+                alert("더 이상 불러올 예약이 없습니다.");
+                setShowMoreCancel(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
+            }
+        } catch (err) {
+            console.error("6개월 이전 예약 불러오기 실패", err);
+        }
+    };
+
+    const handleCancel = (orderCode) => {
+        console.log("취소 요청 들어온 orderCode:", orderCode);
+        if (!orderCode) {
+            alert("취소할 예약이 없습니다.");
+            return;
+        }
+        if (window.confirm("정말 이 예약을 취소하시겠습니까?")) {
+            cancelMyReservation(orderCode)
+                .then(() => {
+                    alert("예약이 취소되었습니다.");
+                    dispatch({ type: "REMOVE_RESERVATION", payload: orderCode });
+                })
+                .catch(err => {
+                    alert("예약 취소 중 오류가 발생했습니다.");
+                    console.error(err);
+                });
+        }
+    }
+
+    return(
+        <>
+            <MyBookingCom
+                selectedTab={selectedTab}
+                onChangeTab={(index) => setSelectedTab(index)}
+                reservations={state.reservations}
+                onCancelReservation={handleCancel}
+                onLoadOldReservationsForSchedule={handleLoadOldForSchedule}
+                onLoadOldReservationsForComplete={handleLoadOldForComplete}
+                onLoadOldReservationsForCancel={handleLoadOldForCancel}
+                // onLoadOldReservationsForSchedule={() => handleLoadOld(setShowMoreSchedule)}
+                // onLoadOldReservationsForComplete={() => handleLoadOld(setShowMoreComplete)}
+                // onLoadOldReservationsForCancel={() => handleLoadOld(setShowMoreCancel)}
+                showMoreSchedule={showMoreSchedule}
+                showMoreComplete={showMoreComplete}
+                showMoreCancel={showMoreCancel}
+            />
+        </>)
+}
+export default MyBookingCon;

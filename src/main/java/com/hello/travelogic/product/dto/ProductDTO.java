@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.CountryEntity;
 import com.hello.travelogic.product.domain.ProductEntity;
@@ -30,6 +31,11 @@ public class ProductDTO {
     private String productThumbnail;
     private ProductEntity.ProductType productType;
 
+    private int reviewCount;
+    // 찜 여부를 나타내는 임시필드
+    @JsonProperty("isWished")
+    private boolean wished;
+
     public ProductDTO(ProductEntity productDTO) {
         this.productCode = productDTO.getProductCode();
         this.productUid = productDTO.getProductUid();
@@ -47,5 +53,6 @@ public class ProductDTO {
         this.productStatus = productDTO.getProductStatus();
         this.productThumbnail = productDTO.getProductThumbnail();
         this.productType = productDTO.getProductType();
+        this.reviewCount = productDTO.getReviewCount();
     }
 }

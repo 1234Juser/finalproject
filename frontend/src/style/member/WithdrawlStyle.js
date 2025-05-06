@@ -1,4 +1,3 @@
-// WithdrawlStyle.ts
 
 export const containerStyle = {
     display: 'flex',

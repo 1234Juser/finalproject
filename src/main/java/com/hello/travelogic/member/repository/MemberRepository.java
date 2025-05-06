@@ -13,8 +13,14 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
     // 찜 등록/취소에 사용
     Optional<MemberEntity> findByMemberCode(Long memberCode);
-
+    //아이디찾기
     Optional<MemberEntity> findByMemberNameAndMemberEmail(String memberName, String memberEmail);
-
+    //비밀번호찾기
     Optional<MemberEntity> findByMemberNameAndMemberIdAndMemberEmail(String memberName, String memberId, String memberEmail);
+    //소셜로그인(카카오)
+    Optional<MemberEntity> findBySocialTypeAndSocialAccountId(String socialType,  Long socialAccountId);
+    //소셜로그인(구글)
+    Optional<MemberEntity> findByMemberEmail(String email);
+
+
 }

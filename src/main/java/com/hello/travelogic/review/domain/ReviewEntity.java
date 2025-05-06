@@ -47,6 +47,11 @@ public class ReviewEntity {
     private OptionEntity option;    // 옵션1 - 리뷰1
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_code", nullable = false)
+    private ProductEntity product;   // 상품1 - 리뷰N
+
+    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_code", nullable = false)
     private OrderEntity order;      // 주문1 - 리뷰1
@@ -63,7 +68,7 @@ public class ReviewEntity {
     @Column( name = "review_date", nullable = false)
     private LocalDateTime reviewDate;
 
-    @Column( name = "review_pic", length = 255, nullable = false )
+    @Column( name = "review_pic", length = 255, nullable = true )
     private String reviewPic;
 
     @NotNull

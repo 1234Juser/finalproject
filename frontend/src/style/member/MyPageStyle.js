@@ -40,13 +40,20 @@ export const greetingText = {
 };
 
 export const profileButton = {
-    fontSize: '12px',
-    padding: '4px 8px',
-    marginTop: '5px',
-    border: '1px solid #ccc',
-    backgroundColor: 'transparent',
-    borderRadius: '4px',
+    fontSize: '13px',
+    padding: '7px 18px',
+    marginTop: '7px',
+    border: 'none',
+    background: 'linear-gradient(92deg, #7b5cf5 56%, #cbaaff 100%)',
+    color: '#fff',
+    fontWeight: 600,
+    borderRadius: '18px',
+    boxShadow: '0 2px 10px rgba(95, 83, 180, 0.12)',
     cursor: 'pointer',
+    letterSpacing: '0.03em',
+    transition: 'background 0.21s, transform 0.15s, box-shadow 0.19s',
+    outline: 'none',
+
 };
 
 export const profileStats = {

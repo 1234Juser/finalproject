@@ -35,6 +35,7 @@ DROP TABLE IF EXISTS tbl_faq CASCADE;
 DROP TABLE IF EXISTS tbl_event CASCADE;
 DROP TABLE IF EXISTS tbl_member_role CASCADE;
 DROP TABLE IF EXISTS tbl_authority CASCADE;
+DROP TABLE IF EXISTS tbl_password_reset_code CASCADE;
 DROP TABLE IF EXISTS tbl_member CASCADE;
 
 -- 1. 회원정보 테이블 (tbl_member)
@@ -42,17 +43,17 @@ CREATE TABLE tbl_member
 (
     member_code INT AUTO_INCREMENT NOT NULL COMMENT '회원번호',
     member_name VARCHAR(20) NOT NULL COMMENT '이름',
-    member_id VARCHAR(20) NOT NULL UNIQUE COMMENT '아이디',
+    member_id VARCHAR(255) NOT NULL UNIQUE COMMENT '아이디',
     member_password VARCHAR(255) NULL COMMENT '비밀번호(소셜로그인은비밀번호x)',
     member_email VARCHAR(30) NOT NULL UNIQUE COMMENT '이메일',
     member_phone VARCHAR(20) NOT NULL COMMENT '연락처',
-    member_profileImageUrl VARCHAR(255) NULL COMMENT '프로필이미지',
+    member_profile_image_url VARCHAR(255) NULL COMMENT '프로필이미지',
     member_registerdate DATETIME NOT NULL COMMENT '가입날짜',
     member_enddate DATETIME NULL COMMENT '탈퇴날짜/시간',
     member_endstatus VARCHAR(20) NOT NULL DEFAULT 'N' COMMENT '탈퇴여부',
     social_type VARCHAR(255) NULL COMMENT '소셜종류(카카오, 구글)',
     social_account_id INT NULL COMMENT '서비스 내 사용자 식별자 (계정 ID 역할)',
-    social_account_ci VARCHAR(255) NULL COMMENT '동일인 식별 (탈퇴/재가입 등 추적)',
+    admin_active VARCHAR(20) NULL COMMENT '관리자활성권한',
     CONSTRAINT pk_member_code PRIMARY KEY (member_code)
 ) ENGINE=INNODB COMMENT '회원정보' AUTO_INCREMENT = 1;
 
@@ -103,7 +104,7 @@ CREATE TABLE `tbl_theme` (
 );
 
 CREATE TABLE `tbl_country` (
-                               `country_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '국가id',
+                               `country_id` INT AUTO_INCREMENT NOT NULL COMMENT '국가id',
                                `country_code` INT NOT NULL UNIQUE COMMENT '국가코드',
                                `region_code` INT NOT NULL COMMENT '지역 고유번호',
                                `country_uid` VARCHAR(20) NOT NULL COMMENT '국가고유코드',
@@ -113,7 +114,7 @@ CREATE TABLE `tbl_country` (
 ) ENGINE=INNODB COMMENT '국가정보' AUTO_INCREMENT = 01;
 
 CREATE TABLE `tbl_city` (
-                            `city_id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '도시id',
+                            `city_id` INT AUTO_INCREMENT NOT NULL COMMENT '도시id',
                             `city_code` varchar(4)  NOT NULL UNIQUE COMMENT '도시코드',
                             `country_id` INT NOT NULL COMMENT '국가고유코드',
                             `region_code` INT NOT NULL COMMENT '지역코드',
@@ -128,8 +129,8 @@ CREATE TABLE `tbl_city` (
 CREATE TABLE `tbl_product` (
                                `product_code` INT AUTO_INCREMENT NOT NULL COMMENT '투어상품 id',
                                `product_uid` VARCHAR(20) NOT NULL COMMENT '상품 고유 코드',
-                               `country_code` INT NOT NULL COMMENT '국가고유번호',
-                               `city_code` INT NOT NULL COMMENT '도시고유번호',
+                               `country_id` INT NOT NULL COMMENT '국가고유번호',
+                               `city_id` INT NOT NULL COMMENT '도시고유번호',
                                `theme_code` INT NULL COMMENT '테마코드',
                                `product_title` VARCHAR(255) NOT NULL COMMENT '투어상품 제목',
                                `product_content` TEXT NOT NULL COMMENT '투어상품 상세내용',
@@ -141,9 +142,10 @@ CREATE TABLE `tbl_product` (
                                `product_max_participants` INT NOT NULL COMMENT '투어 출발 최대 인원',
                                `product_status` ENUM('ON_SALE', 'SOLD_OUT', 'CLOSED') NOT NULL COMMENT '상품 판매 상태',
                                `product_thumbnail` VARCHAR(255) NOT NULL COMMENT '대표 이미지 URL',
+                               `review_count` INT NOT NULL DEFAULT 0 COMMENT '리뷰 수',
                                CONSTRAINT `PK_TBL_PRODUCT` PRIMARY KEY (`product_code`),
-                               CONSTRAINT `FK_tbl_country_TO_tbl_product` FOREIGN KEY (`country_code`) REFERENCES `tbl_country` (`country_code`),
-                               CONSTRAINT `FK_tbl_city_TO_tbl_product` FOREIGN KEY (`city_code`) REFERENCES `tbl_city` (`city_code`),
+                               CONSTRAINT `FK_tbl_country_TO_tbl_product` FOREIGN KEY (`country_id`) REFERENCES `tbl_country` (`country_id`),
+                               CONSTRAINT `FK_tbl_city_TO_tbl_product` FOREIGN KEY (`city_id`) REFERENCES `tbl_city` (`city_id`),
                                CONSTRAINT `FK_tbl_theme_TO_tbl_product` FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
 );
 
@@ -230,6 +232,7 @@ CREATE TABLE tbl_payment_cancel (
 CREATE TABLE tbl_review (
     review_code INT NOT NULL AUTO_INCREMENT COMMENT '리뷰고유번호',
     member_code INT NOT NULL COMMENT '회원고유번호',
+    product_code INT NOT NULL COMMENT '상품고유번호',
     order_code INT NOT NULL COMMENT '예약정보',
     review_rating TINYINT NOT NULL CHECK (review_rating BETWEEN 1 AND 5) COMMENT '상품평점',
     review_content TEXT NULL COMMENT '리뷰내용',
@@ -238,6 +241,7 @@ CREATE TABLE tbl_review (
     review_status ENUM('ACTIVE', 'DELETE_BY_ADMIN') NOT NULL DEFAULT 'ACTIVE' COMMENT '활성화, 관리자에 의한 삭제',
     PRIMARY KEY (review_code),
     FOREIGN KEY (member_code) REFERENCES tbl_member (member_code),
+    FOREIGN KEY (product_code) REFERENCES tbl_product (product_code),
     FOREIGN KEY (order_code) REFERENCES tbl_order (order_code)
 );
 
@@ -248,7 +252,9 @@ CREATE TABLE tbl_event (
                            event_title VARCHAR(50) NOT NULL COMMENT '제목',
                            event_content VARCHAR(255) NOT NULL COMMENT '내용',
                            event_img VARCHAR(255) NOT NULL COMMENT '이미지 파일 경로',
-                           event_status VARCHAR(10) NOT NULL COMMENT '진행 상태'
+                           event_status VARCHAR(10) NOT NULL COMMENT '진행 상태',
+                           event_startdate DATE NOT NULL COMMENT '이벤트 시작날짜',
+                           event_enddate DATE NOT NULL COMMENT '이벤트 종료날짜'
 )ENGINE=INNODB COMMENT '이벤트';
 
 CREATE TABLE tbl_faq (

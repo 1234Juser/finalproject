@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -24,7 +25,7 @@ public class MemberEntity {
     @Column(name="member_name", nullable = false, length = 20)
     private String memberName;
 
-    @Column(name="member_id", nullable = false, length = 20, unique = true)
+    @Column(name="member_id", nullable = false, length = 255, unique = true)
     private String memberId;
 
     @Column(name="member_password", length = 255)
@@ -33,7 +34,7 @@ public class MemberEntity {
     @Column(name="member_email", nullable = false, length=30, unique = true)
     private String memberEmail;
 
-    @Column(name ="member_phone", nullable = false, length = 20)
+    @Column(name ="member_phone", nullable = true, length = 20)
     private String memberPhone;
 
     @Column(name="member_profileImageUrl", length = 255)
@@ -48,16 +49,17 @@ public class MemberEntity {
     @Column(name="member_endstatus", length = 20, nullable = false)
     private String memberEndstatus = "N";
 
+    @Column(name="admin_active", length = 20)
+    private String adminActive;
+
     @Column(name="social_type", length=255)
     private String socialType;
 
     @Column(name="social_account_id")
-    private Integer socialAccountId;
-
-    @Column(name="social_account_ci", length = 255)
-    private String socialAccountCi;
+    private Long socialAccountId;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    private Set<MemberRoleEntity> roles;
+    private Set<MemberRoleEntity> roles = new HashSet<>();
+
 
 }

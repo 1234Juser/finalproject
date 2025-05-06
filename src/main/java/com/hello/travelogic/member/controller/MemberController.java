@@ -11,7 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -134,5 +136,21 @@ public class MemberController {
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequestDTO dto){
         boolean changed = memberService.resetPassword(dto);
         return ResponseEntity.ok(changed);
+    }
+
+    //관리자마이페이지회원정보전체조회
+    @GetMapping("/all")
+    public ResponseEntity<List<MemberAllDTO>> getAllMembers(){
+        List<MemberAllDTO> members = memberService.getAllMembers();
+        return ResponseEntity.ok(members);
+    }
+    //관리자마이페이지회원상태변경
+    @PutMapping("/update-endstatus/{memberId}")
+    public ResponseEntity<String> updateMemberEndstatus(
+            @PathVariable String memberId,
+            @RequestBody Map<String, String> payload){
+        String newStatus = payload.get("memberEndstatus");
+        memberService.updateMemberEndstatus(memberId, newStatus);
+        return ResponseEntity.ok("상태가 변경되었습니다.");
     }
 }

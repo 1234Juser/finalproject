@@ -1,6 +1,7 @@
 package com.hello.travelogic.order.domain;
 
 import com.hello.travelogic.order.dto.OptionDTO;
+import com.hello.travelogic.product.domain.ProductEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -22,8 +23,9 @@ public class OptionEntity {
     private Long optionCode;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_code", nullable = false)
-    private long productCode;
+    private ProductEntity product;      // 상품1 - 옵션N
 
     @Null
     @Column( name = "reservation_date", nullable = true )
@@ -37,8 +39,8 @@ public class OptionEntity {
     @Column( name = "child_count", nullable = true )
     private Integer childCount;
 
-    public OptionEntity(OptionDTO dto) {
-        this.productCode = dto.getProductCode();
+    public OptionEntity(OptionDTO dto, ProductEntity product) {
+        this.product = product;
         this.reservationDate = dto.getReservationDate();
         this.adultCount = dto.getAdultCount();
         this.childCount = dto.getChildCount();

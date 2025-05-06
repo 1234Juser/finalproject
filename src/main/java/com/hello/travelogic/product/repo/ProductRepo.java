@@ -20,9 +20,9 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
 
     // 찜 등록/취소에 사용
     Optional<ProductEntity> findByProductCode(long productCode);
-
-
-    ProductEntity findByProductUid(String productUid);
+    
+    //  productUid 로 상품 찾기
+    Optional<ProductEntity> findByProductUid(String productUid);
 
     // 인텔리제이꺼임
     // 도시 이름 조회
@@ -30,4 +30,13 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     String findCityNameByCityId(@Param("cityCode") String cityCode);
     // UID 갯수 cityId
     Long countByProductUidStartingWith(String prefix);
+
+    // productCode의 최댓값 찾기
+    @Query("SELECT MAX(p.productCode) FROM ProductEntity p")
+    Optional<Long> findMaxProductCode();
+
+    // 리뷰 평균내기
+    @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_code = :productCode", nativeQuery = true)
+    Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
+    
 }

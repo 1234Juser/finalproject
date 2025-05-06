@@ -12,8 +12,10 @@ import java.util.Optional;
 public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
 
     // 평점 평균
-    @Query("SELECT AVG(r.reviewRating) FROM ReviewEntity r WHERE r.order.product.productCode = :productCode")
-    Optional<Double> getAverageRatingByProductCode(@Param("productCode") Long productCode);
+//    @Query("SELECT AVG(r.reviewRating) FROM ReviewEntity r WHERE r.order.product.productCode = :productCode")
+    // tbl_review에 fk로 product_code가 들어옴
+//    @Query("SELECT AVG(r.reviewRating) FROM ReviewEntity r WHERE r.product.productCode = :productCode")
+//    Optional<Double> getAverageRatingByProductCode(@Param("productCode") Long productCode);
 
     // 상품 상세페이지에서 리뷰 디폴트 정렬 최신순
     // /review/product/{productCode}
@@ -37,5 +39,4 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
 
     @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_code = :productCode", nativeQuery = true)
     Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
-
 }
