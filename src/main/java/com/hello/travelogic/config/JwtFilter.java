@@ -50,15 +50,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
 //            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-            // role 동적
-            Claims claims = jwtUtil.getAllClaimsFromToken(jwt);
-            String memberId = claims.getSubject();
-            List<String> roles = claims.get("roles", List.class);
-
-            List<SimpleGrantedAuthority> authorities = roles.stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
-
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(memberId, null, authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

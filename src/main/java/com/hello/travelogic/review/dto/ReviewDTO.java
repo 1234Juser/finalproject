@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -22,6 +23,7 @@ public class ReviewDTO {
     private long reviewCode;
     private long memberCode;
     private long productCode;
+    private long optionCode;
     private long orderCode;
     private Integer reviewRating;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -32,15 +34,31 @@ public class ReviewDTO {
     @NotNull
     private ReviewStatus reviewStatus;
 
+    // 리뷰 폼 출력용 필드
+    private String memberName;
+    private String productTitle;
+    private LocalDate reservationDate;
+
     public ReviewDTO(ReviewEntity entity) {
         this.reviewCode = entity.getReviewCode();
         this.memberCode = entity.getMember().getMemberCode();
         this.productCode = entity.getProduct().getProductCode();
+        this.optionCode = entity.getOption().getOptionCode();
         this.orderCode = entity.getOrder().getOrderCode();
         this.reviewRating = entity.getReviewRating();
         this.reviewDate = entity.getReviewDate();
         this.reviewContent = entity.getReviewContent();
         this.reviewPic = entity.getReviewPic();
         this.reviewStatus = entity.getReviewStatus();
+
+        if (entity.getOrder() != null) {
+            this.orderCode = entity.getOrder().getOrderCode();
+            this.reservationDate = entity.getOption().getReservationDate();
+        }
+
+        if (entity.getMember() != null) {
+            this.memberCode = entity.getMember().getMemberCode();
+            this.memberName = entity.getMember().getMemberName();
+        }
     }
 }

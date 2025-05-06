@@ -315,10 +315,10 @@ INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand,
 INSERT INTO tbl_payment_cancel (payment_code, cancel_time, cancel_amount, pg_tid, cancel_receipt_url) VALUES
     (3, '2025-04-04 11:35:20', 130000, 'pg_cancel_9876543210', 'https://receipt.url/cancel/3');
 
-INSERT INTO tbl_review (member_code, product_code, order_code, review_rating, review_content, review_date, review_pic, review_status) VALUES
-    (1, 2, 2, 5, '정말 최고의 디즈니 여행이었어요! 애들도 좋아했어요~', '2025-04-09 14:30:00', 'disney_review.jpg', 'ACTIVE'),
-    (2, 4, 4, 1, NULL, '2025-04-24 09:15:00', NULL, 'DELETE_BY_ADMIN'),
-    (3, 5, 5, 4, '재밌었음. 나중에 또오겠음.', '2025-04-24 09:15:00', NULL, 'ACTIVE');
+INSERT INTO tbl_review (member_code, product_code, option_code, order_code, review_rating, review_content, review_date, review_pic, review_status) VALUES
+    (1, 2, 2, 2, 5, '정말 최고의 디즈니 여행이었어요! 애들도 좋아했어요~', '2025-04-09 14:30:00', 'disney_review.jpg', 'ACTIVE'),
+    (2, 4, 4, 4, 1, NULL, '2025-04-24 09:15:00', NULL, 'DELETE_BY_ADMIN'),
+    (3, 5, 5, 5, 4, '재밌었음. 나중에 또오겠음.', '2025-04-24 09:15:00', NULL, 'ACTIVE');
 
 -- 4. 이벤트 테이블 (tbl_event)
 INSERT INTO tbl_event (event_title, event_content, event_img, event_status,event_startdate, event_enddate)

@@ -2,6 +2,7 @@ package com.hello.travelogic.event.controller;
 
 import com.hello.travelogic.event.domain.EventEntity;
 import com.hello.travelogic.event.service.EventService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -55,7 +56,7 @@ public class EventController {
         );
         return ResponseEntity.ok(savedEvent);
     }
-
+    //이벤트수정
     @PutMapping("/{id}")
     public ResponseEntity<EventEntity> updateEvent(
             @PathVariable Integer id,
@@ -70,6 +71,12 @@ public class EventController {
                 id, eventTitle, eventContent, eventImg, eventStartdate, eventEnddate, eventStatus
         );
         return ResponseEntity.ok(updatedEvent);
+    }
+    //이벤트삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Integer id){
+        eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
     }
 
 

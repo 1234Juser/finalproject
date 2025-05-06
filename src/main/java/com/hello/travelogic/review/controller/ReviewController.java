@@ -1,5 +1,6 @@
 package com.hello.travelogic.review.controller;
 
+import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.review.domain.ReviewStatus;
 import com.hello.travelogic.review.dto.ReviewDTO;
 import com.hello.travelogic.review.service.ReviewService;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,21 +24,28 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final MemberRepository memberRepository;
 
     // 상품 상세페이지 내 리뷰 조회
     @GetMapping("/review/product/{productCode}")
     public ResponseEntity<List<ReviewDTO>> getReviewListByProductCode(@PathVariable("productCode") long productCode,
-                                                                    @RequestParam(defaultValue = "date") String sort) {
+                                                                      @RequestParam(defaultValue = "date") String sort) {
         log.debug("받은 productCode: {}", productCode);
-        List<ReviewDTO> reviews = reviewService.getReviewsByProductCode(productCode, sort);
-        log.debug("가져온 리뷰 개수: {}", reviews.size());
-        return ResponseEntity.ok(reviews);
+//        List<ReviewDTO> reviews = reviewService.getReviewsByProductCode(productCode, sort);
+//        log.debug("가져온 리뷰 개수: {}", reviews.size());
+//        return ResponseEntity.ok(reviews);
+        // 합친 버전
+        return ResponseEntity.ok(reviewService.getReviewsByProductCode(productCode, sort));
     }
 
     // 로그인 된 회원의 선택 주문에 대한 리뷰 조회
-    @GetMapping("/review/mytravel/{memberCode}/{orderCode}")
-    public ResponseEntity<ReviewDTO> getMyReviewForOrder(@PathVariable("memberCode") long memberCode,
-                                                        @PathVariable("orderCode") long orderCode) {
+    @GetMapping("/review/mytravel/{orderCode}")
+    public ResponseEntity<ReviewDTO> getMyReviewForOrder(@PathVariable("orderCode") long orderCode,
+                                                         Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                .getMemberCode();
         try {
             ReviewDTO reviewDTO = reviewService.getReviewByMemberCodeAndOrderCode(memberCode, orderCode);
             if (reviewDTO == null) {
@@ -49,25 +59,60 @@ public class ReviewController {
 
     // 관리자는 모든 상품에 대한 모든 회원의 리뷰를 조회 가능
     @GetMapping("/admin/manage/review")
-    public ResponseEntity<List<ReviewDTO>> getAllReviews() {
-        List<ReviewDTO> allReviews = reviewService.getAllReviews();
-        return ResponseEntity.ok(allReviews);
+    public ResponseEntity getAllReviews(Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
+        }
+//        List<ReviewDTO> allReviews = reviewService.getAllReviews();
+//        return ResponseEntity.ok(allReviews);
+        return ResponseEntity.ok(reviewService.getAllReviews());
     }
 
     // 관리자의 상품별 리뷰 조회
     @GetMapping("/admin/manage/review/by-product/{productCode}")
-    public ResponseEntity<List<ReviewDTO>> getReviewsByProductForAdmin(@PathVariable long productCode) {
-        List<ReviewDTO> reviews = reviewService.getReviewsByProductCodeForAdmin(productCode);
-        return ResponseEntity.ok(reviews);
+    public ResponseEntity getReviewsByProductForAdmin(@PathVariable long productCode,
+                                                      Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
+        }
+        return ResponseEntity.ok(reviewService.getReviewsByProductCodeForAdmin(productCode));
+//        List<ReviewDTO> reviews = reviewService.getReviewsByProductCodeForAdmin(productCode);
+//        return ResponseEntity.ok(reviews);
+    }
+
+    // 리뷰 작성을 위한 주문 정보 가지고 오기
+    @GetMapping("/review/write/info/{orderCode}")
+    public ResponseEntity<ReviewDTO> getInfoForWriteReview(@PathVariable Long orderCode, Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                .getMemberCode();
+
+        ReviewDTO reviewDTO = reviewService.getInfoForWriteReview(orderCode, memberCode);
+        return ResponseEntity.ok(reviewDTO);
     }
 
     // OrderStatus가 COMPLETED인 회원만 리뷰 작성하기
     @PostMapping(value = "/review/write", consumes = "multipart/form-data")
-    public ResponseEntity writeReview(@RequestParam("memberCode") Long memberCode,
-                                      @RequestParam("orderCode") Long orderCode,
+    public ResponseEntity writeReview(@RequestParam("orderCode") Long orderCode,
                                       @RequestParam("reviewRating") Integer reviewRating,
                                       @RequestParam("reviewContent") String reviewContent,
-                                      @RequestPart(value = "file", required = false) MultipartFile file) {
+                                      @RequestPart(value = "file", required = false) MultipartFile file,
+                                      Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                .getMemberCode();
+
         ReviewDTO reviewDTO = new ReviewDTO();
         reviewDTO.setMemberCode(memberCode);
         reviewDTO.setOrderCode(orderCode);
@@ -77,15 +122,20 @@ public class ReviewController {
         int result = reviewService.writeReview(reviewDTO, file);
         if(result == 1)
             return ResponseEntity.status(HttpStatus.CREATED).body("추가 성공");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("존재하는 id 임");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 작성된 리뷰가 있습니다.");
     }
 
     // 리뷰 수정하기
-    @PutMapping(value = "/review/edit/{reviewCode}")
+    @PutMapping(value = "/review/edit/{reviewCode}", consumes = "multipart/form-data")
     public ResponseEntity modifyReview(@PathVariable("reviewCode") long reviewCode,
-                                                    @RequestParam("reviewRating") int reviewRating,
-                                                    @RequestParam("reviewContent") String reviewContent,
-                                                    @RequestPart(value = "file", required = false) MultipartFile file) {
+                                       @RequestParam("reviewRating") int reviewRating,
+                                       @RequestParam("reviewContent") String reviewContent,
+                                       @RequestPart(value = "file", required = false) MultipartFile file,
+                                       Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                .getMemberCode();
 
         ReviewDTO reviewDTO = new ReviewDTO();
         reviewDTO.setReviewRating(reviewRating);
@@ -101,20 +151,34 @@ public class ReviewController {
 
     // 리뷰 삭제하기
     @DeleteMapping("/review/mytravel/{reviewCode}")
-    public ResponseEntity<Void> deleteMyReview(@PathVariable("reviewCode") long reviewCode) {
-        reviewService.deleteMyReview(reviewCode);
+    public ResponseEntity<Void> deleteMyReview(@PathVariable("reviewCode") long reviewCode,
+                                               Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                .getMemberCode();
+
+        reviewService.deleteMyReview(reviewCode, memberCode);
         return ResponseEntity.ok().build();
     }
 
     // 관리자가 리뷰 삭제하면 삭제가 아니라 UPDATE
     @PatchMapping("/admin/manage/reviews/{reviewCode}")
-    public ResponseEntity deleteByAdmin(@PathVariable("reviewCode") long reviewCode) {
+    public ResponseEntity deleteByAdmin(@PathVariable("reviewCode") long reviewCode,
+                                        Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
+        }
         reviewService.deleteReviewByAdmin(reviewCode);
         return ResponseEntity.ok("리뷰가 관리자에 의해 삭제되었습니다.");
     }
 
     @GetMapping("/review/{reviewPic}/image")
-    public ResponseEntity getImage(@PathVariable(value="fileName") String reviewPic) {
+    public ResponseEntity getImage(@PathVariable(value="reviewPic") String reviewPic) {
         byte[] imageByte = reviewService.getImage(reviewPic);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")

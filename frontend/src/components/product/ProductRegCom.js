@@ -1,6 +1,7 @@
 import { containerStyle, sidebarStyle, mainStyle } from "../../style/member/MyPageStyle";
 import { InputWrapper, StyledLabel, StyledInput, StyledTextArea, StyledSelect, StyledFileInput} from "../../style/product/StyleProductReg";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
+import {Link} from "react-router-dom";
 
 function ProductRegCom({
                            regions,
@@ -18,6 +19,7 @@ function ProductRegCom({
                            handleCityIdChange,
                            handleThemesChange,
                            handleFileSelect,
+                           isEditPage,
                        }) {
 
     return (
@@ -53,8 +55,8 @@ function ProductRegCom({
                             value={formInput.regionType || ""}
                             onChange={(e) => {
                                 onRegionTypeChange(e.target.value);
-                                // console.log("여행유형 select box 선택 시 value 확인" , e.target.value); // -> DOMESTIC, INTERNATIONAL
                             }}
+                            disabled={isEditPage}
                         >
                                 <option value="">-- 선택하세요 --</option>
                                 <option value="DOMESTIC">국내여행</option>
@@ -76,6 +78,7 @@ function ProductRegCom({
                                 }
                                 console.log("권역 선택 select box 클릭 시 value 확인(regionCode 값 찍힘)", e.target.value);
                             }}
+                            disabled={isEditPage}
                         >
                             <option value="">-- 선택하세요 --</option>
                             {regions.map((region) => (
@@ -175,6 +178,7 @@ function ProductRegCom({
                                      min={today}
                                      value={formInput.productStartDate}
                                      onChange={(e) => handleFormChange("productStartDate", e.target.value)}
+                                     disabled={isEditPage}
                         />
                     </InputWrapper>
 
@@ -250,8 +254,22 @@ function ProductRegCom({
                                         //     console.log("업로드한 파일 >>객체<<< 를 확인하는거임ㅠ : ", e.target.files[0]);
                                         // }
                                         />
+                        {formInput.productThumbnail && (
+                            <div> 선택된 파일 : {formInput.productThumbnail}</div>
+                        )}
                     </InputWrapper>
+                    {isEditPage ? (
+                        <>
+                        <button type="submit">수정</button>
+                        </>
+                    ) : (
+                        <>
                     <button type="submit">상품 등록</button>
+                        </>
+                    )}
+                    <Link to="/admin/productAll">
+                        <button type="button" >목록으로</button>
+                    </Link>
                 </form>
 
 

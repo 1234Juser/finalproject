@@ -2,6 +2,7 @@ package com.hello.travelogic.product.controller;
 
 import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.service.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -24,9 +27,10 @@ public class ProductController {
 
     // 투어 상품 전체 조회
     @GetMapping("")
-    public ResponseEntity getProducts() {
-        log.debug("get products 요청");
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts());
+    public ResponseEntity getProducts(@RequestParam(defaultValue = "0") int start,
+                                                            @RequestParam(defaultValue = "10") int page) {
+        log.debug ("start: {} / page: {}", start, page);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts(start, page));
     }
 
 
@@ -84,6 +88,48 @@ public class ProductController {
     }
 
 
+    // 상품 수정 페이지
+    @GetMapping("/admin/{productUid}")
+    public ResponseEntity  getProductToModify(@PathVariable("productUid") String productUid) {
+        log.debug("get product detail : {}", productUid);
+        ProductDTO productDTO = productService.getProductToModify(productUid);
+        
+        if(productDTO != null)
+            return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("일치하는 상품이 없습니다. UID를 다시 확인하세요.");
+    }
+    
+    
     // 상품 수정
-
+    @PutMapping("/admin/{productUid}")
+    public ResponseEntity ProductUpdate(@PathVariable("productUid") String productUid,
+                                                                                @RequestPart("productDTO") ProductDTO productDTO,
+                                                                                @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
+        
+        int result = productService.productUpdate(productUid, productDTO, productThumbnail);
+        
+        if(result == 1)
+            return ResponseEntity.ok (Map.of ("message", "수정 성공"));
+        else if (result == 0)
+            return ResponseEntity.status (HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다. 입력 내용을 확인해주세요."));
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "상품 수정 중 오류가 발생했습니다."));
+    }
+    
+    
+    // 상품 삭제
+    @DeleteMapping("/admin/{productUid}")
+    public ResponseEntity ProductDelete(@PathVariable("productUid") String productUid,
+                                                                @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
+        
+        log.debug ("productUid: {}", productUid);
+        int result = productService.productDelete(productUid, productThumbnail);
+        
+        if(result == 1) {
+            log.debug ("product delete result : {}", result);
+            return ResponseEntity.status (HttpStatus.NO_CONTENT).build();
+        } else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body ("일치하는 Uid 없음");
+    }
+    
 }

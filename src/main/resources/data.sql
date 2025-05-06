@@ -36,6 +36,23 @@ VALUES
     ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
     ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59');
 
+-- faq테이블 중복삭제
+DELETE FROM tbl_faq;
+INSERT INTO tbl_faq (faq_title, faq_content)
+VALUES
+    ('자주 묻는 질문 1', '첫 번째 FAQ 내용'),
+    ('자주 묻는 질문 2', '두 번째 FAQ 내용'),
+    ('자주 묻는 질문 3', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 4', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 5', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 6', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 7', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 8', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 9', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 10', '세 번째 FAQ 내용'),
+    ('자주 묻는 질문 11', '열한 번째 FAQ 내용'),
+    ('자주 묻는 질문 12', '열두 번째 FAQ 내용');
+
 INSERT IGNORE INTO tbl_region (region_code, region_uid, region_name, region_type)
 VALUES
 (1,'SEOULGYEONGGI', '서울/경기/강원/충청', 'DOMESTIC'),
@@ -176,3 +193,4 @@ INSERT IGNORE INTO tbl_product_theme (pt_id, product_code, theme_code) VALUES
                                                                     (8, 8, 2),    -- 파리 골프 투어 -> GOLF
                                                                     (9, 9, 5),    -- 로마 허니문 투어 -> HONEYMOON
                                                                     (10, 10, 6);  -- 뉴욕 실버 시티 투어 -> SILVER
+

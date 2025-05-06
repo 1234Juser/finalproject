@@ -30,7 +30,7 @@ public class WishController {
     // 위시 그룹 불러오기
     // JWT버전
     @GetMapping("/wish/groups")
-    public ResponseEntity<List<WishGroupDTO>> getGroups(Authentication authentication) {
+    public ResponseEntity<List<WishGroupDTO>> getGroups( Authentication authentication) {
         String memberId = authentication.getPrincipal().toString();
         Long memberCode = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
