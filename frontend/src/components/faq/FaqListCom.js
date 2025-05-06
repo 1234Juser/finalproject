@@ -6,7 +6,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
-// 역할 확인 함수
 function isAdmin() {
     const roles = JSON.parse(localStorage.getItem("roles") || "[]");
     return roles.includes("ROLE_ADMIN");
@@ -33,6 +32,27 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
                     <FaqItem key={faq.faqCode}>
                         <QuestionRow onClick={() => handleToggle(idx)}>
                             <span>{faq.faqTitle}</span>
+                            {isAdmin() && (
+                                <button
+                                    style={{
+                                        marginLeft: 10,
+                                        padding: "2px 8px",
+                                        fontSize: 12,
+                                        border: "1px solid #398",
+                                        borderRadius: 6,
+                                        background: "#fff",
+                                        color: "#398",
+                                        cursor: "pointer"
+                                    }}
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        // 수정페이지로 이동, faqCode를 넘김
+                                        navigate(`/faq/edit/${faq.faqCode}`);
+                                    }}
+                                >
+                                    수정
+                                </button>
+                            )}
                             <ToggleButton>
                                 {openIndex === idx ? <FaChevronUp /> : <FaChevronDown />}
                             </ToggleButton>
@@ -48,8 +68,6 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
                     onClick={() => setPage(page - 1)}
                     disabled={page === 0}
                 >이전</button>
-
-                {/* 숫자 페이지네이션 버튼 추가, EventListStyle과 비슷한 UX */}
                 {Array.from({ length: totalPages }, (_, idx) => (
                     <button
                         key={idx}
@@ -60,7 +78,6 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
                         {idx + 1}
                     </button>
                 ))}
-
                 <button
                     onClick={() => setPage(page + 1)}
                     disabled={page + 1 >= totalPages}

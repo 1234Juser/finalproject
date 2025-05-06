@@ -30,6 +30,7 @@ import MyBookingPage from "./pages/reservation/MyBookingPage";
 import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 import FaqListPage from "./pages/faq/FaqListPage";
 import FaqRegisterPage from "./pages/faq/FaqRegisterPage";
+import FaqEditCon from "./containers/faq/FaqEditCon";
 
 function App() {
   return (
@@ -46,6 +47,8 @@ function App() {
               {/*faq페이지*/}
               <Route path="/faq" element={<FaqListPage/>}/>
               <Route path="/faq/register" element={<FaqRegisterPage />} />
+              <Route path="/faq/edit/:faqCode" element={<FaqEditCon />} />
+
 
 
 

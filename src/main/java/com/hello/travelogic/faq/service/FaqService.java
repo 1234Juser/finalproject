@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,4 +25,19 @@ public class FaqService {
     public void save(FaqEntity faq) {
         faqRepository.save(faq);
     }
+    //faq 단일조회
+    public Optional<FaqEntity> findById(Integer faqCode) {
+        return faqRepository.findById(faqCode);
+    }
+    //faq수정
+    public void update(Integer faqCode, FaqEntity faqDto) {
+        FaqEntity faq = faqRepository.findById(faqCode)
+                .orElseThrow(()-> new RuntimeException("FAQ없음"));
+        faq.setFaqTitle(faqDto.getFaqTitle());
+        faq.setFaqContent(faqDto.getFaqContent());
+        faqRepository.save(faq); // 더티체킹으로 저장 가능하지만, 명확하게 save 호출
+    }
+
+
+
 }
