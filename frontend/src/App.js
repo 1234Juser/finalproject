@@ -65,7 +65,7 @@ function App() {
                     <Route path="withdrawl" element={<WithdrawlPage />} />
                 </Route>
                 <Route path="/my/reservations" element={<MyBookingPage />} />
-                <Route path="/review/write/:orderCode" element={<MyReviewPage />}
+                <Route path="/review/write/:orderCode" element={<MyReviewPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
