@@ -3,7 +3,7 @@ import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {StyledTable, TableContainer} from "../../style/product/StyledProductAllAdmin";
 import {Link} from "react-router-dom";
 
-function ProductAllAdminCom({products, currentPage, totalPages, totalItems, onPageChange}) {
+function ProductAllAdminCom({products, currentPage, totalPages, totalItems, onPageChange, onDelete}) {
 
     return (
         <div style={containerStyle}>
@@ -103,12 +103,12 @@ function ProductAllAdminCom({products, currentPage, totalPages, totalItems, onPa
                             <td>{p.productType}</td>
                             <td>{p.reviewCount}</td>
                             <td>
-                                <a
-                                    href={`/delete/${p.productCode}`}
-                                    style={{color: 'red'}}
+                                <span
+                                    onClick={() => onDelete(p.productUid)}
+                                    style={{color: 'red', cursor: "pointer"}}
                                 >
                                     삭제
-                                </a>
+                                </span>
                             </td>
                         </tr>
                     ))}

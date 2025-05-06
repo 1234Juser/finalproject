@@ -106,18 +106,30 @@ public class ProductController {
                                                                                 @RequestPart("productDTO") ProductDTO productDTO,
                                                                                 @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
         
-        log.debug ("productUid: {}", productUid);
-        log.debug ("productDTO : {}", productDTO);
         int result = productService.productUpdate(productUid, productDTO, productThumbnail);
         
-        if(result == 1) {
-            log.debug ("product update result : {}", result);
+        if(result == 1)
             return ResponseEntity.ok (Map.of ("message", "수정 성공"));
-        }
         else if (result == 0)
             return ResponseEntity.status (HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다. 입력 내용을 확인해주세요."));
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "상품 수정 중 오류가 발생했습니다."));
+    }
+    
+    
+    // 상품 삭제
+    @DeleteMapping("/admin/{productUid}")
+    public ResponseEntity ProductDelete(@PathVariable("productUid") String productUid,
+                                                                @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
+        
+        log.debug ("productUid: {}", productUid);
+        int result = productService.productDelete(productUid, productThumbnail);
+        
+        if(result == 1) {
+            log.debug ("product delete result : {}", result);
+            return ResponseEntity.status (HttpStatus.NO_CONTENT).build();
+        } else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body ("일치하는 Uid 없음");
     }
     
 }
