@@ -1,5 +1,6 @@
 package com.hello.travelogic.wish.controller;
 
+import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.wish.dto.WishDTO;
 import com.hello.travelogic.wish.dto.WishGroupDTO;
 import com.hello.travelogic.wish.repo.WishGroupRepo;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +30,7 @@ public class WishController {
     // 위시 그룹 불러오기
     // JWT버전
     @GetMapping("/wish/groups")
-    public ResponseEntity<List<WishGroupDTO>> getGroups(Authentication authentication) {
+    public ResponseEntity<List<WishGroupDTO>> getGroups( Authentication authentication) {
         String memberId = authentication.getPrincipal().toString();
         Long memberCode = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
