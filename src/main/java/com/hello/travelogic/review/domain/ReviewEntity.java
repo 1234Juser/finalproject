@@ -1,7 +1,9 @@
 package com.hello.travelogic.review.domain;
 
 import com.hello.travelogic.member.domain.MemberEntity;
+import com.hello.travelogic.order.domain.OptionEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
+import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.review.dto.ReviewDTO;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -34,6 +36,16 @@ public class ReviewEntity {
     @JoinColumn(name = "member_code", nullable = false)
     private MemberEntity member;     // 회원1 - 리뷰N
 
+    NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_code", nullable = false)
+    private ProductEntity product;   // 상품1 - 리뷰N
+
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "option_code", nullable = false)
+    private OptionEntity option;    // 옵션1 - 리뷰1
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_code", nullable = false)
@@ -61,6 +73,8 @@ public class ReviewEntity {
 
     public ReviewEntity(ReviewDTO review, MemberEntity member, OrderEntity order) {
         this.member = member;
+        this.product = order.getProduct();
+        this.option = order.getOption();
         this.order = order;
         this.reviewRating = review.getReviewRating();
         this.reviewDate = review.getReviewDate();

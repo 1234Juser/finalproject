@@ -29,6 +29,13 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
 
     // 상품별 최신순
     // /review/product/{productCode}?sort=date
-    List<ReviewEntity> findByOrder_Product_ProductCodeOrderByReviewDateDesc(long productCode);   // 최신순 (명시적)
+//    List<ReviewEntity> findByOrder_Product_ProductCodeOrderByReviewDateDesc(long productCode);   // 최신순 (명시적)
+    // tbl_review에 fk로 product_code가 들어옴
+    List<ReviewEntity> findByProduct_ProductCodeOrderByReviewDateDesc(long productCode);
+
+    int countByProduct_ProductCode(Long productCode);
+
+    @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_code = :productCode", nativeQuery = true)
+    Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
 
 }
