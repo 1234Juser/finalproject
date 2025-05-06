@@ -32,6 +32,7 @@ import FaqListPage from "./pages/faq/FaqListPage";
 import FaqRegisterPage from "./pages/faq/FaqRegisterPage";
 import MyReviewPage from "./pages/review/MyReveiwPage";
 import AdminReviewPage from "./pages/review/AdminReviewPage";
+import AdminBookingByProductPage from "./pages/reservation/AdminBookingByProductPage";
 
 function App() {
     return (
@@ -76,6 +77,7 @@ function App() {
                     <Route path="productEdit/:productUid" element={<ProductRegPage/>} />
                 </Route>
                 <Route path="/admin/booking" element={<AdminBookingPage />} />
+                <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
 
                 <Route path="/domestic" element={<DomesticPage/>}/>

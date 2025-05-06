@@ -143,3 +143,59 @@ export async function cancelMyReservation(orderCode) {
         throw error;
     }
 }
+
+// 상품 목록 조회 (관리자 예약 필터용)
+export async function fetchProductListForFilter() {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        console.error("accessToken 없음");
+        return;
+    }
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    try {
+        const res = await axios.get(`${path}/admin/booking/products`, config);
+        return res.data;
+    } catch (error) {
+        console.error("fetchProductListForFilter 실패", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// 상품별 예약 조회
+// 디폴트인 전체일 경우 /admin/booking으로 요청
+export async function fetchReservationsByProductCode(productCode, start = 1) {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        console.error("accessToken 없음");
+        return;
+    }
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        params: { start }
+    };
+
+    try {
+        if (productCode == null) {
+            const res = await axios.get(`${path}/admin/booking`, config); // 전체 예약
+            return res.data;
+        } else {
+            config.params.productCode = productCode;
+            const res = await axios.get(`${path}/admin/booking/filter`, config); // 상품별 예약
+            return res.data;
+        }
+    } catch (error) {
+        console.error("fetchReservationsByProductCode 실패", error.response?.data || error.message);
+        throw error;
+    }
+}

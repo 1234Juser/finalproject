@@ -48,11 +48,11 @@ public class OrderService {
         start = start > 0? start -1 : start;
         
         int size = 10;
-        Pageable pageable = PageRequest.of(start, size, Sort.by(Sort.Order.desc("orderDate")));
-        Page<OrderEntity> page = orderRepo.findAll(pageable);
-        List<OrderEntity> listE = page.getContent();
-        
+        Pageable pageable = PageRequest.of(start, 10, Sort.by("orderDate").descending());
+        Page<OrderEntity> page = orderRepo.findAllWithJoins(pageable);
+
         LocalDate today = LocalDate.now();
+        List<OrderEntity> orderList = page.getContent();
         for (OrderEntity order : page.getContent()) {
             LocalDate resDate = order.getOption().getReservationDate();
             if (order.getOrderStatus() == OrderStatus.SCHEDULED && resDate != null && resDate.isBefore(today)) {
@@ -60,9 +60,13 @@ public class OrderService {
                 orderRepo.save(order); // 자동 갱신
             }
         }
-        
+
+        List<OrderDTO> reservationList = page.getContent().stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
+
         Map<String, Object> map = new HashMap<>();
-        map.put("list", listE.stream().map(entity -> new OrderDTO(entity)).toList());
+        map.put("reservations", reservationList);
         map.put("totalPages", page.getTotalPages());
         map.put("currentPage", page.getNumber() + 1);
         
@@ -105,38 +109,38 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderDTO getOrder(Long orderCode) {
         OrderEntity order = orderRepo.findById(orderCode)
-                            .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-        //        OptionEntity option = optionRepo.findById(dto.getOptionCode())
-        //                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+//        OptionEntity option = optionRepo.findById(dto.getOptionCode())
+//                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
         return new OrderDTO(order);
     }
-    
+
     @Transactional(readOnly = true)
     public List<OrderDTO> getOrdersByMemberCode(Long memberCode) {
-        
+
         MemberEntity member = memberRepo.findById(memberCode)
-                              .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-        
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
         Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
         Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
-        
+
         return orderPage.getContent().stream()
-               .map(OrderDTO::new)
-               .collect(Collectors.toList());
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
     }
-    
-    //    @Transactional(readOnly = true)
-    //    public List<OrderDTO> getOrdersByUsername(String username) {
-    //        MemberEntity member = memberRepo.findByMemberId(username)
-    //                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
-    //
-    //        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
-    //        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
-    //
-    //        return orderPage.getContent().stream()
-    //                .map(OrderDTO::new)
-    //                .collect(Collectors.toList());
-    //    }
+
+//    @Transactional(readOnly = true)
+//    public List<OrderDTO> getOrdersByUsername(String username) {
+//        MemberEntity member = memberRepo.findByMemberId(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+//
+//        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
+//        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
+//
+//        return orderPage.getContent().stream()
+//                .map(OrderDTO::new)
+//                .collect(Collectors.toList());
+//    }
     
     @Transactional
     public int updateOrderStatusIfCompleted(Long orderCode) {
@@ -181,5 +185,36 @@ public class OrderService {
             order.setOrderStatus(OrderStatus.CANCELED);
             orderRepo.save(order);
         }
+    }
+
+    // 필터링
+    public Map<String, Object> getReservationsByProduct(Long productCode, int start) {
+        int page = (start <= 0) ? 0 : start - 1;
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "orderDate"));
+
+        Page<OrderEntity> pageResult = orderRepo.findByProduct_ProductCode(productCode, pageable);
+
+        List<OrderDTO> dtoList = pageResult.getContent().stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", dtoList);
+        result.put("totalPages", pageResult.getTotalPages());
+        result.put("currentPage", pageResult.getNumber() + 1); // 페이지 번호는 0부터 시작하므로 +1
+
+        return result;
+    }
+
+    // 필터링 해서 상품별 조회
+    public List<Map<String, Object>> getProductListForFilter() {
+        return productRepo.findAll().stream()
+                .map(product -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("productCode", product.getProductCode());
+                    map.put("productTitle", product.getProductTitle());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 }
