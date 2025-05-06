@@ -16,6 +16,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,14 +51,24 @@ public class ProductService {
     private final WishRepo wishRepo;
 
     // 모든 Products 조회
-    public List<ProductDTO> getProducts() {
-        List<ProductDTO> productList = null;
-        List<ProductEntity> productE = productRepo.findAll();
-        if(productE.size() != 0) {
-                productList = productE.stream().map( product -> new ProductDTO(product)).toList();
+    public Map<String, Object> getProducts(int start, int page) {
+        
+        start = start > 0 ? start - 1 : start;
+        // 페이지는 인덱스 기반이라서 0부터 시작하는데,
+        // start=1 일때 2번째 인덱스의 값이 출력되므로, start=1일 때 1번째 인덱스의 값이 프론트에 출력될 수 있도록 만들어줌.
+        
+        Pageable pageable = PageRequest.of(start, page, Sort.by(Sort.Order.asc ("productCode")));
+        
+        Page <ProductEntity> pageEntity = productRepo.findAll(pageable);
+        List<ProductEntity> listE = pageEntity.getContent();
+        Map <String, Object> map = new HashMap <> ();
+        
+        map.put("productList", listE.stream().map(entity -> new ProductDTO (entity)).toList());
+        map.put("totalPages", pageEntity.getTotalPages());           // 전체 페이지 수
+        map.put("currentPage", pageEntity.getNumber() + 1);          // 현재 페이지 번호
+        map.put ("totalItems", pageEntity.getTotalElements ());        // 전체 아이템 개수
 
-        }
-        return productList;
+        return map;
     }
 
 

@@ -27,9 +27,10 @@ public class ProductController {
 
     // 투어 상품 전체 조회
     @GetMapping("")
-    public ResponseEntity getProducts() {
-        log.debug("get products 요청");
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts());
+    public ResponseEntity getProducts(@RequestParam(defaultValue = "0") int start,
+                                                            @RequestParam(defaultValue = "10") int page) {
+        log.debug ("start: {} / page: {}", start, page);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProducts(start, page));
     }
 
 

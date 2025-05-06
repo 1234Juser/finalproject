@@ -1,8 +1,8 @@
 const path = "http://localhost:8080"
 
 // tbl_product 전체 데이터 가져오는 함수
-const getProductsList = async () => {
-    const response = await fetch(`${path}/products`, {
+const getProductsList = async (currentPage) => {
+    const response = await fetch(`${path}/products?start=${currentPage}`, {
         method : "GET"
     });
     return response.json();

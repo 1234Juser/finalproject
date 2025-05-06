@@ -3,7 +3,7 @@ import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {StyledTable, TableContainer} from "../../style/product/StyledProductAllAdmin";
 import {Link} from "react-router-dom";
 
-function ProductAllAdminCom({products}) {
+function ProductAllAdminCom({products, currentPage, totalPages, totalItems, onPageChange}) {
 
     return (
         <div style={containerStyle}>
@@ -13,6 +13,49 @@ function ProductAllAdminCom({products}) {
             <main style={mainStyle}>
                 <h1>전체 상품 목록</h1>
                 <hr />
+                    <div style={{ marginTop: "20px", textAlign: "left" }}>
+                        <button
+                            onClick={() => onPageChange(1)}
+                            disabled={currentPage === 1}
+                            style={{
+                                margin: "0 5px",
+                                padding: "5px 10px",
+                                backgroundColor: currentPage === 1 ? "lightgray" : "white",
+                                border: "1px solid black",
+                                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                            }}
+                        >
+                            {"<<"}
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index + 1}
+                                onClick={() => onPageChange(index + 1)}
+                                style={{
+                                    margin: "0 5px",
+                                    padding: "5px 10px",
+                                    backgroundColor: currentPage === index + 1 ? "lightgray" : "white",
+                                    border: "1px solid black",
+                                    cursor: currentPage === index + 1 ? "not-allowed" : "pointer",
+                                }}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => onPageChange(totalPages)}
+                            disabled={currentPage === totalPages}
+                            style={{
+                                margin: "0 5px",
+                                padding: "5px 10px",
+                                backgroundColor: currentPage === totalPages ? "lightgray" : "white",
+                                border: "1px solid black",
+                                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                            }}
+                        >
+                            {">>"}
+                        </button>
+                    </div>
                 <TableContainer>
                     <StyledTable>
                     <thead>
@@ -27,8 +70,8 @@ function ProductAllAdminCom({products}) {
                         <th>Kids</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th>Min Parti</th>
-                        <th>Max Parti</th>
+                        <th>Min</th>
+                        <th>Max</th>
                         <th>Status</th>
                         <th>Type</th>
                         <th>Review</th>
@@ -50,8 +93,8 @@ function ProductAllAdminCom({products}) {
                                 >{p.productTitle}
                                 </Link>
                             </td>
-                            <td>{p.productAdult}</td>
-                            <td>{p.productChild}</td>
+                            <td>{p.productAdult.toLocaleString()}</td>
+                            <td>{p.productChild.toLocaleString()}</td>
                             <td>{p.productStartDate}</td>
                             <td>{p.productEndDate}</td>
                             <td>{p.productMinParticipants}</td>
@@ -67,7 +110,6 @@ function ProductAllAdminCom({products}) {
                                     삭제
                                 </a>
                             </td>
-
                         </tr>
                     ))}
                     </tbody>
