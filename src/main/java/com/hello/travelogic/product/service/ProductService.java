@@ -49,6 +49,9 @@ public class ProductService {
     private ThemeRepo themeRepo;
     private final ReviewRepo reviewRepo;
     private final WishRepo wishRepo;
+    
+    final String baseDir = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "product" + File.separator;
+    
 
     // 모든 Products 조회
     public Map<String, Object> getProducts(int start, int page) {
@@ -285,7 +288,6 @@ public class ProductService {
         
         int result = 1;
         Optional<ProductEntity> productEOptional  = productRepo.findByProductUid (productUid);
-        log.info ("상품 엔티티 확인 ==== productE : {}" , productEOptional );
         
         try {
             if (productEOptional .isPresent()) {
@@ -297,19 +299,14 @@ public class ProductService {
                     // 1-1. 기존 파일이 존재한다면 삭제
                     if (productEOptional.get ().getProductThumbnail () != null && !productEOptional.get ().getProductThumbnail ().isEmpty()) {
                         String oldFileName = productEOptional.get ().getProductThumbnail ();
-                        log.debug ("oldFileName : {}", oldFileName);
                         
                         try {
-                            String baseDir = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "product" + File.separator;
-                            
-                            Path path = Paths.get(baseDir + oldFileName);
-                            log.debug ("path : {}", path);
-                            Files.deleteIfExists(path);
-                            
+                                Path path = Paths.get(baseDir + oldFileName);
+                                Files.deleteIfExists(path);
                         } catch (IOException e) {
-                            log.debug ("파일 삭제 에러" + e.getMessage());
-                            e.printStackTrace();
-                            return -1;
+                                log.debug ("파일 삭제 에러" + e.getMessage());
+                                e.printStackTrace();
+                                return -1;
                         }
                     }
                     
@@ -321,8 +318,6 @@ public class ProductService {
                             e.printStackTrace ();
                             return -1;
                     }
-                    
-                    log.debug (">>>>> 새 파일 저장하고 나서 productDTO 확인하기 : {}", productDTO);
                     
                 } else {
                 // 2. 파일 재업로드하지 않은 경우 DTO에 담긴 값으로 엔티티 업데이트 및 DTO의 썸네일 이름 유지
@@ -339,16 +334,8 @@ public class ProductService {
                     productE.setProductThumbnail(productDTO.getProductThumbnail());
                 }
             
-            log.debug (">>>>> 엔티티에 새 파일 저장됨. productE.get ().getProductThumbnail () : {}", productEOptional.get ().getProductThumbnail ());
-                log.debug (">>>>> productE 확인하기 : {}", productE);
-            log.debug (">>>>> 새 파일 저장하고 나서 productDTO 확인하기 : {}", productDTO);
-            log.debug (">>>>>productDTO.getProductThumbnail () : {}", productDTO.getProductThumbnail ());
-            
-            
             // 3. 데이터 저장
             productRepo.save(productE);
-            log.info(">>>>>★★ 데이터 저장하고 수정된 productE는: {} ", productE);
-            
         
             } else {
                  // 해당 productUid를 가진 상품이 없는 경우
@@ -363,4 +350,39 @@ public class ProductService {
         
         return result;
     }
+    
+    
+    // 상품 삭제
+    @Transactional
+    public int productDelete ( String productUid, MultipartFile productThumbnail ) {
+        
+        log.debug ("productThumbnail 확인 : {}", productThumbnail);
+        
+        // 엔티티 먼저 조회
+        ProductEntity productEntity = productRepo.findByProductUid (productUid)
+                                      .orElseThrow(() -> new EntityNotFoundException(">>>>>일치하는 UID 없음. productUid 확인하세요: " + productUid));
+        
+        log.debug ("productEntity 확인 : {}", productEntity);
+        
+        // 엔티티 삭제 & 관련 파일 삭제
+        if (productEntity != null) {
+            productRepo.delete(productEntity);
+            try {
+                Path path = Paths.get(baseDir + productEntity.getProductThumbnail ());
+                log.debug ("path 확인,,,, : {}" , path);
+                if (path.toFile ().exists ()) {
+                    Files.deleteIfExists(path);  //파일이 존재하면 삭제
+                }
+                
+            } catch (Exception e) {
+                throw new RuntimeException (e);
+            }
+            
+            return 1;
+        }
+        
+        return 0;
+    }
+    
+    
 }

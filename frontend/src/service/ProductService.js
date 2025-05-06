@@ -219,6 +219,14 @@ const setProductModify = async (productUid, formData) => {
 }
 
 
+// 삭제하기
+const ProductDelete = (productUid) => {
+    return fetch(`${path}/products/admin/${productUid}`, {
+            method: "DELETE",
+    });
+}
+
+
 //  ------------- 상품 관련 부가 기능 함수
 // 찜 추가하기
 const toggleWish = async (product) => {
@@ -250,5 +258,5 @@ export {
     getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
     getProductsByCountry, getProductsByCity, getProductDetail,
     ProductRegist,
-    getRegions, getThemes, toggleWish, getProductModify, setProductModify
+    getRegions, getThemes, toggleWish, getProductModify, setProductModify, ProductDelete
 };
