@@ -28,6 +28,8 @@ import AdminBookingPage from "./pages/reservation/AdminBookingPage";
 import EventRegisterCon from "./containers/event/EventRegisterCon";
 import MyBookingPage from "./pages/reservation/MyBookingPage";
 import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
+import FaqListPage from "./pages/faq/FaqListPage";
+import FaqRegisterPage from "./pages/faq/FaqRegisterPage";
 
 function App() {
   return (
@@ -41,6 +43,10 @@ function App() {
               <Route path="/event/register" element={<EventRegisterPage />} />
               <Route path="/event/:id" element={<EventDetailPage />} />
               <Route path="/event/edit/:id" element={<EventRegisterCon />} />
+              {/*faq페이지*/}
+              <Route path="/faq" element={<FaqListPage/>}/>
+              <Route path="/faq/register" element={<FaqRegisterPage />} />
+
 
 
 
