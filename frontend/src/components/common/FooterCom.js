@@ -12,6 +12,9 @@ import {
 } from "../../style/common/FooterStyle";
 import styled from "styled-components";
 import { FaYoutube, FaInstagram, FaFacebookSquare } from "react-icons/fa";
+import { SiTistory } from "react-icons/si";
+import { SiNaver } from "react-icons/si";
+
 import {useNavigate} from "react-router-dom";
 
 // Hello, Travelogic! / 만든사람 줄
@@ -32,7 +35,7 @@ const FooterTop = styled.div`
 const FooterInfoRow = styled.div`
     display: flex;
     flex-wrap: wrap;
-    gap: 28px;
+    gap: 10px;
     margin-top: 13px;
     margin-bottom: 3px;
     font-size: 0.97rem;
@@ -49,7 +52,7 @@ const FooterInfoRow = styled.div`
 // 안내문 영역
 const FooterNotice = styled.div`
     width: 100%;
-    margin-top: 18px;
+    margin-top: 10px;
     background: #fff; /* 배경을 흰색으로 변경 */
     border-radius: 7px 13px 13px 7px;
     padding: 19px 24px 17px 28px;
@@ -61,7 +64,7 @@ const FooterNotice = styled.div`
     word-break: keep-all;
     & > span {
         display: block;
-        margin-top: 7px;
+        margin-top: 6px;
         margin-left: 6px;
         text-indent: -8px;
     }
@@ -75,13 +78,7 @@ function FooterCom() {
     return (
         <FooterContainer>
             <FooterContent>
-                <FooterLogo>
-                    <img
-                        src="/img/logo/logo.png"
-                        alt="로고"
-                        onClick={() => navigate("/")}
-                    />
-                </FooterLogo>
+
                 <FooterLinks>
                     <a href="/about">회사 소개</a>
                     <a href="/terms">이용 약관</a>
@@ -90,8 +87,7 @@ function FooterCom() {
                     <a href="/support">고객 지원</a>
                     <a href="/contact">문의하기</a>
                     <a href="/careers">채용 정보</a>
-                    <a href="/blog">블로그</a>
-                    <a href="/sitemap">사이트맵</a>
+
                     <a href="/tour-info">여행 정보</a>
                     <a href="/visa">비자 안내</a>
                     <a href="/package">패키지 투어</a>
@@ -126,7 +122,15 @@ function FooterCom() {
                             </span>
                         </FooterNotice>
                     </div>
+
                     <SocialIcons>
+                        <FooterLogo>
+                            <img
+                                src="/img/logo/logo.png"
+                                alt="로고"
+                                onClick={() => navigate("/")}
+                            />
+                        </FooterLogo>
                         <a href="https://youtube.com" aria-label="Youtube" target="_blank" rel="noopener noreferrer">
                             <FaYoutube />
                         </a>
@@ -135,6 +139,14 @@ function FooterCom() {
                         </a>
                         <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
                             <FaFacebookSquare />
+                        </a>
+                        {/* 티스토리 아이콘 */}
+                        <a href="https://www.tistory.com/" aria-label="Tistory" target="_blank" rel="noopener noreferrer">
+                            <SiTistory />
+                        </a>
+                        {/* 네이버블로그 아이콘 */}
+                        <a href="https://section.blog.naver.com/BlogHome.naver?directoryNo=0&currentPage=1&groupId=0" aria-label="Naver Blog" target="_blank" rel="noopener noreferrer">
+                            <SiNaver />
                         </a>
                     </SocialIcons>
                 </FooterTextWrapper>

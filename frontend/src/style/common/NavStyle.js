@@ -2,14 +2,14 @@ import styled from "styled-components";
 
 // 플렉스 구조 : 왼쪽(로고) - 가운데(중앙 메뉴) - 오른쪽(유저 기능)
 export const StyledNav = styled.nav`
-    background: #fff;
-    border-radius: 0;
-    padding: 0 28px;
-    margin-bottom: 22px;
-    display: flex;
-    align-items: center;
-    height: 70px;
-    min-height: 70px;
+        background: #fff;
+        border-radius: 0;
+        padding: 0 28px;
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        height: 110px;      // 원하는 높이로(예시)
+        min-height: 110px;  // 원하는 높이로(예시)
 `;
 
 
