@@ -30,6 +30,7 @@ import MyBookingPage from "./pages/reservation/MyBookingPage";
 import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 import FaqListPage from "./pages/faq/FaqListPage";
 import FaqRegisterPage from "./pages/faq/FaqRegisterPage";
+import FaqEditCon from "./containers/faq/FaqEditCon";
 import MyReviewPage from "./pages/review/MyReveiwPage";
 import AdminReviewPage from "./pages/review/AdminReviewPage";
 import AdminBookingByProductPage from "./pages/reservation/AdminBookingByProductPage";
@@ -39,16 +40,19 @@ function App() {
         <div className="main-content">
             <HeaderCon /> {/* 항상 헤더/네비가 상단에 고정 */}
 
-            <Routes>
-                <Route path="/" element={<MainPage />} />
-                {/*이벤트페이지*/}
-                <Route path="/event" element={<EventListPage/>}/>
-                <Route path="/event/register" element={<EventRegisterPage />} />
-                <Route path="/event/:id" element={<EventDetailPage />} />
-                <Route path="/event/edit/:id" element={<EventRegisterCon />} />
-                {/*faq페이지*/}
-                <Route path="/faq" element={<FaqListPage/>}/>
-                <Route path="/faq/register" element={<FaqRegisterPage />} />
+          <Routes>
+              <Route path="/" element={<MainPage />} />
+              {/*이벤트페이지*/}
+              <Route path="/event" element={<EventListPage/>}/>
+              <Route path="/event/register" element={<EventRegisterPage />} />
+              <Route path="/event/:id" element={<EventDetailPage />} />
+              <Route path="/event/edit/:id" element={<EventRegisterCon />} />
+              {/*faq페이지*/}
+              <Route path="/faq" element={<FaqListPage/>}/>
+              <Route path="/faq/register" element={<FaqRegisterPage />} />
+              <Route path="/faq/edit/:faqCode" element={<FaqEditCon />} />
+
+
 
                 {/*회원가입/로그인*/}
                 <Route path="/registerselect" element={<RegisterMethodSelectPage />} />

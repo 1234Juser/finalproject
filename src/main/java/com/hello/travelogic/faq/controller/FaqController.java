@@ -25,4 +25,25 @@ public class FaqController {
         faqService.save(faq);
         return ResponseEntity.ok().build();
     }
+    //faq수정
+    @GetMapping("/{faqCode}")
+    public ResponseEntity<FaqEntity> getFaq(@PathVariable Integer faqCode){
+        FaqEntity faq = faqService.findById(faqCode)
+                .orElseThrow(() -> new RuntimeException("FAQ 없음"));
+        return ResponseEntity.ok(faq);
+
+    }
+    //faq수정
+    @PutMapping("/{faqCode}")
+    public ResponseEntity<?> updateFaq(@PathVariable Integer faqCode, @RequestBody FaqEntity faqDto){
+        faqService.update(faqCode, faqDto);
+        return ResponseEntity.ok().build();
+    }
+
+    //faq삭제
+    @DeleteMapping("/{faqCode}")
+    public ResponseEntity<?> deleteFaq(@PathVariable Integer faqCode){
+        faqService.deleteById(faqCode);
+        return ResponseEntity.noContent().build();
+    }
 }

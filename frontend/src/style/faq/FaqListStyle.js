@@ -92,53 +92,102 @@ export const Answer = styled.div`
     line-height: 1.6;
     animation: fadeDown 0.25s;
 
+    /* 자동 줄바꿈 */
+    word-break: break-word;
+    white-space: pre-line;
+
+    /* 너무 길 때 세로 스크롤 */
+    max-height: 320px; /* 원하는 높이로 조절 */
+    overflow-y: auto;
+
     @keyframes fadeDown {
         from { opacity: 0; transform: translateY(-12px);}
         to { opacity: 1; transform: translateY(0);}
     }
 `;
 
-export const Pagination = styled.div`
-  margin: 30px 0 0;
-  text-align: center;
-
-  button {
-    background: #f2f6f9;
-    color: ${Palette.blue};
-    font-weight: 500;
-    font-size: 1.01rem;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 20px;
-    cursor: pointer;
-    transition: background 0.18s, color 0.18s;
-    letter-spacing: -0.5px;
-    margin: 0 5px;
-    box-shadow: none;
-
-    &:hover:not(:disabled) {
-      background: ${Palette.mainGradient};
-      color: #fff;
-      box-shadow: 0 2px 8px #53bbef77;
-    }
-    &:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-      background: #dce0f5;
-      color: #8a91b4;
-    }
-  }
-
-  .active-page {
-    background: ${Palette.mainGradient};
+// 추가: FAQ 수정/삭제 버튼 - EventDetail 버튼 스타일 맞춤
+export const FaqEditButton = styled.button`
+    background: linear-gradient(90deg, #36abc9, #198dbb);
     color: #fff;
-    font-weight: 600;
-    box-shadow: 0 2px 8px #53bbef77;
-  }
+    border: none;
+    padding: 6px 18px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 0.97rem;
+    box-shadow: 0 2px 8px #44c0ee26;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: background .16s, box-shadow .16s, transform .13s;
+    margin-left: 8px;
+    &:hover {
+        background: linear-gradient(90deg, #198dbb, #36abc9);
+        box-shadow: 0 4px 14px #44c0ee36;
+        transform: translateY(-1px) scale(1.03);
+    }
+`;
 
-  span {
-    font-size: 1rem;
-    margin: 0 5px;
-    color: #263765;
-  }
+export const FaqDeleteButton = styled.button`
+    background: linear-gradient(90deg, #e35d83, #ef717a);
+    color: #fff;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 0.97rem;
+    box-shadow: 0 2px 8px #e47a9226;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: background .16s, box-shadow .16s, transform .13s;
+    margin-left: 6px;
+    &:hover {
+        background: linear-gradient(90deg, #ef717a, #e35d83);
+        box-shadow: 0 4px 14px #e47a9236;
+        transform: translateY(-1px) scale(1.03);
+    }
+`;
+
+export const Pagination = styled.div`
+    margin: 30px 0 0;
+    text-align: center;
+
+    button {
+        background: #f2f6f9;
+        color: ${Palette.blue};
+        font-weight: 500;
+        font-size: 1.01rem;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 20px;
+        cursor: pointer;
+        transition: background 0.18s, color 0.18s;
+        letter-spacing: -0.5px;
+        margin: 0 5px;
+        box-shadow: none;
+
+        &:hover:not(:disabled) {
+            background: ${Palette.mainGradient};
+            color: #fff;
+            box-shadow: 0 2px 8px #53bbef77;
+        }
+        &:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            background: #dce0f5;
+            color: #8a91b4;
+        }
+    }
+
+    .active-page {
+        background: ${Palette.mainGradient};
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 2px 8px #53bbef77;
+    }
+
+    span {
+        font-size: 1rem;
+        margin: 0 5px;
+        color: #263765;
+    }
 `;
