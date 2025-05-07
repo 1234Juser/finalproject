@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import {
     FaqContainer, FaqHeader, FaqTitle, FaqAddBtn,
-    FaqList, FaqItem, QuestionRow, ToggleButton, Answer, Pagination
+    FaqList, FaqItem, QuestionRow, ToggleButton, Answer, Pagination,
+    FaqEditButton, FaqDeleteButton
 } from "../../style/faq/FaqListStyle";
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -45,52 +46,42 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
             <FaqList>
                 {faqs.map((faq, idx) => (
                     <FaqItem key={faq.faqCode}>
-                        <QuestionRow onClick={() => handleToggle(idx)}>
-                            <span>{faq.faqTitle}</span>
-                            {isAdmin() && (
-                                <>
-                                <button
-                                    style={{
-                                        marginLeft: 4,
-                                        padding: "2px 8px",
-                                        fontSize: 12,
-                                        border: "1px solid #398",
-                                        borderRadius: 6,
-                                        background: "#fff",
-                                        color: "#398",
-                                        cursor: "pointer"
-                                    }}
-                                    onClick={e => {
-                                        e.stopPropagation();
-                                        // 수정페이지로 이동, faqCode를 넘김
-                                        navigate(`/faq/edit/${faq.faqCode}`);
-                                    }}
+                        <QuestionRow>
+                            {/* 질문 텍스트는 왼쪽, 토글+관리 버튼 묶음은 오른쪽에*/}
+                            <span
+                                style={{ flex: 1, minWidth: 0, cursor: "pointer" }}
+                                onClick={() => handleToggle(idx)}
+                            >
+                                {faq.faqTitle}
+                            </span>
+                            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                                <ToggleButton
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => handleToggle(idx)}
                                 >
-                                    수정
-                                </button>
-                                <button
-                                style={{
-                                marginLeft: 2,
-                                padding: "2px 8px",
-                                fontSize: 12,
-                                border: "1px solid #e33",
-                                borderRadius: 6,
-                                background: "#fff",
-                                color: "#e33",
-                                cursor: "pointer"
-                            }}
-                            onClick={e => {
-                                e.stopPropagation();
-                                handleDelete(faq.faqCode);
-                            }}
-                        >
-                            삭제
-                        </button>
-                    </>
-                )}
-                            <ToggleButton>
-                                {openIndex === idx ? <FaChevronUp /> : <FaChevronDown />}
-                            </ToggleButton>
+                                    {openIndex === idx ? <FaChevronUp /> : <FaChevronDown />}
+                                </ToggleButton>
+                                {isAdmin() && (
+                                    <>
+                                        <FaqEditButton
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                navigate(`/faq/edit/${faq.faqCode}`);
+                                            }}
+                                        >
+                                            수정
+                                        </FaqEditButton>
+                                        <FaqDeleteButton
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                handleDelete(faq.faqCode);
+                                            }}
+                                        >
+                                            삭제
+                                        </FaqDeleteButton>
+                                    </>
+                                )}
+                            </div>
                         </QuestionRow>
                         {openIndex === idx && (
                             <Answer>{faq.faqContent}</Answer>
