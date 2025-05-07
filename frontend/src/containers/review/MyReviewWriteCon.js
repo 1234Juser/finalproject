@@ -54,6 +54,14 @@ function MyReviewWriteCon({ memberCode }) {
         }
     };
 
+    // 업로드 하려고 선택한 사진 삭제 기능
+    const handleFileRemove = () => {
+        selectedFileRef.current = null;
+        setImagePreview(null);
+        fileInputRef.current.value = "";  // 파일 선택 초기화
+        console.log("파일 선택이 취소되었습니다.");
+    };
+
     const handleSubmit = async () => {
         try {
             if (selectedRating === 0) {
@@ -63,6 +71,18 @@ function MyReviewWriteCon({ memberCode }) {
 
             if (!reviewContent.trim()) {
                 alert("리뷰 내용을 작성해주세요.");
+                return;
+            }
+
+            const trimmedContent = reviewContent.trim();
+
+            if (trimmedContent.length < 10) {
+                alert("리뷰는 10자 이상 500자 이하로 작성해주세요.");
+                return;
+            }
+
+            if (trimmedContent.length > 500) {
+                alert("리뷰는 500자 이하로 작성해주세요.");
                 return;
             }
 
@@ -96,6 +116,7 @@ function MyReviewWriteCon({ memberCode }) {
                 imagePreview={imagePreview}
                 fileInputRef={fileInputRef}
                 handleFileChange={handleFileChange}
+                handleFileRemove={handleFileRemove}
                 handleSubmit={async () => await handleSubmit()}
                 setReviewContent={setReviewContent}
             />

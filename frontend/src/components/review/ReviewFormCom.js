@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {useParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import {getInfoForWriteReview} from "../../service/reviewService";
+import SimpleModal from "../common/SimpleModal";
 
 const ReviewFormWrap = styled.div`
     width: 100%;
@@ -83,6 +84,20 @@ const SubmitButton = styled.button`
     }
 `;
 
+const RemoveButton = styled.button`
+    margin-top: 0.5rem;
+    background-color: #ff6666;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    &:hover {
+        background-color: #cc4444;
+    }
+`;
+
 const HiddenFileInput = styled.input`
     display: none;
 `;
@@ -94,10 +109,12 @@ function ReviewFormCom({
                            imagePreview,
                            fileInputRef,
                            handleFileChange,
+                           handleFileRemove,
                            handleSubmit,
                            setReviewContent,
                        }) {
     return (
+    <>
         <ReviewFormWrap>
             <Title>{productTitle ? `[${productTitle}] 어떠셨나요?` : "로딩 중..."}</Title>
 
@@ -107,6 +124,7 @@ function ReviewFormCom({
                         key={num}
                         className={`star ${selectedRating >= num ? "active" : ""}`}
                         onClick={() => setSelectedRating(num)}
+                        // onChange={(e) => setReviewContent(e.target.value)}
                     >★</span>
                 ))}
             </StarRating>
@@ -137,6 +155,9 @@ function ReviewFormCom({
                         <span>사진 업로드 영역</span>
                     )}
                 </PhotoBox>
+                {imagePreview && (
+                    <RemoveButton onClick={handleFileRemove}>사진 삭제</RemoveButton>
+                )}
                 <HiddenFileInput
                     type="file"
                     accept="image/*"
@@ -146,8 +167,15 @@ function ReviewFormCom({
                 />
             </PhotoUpload>
 
-            <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
+            <SubmitButton onClick={handleSubmit}
+                          style={{ marginTop: "2rem",
+                              width: "100%", padding: "0.8rem",
+                              fontWeight: "bold", color: "#fff",
+                              backgroundColor: "#3399ff",
+                              border: "none", borderRadius: "6px",
+                              cursor: "pointer" }}>등록</SubmitButton>
         </ReviewFormWrap>
+    </>
     );
 }
 
