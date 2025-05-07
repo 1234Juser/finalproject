@@ -34,6 +34,15 @@ const getCountryList = async (regionCode) => {
 }
 
 
+// 도시 데이터 가져오는 함수
+const getCityById = async (cityId) => {
+    const response = await fetch(`${path}/city/${cityId}`, {
+        method : "GET"
+    });
+    return response.json();
+}
+
+
 // 국가별 도시 데이터 가져오는 함수 (해외여행용)
 const getCitiesByCountry = async (countryId) => {
     console.log("여기서 countryId 확인----->", countryId);
@@ -251,8 +260,7 @@ const toggleWish = async (product) => {
 };
 
 export {
-    getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
-    getProductsByCountry, getProductsByCity, getProductDetail,
-    ProductRegist,
+    getProductsList, getDomList, getIntlList, getCountryList, getCityById, getCitiesByCountry, getCitiesByRegion,
+    getProductsByCountry, getProductsByCity, getProductDetail, ProductRegist,
     getRegions, getThemes, toggleWish, getProductModify, setProductModify, ProductDelete
 };
