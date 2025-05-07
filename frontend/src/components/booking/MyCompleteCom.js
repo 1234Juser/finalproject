@@ -210,8 +210,8 @@ function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, 
                                 <StyledButtonArea>
                                     <StyledButton>문의하기</StyledButton>
                                     {Boolean(res.reviewed) ? (
-                                        <StyledButton onClick={() => navigate(`/review/view/${res.orderCode}`)}>리뷰보기</StyledButton>
-                                        ) : (
+                                        <StyledButton onClick={() => openReviewModal(res.orderCode)}>리뷰보기</StyledButton>
+                                    ) : (
                                         <StyledButton onClick={() => navigate(`/review/write/${res.orderCode}`)}>후기쓰기</StyledButton>
                                     )}
                                 </StyledButtonArea>

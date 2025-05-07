@@ -87,45 +87,19 @@ const HiddenFileInput = styled.input`
     display: none;
 `;
 
-function ReviewForm() {
-    const { orderCode } = useParams();
-    const [productTitle, setProductTitle] = useState("");
-    const [selectedRating, setSelectedRating] = useState(0);
-    // const [selectedFile, setSelectedFile] = useState(null);
-    const fileInputRef = useRef(null);
-    const [imagePreview, setImagePreview] = useState(null);
-
-    useEffect(() => {
-        const fetchInfo = async () => {
-            try {
-                const data = await getInfoForWriteReview(orderCode);
-                setProductTitle(data.productTitle);
-            } catch (e) {
-                console.error("리뷰 작성 정보 로딩 실패", e);
-            }
-        };
-        fetchInfo();
-    }, [orderCode]);
-
-    const handlePhotoBoxClick = () => {
-        fileInputRef.current?.click(); // 클릭 시 파일 선택 창 열기
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            console.log("파일 선택됨:", file.name);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
+function ReviewFormCom({
+                           productTitle,
+                           selectedRating,
+                           setSelectedRating,
+                           imagePreview,
+                           fileInputRef,
+                           handleFileChange,
+                           handleSubmit,
+                           setReviewContent,
+                       }) {
     return (
         <ReviewFormWrap>
-            <Title>[{productTitle}] 어떠셨나요?</Title>
+            <Title>{productTitle ? `[${productTitle}] 어떠셨나요?` : "로딩 중..."}</Title>
 
             <StarRating>
                 {[1, 2, 3, 4, 5].map((num) => (
@@ -142,6 +116,7 @@ function ReviewForm() {
                 <TextArea
                     id="reviewContent"
                     placeholder="이용하기 전에 알기 어려운 사실이나 꿀팁을 알려주세요."
+                    onChange={(e) => setReviewContent(e.target.value)}
                 />
             </label>
 
@@ -171,9 +146,9 @@ function ReviewForm() {
                 />
             </PhotoUpload>
 
-            <SubmitButton>등록</SubmitButton>
+            <SubmitButton onClick={handleSubmit}>등록</SubmitButton>
         </ReviewFormWrap>
     );
 }
 
-export default ReviewForm;
+export default ReviewFormCom;

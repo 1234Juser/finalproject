@@ -88,8 +88,24 @@ public class ReviewEntity {
     @PrePersist
     public void prePersist() {
         this.reviewDate = this.reviewDate == null ? LocalDateTime.now() : this.reviewDate;
-        log.debug("prePersist 호출됨 - 기존 reviewPic: {}", this.reviewPic);
+//        if (this.reviewDate == null) {
+//            this.reviewDate = LocalDateTime.now();
+//        }
         if (this.reviewPic == null || this.reviewPic.equals("")) {
+            this.reviewPic = "nan";
+            log.debug("prePersist 호출됨 - 기존 reviewPic: {}", this.reviewPic);
+        }
+        if (this.order != null) {
+            this.order.setReviewed(true);
+            log.debug("주문 상태를 리뷰 완료로 설정 - orderCode: {}", this.order.getOrderCode());
+        }
+    }
+
+    @PreRemove
+    public void preRemove() {
+        if (this.order != null) {
+            this.order.setReviewed(false);
+            log.debug("주문 상태를 리뷰 미완료로 설정 - orderCode: {}", this.order.getOrderCode());
         }
     }
 }

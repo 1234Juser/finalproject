@@ -39,7 +39,7 @@ public class ReviewController {
     }
 
     // 로그인 된 회원의 선택 주문에 대한 리뷰 조회
-    @GetMapping("/review/mytravel/{orderCode}")
+    @GetMapping("/review/view/{orderCode}")
     public ResponseEntity<ReviewDTO> getMyReviewForOrder(@PathVariable("orderCode") long orderCode,
                                                          Authentication authentication) {
         String memberId = authentication.getPrincipal().toString();
@@ -108,21 +108,30 @@ public class ReviewController {
                                       @RequestParam("reviewContent") String reviewContent,
                                       @RequestPart(value = "file", required = false) MultipartFile file,
                                       Authentication authentication) {
-        String memberId = authentication.getPrincipal().toString();
-        Long memberCode = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
-                .getMemberCode();
+        try {
+            String memberId = authentication.getPrincipal().toString();
+            Long memberCode = memberRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                    .getMemberCode();
 
-        ReviewDTO reviewDTO = new ReviewDTO();
-        reviewDTO.setMemberCode(memberCode);
-        reviewDTO.setOrderCode(orderCode);
-        reviewDTO.setReviewRating(reviewRating);
-        reviewDTO.setReviewContent(reviewContent);
+            ReviewDTO reviewDTO = new ReviewDTO();
+            reviewDTO.setMemberCode(memberCode);
+            reviewDTO.setOrderCode(orderCode);
+            reviewDTO.setReviewRating(reviewRating);
+            reviewDTO.setReviewContent(reviewContent);
 
-        int result = reviewService.writeReview(reviewDTO, file);
-        if(result == 1)
-            return ResponseEntity.status(HttpStatus.CREATED).body("추가 성공");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 작성된 리뷰가 있습니다.");
+            int result = reviewService.writeReview(reviewDTO, file);
+            if(result == 1) {
+                return ResponseEntity.status(HttpStatus.CREATED).body("리뷰가 성공적으로 작성되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 작성된 리뷰가 있습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 등록 실패");
+        }
     }
 
     // 리뷰 수정하기
@@ -137,11 +146,11 @@ public class ReviewController {
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
                 .getMemberCode();
 
-        ReviewDTO reviewDTO = new ReviewDTO();
-        reviewDTO.setReviewRating(reviewRating);
-        reviewDTO.setReviewContent(reviewContent);
-
         try {
+            ReviewDTO reviewDTO = new ReviewDTO();
+            reviewDTO.setReviewRating(reviewRating);
+            reviewDTO.setReviewContent(reviewContent);
+
             String result = reviewService.modifyReview(reviewCode, reviewDTO, file);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
@@ -150,7 +159,7 @@ public class ReviewController {
     }
 
     // 리뷰 삭제하기
-    @DeleteMapping("/review/mytravel/{reviewCode}")
+    @DeleteMapping("/review/delete/{reviewCode}")
     public ResponseEntity<Void> deleteMyReview(@PathVariable("reviewCode") long reviewCode,
                                                Authentication authentication) {
         String memberId = authentication.getPrincipal().toString();
@@ -178,10 +187,17 @@ public class ReviewController {
     }
 
     @GetMapping("/review/{reviewPic}/image")
-    public ResponseEntity getImage(@PathVariable(value="reviewPic") String reviewPic) {
+    public ResponseEntity<byte[]> getImage(@PathVariable(value="reviewPic") String reviewPic) {
         byte[] imageByte = reviewService.getImage(reviewPic);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
                 .body(imageByte);
+    }
+
+    // 관리자 권한 체크
+    private boolean isAdmin(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
     }
 }

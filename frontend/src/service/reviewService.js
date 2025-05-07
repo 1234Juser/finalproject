@@ -21,8 +21,23 @@ const getReviewsByProduct = async (productCode, sort = "date") => {
 //     const response = await axios.get(`${path}/review/mytravel/0/${orderCode}`);
 //     return response.data;
 // }
-const getMyReview = async (orderCode, token) => {
-    return fetch( path+"/review/mytravel/${orderCode}", {method:"get"} )
+// const getMyReview = async (orderCode, token) => {
+//     return fetch( path+"/review/mytravel/${orderCode}", {method:"get"} )
+// }
+export async function getReviewByOrderCode(orderCode) {
+    try {
+        const token = localStorage.getItem("accessToken");
+        const response = await axios.get(`${path}/review/view/${orderCode}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        });
+        console.log("리뷰 불러오기 성공:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("리뷰 불러오기 실패:", error);
+        throw error;
+    }
 }
 
 // 리뷰 작성을 위한 주문 정보
@@ -46,11 +61,27 @@ export async function writeReview({ orderCode, reviewRating, reviewContent, file
     if (file) {
         formData.append("file", file);
     }
-    // const res = await axios.post("${path}/review/write", formData, {
-    //     headers: { "Content-Type": "multipart/form-data" }
-    // });
-    // return res.data;
-    return fetch(path+"/review/write", {method:"post", body:formData})
+    try {
+        const response = await fetch(`${path}/review/write`, {
+            method: "POST",
+            body: formData,
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "리뷰 등록 실패");
+        }
+
+        return await response.json();
+        // const result = await response.json();
+        // return result;
+    } catch (error) {
+        console.error("리뷰 등록 실패:", error);
+        throw error;
+    }
 }
 
 // 리뷰 수정
@@ -85,10 +116,51 @@ export async function updateReview({ reviewCode, reviewRating, reviewContent, fi
     // return res.data;
 }
 
+// 리뷰 전송
+export const submitReview = async (orderCode, reviewRating, reviewContent, file) => {
+    try {
+        const formData = new FormData();
+        formData.append("orderCode", orderCode);
+        formData.append("reviewRating", reviewRating);
+        formData.append("reviewContent", reviewContent);
+        if (file) {
+            formData.append("file", file);
+        }
+
+        const response = await axios.post(`${path}/review/write`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+        });
+
+        console.log("리뷰 등록 성공:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("리뷰 등록 실패:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
 // 본인의 리뷰 삭제
 export async function deleteMyReview(reviewCode) {
-    const res = await axios.delete(`${path}/review/mytravel/${reviewCode}`);
-    return res.data;
+    try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            throw new Error("로그인이 필요합니다.");
+        }
+
+        const res = await axios.delete(`http://localhost:8080/review/delete/${reviewCode}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return res.data;
+    } catch (error) {
+        console.error("리뷰 삭제 실패:", error);
+        throw error;
+    }
 }
 
 // 관리자의 전체 리뷰 조회

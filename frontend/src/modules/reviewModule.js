@@ -15,6 +15,24 @@ const reducer = (state, action) => {
             return { ...state, myReview: action.data };
         case "SET_SELECTED_REVIEW":
             return { ...state, selectedReview: action.data };
+        case "REMOVE_REVIEW":
+            return {
+                ...state,
+                reservations: state.reservations.map(res =>
+                    res.orderCode === action.payload
+                        ? { ...res, reviewed: false }
+                        : res
+                )
+            };
+        case "UPDATE_REVIEW_STATUS":
+            return {
+                ...state,
+                reservations: state.reservations.map(reservation =>
+                    reservation.orderCode === action.payload.orderCode
+                        ? { ...reservation, reviewed: action.payload.reviewed }
+                        : reservation
+                )
+            };
         case "SET_SORT_OPTION":
             return { ...state, sortOption: action.data };
         case "SET_LOADING":
