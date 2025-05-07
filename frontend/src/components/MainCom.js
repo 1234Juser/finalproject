@@ -26,8 +26,6 @@ export default function MainCom() {
         "5번 배너 설명"
     ];
 
-
-
     return (
         <div style={{position:"relative", minHeight:"100vh", overflow:"hidden"}}>
             {/* 1. 상단 풀 비주얼 영상 */}

@@ -6,25 +6,6 @@ import {
 import React from "react";
 import styled from "styled-components";
 
-// 네비 전체를 덮는 비디오 래퍼
-const NavVideoBackground = styled.div`
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;    // 배경 클릭 불가
-    overflow: hidden;
-    border-radius: inherit;
-    video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        filter: brightness(0.92); //배경 흐리게(선택)
-    }
-`;
-
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 const NavContentWrapper = styled.div`
     position: relative;
