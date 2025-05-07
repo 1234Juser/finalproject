@@ -3,6 +3,7 @@ package com.hello.travelogic.order.domain;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.product.domain.ProductEntity;
+import com.hello.travelogic.review.domain.ReviewEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -65,6 +66,9 @@ public class OrderEntity {
     @Column(name = "is_reviewed", nullable = false)
     private boolean isReviewed = false;
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ReviewEntity review;
+
     public OrderEntity(OrderDTO dto, ProductEntity product, OptionEntity option, MemberEntity member) {
         this.product = product;
         this.option = option;
@@ -76,5 +80,27 @@ public class OrderEntity {
         this.orderDate = dto.getOrderDate();
         this.orderStatus = dto.getOrderStatus();
         this.isReviewed = dto.isReviewed();
+    }
+
+    public boolean hasReview() {
+        return this.review != null;
+    }
+
+    public void setReview(ReviewEntity review) {
+        this.review = review;
+        if (review != null) {
+            this.isReviewed = true;
+            review.setOrder(this);
+        } else {
+            this.isReviewed = false;
+        }
+    }
+
+    public void removeReview() {
+        if (this.review != null) {
+            this.review.setOrder(null);
+            this.isReviewed = false;
+            this.review = null;
+        }
     }
 }

@@ -9,6 +9,7 @@ function MyBookingCon(){
     const [showMoreSchedule, setShowMoreSchedule] = useState(true);
     const [showMoreComplete, setShowMoreComplete] = useState(true);
     const [showMoreCancel, setShowMoreCancel] = useState(true);
+    const [selectedOrderCode, setSelectedOrderCode] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem("accessToken");
@@ -131,6 +132,34 @@ function MyBookingCon(){
         }
     }
 
+    const openReviewModal = (orderCode) => {
+        console.log("openReviewModal 호출됨 - orderCode:", orderCode);
+        setSelectedOrderCode(orderCode);
+    };
+
+    const closeReviewModal = () => {
+        console.log("closeReviewModal 호출됨");
+        setSelectedOrderCode(null);
+    };
+
+    const handleDeleteReview = async (reviewCode, orderCode) => {
+        try {
+            await deleteMyReview(reviewCode);
+            alert("리뷰가 삭제되었습니다.");
+
+            // 삭제된 리뷰의 상태를 업데이트
+            dispatch({
+                type: "UPDATE_REVIEW_STATUS",
+                payload: { orderCode, reviewed: false }
+            });
+
+            closeReviewModal();  // 모달 닫기
+        } catch (error) {
+            alert("리뷰 삭제에 실패했습니다.");
+            console.error("리뷰 삭제 오류:", error);
+        }
+    };
+
     return(
         <>
             <MyBookingCom
@@ -141,13 +170,15 @@ function MyBookingCon(){
                 onLoadOldReservationsForSchedule={handleLoadOldForSchedule}
                 onLoadOldReservationsForComplete={handleLoadOldForComplete}
                 onLoadOldReservationsForCancel={handleLoadOldForCancel}
-                // onLoadOldReservationsForSchedule={() => handleLoadOld(setShowMoreSchedule)}
-                // onLoadOldReservationsForComplete={() => handleLoadOld(setShowMoreComplete)}
-                // onLoadOldReservationsForCancel={() => handleLoadOld(setShowMoreCancel)}
                 showMoreSchedule={showMoreSchedule}
                 showMoreComplete={showMoreComplete}
                 showMoreCancel={showMoreCancel}
+                openReviewModal={openReviewModal}
             />
+            {selectedOrderCode &&
+                <ReviewModalCon orderCode={selectedOrderCode}
+                                onClose={closeReviewModal}
+                                onDeleteReview={handleDeleteReview} />}
         </>)
 }
 export default MyBookingCon;
