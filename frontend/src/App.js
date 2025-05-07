@@ -31,9 +31,9 @@ import ProductAllAdminPage from './pages/product/ProductAllAdminPage';
 import FaqListPage from "./pages/faq/FaqListPage";
 import FaqRegisterPage from "./pages/faq/FaqRegisterPage";
 import FaqEditCon from "./containers/faq/FaqEditCon";
-import MyReviewPage from "./pages/review/MyReveiwPage";
 import AdminReviewPage from "./pages/review/AdminReviewPage";
 import AdminBookingByProductPage from "./pages/reservation/AdminBookingByProductPage";
+import MyReviewFormPage from "./pages/review/MyReviewFormPage";
 
 function App() {
     return (
@@ -70,7 +70,7 @@ function App() {
                     <Route path="withdrawl" element={<WithdrawlPage />} />
                 </Route>
                 <Route path="/my/reservations" element={<MyBookingPage />} />
-                <Route path="/review/write/:orderCode" element={<MyReviewPage />} />
+                <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />

@@ -2,9 +2,12 @@ package com.hello.travelogic.review.service;
 
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
+import com.hello.travelogic.order.domain.OptionEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
+import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.product.domain.ProductEntity;
+import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.product.service.ProductService;
 import com.hello.travelogic.review.domain.ReviewEntity;
 import com.hello.travelogic.review.domain.ReviewStatus;
@@ -37,6 +40,8 @@ public class ReviewService {
     private final MemberRepository memberRepo;
     private final OrderRepo orderRepo;
     private final ProductService productService;
+    private final OptionRepo optionRepo;
+    private final ProductRepo productRepo;
 
     //    final String DIR = "upload/review/";
 //    private static final String UPLOAD_DIR = "C:/Users/hi/Desktop/hello_travelogic/upload/review/";
@@ -141,6 +146,10 @@ public class ReviewService {
                     .orElseThrow(() -> new RuntimeException("Member not found"));
             OrderEntity order = orderRepo.findById(reviewDTO.getOrderCode())
                     .orElseThrow(() -> new RuntimeException("Order not found"));
+            OptionEntity optionEntity = optionRepo.findById(reviewDTO.getOrderCode())
+                    .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다. - orderCode: " + reviewDTO.getOrderCode()));
+            ProductEntity productEntity = productRepo.findById(optionEntity.getProduct().getProductCode())
+                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. - productCode: " + optionEntity.getProduct().getProductCode()));
 
             if (reviewRepo.existsByMemberAndOrder(member, order)) {
                 return 0; // 이미 작성된 리뷰가 있음
@@ -156,6 +165,8 @@ public class ReviewService {
 //            ReviewEntity reviewEntity = new ReviewEntity(reviewDTO, member, order);
             ReviewEntity reviewEntity = new ReviewEntity();
             reviewEntity.setMember(member);
+            reviewEntity.setProduct(productEntity);
+            reviewEntity.setOption(optionEntity);
             reviewEntity.setOrder(order);
             reviewEntity.setReviewRating(reviewDTO.getReviewRating());
             reviewEntity.setReviewContent(reviewDTO.getReviewContent());

@@ -129,7 +129,7 @@ export const submitReview = async (orderCode, reviewRating, reviewContent, file)
 
         const response = await axios.post(`${path}/review/write`, formData, {
             headers: {
-                "Content-Type": "multipart/form-data",
+                // "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
         });
