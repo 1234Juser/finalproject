@@ -1,5 +1,5 @@
 import { containerStyle, sidebarStyle, mainStyle } from "../../style/member/MyPageStyle";
-import { InputWrapper, StyledLabel, StyledInput, StyledTextArea, StyledSelect, StyledFileInput} from "../../style/product/StyleProductReg";
+import { InputWrapper, StyledLabel, StyledInput, StyledTextArea, StyledSelect, StyledFileInput, StyledError} from "../../style/product/StyleProductReg";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {Link} from "react-router-dom";
 
@@ -20,6 +20,8 @@ function ProductRegCom({
                            handleThemesChange,
                            handleFileSelect,
                            isEditPage,
+                           partiError,
+                           formErrors
                        }) {
 
     return (
@@ -172,8 +174,8 @@ function ProductRegCom({
                     </InputWrapper>
 
                     <InputWrapper>
-                        <StyledLabel htmlFor="productStartDate">판매 시작일 설정</StyledLabel>
-                        <span>★ 판매 시작일은 시스템상의 날짜부터 등록이 가능합니다.</span>
+                        <StyledLabel htmlFor="productStartDate">출발 시작일 설정</StyledLabel>
+                        <span>★ 출발 시작일은 시스템상의 날짜부터 등록이 가능하며, 출발일을 수정하는 경우 현재 이전 날짜로 수정이 불가합니다 ★</span>
                         <StyledInput id="productStartDate" type="date" name="productStartDate"
                                      min={today}
                                      value={formInput.productStartDate}
@@ -183,28 +185,31 @@ function ProductRegCom({
                     </InputWrapper>
 
                     <InputWrapper>
-                        <StyledLabel htmlFor="productEndDate">여행 종료일</StyledLabel>
+                        <StyledLabel htmlFor="productEndDate">출발 종료일 설정</StyledLabel>
                         <StyledInput id="productEndDate" type="date" name="productEndDate"
                                      value={formInput.productEndDate}
                                      min={formInput.productStartDate || today}
                                      onChange={(e) => handleFormChange("productEndDate", e.target.value)}
-
                         />
                     </InputWrapper>
 
                     <InputWrapper>
-                        <StyledLabel htmlFor="productMinParticipants">최소 참가자</StyledLabel>
-                        <StyledInput id="productMinParticipants" name="productMinParticipants" placeholder="최소 참가자 수를 입력하세요"
+                        <StyledLabel htmlFor="productMinParticipants">최소 출발 인원</StyledLabel>
+                        <StyledInput id="productMinParticipants" name="productMinParticipants" placeholder="최소 출발 인원을 입력하세요"
                                      value={formInput.productMinParticipants || ""}
                                      onChange={(e) => handleFormChange("productMinParticipants", e.target.value)}/>
                     </InputWrapper>
 
                     <InputWrapper>
-                        <StyledLabel htmlFor="productMaxParticipants">최대 참가자</StyledLabel>
-                        <StyledInput id="productMaxParticipants" name="productMaxParticipants" placeholder="최대 참가자 수를 입력하세요"
+                        <StyledLabel htmlFor="productMaxParticipants">최대 출발 인원</StyledLabel>
+                        <StyledInput id="productMaxParticipants" name="productMaxParticipants" placeholder="최대 출발 인원을 입력하세요"
                                      value={formInput.productMaxParticipants || ""}
                                      onChange={(e) => handleFormChange("productMaxParticipants", e.target.value)}/>
                     </InputWrapper>
+                    <StyledError>
+                        {partiError.participants && (
+                            <p style={{ color: "red", marginTop: "0.5rem" }}>{partiError.participants}</p> )}
+                    </StyledError>
 
                     <InputWrapper>
                         <StyledLabel htmlFor="productStatus">상품 상태</StyledLabel>
@@ -244,37 +249,26 @@ function ProductRegCom({
                         <StyledLabel htmlFor="productThumbnail">썸네일 업로드</StyledLabel>
                         <StyledFileInput id="productThumbnail" type="file" name="productThumbnail" 
                                         onChange={(e) => handleFileSelect(e.target.files[0])}   // FormData로 따로 보낼 파일>>객체<<는 따로 관리
-                                        // onChange={(e) => {
-                                        //     // const file = e.target.files[0].name;     // 업로드한 파일명@@@@
-                                        //     const file = e.target.files[0].name;
-                                        //     if (file) {
-                                        //         handleFormChange("productThumbnail", file.name);       // formInput에는 파일 "이름"만!!!
-                                        //         handleFileSelect(e.target.files[0])     // FormData로 따로 보낼 파일>>객체<<는 따로 관리
-                                        //     }
-                                        //     console.log("업로드한 파일 >>객체<<< 를 확인하는거임ㅠ : ", e.target.files[0]);
-                                        // }
                                         />
                         {formInput.productThumbnail && (
                             <div> 선택된 파일 : {formInput.productThumbnail}</div>
                         )}
                     </InputWrapper>
+                    {formErrors && <StyledError>{formErrors}</StyledError>}
+                    <br/>
                     {isEditPage ? (
                         <>
-                        <button type="submit">수정</button>
+                        <button type="button" onClick={onSubmit}>수정</button>
                         </>
                     ) : (
                         <>
-                    <button type="submit">상품 등록</button>
+                    <button type="button" onClick={onSubmit}>상품 등록</button>
                         </>
                     )}
                     <Link to="/admin/productAll">
                         <button type="button" >목록으로</button>
                     </Link>
                 </form>
-
-
-
-
             </main>
             <hr/>
         </div>

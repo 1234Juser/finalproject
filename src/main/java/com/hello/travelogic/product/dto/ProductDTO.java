@@ -1,10 +1,7 @@
 package com.hello.travelogic.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.hello.travelogic.product.domain.CityEntity;
-import com.hello.travelogic.product.domain.CountryEntity;
-import com.hello.travelogic.product.domain.ProductEntity;
-import com.hello.travelogic.product.domain.ThemeEntity;
+import com.hello.travelogic.product.domain.*;
 import lombok.*;
 
 @Getter
@@ -16,6 +13,7 @@ public class ProductDTO {
 
     private Long productCode;
     private String productUid;
+    private Long regionCode;
     private Long countryId;
     private Long cityId;
     private Long themeCode;
@@ -30,8 +28,9 @@ public class ProductDTO {
     private ProductEntity.ProductStatus productStatus;
     private String productThumbnail;
     private ProductEntity.ProductType productType;
-
     private int reviewCount;
+    private RegionEntity.RegionType regionType;
+
     // 찜 여부를 나타내는 임시필드
     @JsonProperty("isWished")
     private boolean wished;
@@ -39,6 +38,7 @@ public class ProductDTO {
     public ProductDTO(ProductEntity productDTO) {
         this.productCode = productDTO.getProductCode();
         this.productUid = productDTO.getProductUid();
+        this.regionCode = productDTO.getRegionCode().getRegionCode();
         this.countryId = productDTO.getCountryId().getCountryId();
         this.cityId = productDTO.getCityId().getCityId();
         this.themeCode = productDTO.getThemeCode().getThemeCode();
@@ -54,5 +54,6 @@ public class ProductDTO {
         this.productThumbnail = productDTO.getProductThumbnail();
         this.productType = productDTO.getProductType();
         this.reviewCount = productDTO.getReviewCount();
+        this.regionType = productDTO.getRegionType();
     }
 }

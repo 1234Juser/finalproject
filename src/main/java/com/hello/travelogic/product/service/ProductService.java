@@ -1,14 +1,8 @@
 package com.hello.travelogic.product.service;
 
-import com.hello.travelogic.product.domain.CityEntity;
-import com.hello.travelogic.product.domain.CountryEntity;
-import com.hello.travelogic.product.domain.ProductEntity;
-import com.hello.travelogic.product.domain.ThemeEntity;
+import com.hello.travelogic.product.domain.*;
 import com.hello.travelogic.product.dto.ProductDTO;
-import com.hello.travelogic.product.repo.CityRepo;
-import com.hello.travelogic.product.repo.CountryRepo;
-import com.hello.travelogic.product.repo.ProductRepo;
-import com.hello.travelogic.product.repo.ThemeRepo;
+import com.hello.travelogic.product.repo.*;
 import com.hello.travelogic.utils.FileUploadUtils;
 import com.hello.travelogic.review.repo.ReviewRepo;
 import com.hello.travelogic.wish.repo.WishRepo;
@@ -41,6 +35,8 @@ public class ProductService {
 
     @Autowired
     private final ProductRepo productRepo;
+    @Autowired
+    private final RegionRepo regionRepo;
     @Autowired
     private final CityRepo cityRepo;
     @Autowired
@@ -145,6 +141,9 @@ public class ProductService {
         int result = 1;
         try {
             // 1. 입력 받은 데이터 유효성 검증 및 엔티티 매핑
+            RegionEntity region = regionRepo.findById(productDTO.getRegionCode())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권역 코드입니다."));
+
             CountryEntity country = countryRepo.findById(productDTO.getCountryId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 국가 코드입니다."));
 
@@ -189,6 +188,7 @@ public class ProductService {
 
             // 5. productEntity 생성 및 설정
             ProductEntity productE = new ProductEntity(productDTO);
+            productE.setRegionCode(region);
             productE.setCountryId(country);
             productE.setCityId(city);
             productE.setThemeCode(theme);
