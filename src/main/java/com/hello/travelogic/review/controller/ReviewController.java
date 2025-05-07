@@ -1,6 +1,9 @@
 package com.hello.travelogic.review.controller;
 
 import com.hello.travelogic.member.repository.MemberRepository;
+import com.hello.travelogic.order.domain.OptionEntity;
+import com.hello.travelogic.order.repo.OptionRepo;
+import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.review.domain.ReviewStatus;
 import com.hello.travelogic.review.dto.ReviewDTO;
 import com.hello.travelogic.review.service.ReviewService;
@@ -25,6 +28,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final MemberRepository memberRepository;
+    private final OptionRepo optionRepo;
 
     // 상품 상세페이지 내 리뷰 조회
     @GetMapping("/review/product/{productCode}")
@@ -119,6 +123,13 @@ public class ReviewController {
             reviewDTO.setOrderCode(orderCode);
             reviewDTO.setReviewRating(reviewRating);
             reviewDTO.setReviewContent(reviewContent);
+
+            OptionEntity optionEntity = optionRepo.findById(orderCode)
+                    .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
+            ProductEntity productEntity = optionEntity.getProduct();
+
+            reviewDTO.setOption(optionEntity);
+            reviewDTO.setProduct(productEntity);
 
             int result = reviewService.writeReview(reviewDTO, file);
             if(result == 1) {

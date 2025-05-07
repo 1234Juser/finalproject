@@ -61,7 +61,8 @@ public class ReviewEntity {
 
     @NotNull
     @Column( name = "review_date", nullable = false)
-    private LocalDateTime reviewDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime reviewDate = LocalDateTime.now();
 
     @Column( name = "review_pic", length = 255, nullable = true )
     private String reviewPic;
