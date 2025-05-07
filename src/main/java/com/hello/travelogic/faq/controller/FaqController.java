@@ -39,4 +39,11 @@ public class FaqController {
         faqService.update(faqCode, faqDto);
         return ResponseEntity.ok().build();
     }
+
+    //faq삭제
+    @DeleteMapping("/{faqCode}")
+    public ResponseEntity<?> deleteFaq(@PathVariable Integer faqCode){
+        faqService.deleteById(faqCode);
+        return ResponseEntity.noContent().build();
+    }
 }

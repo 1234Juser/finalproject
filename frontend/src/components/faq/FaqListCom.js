@@ -5,6 +5,7 @@ import {
 } from "../../style/faq/FaqListStyle";
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import axios from "axios";
 
 function isAdmin() {
     const roles = JSON.parse(localStorage.getItem("roles") || "[]");
@@ -17,6 +18,20 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
 
     const handleToggle = (idx) => {
         setOpenIndex(openIndex === idx ? null : idx);
+    };
+
+    // FAQ 삭제
+    const handleDelete = (faqCode) => {
+        if (window.confirm("정말 삭제하시겠습니까?")) {
+            axios.delete(`/faq/${faqCode}`)
+                .then(() => {
+                    alert("삭제되었습니다.");
+                    window.location.reload(); // 새로고침 또는 setPage(page) 호출하여 목록 갱신
+                })
+                .catch(e => {
+                    alert("삭제 실패: " + (e.response?.data?.message || e.message));
+                });
+        }
     };
 
     return (
@@ -33,9 +48,10 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
                         <QuestionRow onClick={() => handleToggle(idx)}>
                             <span>{faq.faqTitle}</span>
                             {isAdmin() && (
+                                <>
                                 <button
                                     style={{
-                                        marginLeft: 10,
+                                        marginLeft: 4,
                                         padding: "2px 8px",
                                         fontSize: 12,
                                         border: "1px solid #398",
@@ -52,7 +68,26 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
                                 >
                                     수정
                                 </button>
-                            )}
+                                <button
+                                style={{
+                                marginLeft: 2,
+                                padding: "2px 8px",
+                                fontSize: 12,
+                                border: "1px solid #e33",
+                                borderRadius: 6,
+                                background: "#fff",
+                                color: "#e33",
+                                cursor: "pointer"
+                            }}
+                            onClick={e => {
+                                e.stopPropagation();
+                                handleDelete(faq.faqCode);
+                            }}
+                        >
+                            삭제
+                        </button>
+                    </>
+                )}
                             <ToggleButton>
                                 {openIndex === idx ? <FaChevronUp /> : <FaChevronDown />}
                             </ToggleButton>

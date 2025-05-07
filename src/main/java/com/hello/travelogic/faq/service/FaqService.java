@@ -38,6 +38,11 @@ public class FaqService {
         faqRepository.save(faq); // 더티체킹으로 저장 가능하지만, 명확하게 save 호출
     }
 
-
-
+    //faq삭제
+    public void deleteById(Integer faqCode) {
+        if(!faqRepository.existsById(faqCode)) {
+            throw new RuntimeException("FAQ없음");
+        }
+        faqRepository.deleteById(faqCode);
+    }
 }
