@@ -16,11 +16,6 @@ function MapSection({ cityId }) {
 
   const location = cityCoordinates[cityId];
 
-  if (!location) {
-    return <p>지도를 불러올 수 없습니다. (알 수 없는 도시)</p>;
-  }
-
-
   useEffect(() => {
     const fetchCoords = async () => {
       try {
@@ -42,6 +37,10 @@ function MapSection({ cityId }) {
 
     if (cityId) fetchCoords();
     }, [cityId]);
+
+    if (!location) {
+        return <p>지도를 불러올 수 없습니다. (알 수 없는 도시)</p>;
+    }
 
   return (
     <MapContainer>
