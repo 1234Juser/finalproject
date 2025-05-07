@@ -119,7 +119,6 @@ const getProductDetail = async (productUid) => {
             throw new Error(`Error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("백엔드로부터 받은 data : ", data);
         return data;
     } catch (error) {
         console.error("상품 상세 데이터 조회 중 에러 발생 : ", error);
@@ -140,7 +139,6 @@ const getRegions = async (regionType) => {
             throw new Error(`Error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("백엔드로부터 받은 data : ", data);
         return data;
     } catch (error) {
         console.error("권역 데이터 조회 중 에러 발생 : ", error);
@@ -205,12 +203,10 @@ const setProductModify = async (productUid, formData) => {
             method: "PUT",
             body: formData
         });
-        console.log("전송 formData 확인-------". formData);
         if (!response.ok) {
             throw new Error(`Error! status: ${response.status}`);
         }
         const result = await response.json();
-        console.log("전송 데이터 확인=----->", result);
         return result;
     } catch (error) {
         console.error("수정 실패 ㅠㅠ다시 확인하세요 : ", error);
