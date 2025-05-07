@@ -1,20 +1,25 @@
 import React from 'react';
-import DomesticCon from "../../containers/product/DomesticCon";
-import HeaderCom from "../common/HeaderCom";
+import { RegionGrid, RegionButton, RegionImage } from '../../style/product/StyleDomestic';
 
-const InternationalCom = ({intl, onRegionClick, selectedRegion, countriesVisible}) => {
+const InternationalCom = ({intl, onRegionClick, selectedRegion, countriesVisible, getImageByRegion}) => {
     return (
-        <>
-            <h3> 해외여행 선택 </h3>
+        <RegionGrid>
             {intl.map((i, index) => (
                 <div key={index}>
-                    <p>{i.regionName} ({i.regionType})</p>
-                    <button onClick={() => onRegionClick(i.regionCode)}>
-                        {selectedRegion === i.regionCode && countriesVisible ? "닫기" : "국가 리스트 보기"}
-                    </button>
+                    <RegionImage>
+                        {/*<img src={getImageByRegion(i.regionCode)} alt={`${i.regionName} 이미지`}/>*/}
+                        <img src="/static/img/earth.jpg" alt={`${i.regionName} 이미지`}/>
+                    </RegionImage>
+                    <RegionButton
+                        key = {index}
+                        onClick={() => onRegionClick(i.regionCode)}
+                        selected={selectedRegion === i.regionCode}
+                    >
+                        {i.regionName} ({i.regionType})
+                    </RegionButton>
                 </div>
             ))}
-        </>
+        </RegionGrid>
     );
 };
 

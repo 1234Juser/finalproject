@@ -2,9 +2,11 @@ package com.hello.travelogic.product.service;
 
 import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.CountryEntity;
+import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.domain.RegionEntity;
 import com.hello.travelogic.product.dto.CityDTO;
 import com.hello.travelogic.product.dto.CountryDTO;
+import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.repo.CityRepo;
 import com.hello.travelogic.product.repo.CountryRepo;
 import com.hello.travelogic.product.repo.RegionRepo;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -22,6 +25,17 @@ public class CityService {
     private final CountryRepo countryRepo;
     private final CityRepo cityRepo;
     private final RegionRepo regionRepo;
+
+
+    public CityDTO getCityById(Long cityId) {
+
+        CityEntity cityEntity = cityRepo.findByCityId(cityId);
+        if(cityEntity == null) {
+            throw new NoSuchElementException("일치하는 도시를 찾을 수 없습니다.");
+        }
+
+        return new CityDTO(cityEntity);
+    }
 
     public List<CityDTO> getCitiesByCountry(Long countryId) {
 

@@ -1,24 +1,71 @@
 import {Link} from "react-router-dom";
+import {
+    TourPageContainer,
+    TourHeader,
+    TourCard,
+    CardImageWrapper,
+    CardImage,
+    CardContent,
+    CardTitle,
+    CardSubInfo,
+    ViewDetailButton, ProductUid, CalendarTextContainer, CalendarText, CardPrice,
+    FilterSortBar, FilterSection, FilterLabel, FilterResetBtn, SortSection, SortBtn,
 
-function ProductCom({products}){
+} from "../../style/product/StyleProductCon";
+import { GoCalendar, GoFilter  } from "react-icons/go";
+
+function ProductCom({products, cityName, handleFilterReset, handleSort, filteredProducts}){
+
+    const formatPrice = (price) => {
+        if (typeof price !== "number") return price; // 숫자가 아닐 경우 그대로 반환
+        return new Intl.NumberFormat("ko-KR").format(price);
+    };
+
 
     return (
-        <>
-        <h3> 투어 상품 리스트</h3>
-            {products.map((p, i) => (
-                <Link to={`/products/${p.productUid}`} key={p.productUid}>
-                    <div style={{border: "1px solid #ddd", padding: "10px", margin: "10px 0"}}>
-                    <h4>{p.productTitle}</h4> 
-                    <p><strong>성인 가격:</strong> {p.productAdult}원</p>
-                    <p><strong>최소 참가자:</strong> {p.productMinParticipants}명</p>
-                    <p><strong>판매 상태:</strong> {p.productStatus}</p>
-                    <p><strong>여행 시작일:</strong> {p.productStartDate}</p>
-                    <p><strong>여행 종료일:</strong> {p.productEndDate}</p>
+        <TourPageContainer>
+        <TourHeader>{cityName}</TourHeader>
 
-                </div>
-                </Link>
+            <FilterSortBar>
+                <FilterSection>
+                    <FilterLabel><GoFilter /> 필터</FilterLabel>
+                    <FilterResetBtn onClick={handleFilterReset}>필터초기화 ⭮</FilterResetBtn>
+                </FilterSection>
+                <SortSection>
+                    <SortBtn onClick={() => handleSort("low")}>낮은 가격순</SortBtn>
+                    <SortBtn onClick={() => handleSort("high")}>높은 가격순</SortBtn>
+                </SortSection>
+            </FilterSortBar>
+
+
+            {filteredProducts.map((p, i) => (
+                <TourCard key={p.productUid}>
+                        <CardImageWrapper>
+                            <CardImage src="/static/img/earth.jpg" />
+                        </CardImageWrapper>
+                        <CardContent>
+                            <CardSubInfo>
+                                <span>{p.productStatus}</span>
+                                <ProductUid>상품번호 {p.productUid}</ProductUid>
+                            </CardSubInfo>
+                            <CardTitle>{p.productTitle}</CardTitle>
+                            <CardPrice>￦ {formatPrice(p.productAdult)}원</CardPrice>
+                            <CardSubInfo $noSpaceBetween> {/* noSpaceBetween prop을 적용 */}
+                                <GoCalendar size={24}/>
+                                <CalendarTextContainer>
+                                    <CalendarText>출발 기간 : {p.productStartDate} ~ {p.productEndDate} </CalendarText>
+                                </CalendarTextContainer>
+                            </CardSubInfo>
+                            <Link to={`/products/${p.productUid}`}>
+                                <ViewDetailButton
+                                >자세히 보기</ViewDetailButton
+                                >
+                            </Link>
+                        </CardContent>
+                </TourCard>
             ))}
-        </>
+
+        </TourPageContainer>
     )
 }
 
