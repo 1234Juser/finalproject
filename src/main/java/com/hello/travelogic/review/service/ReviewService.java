@@ -64,7 +64,7 @@ public class ReviewService {
 
         return reviewRepo.findByMemberMemberCodeAndOrderOrderCode(memberCode, orderCode)
                 .map(ReviewDTO::new)
-                .orElseThrow(() -> new RuntimeException("리뷰 없음"));
+                .orElseThrow(() -> new RuntimeException("해당 주문에 대한 리뷰가 존재하지 않습니다."));
     }
 
     public List<ReviewDTO> getAllReviews() {
@@ -83,6 +83,22 @@ public class ReviewService {
                 .stream()
                 .map(ReviewDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public ReviewDTO getInfoForWriteReview(Long orderCode, Long memberCode) {
+        OrderEntity order = orderRepo.findById(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
+        if (!order.getMember().getMemberCode().equals(memberCode)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setOrderCode(order.getOrderCode());
+        reviewDTO.setProductTitle(order.getProduct().getProductTitle());
+//        reviewDTO.setReservationDate(order.getReservationDate());
+
+        return reviewDTO;
     }
 
     @Transactional
@@ -194,10 +210,13 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteMyReview(long reviewCode) {
+    public void deleteMyReview(long reviewCode, long memberCode) {
 
         ReviewEntity review = reviewRepo.findById(reviewCode)
                 .orElseThrow(() -> new NoSuchElementException("리뷰를 찾을 수 없습니다."));
+        if (!review.getMember().getMemberCode().equals(memberCode)) {
+            throw new IllegalArgumentException("자신의 리뷰만 삭제할 수 있습니다.");
+        }
 
         if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
             String fullPath = "C:/Users/hi/Desktop/hello_travelogic/upload/review/" + review.getReviewPic();

@@ -1,5 +1,5 @@
 import ProductAllAdminCom from "../../components/product/ProductAllAdminCom";
-import {getProductsList} from "../../service/ProductService";
+import {getProductsList, ProductDelete} from "../../service/ProductService";
 import {useState, useEffect} from "react";
 
 function ProductAllAdminCon() {
@@ -32,11 +32,29 @@ function ProductAllAdminCon() {
         setCurrentPage(page);
     };
 
+    const onDelete = async (productUid) => {
+        const confirmDelete = window.confirm("삭제하시겠습니까?");
+        if (confirmDelete) {
+            try {
+                const response = await ProductDelete(productUid);
+                if (response.ok) {
+                    alert("삭제가 완료되었습니다!");
+                    // setTimeout(() => {
+                    //     fetchProducts(currentPage);
+                    // }, 1000);
+                    fetchProducts(currentPage);
+                }
+            } catch (error) {
+                console.error("삭제 중 오류 발생: ", error);
+            }
+        }
+    }
+
 
     return (
         <>
             <ProductAllAdminCom products={products} currentPage={currentPage} totalPages={totalPages} totalItems={totalItems}
-                                                onPageChange={handlePageChange}/>
+                                                onPageChange={handlePageChange} onDelete={onDelete}/>
         </>
     )
 }

@@ -49,4 +49,10 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
     @Query("SELECT o FROM OrderEntity o JOIN FETCH o.option WHERE o.member = :member AND o.option.reservationDate < :cutoffDate ORDER BY o.orderDate DESC")
     List<OrderEntity> findOldOrders(@Param("member") MemberEntity member, @Param("cutoffDate") LocalDate cutoffDate);
 
+    // 관리자의 상품별 예약 조회
+    Page<OrderEntity> findByProduct_ProductCode(Long productCode, Pageable pageable);
+
+    @Query(value = "SELECT o FROM OrderEntity o JOIN FETCH o.option JOIN FETCH o.product JOIN FETCH o.member",
+            countQuery = "SELECT COUNT(o) FROM OrderEntity o")
+    Page<OrderEntity> findAllWithJoins(Pageable pageable);
 }
