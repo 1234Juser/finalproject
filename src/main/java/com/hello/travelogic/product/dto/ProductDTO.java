@@ -30,6 +30,10 @@ public class ProductDTO {
     private ProductEntity.ProductType productType;
     private int reviewCount;
     private RegionEntity.RegionType regionType;
+    private String cityName;
+    private String countryName;
+    private String fullLocation;
+    private String productDescription;
 
     // 찜 여부를 나타내는 임시필드
     @JsonProperty("isWished")
@@ -55,5 +59,9 @@ public class ProductDTO {
         this.productType = productDTO.getProductType();
         this.reviewCount = productDTO.getReviewCount();
         this.regionType = productDTO.getRegionType();
+        this.cityName = productDTO.getCityName();
+        this.countryName = productDTO.getCountryName();
+        this.fullLocation = productDTO.getFullLocation();
+        this.productDescription = productDTO.getProductDescription();
     }
 }
