@@ -8,7 +8,6 @@ export default function MainCom() {
 
     return (
         <div>
-            <h1>메인 페이지</h1>
             <BannerContainer>
                 <SlideWrapper>
                     {images.map((src, index) => (
