@@ -5,6 +5,8 @@ const initialState = {
     loading: false,
     error: null,
     sortOptionDefault: "date",  // 디폴트는 작성일 순
+    showToast: false,      // 리뷰 작성 성공 메시지
+    toastMessage: "",      // 토스트 메시지 내용
 };
 
 const reducer = (state, action) => {
@@ -15,6 +17,13 @@ const reducer = (state, action) => {
             return { ...state, myReview: action.data };
         case "SET_SELECTED_REVIEW":
             return { ...state, selectedReview: action.data };
+        case "ADD_REVIEW":
+            return {
+                ...state,
+                reviews: [action.data, ...state.reviews],  // 최신 리뷰가 상단으로
+                showToast: true,
+                toastMessage: "감사합니다! 리뷰가 성공적으로 등록되었습니다."
+            };
         case "REMOVE_REVIEW":
             return {
                 ...state,
@@ -39,6 +48,8 @@ const reducer = (state, action) => {
             return { ...state, loading: action.data };
         case "SET_ERROR":
             return { ...state, error: action.data, loading: false };
+        case "HIDE_TOAST":
+            return { ...state, showToast: false, toastMessage: "" };
         default:
             return state;
     }
