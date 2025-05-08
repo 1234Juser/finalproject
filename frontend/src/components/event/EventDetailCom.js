@@ -23,9 +23,10 @@ function EventDetailCom({ event, onBack, onEdit, onDelete }) {
 
     // 이미지 경로 처리
     let imgSrc = "/img/event/default_event.jpg";
-    if (event.eventImg) {
+    if (event.eventImg && event.eventImg !== "event/default_event.jpg") {
         imgSrc = `/events/${event.eventImg}`;
     }
+
 
     // 상태 뱃지
     const now = new Date();
@@ -35,7 +36,7 @@ function EventDetailCom({ event, onBack, onEdit, onDelete }) {
     let badgeType = "";
     if (start && end) {
         if (now < start) badgeType = "예정";
-        else if (now > end) badgeType = "완료";
+        else if (now > end) badgeType = "종료";
         else badgeType = "진행중";
     }
 
