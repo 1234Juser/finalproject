@@ -6,7 +6,9 @@ import {useNavigate, useParams} from "react-router-dom";
 function ProductRegCon() {
 
     // 오늘 날짜를 'YYYY-MM-DD' 형식으로 가져오기
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toLocaleDateString("sv-SE", {
+        timeZone: "Asia/Seoul"
+    });
     
     const [formInput, setFormInput] = useState({
         productTitle: "",
@@ -21,6 +23,7 @@ function ProductRegCon() {
         productType: null,
         productThumbnail : null,
         regionCode : "",
+        regionType : "",
         countryId: "",
         cityId: "",
         themeCode: "",
@@ -30,6 +33,8 @@ function ProductRegCon() {
     const [cities, setCities] = useState([]);
     const [themes, setThemes] = useState([]);
     const [uploadedFile, setUploadedFile] = useState(null);
+    const [partiError, setPartiError] = useState({participants: ""});
+    const [formErrors, setFormErrors] = useState("")
 
     const navigate = useNavigate();
     const {productUid} = useParams();
@@ -39,6 +44,7 @@ function ProductRegCon() {
 
     useEffect(() => {
         console.log("-------formInput 변경 확인하기-------", formInput);
+        
         getThemes()
             .then( data => {
                 setThemes(data);
@@ -49,27 +55,64 @@ function ProductRegCon() {
         if(productUid) {
             console.log("isEditPage : ", isEditPage);
             console.log("productUid : ", productUid);
+            
             getProductModify(productUid)
-                .then( data => {
-                    console.log("수정용 데이터 불러오기 확인 : ", data);
-                    setFormInput({
-                        ...data,
-                        regionType: "DOMESTIC",        // DTO 필드 추가 필요 ★★
-                        regionCode: 1,                          // data.regionType 및 data.regionCode로 수정할 것 ★★
-                        productThumbnail: data.productThumbnail,
-                    });
-                })
-                .catch(err => console.error(err))
+            .then( data => {
+                console.log("-------수정용 data 확인-------", data);
+                setFormInput({
+                    ...data,
+                    regionType: data.regionType,
+                    regionCode: data.regionCode,
+                    // regionName: selectedRegion ? selectedRegion.regionName : "", // 권역 이름 추가
+                    productThumbnail: data.productThumbnail,
+                });
+                
+                // 권역 리스트 조회
+                return getRegions(data.regionType)
+            })
+            .then((regionData) => {
+                setRegions(regionData);
+            })
+            .catch(err => console.error(err))
         }
     }, []);
 
 
     // formInput 상태 관리
     const handleFormChange = (name, value) => {
-        setFormInput({
+        // 숫자 입력 제한: 참가자 수 필드에만 적용
+        // ----/^\d*$/ ----> "숫자(0~9)로만 이루어진 문자열"을 의미하는 정규식
+        if (
+            (name === "productMinParticipants" || name === "productMaxParticipants") &&
+            !/^\d*$/.test(value)
+        ) {
+            return;     // 숫자가 아닌 값이 들어오면 아무 일도 안 하고 종료 (숫자 입력 제한)
+        }
+
+        const newValue = value;
+
+        // 새로운 입력값을 반영한 formInput 객체 생성
+        const updatedForm = {
             ...formInput,
-            [name]: value,
-        });
+            [name]: newValue,
+        };
+
+        let errorMsg = "";
+
+        // 참가자 수 관련 유효성 검사(현재 입력값을 반영해서 min/max 값 계산)
+        const min = name === "productMinParticipants" ? Number(newValue) : Number(formInput.productMinParticipants);
+        const max = name === "productMaxParticipants" ? Number(newValue) : Number(formInput.productMaxParticipants);
+
+        if (name === "productMinParticipants" || name === "productMaxParticipants") {
+            if (min && max && min > max)
+                errorMsg = "최소 출발 인원은 최대 출발 인원을 초과할 수 없습니다.";
+        }
+
+        setFormInput(updatedForm);
+        setPartiError((prev) => ({
+            ...prev,
+            participants: errorMsg,
+        }));
     };
 
 
@@ -187,12 +230,26 @@ function ProductRegCon() {
             productThumbnail: file.name,
         }));
         }
-        console.log("업로드 파일 확인 ㅠㅠㅠ", file);
+        console.log("업로드 파일 확인 : ", file);
     };
 
 
     const onSubmit = async (e) => {
         e.preventDefault();
+
+        // '최소 출발 인원 > 최대 출발 인원'일 경우 폼 전송 방지
+        const min = Number(formInput.productMinParticipants);
+        const max = Number(formInput.productMaxParticipants);
+        if (isNaN(min) || isNaN(max)) {
+            setFormErrors("최소/최대 인원수는 숫자여야 합니다.");
+            return;
+        }
+        if (min > max) {
+            setFormErrors("최소 참가자는 최대 참가자보다 클 수 없습니다.");
+            return;
+        }
+        setFormErrors(""); // 에러 없을 경우 에러 메시지 초기화
+
 
         const formData = new FormData();
         formData.append("productDTO", new Blob(
@@ -202,22 +259,18 @@ function ProductRegCon() {
             })
         );
 
-
         if (uploadedFile) {
             formData.append("productThumbnail", uploadedFile);
-            console.log("여기서 uploadedFile 확인------------", uploadedFile);
         } else {
-            formData.append("productThumbnail", formInput.productThumbnail);
-            console.log("기존 파일 이름만 전송 : ", formInput.productThumbnail)
+            formData.append("productThumbnail", formInput.productThumbnail);    // 기존 파일 이름만 전송
         }
 
-        console.log("여기까지 formInput확인 : ", formInput);
+        // console.log("여기까지 formInput확인 : ", formInput);
 
        if (productUid) {
             // 수정
            await setProductModify(productUid, formData)
                .then((data) => {
-                    console.log("전송 데이터 확인 : ", data);
                     navigate("/admin/productAll");
                 })
                .catch((err) =>
@@ -232,7 +285,6 @@ function ProductRegCon() {
                .catch((err) =>
                     console.error("상품 등록 실패:", err.message))
             }
-
     };
 
 
@@ -255,11 +307,9 @@ function ProductRegCon() {
                 handleThemesChange={handleThemesChange}
                 handleFileSelect ={handleFileSelect}
                 isEditPage={isEditPage}
-                
+                partiError={partiError}
+                formErrors={formErrors}
             />
-
-            {/*<ProductRegCom onSubmit={onSubmit}*/}
-            {/*today={today} startDate={startDate} handleStartDateChange={handleStartDateChange}/>*/}
         </>
     )
 }

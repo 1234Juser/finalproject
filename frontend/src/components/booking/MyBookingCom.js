@@ -35,11 +35,12 @@ const inactiveTabStyle = {
 };
 
 function MyBookingCom({selectedTab, onChangeTab, reservations = [],
-                          onCancelReservation,
-                          onLoadOldReservationsForSchedule,
-                          onLoadOldReservationsForComplete,
-                          onLoadOldReservationsForCancel,
-                          showMoreSchedule, showMoreComplete, showMoreCancel}){
+                        onCancelReservation,
+                        onLoadOldReservationsForSchedule,
+                        onLoadOldReservationsForComplete,
+                        onLoadOldReservationsForCancel,
+                        showMoreSchedule, showMoreComplete, showMoreCancel,
+                        openReviewModal}){
     const filtered = {
         0: reservations.filter(r => r.orderStatus.toUpperCase() === "SCHEDULED"),
         1: reservations.filter(r => r.orderStatus.toUpperCase() === "COMPLETED"),
@@ -101,6 +102,7 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                             reservations={filtered[1]}
                             onLoadOldReservations={onLoadOldReservationsForComplete}
                             showMoreComplete={showMoreComplete}
+                            openReviewModal={openReviewModal}
                         />
                     )}
                     {selectedTab === 2 &&

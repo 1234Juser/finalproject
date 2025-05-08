@@ -1,5 +1,7 @@
 package com.hello.travelogic.review.repo;
 
+import com.hello.travelogic.member.domain.MemberEntity;
+import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.review.domain.ReviewEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,8 +37,19 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
     // tbl_review에 fk로 product_code가 들어옴
     List<ReviewEntity> findByProduct_ProductCodeOrderByReviewDateDesc(long productCode);
 
+    // 상품별 리뷰 개수
     int countByProduct_ProductCode(Long productCode);
 
     @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_code = :productCode", nativeQuery = true)
     Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
+
+    // 리뷰 중복 작성 방지 체크
+    boolean existsByMemberAndOrder(MemberEntity member, OrderEntity order);
+
+    @Query("SELECT r FROM ReviewEntity r " +
+            "JOIN FETCH r.product p " +
+            "JOIN FETCH r.order o " +
+            "WHERE r.member.memberCode = :memberCode AND r.order.orderCode = :orderCode")
+    ReviewEntity findByMemberCodeAndOrderCode(@Param("memberCode") Long memberCode,
+                                              @Param("orderCode") Long orderCode);
 }

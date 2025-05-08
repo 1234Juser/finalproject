@@ -68,4 +68,11 @@ export const StyledFileInput = styled.input`
   }
 `;
 
+export const StyledError = styled.span`
+color: red;
+font-size: 0.875rem;
+margin-top: 0.25rem;
+margin-bottom: 0;
+`;
+
 

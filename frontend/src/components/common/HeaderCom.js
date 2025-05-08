@@ -1,5 +1,5 @@
 import {HeaderWrapBlock} from "../../style/components/StyleSet";
-import {ProfileImg, StyledHeader, HeaderRight, StyledTitle} from "../../style/components/StyleHeader";
+import {ProfileImg, StyledHeader, HeaderRight, StyledTitle, HeaderButton} from "../../style/common/HeaderStyle";
 import { Link, useNavigate } from "react-router-dom";
 import NavPage from "../../pages/common/NavPage";
 
@@ -19,12 +19,12 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
                             <>
                                 <ProfileImg src={profileImg} alt="프로필" />
                                 <span style={{fontWeight:600}}>{memberName}</span>
-                                <button onClick={handleLogout}>로그아웃</button>
+                                <HeaderButton onClick={handleLogout}>로그아웃</HeaderButton>
                             </>
                         ) : (
                             <>
-                                <button onClick={()=>navigate("/login")}>로그인</button>
-                                <button onClick={() => navigate("/registerselect")}>회원가입</button>
+                                <HeaderButton onClick={()=>navigate("/login")}>로그인</HeaderButton>
+                                <HeaderButton onClick={() => navigate("/registerselect")}>회원가입</HeaderButton>
                             </>
                         )}
                     </HeaderRight>

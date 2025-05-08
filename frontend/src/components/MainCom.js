@@ -1,38 +1,69 @@
-import React from "react";
-import MainBanner from "../style/components/StyleMain";
-import { BannerContainer, SlideWrapper, SlideImage, images } from "../style/components/StyleMain";
-
+import {
+    MainVideoWrapper, MainVideoOverlay, MainTitleOnVisual, SubTextFx,
+    MainSectionWrapper, BannerContainer, SlideWrapper, SlideCard, SlideImage, SlideOverlay, SlideText, BestLabel, images
+} from "../style/MainStyle";
+import {useEffect, useState} from "react";
+// ... 생략
 
 export default function MainCom() {
+    // ...useState, useEffect 생략
+    const [index, setIndex] = useState(0);
 
+    useEffect(() => {
+        const lastIndex = images.length - 1;
+        const timer = setInterval(() => {
+            setIndex(prev => (prev === lastIndex ? 0 : prev + 1));
+        }, 3000); // 1초마다
+
+        return () => clearInterval(timer); // 언마운트 시 해제
+    }, []);
+
+    const slideTexts = [
+        "1번 배너 설명",
+        "2번 배너 설명",
+        "3번 배너 설명",
+        "4번 배너 설명",
+        "5번 배너 설명"
+    ];
 
     return (
-        <div>
-            <h1>메인 페이지</h1>
-            <BannerContainer>
-                <SlideWrapper>
-                    {images.map((src, index) => (
-                        <SlideImage
-                            key={index}
-                            src={`http://localhost:8080${src}`}
-                            alt={`banner-${index}`}
-                        />
-                    ))}
-                </SlideWrapper>
-            </BannerContainer>
+        <div style={{position:"relative", minHeight:"100vh", overflow:"hidden"}}>
+            {/* 1. 상단 풀 비주얼 영상 */}
+            <MainVideoWrapper>
+                <video autoPlay muted loop playsInline>
+                    <source src="http://localhost:8080/img/logo/finalvideo.mp4" type="video/mp4" />
+                    브라우저가 video 태그를 지원하지 않습니다.
+                </video>
+                <MainVideoOverlay />
+            </MainVideoWrapper>
 
-            {/*<MainBanner src="http://localhost:8080/img/banner/130743172_04.jpg" alt="bannerImg"/>*/}
-            <br/>
-            <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                style={{ width: '100%', height: 'auto' }}
-            >
-                <source src="http://localhost:8080/img/logo/finalvideo.mp4" type="video/mp4" />
-                브라우저가 video 태그를 지원하지 않습니다.
-            </video>
+            {/* 2. 타이틀과 감성 부제목 */}
+            <MainTitleOnVisual>
+
+                <SubTextFx>
+                    설레임 가득, 지금 가장 인기있는 여행을 영상과 함께 만나보세요!
+                </SubTextFx>
+            </MainTitleOnVisual>
+
+            {/* 3. 슬라이드 배너 */}
+            <MainSectionWrapper style={{marginTop:"62vh", zIndex:2}}>
+                <BannerContainer>
+                    <SlideWrapper style={{ transform: `translateX(-${index * 100}%)` }}>
+                        {images.map((src, idx) => (
+                            <SlideCard key={idx}>
+                                <BestLabel>BEST {idx + 1}</BestLabel>
+                                <SlideImage
+                                    src={`http://localhost:8080${src}`}
+                                    alt={`banner-${idx}`}
+                                />
+                                <SlideOverlay />
+                                <SlideText>{slideTexts[idx]}</SlideText>
+                            </SlideCard>
+                        ))}
+                    </SlideWrapper>
+                </BannerContainer>
+            </MainSectionWrapper>
         </div>
     );
+
 }

@@ -3,6 +3,7 @@ package com.hello.travelogic.product.domain;
 import com.hello.travelogic.product.dto.ProductDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +25,10 @@ public class ProductEntity {
 
     @Column(name = "product_uid", unique = true, nullable = false, length = 20)
     private String productUid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_code", nullable = false)
+    private RegionEntity regionCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
@@ -75,15 +80,16 @@ public class ProductEntity {
     @Column(name = "review_count", nullable = false, columnDefinition = "INT DEFAULT 0")
     private int reviewCount = 0;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "region_type", nullable = false)
+    private RegionEntity.RegionType regionType;
+
     // 양방향 매핑 ("product"는 ProductThemeEntity에서 @ManyToOne ProductEntity의 필드명)
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();
 
 
-    // Optimistic Locking을 위한 Version 칼럼
-//    @Version
-//    @Column(name = "version")
-//    private int version;
+
     @PrePersist
     public void perPersist() {
         if(this.productThumbnail == null || this.productThumbnail.equals("")) {
@@ -96,6 +102,7 @@ public class ProductEntity {
     public ProductEntity(ProductDTO productDTO) {
         this.productCode = productDTO.getProductCode();
         this.productUid = productDTO.getProductUid();
+//        this.regionCode = productDTO.getRegionCode();
 //        this.countryCode = productDTO.getCountryCode(); // 서비스에서 CountryEntity 매핑
 //        this.cityCode = productDTO.getCityCode();       // 서비스에서 CityEntity 매핑
 //        this.themeCode = productDTO.getThemeCode();     // 서비스에서 ThemeEntity 매핑
@@ -112,6 +119,7 @@ public class ProductEntity {
         this.productType = productDTO.getProductType();     // Enum 매핑 필요
 //        this.productThemes = productDTO.getProductThemes(); // 연관 엔티티 리스트 매핑 필요
         this.reviewCount = productDTO.getReviewCount();
+        this.regionType = productDTO.getRegionType();       // Enum 매핑 불필요
     }
 
     public enum ProductStatus {

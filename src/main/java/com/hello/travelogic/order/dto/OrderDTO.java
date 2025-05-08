@@ -49,7 +49,7 @@ public class OrderDTO {
         this.totalPrice = entity.getTotalPrice();
         this.orderDate = entity.getOrderDate();
         this.orderStatus = entity.getOrderStatus();
-        this.isReviewed = entity.isReviewed();
+        this.isReviewed = entity.hasReview();
         this.memberName = entity.getMember().getMemberName();
         this.productTitle = entity.getProduct().getProductTitle();
         this.adultCount = entity.getOption().getAdultCount();
