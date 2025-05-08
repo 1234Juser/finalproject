@@ -40,8 +40,9 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
 
     //검색어입력창
-    @Query("SELECT p FROM ProductEntity p WHERE p.productTitle LIKE %:kw% OR p.productDescription LIKE %:kw% OR p.productContent LIKE %:kw%")
+    @Query("SELECT p FROM ProductEntity p WHERE p.productTitle LIKE %:kw% OR p.productContent LIKE %:kw%")
     List<ProductEntity> searchByTitleOrDescription(@Param("kw") String kw);
+
 
 
 

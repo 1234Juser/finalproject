@@ -53,7 +53,7 @@ function App() {
               <Route path="/faq/register" element={<FaqRegisterPage />} />
               <Route path="/faq/edit/:faqCode" element={<FaqEditCon />} />
               {/*검색어리스트창*/}
-              <Route path="/search/products" element={<SearchProductPage />} />
+              <Route path="/search" element={<SearchProductPage />} />
 
 
 

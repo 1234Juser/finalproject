@@ -31,8 +31,6 @@ public class SearchService {
             results.add(SearchDTO.fromProduct(product));
         }
 
-
-
         return results;
 
     }

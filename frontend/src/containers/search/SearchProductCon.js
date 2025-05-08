@@ -7,7 +7,7 @@ function SearchProductCon() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchParams] = useSearchParams();
-    const keyword = searchParams.get("q") || "";
+    const keyword = searchParams.get("query") || ""; // 'q'를 'query'로 변경
 
     useEffect(() => {
         if (!keyword) {
@@ -17,7 +17,7 @@ function SearchProductCon() {
         }
         setLoading(true);
         axios.get(`/search?query=${encodeURIComponent(keyword)}`)
-            .then((res) => setProducts(res.data))
+            .then((res) => setProducts(res.data)) // res.data가 SearchDTO[] 형태일 것으로 예상
             .catch(() => setProducts([]))
             .finally(() => setLoading(false));
     }, [keyword]);

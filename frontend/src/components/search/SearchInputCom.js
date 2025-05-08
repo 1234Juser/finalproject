@@ -1,4 +1,3 @@
-// components/search/SearchInputCom.js
 import React from "react";
 import styled from "styled-components";
 
@@ -15,13 +14,14 @@ const Input = styled.input`
     border-radius: 5px;
 `;
 
-export default function SearchInputCom({ value, onChange, placeholder }) {
+export default function SearchInputCom({ value, onChange, onKeyDown, placeholder }) {
     return (
         <Wrapper>
             <Input
                 type="text"
                 value={value}
                 onChange={onChange}
+                onKeyDown={onKeyDown} // onKeyDown 프롭 추가
                 placeholder={placeholder}
                 autoComplete="off"
             />
