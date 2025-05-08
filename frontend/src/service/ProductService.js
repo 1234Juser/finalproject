@@ -238,9 +238,10 @@ const toggleWish = async (product) => {
     try {
         const token = localStorage.getItem("accessToken");
         if (!token) {
+            const currentPath = window.location.pathname;
             alert("로그인이 필요합니다.");
-            window.location.href = "/login";
-            return null;  // 비로그인 상태에서 함수를 즉시 종료
+            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+            return;
         }
         const response = await fetch(`/wish/toggle/${product.productCode}`, {
             method: "POST",

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import LoginCom from "../../components/member/LoginCom";
 import Modal from "../../components/common/Modal";
 import FindIdCon from "../member/FindIdCon";
@@ -14,6 +14,7 @@ function LoginCon(){
     const [memberPassword, setMemberPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [showFindId, setShowFindId] = useState(false);
     const [showFindPwMethod, setShowFindPwMethod] = useState(false);
     const [showFindPw, setShowFindPw] = useState(false);
@@ -53,7 +54,10 @@ function LoginCon(){
 
 
             //로그인 성공시 메인페이지로 이동
-            navigate("/");
+            // navigate("/");
+            // 로그인 성공 후 리다이렉트 처리
+            const redirectUrl = searchParams.get("redirect") || "/";
+            navigate(redirectUrl);
 
         } catch(err){
             console.error("로그인 에러:", err.response?.data || err.message);
@@ -67,13 +71,16 @@ function LoginCon(){
 
     // 카카오 로그인 핸들러 추가
     const handleKakaoLogin = () => {
+        // 로그인 성공 후 리다이렉트 처리
+        const redirectUrl = searchParams.get("redirect") || "/";
         window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=14194a0a23cf74ec0bc6c0b2ba676489&redirect_uri=http://localhost:3000/oauth/kakao/callback&prompt=login`
             .replace(/\s+/g, '');
     }
     // 구글 로그인 핸들러 추가
     const handleGoogleLogin = () => {
         const googleClientId = "981822033334-r6u3d855k6gds83h9dtd8p327m6bfcu3.apps.googleusercontent.com";
-        const redirectUri = "http://localhost:3000/oauth/google/callback";
+        // 로그인 성공 후 리다이렉트 처리
+        const redirectUri = `http://localhost:3000/oauth/google/callback?redirect=${encodeURIComponent(searchParams.get("redirect") || "/")}`;
         const scope = "profile email";
         const authUrl =
             `https://accounts.google.com/o/oauth2/v2/auth` +
