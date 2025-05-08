@@ -24,10 +24,22 @@ export const Title = styled.h2`
 
 export const RegionGrid = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 1rem;
   margin-bottom: 2rem;
 `;
+
+export const RegionCard = styled.div`
+  position: relative;
+  width: 180px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem;
+  flex-direction: column;
+`;
+
 
 export const RegionButton = styled.button`
   padding: 12px 20px;
@@ -58,7 +70,7 @@ export const RegionButton = styled.button`
 export const CountryBox = styled.button`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   min-width: 140px;
   padding: 10px 16px;
   margin: 6px;

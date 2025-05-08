@@ -49,6 +49,7 @@ function ProductCom({products, cityName, handleFilterReset, handleSort, filtered
                                 <ProductUid>상품번호 {p.productUid}</ProductUid>
                             </CardSubInfo>
                             <CardTitle>{p.productTitle}</CardTitle>
+                            <CalendarText>{p.productContent}</CalendarText>
                             <CardPrice>￦ {formatPrice(p.productAdult)}원</CardPrice>
                             <CardSubInfo $noSpaceBetween> {/* noSpaceBetween prop을 적용 */}
                                 <GoCalendar size={24}/>

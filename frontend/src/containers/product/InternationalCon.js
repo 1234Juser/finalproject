@@ -108,7 +108,7 @@ const InternationalCon = () => {
                             <CountryBox
                                 onClick={() => {handleCountryClick(c.countryId)}}>
                                      {/*navigate(`/products/country?country_id=${c.countryId}`)}}>*/}
-                                {c.countryName}
+                                {c.countryNameKR}
                             </CountryBox>
 
                                 {/* City List (해당 Country에 속한 도시 목록만 표시) */}

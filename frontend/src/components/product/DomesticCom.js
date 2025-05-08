@@ -1,5 +1,5 @@
 import React from 'react';
-import {RegionGrid, RegionButton, RegionImage} from '../../style/product/StyleDomestic';
+import {RegionGrid, RegionButton, RegionImage, RegionCard} from '../../style/product/StyleDomestic';
 
 const DomesticCom = ({domestic, cityVisible, onRegionClick, selectedRegion}) => {
     if (!domestic || !Array.isArray(domestic)) {
@@ -11,7 +11,7 @@ const DomesticCom = ({domestic, cityVisible, onRegionClick, selectedRegion}) => 
     return (
         <RegionGrid>
         {domestic.map((d, idx) => (
-            <div key={idx}>
+            <RegionCard key={idx}>
                 <RegionImage>
                     {/*<img src={getImageByRegion(i.regionCode)} alt={`${i.regionName} 이미지`}/>*/}
                     <img src="/static/img/earth.jpg" alt={`${d.regionName} 이미지`}/>
@@ -23,7 +23,7 @@ const DomesticCom = ({domestic, cityVisible, onRegionClick, selectedRegion}) => 
                 >
                     {d.regionName}
                 </RegionButton>
-            </div>
+            </RegionCard>
         ))}
       </RegionGrid>
     );
