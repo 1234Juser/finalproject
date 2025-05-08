@@ -38,6 +38,7 @@ function ProductDetailCon({productCode, initialWishState, memberCode}) {
     const handleWishToggle = async () => {
         try {
             const result = await toggleWish(product);
+            if (result === null) return;
             const isLiked = result === "LIKED";
             dispatch({ type: "TOGGLE_WISH", payload: isLiked });
             toast.success(isLiked ? "찜 등록되었습니다 💖" : "찜이 취소되었습니다 💔");
