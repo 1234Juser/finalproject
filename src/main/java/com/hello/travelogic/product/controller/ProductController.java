@@ -53,9 +53,14 @@ public class ProductController {
     // 투어 상품 상세 페이지
     @GetMapping("/{productUid}")
     public ResponseEntity<ProductDTO> getProductDetail(@PathVariable("productUid") String productUid,
-                                                       @RequestHeader("Authorization") String authorizationHeader) {
+                                                       @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         log.debug("get product detail : {}", productUid);
-        Long memberCode = jwtUtil.getMemberCodeFromToken(authorizationHeader.replace("Bearer ", ""));
+        // 비로그인 상태를 대비해 memberCode는 null로 초기화
+        Long memberCode = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            memberCode = jwtUtil.getMemberCodeFromToken(authorizationHeader.replace("Bearer ", ""));
+            log.debug("memberCode : {}", memberCode);
+        }
         ProductDTO dto = productService.getProductDetail(productUid, memberCode);
 //        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByUid(productUid));
         return ResponseEntity.status(HttpStatus.OK).body(dto);

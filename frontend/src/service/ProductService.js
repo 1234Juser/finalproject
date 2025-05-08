@@ -118,11 +118,11 @@ const getProductDetail = async (productUid) => {
     const token = localStorage.getItem("accessToken");
     try {
         console.log("productUid : ", productUid);
+        // 토큰이 있는 경우 Authorization 헤더 추가
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const response = await fetch(`${path}/products/${productUid}`, {
             method : "GET",
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+            headers: headers
         });
         if (!response.ok) {
             throw new Error(`Error! status: ${response.status}`);
