@@ -84,6 +84,20 @@ public class ProductEntity {
     @Column(name = "region_type", nullable = false)
     private RegionEntity.RegionType regionType;
 
+    @Column(name = "city_name", nullable = false, length = 50)
+    private String cityName;
+
+    @Column(name = "country_name", nullable = false, length = 50)
+    private String countryName;
+
+    @Column(name = "full_location", nullable = false, length = 100)
+    private String fullLocation;
+
+    @Column(name = "product_description", nullable = true, columnDefinition = "TEXT")
+    private String productDescription;
+
+
+
     // 양방향 매핑 ("product"는 ProductThemeEntity에서 @ManyToOne ProductEntity의 필드명)
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();
@@ -120,6 +134,10 @@ public class ProductEntity {
 //        this.productThemes = productDTO.getProductThemes(); // 연관 엔티티 리스트 매핑 필요
         this.reviewCount = productDTO.getReviewCount();
         this.regionType = productDTO.getRegionType();       // Enum 매핑 불필요
+        this.cityName = productDTO.getCityName();
+        this.countryName = productDTO.getCountryName();
+        this.fullLocation = productDTO.getFullLocation();
+        this.productDescription = productDTO.getProductDescription();
     }
 
     public enum ProductStatus {

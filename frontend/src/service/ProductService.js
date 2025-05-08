@@ -34,6 +34,15 @@ const getCountryList = async (regionCode) => {
 }
 
 
+// 도시 데이터 가져오는 함수
+const getCityById = async (cityId) => {
+    const response = await fetch(`${path}/city/${cityId}`, {
+        method : "GET"
+    });
+    return response.json();
+}
+
+
 // 국가별 도시 데이터 가져오는 함수 (해외여행용)
 const getCitiesByCountry = async (countryId) => {
     console.log("여기서 countryId 확인----->", countryId);
@@ -109,11 +118,11 @@ const getProductDetail = async (productUid) => {
     const token = localStorage.getItem("accessToken");
     try {
         console.log("productUid : ", productUid);
+        // 토큰이 있는 경우 Authorization 헤더 추가
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const response = await fetch(`${path}/products/${productUid}`, {
             method : "GET",
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+            headers: headers
         });
         if (!response.ok) {
             throw new Error(`Error! status: ${response.status}`);
@@ -251,8 +260,7 @@ const toggleWish = async (product) => {
 };
 
 export {
-    getProductsList, getDomList, getIntlList, getCountryList, getCitiesByCountry, getCitiesByRegion, 
-    getProductsByCountry, getProductsByCity, getProductDetail,
-    ProductRegist,
+    getProductsList, getDomList, getIntlList, getCountryList, getCityById, getCitiesByCountry, getCitiesByRegion,
+    getProductsByCountry, getProductsByCity, getProductDetail, ProductRegist,
     getRegions, getThemes, toggleWish, getProductModify, setProductModify, ProductDelete
 };

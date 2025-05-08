@@ -2,16 +2,28 @@ import React, {useEffect, useState} from 'react';
 import DomesticCom from "../../components/product/DomesticCom";
 import {getDomList, getCitiesByRegion} from "../../service/ProductService";
 import { useNavigate } from 'react-router-dom';
+import { Container, Title, RegionGrid, CityList, CityButton } from '../../style/product/StyleDomestic';
 
 
 const DomesticCon = () => {
 
     const [domestic , setDomestic] = useState([]);
     const [koCities, setKoCities] = useState([]);
-    const [selectedRegion, setSelectedRegion] = useState(null); // 선택된 regionCode 상태
-    const [cityVisible, setCityVisible] = useState(false);  // 도시 리스트 visibility 상태
+    const [selectedRegion, setSelectedRegion] = useState(null);
+    const [cityVisible, setCityVisible] = useState(false); 
 
     const navigate = useNavigate();
+
+    const getImageByRegion = (regionCode) => {
+        const images = {
+            1: '/images/asia.jpg',
+            2: '/images/europe.jpg',
+            3: '/images/america.jpg',
+            // ... 필요한 지역코드 이미지 추가 가능
+        };
+        return images[regionCode] || '/static/img/earth.jpg'; // 매칭이 없는 경우 기본 이미지
+
+    }
 
     // 자동으로 도시 목록 불러오기
     useEffect(() => {
@@ -47,31 +59,23 @@ const DomesticCon = () => {
 
 
     return (
-        <>
-          <DomesticCom domestic={domestic} cityVisible={cityVisible}
-          onRegionClick={handleRegionClick} selectedRegion={selectedRegion}/>
-          {cityVisible && (
-            <>
-                <h3>각 권역별 도시 리스트</h3>
-                    <ul>
-                        {koCities.map((c, index) => (
-                            <li key={index}>
-                                {/* <Link to="/products"> */}
-                                {/* <Link to={`/product/city?citycode=${cityCode}`}> */}
-                                <button onClick={() => {
-                                    // onClickHandler(c.countryCode)
-                                    navigate(`/products/city?city_id=${c.cityId}`)
-                                }}
-                                >
-                                    {c.cityName}
-                                </button>
-                                {/* </Link> */}
-                                </li>
+        <Container>
+            <Title>어디로 떠나시나요?</Title>
+                <DomesticCom domestic={domestic} cityVisible={cityVisible}
+                onRegionClick={handleRegionClick} selectedRegion={selectedRegion}
+                getImageByRegion={getImageByRegion}/>
+            {cityVisible && (
+                <CityList>
+                        {koCities.map((c, i) => (
+                            <CityButton
+                                key={i}
+                                onClick={() => navigate(`/products/city?city_id=${c.cityId}`)}>
+                                {c.cityNameKR}
+                            </CityButton>
                         ))}
-                    </ul>
-            </>
-          )}
-        </>
+                </CityList>
+            )}
+        </Container>
     );
 };
 

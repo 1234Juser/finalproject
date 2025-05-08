@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.controller;
 
+import com.hello.travelogic.product.dto.CityDTO;
 import com.hello.travelogic.product.service.CityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,14 @@ public class CityController {
 
     @Autowired
     private final CityService cityService;
+
+    // cityId로 해당하는 도시 정보 불러오기
+    @GetMapping("/city/{cityId}")
+    public ResponseEntity<CityDTO> getCityById(@PathVariable("cityId") Long cityId) {
+        log.debug("cityId : {}", cityId);
+        return ResponseEntity.status(HttpStatus.OK).body(cityService.getCityById(cityId));
+    }
+
 
     // 국가별 도시 목록 불러오기
     @GetMapping("/cities/{countryId}")
