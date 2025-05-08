@@ -19,10 +19,10 @@ function ProductDetailCon({productCode, initialWishState, memberCode}) {
 
 
     useEffect(() => {
-        const memberCode = Number(localStorage.getItem("memberCode"));
-        console.log("호출 URL:",
-            `http://localhost:8080/products/${productUid}?memberCode=${memberCode}`
-        );
+        // const memberCode = Number(localStorage.getItem("memberCode"));
+        // console.log("호출 URL:",
+        //     `http://localhost:8080/products/${productUid}?memberCode=${memberCode}`
+        // );
 
         getProductDetail(productUid)
             .then((data) => {

@@ -2,6 +2,8 @@ import MyBookingCom from "../../components/booking/MyBookingCom";
 import {useEffect, useReducer, useState} from "react";
 import {cancelMyReservation, fetchRecentReservations, fetchOldReservations} from "../../service/reservationService";
 import {initialState, reservationReducer} from "../../modules/reservationModule";
+import MyReviewModalCon from "../review/MyReviewModalCon";
+import {deleteMyReview} from "../../service/reviewService";
 
 function MyBookingCon(){
     const [selectedTab, setSelectedTab] = useState(0);
@@ -176,7 +178,7 @@ function MyBookingCon(){
                 openReviewModal={openReviewModal}
             />
             {selectedOrderCode &&
-                <ReviewModalCon orderCode={selectedOrderCode}
+                <MyReviewModalCon orderCode={selectedOrderCode}
                                 onClose={closeReviewModal}
                                 onDeleteReview={handleDeleteReview} />}
         </>)

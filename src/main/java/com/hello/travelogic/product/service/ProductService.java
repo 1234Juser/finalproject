@@ -111,19 +111,20 @@ public class ProductService {
     // productUid를 기반으로 투어 상품 조회
     public ProductDTO getProductsByUid(String productUid, Long memberCode) {
 
-//        ProductEntity productEntity = productRepo.findByProductUid(productUid);
-//        log.debug("productEntity : {}", productEntity);
-//        if(productEntity != null) {
         // 찜 여부 확인 기능 추가하면서 수정
         Optional<ProductEntity> optional = productRepo.findByProductUid(productUid);
         if (optional.isPresent()) {
             ProductEntity product = optional.get();
             log.debug("productEntity : {}", product);
 
-            boolean isWished = wishRepo.existsByMember_MemberCodeAndProduct_ProductCode(
-                    memberCode, product.getProductCode()
-            );
-            log.debug("isWished: {}", isWished);
+            // 비회원인 경우 memberCode가 null이므로 기본값 false
+            boolean isWished = false;
+            if (memberCode != null) {
+                isWished = wishRepo.existsByMember_MemberCodeAndProduct_ProductCode(
+                        memberCode, product.getProductCode()
+                );
+                log.debug("isWished: {}", isWished);
+            }
 
             // DTO로 변환하고 찜 상태 세팅
             ProductDTO dto = new ProductDTO(product);
@@ -254,9 +255,12 @@ public class ProductService {
 
         log.info("찜 여부 체크: memberCode={}, productCode={}", memberCode, product.getProductCode());
 
-        boolean isWished = wishRepo.existsByMember_MemberCodeAndProduct_ProductCode(memberCode, product.getProductCode());
-
-        log.info("찜 여부 결과: {}", isWished);
+        // 비회원일 경우 isWished를 기본값 false로 초기화
+        boolean isWished = false;
+        if (memberCode != null) {
+            isWished = wishRepo.existsByMember_MemberCodeAndProduct_ProductCode(memberCode, product.getProductCode());
+            log.info("찜 여부 결과: {}", isWished);
+        }
 
         ProductDTO dto = new ProductDTO(product);
 

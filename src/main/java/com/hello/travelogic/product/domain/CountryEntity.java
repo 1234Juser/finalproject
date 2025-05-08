@@ -32,4 +32,7 @@ public class CountryEntity {
     @Column(name = "country_name", nullable = false, length = 20)
     private String countryName;
 
+    @Column(name = "country_name_kr", nullable = false, length = 20)
+    private String countryNameKr;
+
 }

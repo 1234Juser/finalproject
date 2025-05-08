@@ -3,16 +3,31 @@ import InternationalCom from "../../components/product/InternationalCom";
 import {getCitiesByCountry, getCountryList, getIntlList} from "../../service/ProductService";
 import { Link, useNavigate } from 'react-router-dom';
 import { getProductsByCity } from "../../service/ProductService";
+import {Container, CityList, Title, CityButton, CityListContainer, CountryBox} from '../../style/product/StyleDomestic';
 
 const InternationalCon = () => {
 
     const [intl, setIntl] = useState([]);
     const [country, setCountry] = useState([]);
-    const [selectedRegion, setSelectedRegion] = useState(null); // 선택된 regionCode 상태
-    const [countriesVisible, setCountriesVisible] = useState(false); // 국가 리스트 visibility 상태
-    const [cities, setCities] = useState([]); // 도시 조회용 useState
+    const [selectedRegion, setSelectedRegion] = useState(null);
+    const [countriesVisible, setCountriesVisible] = useState(false);
+    const [cities, setCities] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+
 
     const navigate = useNavigate();
+
+    const getImageByRegion = (regionCode) => {
+        const images = {
+            4: '/images/asia.jpg',
+            5: '/images/europe.jpg',
+            6: '/images/america.jpg',
+            7 : '/images/oceania.jpg',
+            8 : '/images/africa.jpg',
+            // ... 필요한 지역코드 이미지 추가 가능
+        };
+        return images[regionCode] || '/static/img/earth.jpg'; // 매칭이 없는 경우 기본 이미지
+    }
 
     // 초기 데이터 로딩 (대륙 리스트)
     useEffect(() => {
@@ -44,7 +59,23 @@ const InternationalCon = () => {
         }
     }
 
-    // console.log("country 확인---->", country);
+    const handleCountryClick = async (countryId) => {
+        if (selectedCountry === countryId) {
+            // 동일한 countryId를 다시 클릭하면 도시 목록을 닫음
+            setSelectedCountry(null);
+            setCities([]); // 도시 데이터 초기화
+        } else {
+            // 새로운 countryId를 선택하면 도시 목록을 가져옴
+            setSelectedCountry(countryId);
+            await getCitiesByCountry(countryId)
+                .then(data => {
+                    console.log(`${countryId}에 해당하는 도시들: `, data);
+                    setCities(data);
+                })
+                .catch((err) => console.error("도시 조회 오류:", err));
+        }
+    };
+
 
     // 버튼 클릭 시 countryId 불러오는 함수
     const onClickHandler = async (countryId) => {
@@ -61,45 +92,46 @@ const InternationalCon = () => {
         
     }
 
-    // const handleCityOnClick = async (cityCode) => {
-    //     console.log("일본 클릭했는ㄷ ㅔ ", cityCode);
-    //     await getProductsByCity(cityCode)
-    //     .then(data => {
-    //         console.log("cityCode 받기 : ", cityCode);
-    //         console.log("도시별 투어 목록 리스트 : ", data);
-    //         setProducts(data);
-    //     })
-    //     .catch((err) => console.log(err));
-    // }
 
     return (
-        <>
+        <Container>
+            <Title>어디로 떠나시나요?</Title>
             <InternationalCom intl={intl} onRegionClick={handleRegionClick}
                               selectedRegion={selectedRegion}
                               countriesVisible={countriesVisible}
-            />
+                              getImageByRegion={getImageByRegion}
+                              />
             {countriesVisible && (
-                <>
-                    <h3>해당 Region의 국가 리스트</h3>
-                    <ul>
+                <CityListContainer>
                         {country.map((c, index) => (
-                            <li key={index}>
-                                {/* <Link to="/products"> */}
-                                {/* <Link to={`/product/city?citycode=${cityCode}`}> */}
-                                <button onClick={() => {
-                                    onClickHandler(c.countryId)
-                                    navigate(`/products/country?country_id=${c.countryId}`)
-                                }}
-                                >
-                                    {c.countryName}
-                                </button>
-                                {/* </Link> */}
-                                </li>
+                            <div key={index}>
+                            <CountryBox
+                                onClick={() => {handleCountryClick(c.countryId)}}>
+                                     {/*navigate(`/products/country?country_id=${c.countryId}`)}}>*/}
+                                {c.countryName}
+                            </CountryBox>
+
+                                {/* City List (해당 Country에 속한 도시 목록만 표시) */}
+                                {selectedCountry === c.countryId && (
+                                    <CityList>
+                                    {cities.length > 0 ? (
+                                        cities.map((city, idx) => (
+                                            <CityButton
+                                                key={idx}
+                                                onClick={() => navigate(`/products/city?city_id=${city.cityId}`)} // Navigate to city page
+                                            >
+                                                {city.cityNameKR}
+                                            </CityButton>
+                                        ))) : (
+                                        <p>도시 정보를 가져오는 중...</p>
+                                    )}
+                                     </CityList>
+                                    )}
+                            </div>
                         ))}
-                    </ul>
-                </>
+                </CityListContainer>
             )}
-        </>
+    </Container>
     );
 };
 

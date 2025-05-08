@@ -4,7 +4,7 @@ import styled from "styled-components";
 export const MainSectionWrapper = styled.div`
     position: relative;
     width: 100%;
-    min-height: 100vh;
+    min-height: 37vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;

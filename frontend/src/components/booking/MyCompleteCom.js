@@ -163,7 +163,7 @@ const LoadMoreButton = styled.button`
   }
 `;
 
-function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, showMoreComplete }) {
+function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, showMoreComplete, openReviewModal }) {
     const completed = (reservations ?? []).filter(res => res.orderStatus === "COMPLETED");
     console.log("예약 상태들:", reservations.map(r => r.orderStatus));
     const navigate = useNavigate();
