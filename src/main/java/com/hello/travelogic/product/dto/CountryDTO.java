@@ -16,6 +16,7 @@ public class CountryDTO {
     private Long regionCode;       // RegionEntity 대신 ID만
     private String countryUid;
     private String countryName;
+    private String countryNameKR;
 
     public CountryDTO(CountryEntity countryDTO) {
         this.countryId = countryDTO.getCountryId();
@@ -23,5 +24,6 @@ public class CountryDTO {
         this.regionCode = countryDTO.getRegionCode().getRegionCode();
         this.countryUid = countryDTO.getCountryUid();
         this.countryName = countryDTO.getCountryName();
+        this.countryNameKR = countryDTO.getCountryNameKr();
     }
 }

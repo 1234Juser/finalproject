@@ -106,25 +106,49 @@ export const WishButton = styled.button`
   }
 `;
 
+export const PaymentButton = styled.button`
+  background-color: #00b6ff; 
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width : 200px;
+`;
+
 export const DetailTabWrapper = styled.div`
   display: flex;
   gap: 16px;
   margin-top: 40px;
   border-bottom: 2px solid #eee;
+  top: 0;
+  font-size : 20px;
+   position: sticky;
+   background-color: white; /* 필요에 따라 배경색 설정 */
+  z-index: 10; /* 다른 요소 위에 표시하기 위해 z-index 설정 (다른 콘텐츠 위에 나타나도록) */
 `;
 
 export const DetailTab = styled.button`
   padding: 12px 18px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 400;
   background: none;
   border: none;
   border-bottom: ${({ active }) => (active ? '3px solid #000' : 'none')};
-  color: ${({ active }) => (active ? '#000' : '#888')};
+  color: #2a2a2a;
   cursor: pointer;
+  text-decoration: none; /* 링크 밑줄 제거 */
 
   &:hover {
     color: #000;
+    background-color: #f0f0f0; /* 호버 시 회색 배경 */
+  }
+  /* active 상태일 때 색상 유지 */
+  &.active-tab {
+    color: black;
+    background-color: #f0f0f0; /* 클릭 시 회색 배경 */
   }
 `;
 
@@ -156,6 +180,13 @@ export const DetailContentWrapper = styled.div`
   }
 `;
 
+export const SectionWrapper = styled.section`
+  padding: 40px 0;
+  // border-bottom: ${({ active }) => (active ? '3px solid black' : 'none')};
+  transition: border-bottom 0.3s ease;
+`;
+
+
 export const SubTitle = styled.h3`
   font-size: 18px;
   font-weight: bold;
@@ -168,4 +199,23 @@ export const Divider = styled.hr`
   margin: 30px 0;
   border: none;
   border-top: 1px solid #eee;
+`;
+
+
+export const FlexSectionWrapper = styled(SectionWrapper)`
+  display: flex;
+  gap: 20px; /* 필요에 따라 gap 속성 추가 */
+`;
+
+export const MapWrapper = styled.div`
+  flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
+  border : 1px solid black;
+`;
+
+export const WeatherWrapper = styled.div`
+  flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  gap: 10px; /* 텍스트와 이모티콘 사이의 간격 */
+  border : 1px solid black;
 `;
