@@ -52,4 +52,6 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
             "WHERE r.member.memberCode = :memberCode AND r.order.orderCode = :orderCode")
     ReviewEntity findByMemberCodeAndOrderCode(@Param("memberCode") Long memberCode,
                                               @Param("orderCode") Long orderCode);
+
+    List<ReviewEntity> findAllByOrderByReviewDateDesc();
 }

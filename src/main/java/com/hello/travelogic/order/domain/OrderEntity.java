@@ -1,5 +1,6 @@
 package com.hello.travelogic.order.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.product.domain.ProductEntity;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"review", "product", "member", "option"})
 public class OrderEntity {
 
     @Id
@@ -66,7 +67,8 @@ public class OrderEntity {
     @Column(name = "is_reviewed", nullable = false)
     private boolean isReviewed = false;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     private ReviewEntity review;
 
     public OrderEntity(OrderDTO dto, ProductEntity product, OptionEntity option, MemberEntity member) {

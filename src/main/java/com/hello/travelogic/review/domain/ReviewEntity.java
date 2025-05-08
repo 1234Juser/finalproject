@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"member", "product", "option", "order"})   // 무한참조 방지
 public class ReviewEntity {
 
     @Id

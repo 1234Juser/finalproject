@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -29,6 +30,10 @@ public class JwtUtil {
     ) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
+
+        List<String> prefixedRoles = roles.stream()
+                .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
+                .collect(Collectors.toList());
 
         return Jwts.builder()
                 .setSubject(memberId)
