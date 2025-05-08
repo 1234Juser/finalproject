@@ -3,30 +3,25 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { MapContainer } from '../../style/product/StyleMapSection';
 
 
-const cityCoordinates = {
-    101: { lat: 51.5074, lng: -0.1278, name: "런던" },
-    102: { lat: 35.6895, lng: 139.6917, name: "도쿄" },
-    103: { lat: 48.8566, lng: 2.3522, name: "파리" },
-    // ...필요한 도시 추가
-  };
 
-
-function MapSection({ cityId }) {
+function MapSection({ location }) {
   const [center, setCenter] = useState(null);
-
-  const location = cityCoordinates[cityId];
+  const [isLoaded, setIsLoaded] = useState(false); // LoadScript 로딩 상태 관리
 
   useEffect(() => {
     const fetchCoords = async () => {
       try {
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${cityId}&key=YOUR_GOOGLE_API_KEY`
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${process.env.REACT_APP_GOOGLE_MAP_API_KEY}`
         );
+        
         const data = await response.json();
-        const location = data.results[0]?.geometry?.location;
+        console.log("----지도data확인---->", data);
+        const loc = data.results[0]?.geometry?.location;
 
-        if (location) {
-          setCenter({ lat: location.lat, lng: location.lng });
+        if (loc) {
+          setCenter({ lat: loc.lat, lng: loc.lng });
+          console.log("좌표:", { lat: loc.lat, lng: loc.lng });
         } else {
           console.error("좌표를 찾을 수 없습니다.");
         }
@@ -34,26 +29,35 @@ function MapSection({ cityId }) {
         console.error("Geocoding API 오류:", e);
       }
     };
+    
+    if (location)
+      fetchCoords();
+    
+  }, [location]);
 
-    if (cityId) fetchCoords();
-    }, [cityId]);
+    // LoadScript 로딩 완료 시 상태 업데이트
+    const handleLoad = () => {
+      setIsLoaded(true);
+      console.log("LoadScript 로딩 완료");
+    };
 
-    if (!location) {
-        return <p>지도를 불러올 수 없습니다. (알 수 없는 도시)</p>;
+    if (!center) {
+        return <p>지도를 불러오는 중입니다...</p>;
     }
 
   return (
     <MapContainer>
-<LoadScript googleMapsApiKey="YOUR_GOOGLE_API_KEY">
+      <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAP_API_KEY}
+                  onLoad={handleLoad}>
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}
-          center={{ lat: location.lat, lng: location.lng }}
+          center={center}
           zoom={10}
         >
-          <Marker position={{ lat: location.lat, lng: location.lng }} />
+          <Marker position={center} />
         </GoogleMap>
       </LoadScript>
-      </MapContainer>
+    </MapContainer>
   );
 }
 
