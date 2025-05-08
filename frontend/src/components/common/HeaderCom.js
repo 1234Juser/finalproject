@@ -1,7 +1,8 @@
 import {HeaderWrapBlock} from "../../style/components/StyleSet";
-import {ProfileImg, StyledHeader, HeaderRight, StyledTitle, HeaderButton} from "../../style/common/HeaderStyle";
-import { Link, useNavigate } from "react-router-dom";
+import {HeaderButton, HeaderRight, ProfileImg, StyledHeader, StyledTitle} from "../../style/common/HeaderStyle";
+import {Link, useNavigate} from "react-router-dom";
 import NavPage from "../../pages/common/NavPage";
+import SearchInputPage from "../../pages/search/SearchInputPage";
 
 function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
 
@@ -15,6 +16,7 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
                         <Link to="/" className="link">Hello, Travelogic!</Link>
                     </StyledTitle>
                     <HeaderRight>
+                        <SearchInputPage /> {/* 검색창을 가장 먼저 추가 */}
                         {isLoggedIn ? (
                             <>
                                 <ProfileImg src={profileImg} alt="프로필" />
@@ -34,4 +36,5 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
         </>
     )
 }
+
 export default HeaderCom;

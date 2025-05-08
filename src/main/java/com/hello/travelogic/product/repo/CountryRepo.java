@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.repo;
 
+import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.CountryEntity;
 import com.hello.travelogic.product.domain.RegionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,5 @@ public interface CountryRepo extends JpaRepository<CountryEntity, Long> {
 
     // countryId 필드를 기준으로 국가 조회(CityService용)
     CountryEntity findByCountryId(Long countryId);
+
 }

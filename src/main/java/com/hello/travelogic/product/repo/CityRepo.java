@@ -22,4 +22,6 @@ public interface CityRepo extends JpaRepository<CityEntity, Long> {
     // 새로운 uid 생성용
     @Query(value = "SELECT city_name FROM tbl_city WHERE city_id = :cityId", nativeQuery = true)
     String findCityNameByCityId(Long cityId);
+
+
 }
