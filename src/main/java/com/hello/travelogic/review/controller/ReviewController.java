@@ -31,15 +31,15 @@ public class ReviewController {
     private final OptionRepo optionRepo;
 
     // 상품 상세페이지 내 리뷰 조회
-    @GetMapping("/review/product/{productCode}")
-    public ResponseEntity<List<ReviewDTO>> getReviewListByProductCode(@PathVariable("productCode") long productCode,
+    @GetMapping("/review/product/{productUid}")
+    public ResponseEntity<List<ReviewDTO>> getReviewListByProductUid(@PathVariable("productUid") String productUid,
                                                                       @RequestParam(defaultValue = "date") String sort) {
-        log.debug("받은 productCode: {}", productCode);
+        log.debug("받은 productCode: {}", productUid);
 //        List<ReviewDTO> reviews = reviewService.getReviewsByProductCode(productCode, sort);
 //        log.debug("가져온 리뷰 개수: {}", reviews.size());
 //        return ResponseEntity.ok(reviews);
         // 합친 버전
-        return ResponseEntity.ok(reviewService.getReviewsByProductCode(productCode, sort));
+        return ResponseEntity.ok(reviewService.getReviewsByProductCode(productUid, sort));
     }
 
     // 로그인 된 회원의 선택 주문에 대한 리뷰 조회

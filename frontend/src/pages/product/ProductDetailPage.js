@@ -6,7 +6,6 @@ function ProductDetailPage() {
     return (
         <>
             <ProductDetailCon/>
-            <ProductReviewCon />
         </>
     )
 }

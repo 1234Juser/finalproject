@@ -27,7 +27,7 @@ const reducer = (state, action) => {
         case "REMOVE_REVIEW":
             return {
                 ...state,
-                reviews: state.reviews.map(review =>
+                reviews: state.reviews.filter(review =>
                     review.reviewCode !== action.payload)
             };
         case "UPDATE_REVIEW_STATUS":
