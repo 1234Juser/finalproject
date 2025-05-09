@@ -98,21 +98,21 @@ public class ProductController {
     public ResponseEntity  getProductToModify(@PathVariable("productUid") String productUid) {
         log.debug("get product detail : {}", productUid);
         ProductDTO productDTO = productService.getProductToModify(productUid);
-        
+
         if(productDTO != null)
             return ResponseEntity.status(HttpStatus.OK).body(productDTO);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("일치하는 상품이 없습니다. UID를 다시 확인하세요.");
     }
-    
-    
+
+
     // 상품 수정
     @PutMapping("/admin/{productUid}")
     public ResponseEntity ProductUpdate(@PathVariable("productUid") String productUid,
                                                                                 @RequestPart("productDTO") ProductDTO productDTO,
                                                                                 @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
-        
+
         int result = productService.productUpdate(productUid, productDTO, productThumbnail);
-        
+
         if(result == 1)
             return ResponseEntity.ok (Map.of ("message", "수정 성공"));
         else if (result == 0)
@@ -120,21 +120,21 @@ public class ProductController {
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "상품 수정 중 오류가 발생했습니다."));
     }
-    
-    
+
+
     // 상품 삭제
     @DeleteMapping("/admin/{productUid}")
     public ResponseEntity ProductDelete(@PathVariable("productUid") String productUid,
                                                                 @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
-        
+
         log.debug ("productUid: {}", productUid);
         int result = productService.productDelete(productUid, productThumbnail);
-        
+
         if(result == 1) {
             log.debug ("product delete result : {}", result);
             return ResponseEntity.status (HttpStatus.NO_CONTENT).build();
         } else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body ("일치하는 Uid 없음");
     }
-    
+
 }

@@ -59,7 +59,7 @@ function AdminMemberListCom({ memberList, onToggleStatus }) {
                                 <td style={tdStyle}>{m.socialType}</td>
                                 <td style={tdStyle}>{m.socialAccountId}</td>
                                 <td style={tdStyle}>{m.memberEnddate}</td>
-                                <td style={tdStyle}>{m.memberEndstatus === "Y" ? "비활성" : "활성"}</td>
+                                <td style={tdStyle}>{m.memberEndstatus === "Y" ? "탈퇴상태" : "활성상태"}</td>
                                 <td style={tdStyle}>
                                     {m.roles?.includes("ROLE_USER") &&!m.roles?.includes("ROLE_ADMIN") && (
                                         <button

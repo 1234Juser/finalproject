@@ -47,13 +47,8 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
 //    @Query("SELECT p FROM ProductEntity p WHERE p.productUid = :productUid")
 //    Optional<ProductEntity> findByProductUid(@Param("productUid") String productUid);
 
-
     //검색어입력창
     @Query("SELECT p FROM ProductEntity p WHERE p.productTitle LIKE %:kw% OR p.productContent LIKE %:kw%")
     Page<ProductEntity> searchByTitleOrDescription(@Param("kw") String kw, Pageable pageable);
-
-
-
-
 
 }
