@@ -41,14 +41,14 @@ function ProductCom({products, cityName, handleFilterReset, handleSort, filtered
             {filteredProducts.map((p, i) => (
                 <TourCard key={p.productUid}>
                         <CardImageWrapper>
-                            <CardImage src={`/upload/product/${p.productThumbnail}`} 
-                            alt="상품 이미지" 
-                            onError={(e) => {
-                                e.target.onerror = null; // 무한 루프 방지
-                                e.target.src = p.productThumbnail.startsWith('/static/')
-                                    ? p.productThumbnail // 원래부터 static이면 그대로 보여줌
-                                    : '/static/img/earth.jpg'; // 그 외는 기본 이미지로 대체
-                              }}/>
+                            <CardImage src={p.productThumbnail?.startsWith('/static/') 
+                                                ? p.productThumbnail
+                                                : `/upload/product/${p.productThumbnail}`} 
+                                        alt="상품 이미지" 
+                                        onError={(e) => {
+                                            e.target.onerror = null; // 무한 루프 방지
+                                            e.target.src = '/static/img/earth.jpg';
+                                        }}/>
                         </CardImageWrapper>
                         <CardContent>
                             <CardSubInfo>

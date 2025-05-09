@@ -5,6 +5,7 @@ import { WishButton, Container, ImageSection, InfoSection, Title, PriceWrapper, 
 } from "../../style/product/StyleProductDetail";
 import MapSection from "../../containers/product/MapSection";
 import WeatherSection from "../../containers/product/WeatherSection";
+import ProductReviewCon from "../../containers/review/ProductReviewCon";
 
 
 function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSection}) {
@@ -13,12 +14,15 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
         <Container>
             <MainSectionWrapper>
             <ImageSection>
-                <img src={`/upload/product/${product.productThumbnail}`} alt="상품 이미지" 
+                <img src={
+                    product.productThumbnail?.startsWith('/static/') 
+                        ? product.productThumbnail
+                        : `/upload/product/${product.productThumbnail}`
+                } 
+                    alt="상품 이미지" 
                     onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = product.productThumbnail.startsWith('/static/')
-                            ? product.productThumbnail
-                            : '/static/img/earth.jpg';
+                        e.target.src = '/static/img/earth.jpg';
                       }}/>
             </ImageSection>
 
