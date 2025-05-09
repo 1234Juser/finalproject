@@ -33,7 +33,10 @@ public class CountryService {
         List<CountryEntity> countryEntityList = countryRepo.findByRegionCode(regionEntity);
         List<CountryDTO> countryByRegion = null;
         if(countryEntityList.size() != 0) {
-            countryByRegion = countryEntityList.stream().map( cr -> new CountryDTO(cr)).toList();
+            countryByRegion = countryEntityList.stream()
+                    .filter(c -> c.getCountryCode() != 1)
+                    .map( cr -> new CountryDTO(cr))
+                    .toList();
         }
         log.info("countryEntityList : {}", countryEntityList);
         log.info("countryByRegion : {}", countryByRegion);

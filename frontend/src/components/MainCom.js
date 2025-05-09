@@ -3,6 +3,7 @@ import {
     MainSectionWrapper, BannerContainer, SlideWrapper, SlideCard, SlideImage, SlideOverlay, SlideText, BestLabel, images
 } from "../style/MainStyle";
 import {useEffect, useState} from "react";
+import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
 // ... 생략
 
 export default function MainCom() {
@@ -63,7 +64,12 @@ export default function MainCom() {
                     </SlideWrapper>
                 </BannerContainer>
             </MainSectionWrapper>
+
+            {/* === 환율 박스 여기에 넣기 === */}
+            <div>
+                <ExchangeBoxCom />
+            </div>
+
         </div>
     );
-
 }

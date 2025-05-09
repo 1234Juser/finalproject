@@ -240,11 +240,17 @@ public class ProductService {
     
     // 리뷰 작성/삭제 시 reviewcount만 업데이트
     public void updateReviewCount(Long productCode) {
-        int count = reviewRepo.countByProduct_ProductCode(productCode);
+//        int count = reviewRepo.countByProduct_ProductCode(productCode);
+//        ProductEntity product = productRepo.findById(productCode).orElseThrow();
+//        product.setReviewCount(count);
+        int newReviewCount = reviewRepo.countByProduct_ProductCode(productCode);
 
-        ProductEntity product = productRepo.findById(productCode).orElseThrow();
-        product.setReviewCount(count);
+        ProductEntity product = productRepo.findById(productCode)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        product.setReviewCount(newReviewCount);
         productRepo.save(product);
+
     }
 
     

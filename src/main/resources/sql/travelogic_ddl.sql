@@ -340,4 +340,14 @@ CREATE TABLE `tbl_notification` (
                                     CONSTRAINT `FK_tbl_member_TO_tbl_notification_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
 );
 
+-- 환율 테이블 생성
+CREATE TABLE IF NOT EXISTS tbl_exchange_rates (
+                                              id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '자동 증가 ID',
+                                              base_currency VARCHAR(3) NOT NULL DEFAULT 'USD' COMMENT '기준 통화',
+                                              target_currency VARCHAR(3) NOT NULL COMMENT '대상 통화',
+                                              rate DECIMAL(19, 6) NOT NULL COMMENT '환율',
+                                              updated_date DATETIME NOT NULL COMMENT '환율 기준일시',
+                                              UNIQUE KEY unique_rate (base_currency, target_currency, updated_date)
+) ENGINE=INNODB DEFAULT CHARSET=UTF8MB4 COMMENT='국가별 환율정보';
+
 commit;

@@ -2,6 +2,52 @@ import axios from "axios";
 
 const path ="http://localhost:8080";
 
+// export const getAverageRatingByProductUid = async (productUid) => {
+//     const response = await axios.get(`/review/product/${productUid}/average`);
+//     return response.data;
+// };
+export const getReviewCountByProductUid = async (productUid) => {
+    try {
+        const response = await fetch(`/review/product/${productUid}/count`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`리뷰 개수 조회 실패: ${response.status}`);
+        }
+
+        const reviewCount = await response.json();
+        console.log("리뷰 개수:", reviewCount);
+        return reviewCount;
+    } catch (error) {
+        console.error("리뷰 개수 조회 오류:", error.message);
+        throw error;
+    }
+};
+export const getAverageRatingByProductUid = async (productUid) => {
+    try {
+        const response = await fetch(`/review/product/${productUid}/average`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`평균 평점 조회 실패: ${response.status}`);
+        }
+
+        const averageRating = await response.json();
+        return averageRating;
+    } catch (error) {
+        console.error("평균 평점 조회 오류:", error.message);
+        throw error;
+    }
+};
+
 // 상품 상세페이지 내 해당 상품의 전체 리뷰 조회(디폴트 작성일 내림차순)
 // export async function getReviewsByProduct(productCode, sort = "date") {
 //     const response = await axios.get(`${path}/review/product/${productCode}`, {
@@ -12,9 +58,27 @@ const path ="http://localhost:8080";
 //     });
 //     return await response.json();
 // }
-const getReviewsByProduct = async (productCode, sort = "date") => {
-    return fetch( path+"/review/product/${productCode}", {method:"get"} )
-}
+export const getReviewsByProductUid = async (productUid, sort = "date") => {
+    try {
+        const response = await fetch(`/review/product/${productUid}?sort=${sort}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`리뷰 조회 실패: ${response.status}`);
+        }
+
+        // const reviews = await response.json();
+        // return reviews;
+        return await response.json();
+    } catch (error) {
+        console.error("리뷰 조회 오류:", error.message);
+        throw error;
+    }
+};
 
 // 로그인 된 회원의 선택 주문에 대한 본인 작성 리뷰 조회
 // export async function getMyReview(orderCode) {
@@ -165,20 +229,40 @@ export async function deleteMyReview(reviewCode) {
 
 // 관리자의 전체 리뷰 조회
 export async function getAllReviewsForAdmin() {
-    const res = await axios.get("${path}/admin/manage/review");
-    return res.data;
+    try {
+        console.log("🟡 리뷰 조회 요청 시작");
+        const token = localStorage.getItem("accessToken");
+        const response = await axios.get(`${path}/admin/review`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        console.log("🟢 리뷰 조회 응답:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("리뷰 목록 조회 실패", error);
+        throw error;
+    }
 }
 
 // 관리자의 상품별 리뷰 조회
 export async function getReviewsByProductForAdmin(productCode) {
-    const res = await axios.get(`${path}/admin/manage/review/by-product/${productCode}`);
-    return res.data;
+    const response = await axios.get(`${path}/admin/review/by-product/${productCode}`);
+    return response.data;
 }
 
 // 관리자의 리뷰 삭제
 export async function deleteReviewByAdmin(reviewCode) {
-    const res = await axios.patch(`${path}/admin/manage/reviews/${reviewCode}`);
-    return res.data;
+    const token = localStorage.getItem("accessToken");
+    if (!token) throw new Error("로그인이 필요합니다.");
+    const response = await axios.patch(`${path}/admin/reviews/delete/${reviewCode}`, {}, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        // withCredentials: true,
+    });
+    return response.data;
 }
 
 export async function getReviewImage(reviewPic) {

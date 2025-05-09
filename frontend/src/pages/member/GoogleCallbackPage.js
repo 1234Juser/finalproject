@@ -57,4 +57,3 @@ function GoogleCallbackPage() {
 }
 
 export default GoogleCallbackPage;
-

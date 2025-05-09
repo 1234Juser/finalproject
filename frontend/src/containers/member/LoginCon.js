@@ -86,8 +86,6 @@ function LoginCon(){
         window.location.href = authUrl;
     };
 
-
-
     return (
         <>
             <LoginCom

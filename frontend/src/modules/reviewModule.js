@@ -27,23 +27,24 @@ const reducer = (state, action) => {
         case "REMOVE_REVIEW":
             return {
                 ...state,
-                reservations: state.reservations.map(res =>
-                    res.orderCode === action.payload
-                        ? { ...res, reviewed: false }
-                        : res
-                )
+                reviews: state.reviews.filter(review =>
+                    review.reviewCode !== action.payload)
             };
         case "UPDATE_REVIEW_STATUS":
             return {
                 ...state,
-                reservations: state.reservations.map(reservation =>
-                    reservation.orderCode === action.payload.orderCode
-                        ? { ...reservation, reviewed: action.payload.reviewed }
-                        : reservation
+                reviews: state.reviews.map(review =>
+                    review.reviewCode === action.payload.reviewCode
+                        ? { ...review, reviewStatus: action.payload.reviewStatus }
+                        : review
                 )
             };
         case "SET_SORT_OPTION":
             return { ...state, sortOption: action.data };
+        case "SET_AVERAGE_RATING":
+            return { ...state, averageRating: action.data };
+        case "SET_REVIEW_COUNT":
+            return { ...state, reviewCount: action.data };
         case "SET_LOADING":
             return { ...state, loading: action.data };
         case "SET_ERROR":

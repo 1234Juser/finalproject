@@ -112,5 +112,4 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
         </FaqContainer>
     );
 }
-
 export default FaqListCom;
