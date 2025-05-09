@@ -15,8 +15,12 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
                     <StyledTitle>
                         <Link to="/" className="link">Hello, Travelogic!</Link>
                     </StyledTitle>
-                    <HeaderRight>
-                        <SearchInputPage /> {/* 검색창을 가장 먼저 추가 */}
+                    {/*검색어 입력창*/}
+                    <div style={{flex: 1, display: "flex", justifyContent: "center"}}>
+                        <SearchInputPage />
+                    </div>
+                    {/*로그인버튼*/}
+                    <HeaderRight>                        
                         {isLoggedIn ? (
                             <>
                                 <ProfileImg src={profileImg} alt="프로필" />

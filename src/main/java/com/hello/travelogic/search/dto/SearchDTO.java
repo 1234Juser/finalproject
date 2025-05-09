@@ -15,9 +15,11 @@ public class SearchDTO {
     private String extraInfo;
     private String productUid; // 상품 UID 필드 추가
     // 필요하다면 가격, 이미지 URL, 여행 기간 등의 필드도 추가 가능
-     private Integer productAdult;
-     private String productStartDate;
-     private String productEndDate;
+    private Integer productAdult;
+    private Integer productChild;
+    private ProductEntity.ProductStatus productStatus;
+    private String productStartDate;
+    private String productEndDate;
     // private String imageUrl;
 
 
@@ -28,9 +30,11 @@ public class SearchDTO {
                 .description(e.getProductDescription())
                 .extraInfo(e.getFullLocation())
                 .productUid(e.getProductUid()) // productUid 설정
-                .productAdult(e.getProductAdult())
-                 .productStartDate(e.getProductStartDate() != null ? e.getProductStartDate().toString() : null)
-                 .productEndDate(e.getProductEndDate() != null ? e.getProductEndDate().toString() : null)
+                .productAdult(e.getProductAdult()) //설정
+                .productChild(e.getProductChild())
+                .productStatus(e.getProductStatus()) // productStatus 설정
+                .productStartDate(e.getProductStartDate() != null ? e.getProductStartDate().toString() : null)
+                .productEndDate(e.getProductEndDate() != null ? e.getProductEndDate().toString() : null)
                 // .imageUrl(e.getThumbnailImageUrl()) // 예시: 상품 엔티티에 썸네일 이미지 URL 필드가 있다면
                  .build();
     }

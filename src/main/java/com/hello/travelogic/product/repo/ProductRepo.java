@@ -3,6 +3,8 @@ package com.hello.travelogic.product.repo;
 import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.CountryEntity;
 import com.hello.travelogic.product.domain.ProductEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,7 +43,7 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
 
     //검색어입력창
     @Query("SELECT p FROM ProductEntity p WHERE p.productTitle LIKE %:kw% OR p.productContent LIKE %:kw%")
-    List<ProductEntity> searchByTitleOrDescription(@Param("kw") String kw);
+    Page<ProductEntity> searchByTitleOrDescription(@Param("kw") String kw, Pageable pageable);
 
 
 

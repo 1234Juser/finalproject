@@ -6,6 +6,10 @@ import com.hello.travelogic.product.repo.*;
 import com.hello.travelogic.search.dto.SearchDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort; // Sort import
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,18 +26,21 @@ public class SearchService {
     private final RegionRepo regionRepo;
     private final ThemeRepo themeRepo;
 
-    public List<SearchDTO> unifiedSearch(String keyword) {
-        List<SearchDTO> results = new ArrayList<>();
-
-        // 상품명, 상품설명 둘 다 검색
-        List<ProductEntity> products = productRepo.searchByTitleOrDescription(keyword);
-        for (ProductEntity product : products) {
-            results.add(SearchDTO.fromProduct(product));
+    // sortBy 파라미터 추가
+    public Page<SearchDTO> unifiedSearch(String keyword, int page, int size, String sortBy) {
+        Sort sort = Sort.unsorted(); // 기본 정렬
+        if ("low".equals(sortBy)) {
+            sort = Sort.by(Sort.Direction.ASC, "productAdult"); // 낮은 가격순 정렬 (필드명 확인 필요)
+        } else if ("high".equals(sortBy)) {
+            sort = Sort.by(Sort.Direction.DESC, "productAdult"); // 높은 가격순 정렬 (필드명 확인 필요)
         }
 
-        return results;
+        Pageable pageable = PageRequest.of(page, size, sort); // Pageable 객체에 정렬 정보 추가
 
+        // 상품명, 상품설명 둘 다 검색
+        Page<ProductEntity> products = productRepo.searchByTitleOrDescription(keyword, pageable); // Pageable 전달
+
+        return products.map(SearchDTO::fromProduct); // Page<ProductEntity>를 Page<SearchDTO>로 변환
     }
+
 }
-
-
