@@ -83,6 +83,7 @@ public class GoogleOAuthService {
                 member.setMemberProfileImageUrl(googleUser.picture());
                 member.setSocialType("google");
                 member.setMemberId("google_" + googleUser.sub());
+                member.setAdminActive("Y");
                 // 필요시 memberRole 추가 등 복구 처리
                 memberRepository.save(member);
             } else {
@@ -103,6 +104,7 @@ public class GoogleOAuthService {
                     .memberProfileImageUrl(googleUser.picture())
                     .memberEndstatus("N")
                     .socialType("google")
+                    .adminActive("Y")
                     .build();
             member = memberRepository.save(member);
             // 권한 추가
