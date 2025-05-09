@@ -167,6 +167,7 @@ const getThemes = async () => {
 
 // 상품 등록 함수
 const ProductRegist = async (formData) => {
+    console.log("받은 formData 확인-------->", formData);
     try {
         const response = await fetch(`${path}/products/register`, {
             method : "POST",
@@ -175,6 +176,7 @@ const ProductRegist = async (formData) => {
 
         if( response.ok) {
             const result = await response.text();
+            console.log("전송 결과 확인 : ", result);
             return { ok: true, message: result };
         } else {
             const errorData = await response.json();  // 실패시 JSON 응답 처리

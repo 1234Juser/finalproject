@@ -13,8 +13,13 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
         <Container>
             <MainSectionWrapper>
             <ImageSection>
-                {/* <img src={product.productThumbnail} alt="상품 이미지" /> */}
-                <img src="/static/img/product/london.jpg" alt="상품 이미지" />
+                <img src={`/upload/product/${product.productThumbnail}`} alt="상품 이미지" 
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = product.productThumbnail.startsWith('/static/')
+                            ? product.productThumbnail
+                            : '/static/img/earth.jpg';
+                      }}/>
             </ImageSection>
 
             <InfoSection>
