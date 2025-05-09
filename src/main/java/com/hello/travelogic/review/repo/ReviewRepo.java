@@ -60,4 +60,14 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
 
     // 관리자용 리뷰 전체 조회
     List<ReviewEntity> findAllByOrderByReviewDateDesc();
+
+    @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_uid = :productUid", nativeQuery = true)
+    Double findAvgRatingByProductUid(@Param("productUid") String productUid);
+
+    // 리뷰 수 자동계산
+//    @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.product.productCode = :productCode")
+//    int countByProductCode(@Param("productCode") Long productCode);
+
+    // 상품코드로 리뷰 평균내고 productUid맞춰주기
+    List<ReviewEntity> findByProduct_ProductCode(Long productCode);
 }
