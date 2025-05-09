@@ -7,7 +7,7 @@ import {
 import { initialState, reservationReducer } from "../../modules/reservationModule";
 import AdminBookingByProductCom from "../../components/booking/AdminBookingByProductCom";
 
-function AdminBookingByProductCon() {
+function AdminBookingByProductCon({accessToken}) {
     const [state, dispatch] = useReducer(reservationReducer, initialState);
     const [selectedOrders, setSelectedOrders] = useState([]);
     const [start, setStart] = useState(1);

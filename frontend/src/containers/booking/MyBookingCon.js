@@ -5,35 +5,35 @@ import {initialState, reservationReducer} from "../../modules/reservationModule"
 import MyReviewModalCon from "../review/MyReviewModalCon";
 import {deleteMyReview} from "../../service/reviewService";
 
-function MyBookingCon(){
+function MyBookingCon({accessToken}){
     const [selectedTab, setSelectedTab] = useState(0);
     const [state, dispatch] = useReducer(reservationReducer, initialState);
     const [showMoreSchedule, setShowMoreSchedule] = useState(true);
     const [showMoreComplete, setShowMoreComplete] = useState(true);
     const [showMoreCancel, setShowMoreCancel] = useState(true);
     const [selectedOrderCode, setSelectedOrderCode] = useState(null);
+    const [memberCode, setMemberCode] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
+        if (!accessToken) {
             alert("로그인이 필요합니다.");
             return;
         }
-        if (token) {
             // let memberCode = null;
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const memberCode = payload.memberCode;
+                const payload = JSON.parse(atob(accessToken.split('.')[1]));
+                const parsedMemberCode = payload.memberCode;
                 // if (memberCode) {
                 //     console.log("memberCode from token:", memberCode);
                 //     localStorage.setItem("memberCode", memberCode);
                 // }
-                if (!memberCode || isNaN(memberCode)) {
+                if (!parsedMemberCode || isNaN(parsedMemberCode)) {
                     console.error("유효하지 않은 memberCode");
                     alert("로그인 정보가 유효하지 않습니다.");
                     return;
                 }
-                console.log("로그인된 memberCode:", memberCode);
+                setMemberCode(parsedMemberCode);
+                console.log("로그인된 memberCode:", parsedMemberCode);
             // } catch (e) {
             //     console.error("토큰 파싱 실패", e);
             //     return;
@@ -47,7 +47,7 @@ function MyBookingCon(){
         // }
         // const loadRecent = async () => {
             dispatch({ type: "LOADING" });
-            fetchRecentReservations()
+            fetchRecentReservations(accessToken)
                 .then(data => {
                     dispatch({ type: "FETCH_SUCCESS", payload: data });
                 })
@@ -59,10 +59,7 @@ function MyBookingCon(){
                 console.error("토큰 파싱 실패", e);
                 alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
             }
-        } else {
-            alert("로그인이 필요합니다.");
-        }
-    }, []);
+    }, [accessToken]);
     //         try {
     //             const data = await fetchRecentReservations();
     //             dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -76,7 +73,7 @@ function MyBookingCon(){
 
     const handleLoadOldForSchedule = async () => {
         try {
-            const oldData = await fetchOldReservations();
+            const oldData = await fetchOldReservations(accessToken);
             if (oldData.length > 0) {
                 dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             } else {
@@ -90,7 +87,7 @@ function MyBookingCon(){
     };
     const handleLoadOldForComplete = async () => {
         try {
-            const oldData = await fetchOldReservations();
+            const oldData = await fetchOldReservations(accessToken);
             if (oldData.length > 0) {
                 dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             } else {
@@ -103,7 +100,7 @@ function MyBookingCon(){
     };
     const handleLoadOldForCancel = async () => {
         try {
-            const oldData = await fetchOldReservations();
+            const oldData = await fetchOldReservations(accessToken);
             if (oldData.length > 0) {
                 dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             } else {
@@ -122,7 +119,7 @@ function MyBookingCon(){
             return;
         }
         if (window.confirm("정말 이 예약을 취소하시겠습니까?")) {
-            cancelMyReservation(orderCode)
+            cancelMyReservation(orderCode, accessToken)
                 .then(() => {
                     alert("예약이 취소되었습니다.");
                     dispatch({ type: "REMOVE_RESERVATION", payload: orderCode });
@@ -146,7 +143,7 @@ function MyBookingCon(){
 
     const handleDeleteReview = async (reviewCode, orderCode) => {
         try {
-            await deleteMyReview(reviewCode);
+            await deleteMyReview(reviewCode, accessToken);
             alert("리뷰가 삭제되었습니다.");
 
             // 삭제된 리뷰의 상태를 업데이트
