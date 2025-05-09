@@ -1,31 +1,29 @@
 import WishCon from "../../containers/wish/WishCon";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 
 function WishGroupPage() {
     const navigate = useNavigate();
-    const [memberCode, setMemberCode] = useState(null);
     const [isReady, setIsReady] = useState(false);
+    const [accessToken, setAccessToken] = useState(null); // accessToken 상태 추가
 
     useEffect(() => {
-        const storedCode = localStorage.getItem("memberCode");
+        const token = localStorage.getItem("accessToken");
 
-        console.log("로그아웃 이후에도 남은 memberCode:", storedCode);
-
-        if (!storedCode || isNaN(parseInt(storedCode, 10))) {
-            alert("로그인 후 이용해주세요.");
+        if (!token) {
             navigate("/login");
-        } else {
-            setMemberCode(parseInt(storedCode, 10));
-            setIsReady(true); // 렌더링 허용
+            return;
         }
+        setAccessToken(token);
+        setIsReady(true); // 렌더링 허용
     }, [navigate]);
 
     if (!isReady) return null;
 
     return(
         <>
-            <WishCon memberCode={memberCode}
+            {/* WishCon에 memberCode 대신 accessToken 전달 */}
+            <WishCon accessToken={accessToken}
             />
         </>
     )
