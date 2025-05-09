@@ -28,7 +28,6 @@ function WishCon({groupCode, accessToken}) {
     useEffect(() => {
         // props로 받은 accessToken 사용
         if (!accessToken) {
-            alert("찜 기능은 로그인 후 이용 가능합니다.");
             return;
         }
         console.log("사용 중인 token: ", accessToken); // accessToken 로그 출력
