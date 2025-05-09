@@ -5,6 +5,7 @@ import { WishButton, Container, ImageSection, InfoSection, Title, PriceWrapper, 
 } from "../../style/product/StyleProductDetail";
 import MapSection from "../../containers/product/MapSection";
 import WeatherSection from "../../containers/product/WeatherSection";
+import ProductReviewCon from "../../containers/review/ProductReviewCon";
 
 
 function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSection}) {
@@ -21,7 +22,6 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
                             : '/static/img/earth.jpg';
                       }}/>
             </ImageSection>
-
             <InfoSection>
             <DetailText><strong>판매 상태:</strong> {product.productStatus}</DetailText>
             <Title>{product.productTitle}</Title>

@@ -102,7 +102,16 @@ function SearchProductCom({
                         p.type === "product" && (
                             <TourCard key={p.productUid}>
                                 <CardImageWrapper>
-                                    <CardImage src={p.imageUrl || "/static/img/earth.jpg"} alt={p.title || "상품 이미지"} />
+                                    <CardImage
+                                        src={`/upload/product/${p.productThumbnail}`} // ProductCom.js의 이미지 소스 사용
+                                        alt={p.title || "상품 이미지"}
+                                        onError={(e) => { // 에러 핸들링 추가
+                                            e.target.onerror = null;
+                                            e.target.src = p.productThumbnail?.startsWith('/static/') // productThumbnail이 있는지 확인
+                                                ? p.productThumbnail
+                                                : '/static/img/earth.jpg';
+                                        }}
+                                    />
                                 </CardImageWrapper>
                                 <CardContent>
                                     <CardSubInfo $noSpaceBetween>
@@ -137,7 +146,6 @@ function SearchProductCom({
                     ))}
                 </div>
             )}
-
             {/* 페이징 UI 렌더링 */}
             {!loading && totalPages > 1 && (
                 <PagingWrapper>

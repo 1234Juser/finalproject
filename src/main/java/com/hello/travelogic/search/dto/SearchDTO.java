@@ -20,7 +20,8 @@ public class SearchDTO {
     private ProductEntity.ProductStatus productStatus;
     private String productStartDate;
     private String productEndDate;
-    // private String imageUrl;
+    private String productThumbnail;
+
 
 
     public static SearchDTO fromProduct(ProductEntity e){
@@ -35,8 +36,8 @@ public class SearchDTO {
                 .productStatus(e.getProductStatus()) // productStatus 설정
                 .productStartDate(e.getProductStartDate() != null ? e.getProductStartDate().toString() : null)
                 .productEndDate(e.getProductEndDate() != null ? e.getProductEndDate().toString() : null)
-                // .imageUrl(e.getThumbnailImageUrl()) // 예시: 상품 엔티티에 썸네일 이미지 URL 필드가 있다면
-                 .build();
+                .productThumbnail(e.getProductThumbnail())
+                .build();
     }
 
     // 다른 fromCity, fromCountry 등의 메소드는 여기에 위치합니다.

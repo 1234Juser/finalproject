@@ -90,5 +90,4 @@ function SearchProductCon() {
         />
     );
 }
-
 export default SearchProductCon;
