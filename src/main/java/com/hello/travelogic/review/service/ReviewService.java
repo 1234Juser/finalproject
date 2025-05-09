@@ -48,16 +48,16 @@ public class ReviewService {
     private static final String REVIEW_DIR = "upload/review/";
 //    final String DIR = "C:/Users/hi/Desktop/hello_travelogic/upload/review/";
 
-    public List<ReviewDTO> getReviewsByProductCode(long productCode, String sortOption) {
+    public List<ReviewDTO> getReviewsByProductCode(String ProductUid, String sortOption) {
         List<ReviewEntity> entities;
 
         if ("rating".equalsIgnoreCase(sortOption)) {
-            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewRatingDesc(productCode); // 평점 높은순
+            entities = reviewRepo.findByOrder_Product_ProductUidOrderByReviewRatingDesc(ProductUid); // 평점 높은순
         } else {
             // order_code 타고 찾은 product_code
 //            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
             // product_code가 직접 FK로 들어온 거로 수정 한 후
-            entities = reviewRepo.findByProduct_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
+            entities = reviewRepo.findByProduct_ProductUidOrderByReviewDateDesc(ProductUid); // 최신순
         }
 
         return entities
@@ -93,10 +93,32 @@ public class ReviewService {
 
     public List<ReviewDTO> getAllReviews() {
 
-        return reviewRepo.findAll(Sort.by(Sort.Direction.DESC, "reviewDate"))
-                .stream()
-                .map(ReviewDTO::new)
-                .collect(Collectors.toList());
+        try {
+            log.info("🟢 리뷰 조회 시작");
+
+            // 모든 리뷰 엔티티 조회
+            List<ReviewEntity> reviewEntities = reviewRepo.findAllByOrderByReviewDateDesc();
+            log.info("🟢 리뷰 엔티티 로드 완료: {}개", reviewEntities.size());
+
+            List<ReviewDTO> reviewDTOs = reviewEntities.stream()
+                    .map(review -> {
+                        log.debug("🟡 ReviewEntity -> ReviewDTO 변환: {}", review);
+                        return new ReviewDTO(review);
+                    })
+                    .collect(Collectors.toList());
+
+            log.info("🟢 리뷰 DTO 변환 완료: {}개", reviewDTOs.size());
+            return reviewDTOs;
+
+        } catch (Exception e) {
+            log.error("🔴 리뷰 목록 조회 중 오류 발생", e);
+            throw e;
+        }
+
+//        return reviewRepo.findAll(Sort.by(Sort.Direction.DESC, "reviewDate"))
+//                .stream()
+//                .map(ReviewDTO::new)
+//                .collect(Collectors.toList());
     }
 
     public List<ReviewDTO> getReviewsByProductCodeForAdmin(long productCode) {

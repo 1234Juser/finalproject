@@ -41,7 +41,14 @@ function ProductCom({products, cityName, handleFilterReset, handleSort, filtered
             {filteredProducts.map((p, i) => (
                 <TourCard key={p.productUid}>
                         <CardImageWrapper>
-                            <CardImage src="/static/img/earth.jpg" />
+                            <CardImage src={`/upload/product/${p.productThumbnail}`} 
+                            alt="상품 이미지" 
+                            onError={(e) => {
+                                e.target.onerror = null; // 무한 루프 방지
+                                e.target.src = p.productThumbnail.startsWith('/static/')
+                                    ? p.productThumbnail // 원래부터 static이면 그대로 보여줌
+                                    : '/static/img/earth.jpg'; // 그 외는 기본 이미지로 대체
+                              }}/>
                         </CardImageWrapper>
                         <CardContent>
                             <CardSubInfo>
@@ -49,6 +56,7 @@ function ProductCom({products, cityName, handleFilterReset, handleSort, filtered
                                 <ProductUid>상품번호 {p.productUid}</ProductUid>
                             </CardSubInfo>
                             <CardTitle>{p.productTitle}</CardTitle>
+                            <CalendarText>{p.productContent}</CalendarText>
                             <CardPrice>￦ {formatPrice(p.productAdult)}원</CardPrice>
                             <CardSubInfo $noSpaceBetween> {/* noSpaceBetween prop을 적용 */}
                                 <GoCalendar size={24}/>

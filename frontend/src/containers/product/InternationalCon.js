@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import InternationalCom from "../../components/product/InternationalCom";
 import {getCitiesByCountry, getCountryList, getIntlList} from "../../service/ProductService";
-import { Link, useNavigate } from 'react-router-dom';
-import { getProductsByCity } from "../../service/ProductService";
+import { useNavigate } from 'react-router-dom';
 import {Container, CityList, Title, CityButton, CityListContainer, CountryBox} from '../../style/product/StyleDomestic';
 
 const InternationalCon = () => {
@@ -17,17 +16,6 @@ const InternationalCon = () => {
 
     const navigate = useNavigate();
 
-    const getImageByRegion = (regionCode) => {
-        const images = {
-            4: '/images/asia.jpg',
-            5: '/images/europe.jpg',
-            6: '/images/america.jpg',
-            7 : '/images/oceania.jpg',
-            8 : '/images/africa.jpg',
-            // ... 필요한 지역코드 이미지 추가 가능
-        };
-        return images[regionCode] || '/static/img/earth.jpg'; // 매칭이 없는 경우 기본 이미지
-    }
 
     // 초기 데이터 로딩 (대륙 리스트)
     useEffect(() => {
@@ -79,7 +67,6 @@ const InternationalCon = () => {
 
     // 버튼 클릭 시 countryId 불러오는 함수
     const onClickHandler = async (countryId) => {
-        console.log("일본 클릭했을 때 countryCode: ", countryId);
 
         // 해당 countryCode에 포함된 도시들 요청
         await getCitiesByCountry(countryId)
@@ -99,7 +86,6 @@ const InternationalCon = () => {
             <InternationalCom intl={intl} onRegionClick={handleRegionClick}
                               selectedRegion={selectedRegion}
                               countriesVisible={countriesVisible}
-                              getImageByRegion={getImageByRegion}
                               />
             {countriesVisible && (
                 <CityListContainer>
@@ -107,8 +93,7 @@ const InternationalCon = () => {
                             <div key={index}>
                             <CountryBox
                                 onClick={() => {handleCountryClick(c.countryId)}}>
-                                     {/*navigate(`/products/country?country_id=${c.countryId}`)}}>*/}
-                                {c.countryName}
+                                {c.countryNameKR}
                             </CountryBox>
 
                                 {/* City List (해당 Country에 속한 도시 목록만 표시) */}

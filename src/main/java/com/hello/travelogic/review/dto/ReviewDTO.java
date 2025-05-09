@@ -12,6 +12,7 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -22,20 +23,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@Slf4j
 public class ReviewDTO {
 
     private long reviewCode;
-    private MemberEntity member;
-    private ProductEntity product;
-    private OptionEntity option;
-    private OrderEntity order;
-
     private long memberCode;
     private long orderCode;
     private long productCode;
     private long optionCode;
     private Integer reviewRating;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime reviewDate = LocalDateTime.now();
     @Size(min = 10, max = 500, message = "리뷰는 10자 이상 500자 이하로 작성해주세요.")
     private String reviewContent;
@@ -48,14 +45,22 @@ public class ReviewDTO {
     private String productTitle;
     private LocalDate reservationDate;
 
+    public void setOptionEntity(OptionEntity optionEntity) {
+        this.optionCode = optionEntity.getOptionCode();
+        this.reservationDate = optionEntity.getReservationDate();
+        this.productCode = optionEntity.getProduct().getProductCode();
+        this.productTitle = optionEntity.getProduct().getProductTitle();
+    }
+
+    public void setProductEntity(ProductEntity productEntity) {
+        this.productCode = productEntity.getProductCode();
+        this.productTitle = productEntity.getProductTitle();
+    }
+
     public ReviewDTO(ReviewEntity entity) {
         this.reviewCode = entity.getReviewCode();
-        this.member = entity.getMember();
         this.memberCode = entity.getMember().getMemberCode();
-        this.product = entity.getProduct();
         this.productCode = entity.getProduct().getProductCode();
-        this.option = entity.getOption();
-        this.order = entity.getOrder();
         this.orderCode = entity.getOrder().getOrderCode();
         this.reviewRating = entity.getReviewRating();
         this.reviewDate = entity.getReviewDate();
@@ -63,14 +68,26 @@ public class ReviewDTO {
         this.reviewPic = entity.getReviewPic();
         this.reviewStatus = entity.getReviewStatus();
 
+        // 필드 직접 참조 방지
         if (entity.getOrder() != null) {
-//            this.order = entity.getOrder().getOrderCode();
-            this.order = entity.getOrder();
-            this.reservationDate = entity.getOption().getReservationDate();
+            this.orderCode = entity.getOrder().getOrderCode();
+//            this.order = entity.getOrder();
+            log.debug("🟡 OrderEntity 로드 완료 - orderCode: {}", this.orderCode);
         }
-
         if (entity.getMember() != null) {
+            this.memberCode = entity.getMember().getMemberCode();
             this.memberName = entity.getMember().getMemberName();
+            log.debug("🟡 MemberEntity 로드 완료 - memberCode: {}, memberName: {}", this.memberCode, this.memberName);
+        }
+        if (entity.getProduct() != null) {
+            this.productCode = entity.getProduct().getProductCode();
+            this.productTitle = entity.getProduct().getProductTitle();
+            log.debug("🟡 ProductEntity 로드 완료 - productCode: {}, productTitle: {}", this.productCode, this.productTitle);
+        }
+        if (entity.getOption() != null) {
+            this.optionCode = entity.getOption().getOptionCode();
+            this.reservationDate = entity.getOption().getReservationDate();
+            log.debug("🟡 OptionEntity 로드 완료 - optionCode: {}, reservationDate: {}", this.optionCode, this.reservationDate);
         }
     }
 }
