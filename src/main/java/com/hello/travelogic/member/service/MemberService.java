@@ -59,6 +59,7 @@ public class MemberService {
                 .memberEndstatus("N")
                 .socialType(memberDTO.getSocialType())
                 .socialAccountId(memberDTO.getSocialAccountId())
+                .adminActive("Y")
                 .build();
 
         MemberEntity savedMember = memberRepository.save(memberEntity);

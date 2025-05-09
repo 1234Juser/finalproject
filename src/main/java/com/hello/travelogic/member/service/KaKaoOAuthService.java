@@ -225,6 +225,7 @@ public class KaKaoOAuthService {
                         .socialType("kakao")
                         .socialAccountId(kakaoId)
                         .memberProfileImageUrl(profileImageUrl)
+                        .adminActive("Y")
                         .build();
                 newMember = memberRepository.save(newMember);
 
@@ -271,6 +272,7 @@ public class KaKaoOAuthService {
         member.setMemberProfileImageUrl(profileImageUrl);
         member.setSocialType("kakao");
         member.setSocialAccountId(kakaoId);
+        member.setAdminActive("Y");
     }
 
     //카카오 연동해제
