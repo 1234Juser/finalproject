@@ -246,7 +246,7 @@ CREATE TABLE tbl_review (
 );
 
 
-
+# 이벤트테이블
 CREATE TABLE tbl_event (
                            event_code INT AUTO_INCREMENT PRIMARY KEY AUTO_INCREMENT COMMENT '이벤트 번호',
                            event_title VARCHAR(50) NOT NULL COMMENT '제목',
@@ -257,6 +257,7 @@ CREATE TABLE tbl_event (
                            event_enddate DATE NOT NULL COMMENT '이벤트 종료날짜'
 )ENGINE=INNODB COMMENT '이벤트';
 
+# faq테이블
 CREATE TABLE tbl_faq (
                          faq_code INT AUTO_INCREMENT PRIMARY KEY AUTO_INCREMENT COMMENT 'FAQ 번호',
                          faq_title VARCHAR(50) NOT NULL COMMENT '제목',
@@ -349,5 +350,20 @@ CREATE TABLE IF NOT EXISTS tbl_exchange_rates (
                                               updated_date DATETIME NOT NULL COMMENT '환율 기준일시',
                                               UNIQUE KEY unique_rate (base_currency, target_currency, updated_date)
 ) ENGINE=INNODB DEFAULT CHARSET=UTF8MB4 COMMENT='국가별 환율정보';
+
+-- 실시간검색어 테이블 (도시별 조회수를 집계)
+-- city_id는 tbl_city 테이블의 city_id를 참조합니다.
+-- view_count는 해당 도시의 상품 상세 페이지 총 조회수를 저장합니다.
+CREATE TABLE tbl_city_view_count (
+                                     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 식별자',
+                                     city_id BIGINT NOT NULL COMMENT '도시 코드 (tbl_city 테이블 참조)',
+                                     view_count INT NOT NULL DEFAULT 0 COMMENT '도시별 총 조회수',
+                                     last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '마지막 업데이트 시간',
+                                     UNIQUE KEY uk_city_id (city_id), -- 도시당 하나의 집계 레코드만 존재하도록 UNIQUE 제약 조건 추가
+                                     FOREIGN KEY (city_id) REFERENCES tbl_city(city_id) -- tbl_city 테이블을 참조하는 외래 키
+) ENGINE=INNODB COMMENT='도시별 조회수 집계 테이블';
+
+-- 실시간 검색어 순위 조회를 위한 인덱스 추가 (view_count 기준 내림차순 정렬 성능 향상)
+CREATE INDEX idx_city_view_count_view_count ON tbl_city_view_count (view_count DESC);
 
 commit;
