@@ -215,10 +215,9 @@ public class GoogleOAuthService {
             member.setMemberEnddate(LocalDateTime.now());
             memberRepository.save(member);
         }
-      }
-        /** 구글 사용자 객체 */
-        record GoogleUser(String sub, String name, String email, String picture) {
+    }
+    /** 구글 사용자 객체 */
+    record GoogleUser(String sub, String name, String email, String picture) {
     }
 }
-
 

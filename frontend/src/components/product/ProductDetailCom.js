@@ -25,7 +25,6 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
                         e.target.src = '/static/img/earth.jpg';
                       }}/>
             </ImageSection>
-
             <InfoSection>
             <DetailText><strong>판매 상태:</strong> {product.productStatus}</DetailText>
             <Title>{product.productTitle}</Title>

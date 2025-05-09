@@ -3,6 +3,8 @@ package com.hello.travelogic.product.repo;
 import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.CountryEntity;
 import com.hello.travelogic.product.domain.ProductEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -38,5 +40,13 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     // 리뷰 평균내기
     @Query(value = "SELECT AVG(review_rating) FROM tbl_review WHERE product_code = :productCode", nativeQuery = true)
     Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
-    
+
+    //검색어입력창
+    @Query("SELECT p FROM ProductEntity p WHERE p.productTitle LIKE %:kw% OR p.productContent LIKE %:kw%")
+    Page<ProductEntity> searchByTitleOrDescription(@Param("kw") String kw, Pageable pageable);
+
+
+
+
+
 }

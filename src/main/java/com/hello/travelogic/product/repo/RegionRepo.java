@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.repo;
 
+import com.hello.travelogic.product.domain.CountryEntity;
 import com.hello.travelogic.product.domain.RegionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,5 @@ public interface RegionRepo extends JpaRepository<RegionEntity, Long> {
 
     // 지역 -> 국가 조회 (CountryService용)
     RegionEntity findByRegionCode(Long regionCode);
+
 }
