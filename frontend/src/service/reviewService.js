@@ -12,9 +12,27 @@ const path ="http://localhost:8080";
 //     });
 //     return await response.json();
 // }
-const getReviewsByProduct = async (productCode, sort = "date") => {
-    return fetch( path+"/review/product/${productCode}", {method:"get"} )
-}
+export const getReviewsByProductUid = async (productUid, sort = "date") => {
+    try {
+        const response = await fetch(`/review/product/${productUid}?sort=${sort}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`리뷰 조회 실패: ${response.status}`);
+        }
+
+        // const reviews = await response.json();
+        // return reviews;
+        return await response.json();
+    } catch (error) {
+        console.error("리뷰 조회 오류:", error.message);
+        throw error;
+    }
+};
 
 // 로그인 된 회원의 선택 주문에 대한 본인 작성 리뷰 조회
 // export async function getMyReview(orderCode) {
