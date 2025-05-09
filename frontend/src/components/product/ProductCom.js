@@ -25,7 +25,6 @@ function ProductCom({products, cityName, handleFilterReset, handleSort, filtered
     return (
         <TourPageContainer>
         <TourHeader>{cityName}</TourHeader>
-
             <FilterSortBar>
                 <FilterSection>
                     <FilterLabel><GoFilter /> 필터</FilterLabel>
