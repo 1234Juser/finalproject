@@ -118,8 +118,7 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
                     </WeatherWrapper>
                 </FlexSectionWrapper>
                 <SectionWrapper  id="review">
-                    <SubTitle>💬 리뷰</SubTitle>
-                    <p>아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해 주세요!</p>
+                    <ProductReviewCon productUid={product.productUid} />
                 </SectionWrapper >
             </DetailContentWrapper>
         </Container>
