@@ -69,7 +69,6 @@ function WishCon({groupCode, accessToken}) {
     };
 
     const handleDeleteWish = (wishCode) => {
-        // deleteWish 호출 시 accessToken 전달 (필요하다면 wishService.js도 수정해야 합니다)
         deleteWish(wishCode, accessToken)
             .then((data) => {
                 dispatch({ type: "SET_WISH_LIST", data });
@@ -80,7 +79,6 @@ function WishCon({groupCode, accessToken}) {
     };
 
     const handleDeleteGroup = (groupCode) => {
-        // deleteGroup 호출 시 accessToken 전달 (필요하다면 wishService.js도 수정해야 합니다)
         deleteGroup(groupCode, accessToken)
             .then((data) => {
                 dispatch({ type: "SET_GROUPS", data });
@@ -94,8 +92,6 @@ function WishCon({groupCode, accessToken}) {
 
     const handleAddWish = async (productCode) => {
         try {
-            // 로컬 스토리지에서 accessToken 가져오는 대신 props로 받은 accessToken 사용
-            // const token = localStorage.getItem("accessToken");
             const response = await axios.post(`/wish/toggle/${productCode}`, {}, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`, // props로 받은 accessToken 사용

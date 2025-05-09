@@ -22,7 +22,6 @@ function WishGroupPage() {
 
     return(
         <>
-            {/* WishCon에 memberCode 대신 accessToken 전달 */}
             <WishCon accessToken={accessToken}
             />
         </>
