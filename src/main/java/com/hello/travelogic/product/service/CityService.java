@@ -27,15 +27,15 @@ public class CityService {
     private final RegionRepo regionRepo;
 
 
-//    public CityDTO getCityById(Long cityId) {
-//
-//        CityEntity cityEntity = cityRepo.findByCityId(cityId);
-//        if(cityEntity == null) {
-//            throw new NoSuchElementException("일치하는 도시를 찾을 수 없습니다.");
-//        }
-//
-//        return new CityDTO(cityEntity);
-//    }
+    public CityDTO getCityById(Long cityId) {
+
+        CityEntity cityEntity = cityRepo.findByCityId(cityId);
+        if(cityEntity == null) {
+            throw new NoSuchElementException("일치하는 도시를 찾을 수 없습니다.");
+        }
+
+        return new CityDTO(cityEntity);
+    }
 
     public List<CityDTO> getCitiesByCountry(Long countryId) {
 

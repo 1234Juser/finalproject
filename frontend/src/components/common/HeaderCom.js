@@ -21,6 +21,7 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
                         <SearchInputPage />
                         <RealtimeRanking /> {/* 실시간 랭킹 컴포넌트 추가 */}
                     </div>
+
                     {/*로그인버튼*/}
                     <HeaderRight>                        
                         {isLoggedIn ? (

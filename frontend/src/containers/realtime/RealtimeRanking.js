@@ -10,14 +10,10 @@ const RankingContainer = styled.div`
     background-color: #fff; // 배경색 추가
     padding: 10px 20px; // 패딩 추가
     border-radius: 20px; // 둥근 모서리
-    width: fit-content; // 내용물 크기에 맞게 너비 조절
+    width: 180px; /* 고정 너비 설정 (필요에 따라 값 조정) */
+    min-width: 180px; /* 최소 너비 설정 */
     position: relative; /* 자식 요소의 absolute positioning 기준 */
     z-index: 100; /* 다른 요소 위에 오도록 z-index 설정 */
-
-    /* 마우스 오버 시 랭킹 목록을 보이도록 설정 */
-    &:hover .ranking-list {
-        display: block; /* 랭킹 목록 보이도록 설정 */
-    }
 `;
 
 const RankingHeader = styled.div`
@@ -27,6 +23,11 @@ const RankingHeader = styled.div`
     cursor: pointer; // 헤더 클릭 가능하도록
     padding-bottom: 5px;
     border-bottom: 1px solid #eee; // 구분선 추가
+    /* 랭킹이 숨겨졌을 때 하단 보더 제거 */
+    ${props => !props.$isVisible && `
+        border-bottom: none;
+        padding-bottom: 0;
+    `}
 `;
 
 const RankingTitle = styled.strong`
@@ -36,18 +37,27 @@ const RankingTitle = styled.strong`
 const RankingList = styled.ul`
     list-style: none;
     padding: 0;
-    margin: 5px 0 0 0; // 위쪽에 마진 추가
+    margin: 10px 0 0 0; /* 제목과 도시 이름 간격 조정 */
     overflow: hidden; /* 숨겨진 항목 감추기 */
-    display: none; /* 기본적으로 숨김 */
+    height: ${props => props.$isVisible ? 'auto' : 'auto'}; /* 숨김 상태일 때 높이 자동 */
 
-    position: absolute; /* 헤더 아래로 오버레이 */
-    top: 100%; /* 헤더 바로 아래에 위치 */
-    left: 0; /* 컨테이너의 왼쪽 정렬 */
-    background-color: #f8f9fa; /* 배경색 유지 */
-    border-radius: 0 0 20px 20px; /* 하단 모서리만 둥글게 */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-    width: 100%; /* 부모 컨테이너 너비에 맞춤 */
-    padding-top: 5px; /* 펼쳤을 때 상단 여백 */
+
+    /* 랭킹이 보일 때만 absolute 스타일 적용 */
+    ${props => props.$isVisible && `
+        position: absolute; /* 헤더 아래로 오버레이 */
+        top: 100%; /* 헤더 바로 아래에 위치 */
+        left: 0; /* 컨테이너의 왼쪽 정렬 */
+        background-color: #f8f9fa; /* 배경색 유지 */
+        border-radius: 0 0 20px 20px; /* 하단 모서리만 둥글게 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+        width: 100%; /* 부모 컨테이너 너비에 맞춤 */
+        padding-top: 5px; /* 펼쳤을 때 상단 여백 */
+    `}
+
+        /* 랭킹이 숨겨졌을 때 스타일 */
+    ${props => !props.$isVisible && `
+        margin-top: 0;
+    `}
 `;
 
 
@@ -55,11 +65,15 @@ const RankingItem = styled.li`
     margin-bottom: 8px; // 세로 간격 조절
     &:last-child {
         margin-bottom: 0;
-        padding-bottom: 10px; /* 하단 패딩 추가 */
+        /* 랭킹이 보일 때만 하단 패딩 추가 */
+        ${props => props.$isVisible && `
+            padding-bottom: 10px;
+        `}
     }
     cursor: pointer; // 클릭 가능한 항목임을 표시
     transition: all 0.3s ease-in-out; // 모든 속성에 애니메이션 적용
     padding: 0 20px; /* 좌우 패딩 추가 (컨테이너 패딩과 맞춤) */
+
 
     display: flex;
     align-items: center;
@@ -75,7 +89,11 @@ const RankingItem = styled.li`
     .city-name {
         flex-grow: 1; // 남은 공간 채우기
         text-align: left; // 도시 이름 왼쪽 정렬
+        overflow: hidden; /* 내용 넘칠 경우 숨김 */
+        text-overflow: ellipsis; /* 넘치는 내용 ...으로 표시 */
+        white-space: nowrap; /* 줄바꿈 방지 */
     }
+
 
     &:hover {
         color: #0056b3; // 호버 시 색상 변경
@@ -86,6 +104,8 @@ const RankingItem = styled.li`
 function RealtimeRanking() {
     const [ranking, setRanking] = useState([]);
     const [error, setError] = useState(null);
+    const [isRankingVisible, setIsRankingVisible] = useState(false); // 랭킹 목록 표시/숨김 상태
+    const [currentRankingIndex, setCurrentRankingIndex] = useState(0); // 현재 표시할 랭킹 항목의 인덱스
 
     useEffect(() => {
         const fetchRanking = async () => {
@@ -109,6 +129,21 @@ function RealtimeRanking() {
 
     }, []);
 
+    // 랭킹 목록 자동 슬라이드 효과 (마우스 오버 상태가 아닐 때만 동작)
+    useEffect(() => {
+        let slideInterval;
+        if (!isRankingVisible && ranking.length > 0) { // isRankingVisible이 false일 때만 동작
+            slideInterval = setInterval(() => {
+                setCurrentRankingIndex(prevIndex =>
+                    (prevIndex + 1) % Math.min(ranking.length, 10) // 최대 10개 항목 내에서 순환
+                );
+            }, 3000); // 3초마다 다음 항목 표시
+        }
+
+        // 컴포넌트 언마운트 또는 isRankingVisible, ranking 상태 변경 시 인터벌 클리어
+        return () => clearInterval(slideInterval);
+    }, [isRankingVisible, ranking]); // isRankingVisible 또는 ranking 상태 변경 시 useEffect 다시 실행
+
     // 클릭 시 해당 도시 검색 기능 (예시)
     const handleCityClick = (cityName) => {
         // 실제 검색 기능을 구현해야 합니다.
@@ -129,19 +164,33 @@ function RealtimeRanking() {
     const displayedRanking = ranking.slice(0, 10);
 
     return (
-        <RankingContainer>
-            <RankingHeader>
+        <RankingContainer
+            onMouseEnter={() => setIsRankingVisible(true)} // 마우스 진입 시 랭킹 목록 표시
+            onMouseLeave={() => setIsRankingVisible(false)} // 마우스 이탈 시 랭킹 목록 숨김
+        >
+            <RankingHeader $isVisible={isRankingVisible}> {/* isRankingVisible 상태에 따라 스타일 변경 */}
                 <RankingTitle>실시간 인기 도시 순위</RankingTitle>
             </RankingHeader>
 
-            {/* 랭킹 목록 (기본적으로 숨김, 마우스 오버 시 표시) */}
-            <RankingList className="ranking-list"> {/* 클래스 이름 추가 */}
-                {displayedRanking.map((item, index) => (
-                    <RankingItem key={index} onClick={() => handleCityClick(item.cityName)}>
-                        <span className="rank-number">{index + 1}.</span>
-                        <span className="city-name">{item.cityName}</span>
-                    </RankingItem>
-                ))}
+            {/* 랭킹 목록 (상태에 따라 조건부 렌더링) */}
+            <RankingList $isVisible={isRankingVisible}>
+                {isRankingVisible ? (
+                    // 펼쳤을 때 전체 목록 표시
+                    displayedRanking.map((item, index) => (
+                        <RankingItem key={index} onClick={() => handleCityClick(item.cityName)} $isVisible={isRankingVisible}>
+                            <span className="rank-number">{index + 1}.</span> {/* 모든 항목에 순위 번호 표시 */}
+                            <span className="city-name">{item.cityName}</span>
+                        </RankingItem>
+                    ))
+                ) : (
+                    // 접었을 때 현재 인덱스에 해당하는 항목만 표시
+                    displayedRanking.length > 0 && (
+                        <RankingItem key={currentRankingIndex} onClick={() => handleCityClick(displayedRanking[currentRankingIndex].cityName)} $isVisible={isRankingVisible}>
+                            <span className="rank-number">{currentRankingIndex + 1}.</span> {/* 현재 인덱스의 순위 번호 */}
+                            <span className="city-name">{displayedRanking[currentRankingIndex].cityName}</span> {/* 현재 인덱스의 도시 이름 */}
+                        </RankingItem>
+                    )
+                )}
             </RankingList>
         </RankingContainer>
     );

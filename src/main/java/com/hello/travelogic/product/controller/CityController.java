@@ -20,12 +20,12 @@ public class CityController {
     @Autowired
     private final CityService cityService;
 
-//    // cityId로 해당하는 도시 정보 불러오기
-//    @GetMapping("/city/{cityId}")
-//    public ResponseEntity<CityDTO> getCityById(@PathVariable("cityId") Long cityId) {
-//        log.debug("cityId : {}", cityId);
-//        return ResponseEntity.status(HttpStatus.OK).body(cityService.getCityById(cityId));
-//    }
+    // cityId로 해당하는 도시 정보 불러오기
+    @GetMapping("/city/{cityId}")
+    public ResponseEntity<CityDTO> getCityById(@PathVariable("cityId") Long cityId) {
+        log.debug("cityId : {}", cityId);
+        return ResponseEntity.status(HttpStatus.OK).body(cityService.getCityById(cityId));
+    }
 
 
     // 국가별 도시 목록 불러오기
