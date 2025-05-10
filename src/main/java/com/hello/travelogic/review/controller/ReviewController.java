@@ -6,6 +6,7 @@ import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.review.domain.ReviewStatus;
 import com.hello.travelogic.review.dto.ReviewDTO;
+import com.hello.travelogic.review.repo.ReviewRepo;
 import com.hello.travelogic.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,17 +31,18 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final MemberRepository memberRepository;
     private final OptionRepo optionRepo;
+    private final ReviewRepo reviewRepo;
 
     // 상품 상세페이지 내 리뷰 조회
-    @GetMapping("/review/product/{productCode}")
-    public ResponseEntity<List<ReviewDTO>> getReviewListByProductCode(@PathVariable("productCode") long productCode,
+    @GetMapping("/review/product/{productUid}")
+    public ResponseEntity<List<ReviewDTO>> getReviewListByProductUid(@PathVariable("productUid") String productUid,
                                                                       @RequestParam(defaultValue = "date") String sort) {
-        log.debug("받은 productCode: {}", productCode);
+        log.debug("받은 productCode: {}", productUid);
 //        List<ReviewDTO> reviews = reviewService.getReviewsByProductCode(productCode, sort);
 //        log.debug("가져온 리뷰 개수: {}", reviews.size());
 //        return ResponseEntity.ok(reviews);
         // 합친 버전
-        return ResponseEntity.ok(reviewService.getReviewsByProductCode(productCode, sort));
+        return ResponseEntity.ok(reviewService.getReviewsByProductCode(productUid, sort));
     }
 
     // 로그인 된 회원의 선택 주문에 대한 리뷰 조회
@@ -226,5 +229,27 @@ public class ReviewController {
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(role -> role.equals("ROLE_ADMIN"));
+    }
+
+    // 리뷰 평균내기
+    @GetMapping("/review/product/{productUid}/average")
+    public ResponseEntity<Double> getAverageRatingByProductUid(@PathVariable String productUid) {
+        try {
+            double averageRating = reviewService.getAverageRatingByProductUid(productUid);
+            return ResponseEntity.ok(averageRating);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0.0);
+        }
+    }
+
+    // 리뷰 개수
+    @GetMapping("/review/product/{productUid}/count")
+    public ResponseEntity<Integer> getReviewCountByProductUid(@PathVariable String productUid) {
+        try {
+            int reviewCount = reviewService.getReviewCountByProductUid(productUid);
+            return ResponseEntity.ok(reviewCount);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
+        }
     }
 }

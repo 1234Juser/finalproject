@@ -1,7 +1,7 @@
 import React from 'react';
 import {RegionGrid, RegionButton, RegionImage, RegionCard} from '../../style/product/StyleDomestic';
 
-const InternationalCom = ({intl, onRegionClick, selectedRegion, countriesVisible, getImageByRegion}) => {
+const InternationalCom = ({intl, onRegionClick, selectedRegion}) => {
     return (
         <RegionGrid>
             {intl.map((i, index) => (

@@ -41,7 +41,7 @@ const KakaoBtn = styled.img`
     cursor: pointer;
     width: 100%;
     max-width: 340px;
-    height: 48px;             
+    height: 48px;
     object-fit: cover;
     border-radius: 12px;
     border: 2px solid #fae100;
@@ -83,7 +83,7 @@ const GoogleBtn = styled.img`
     cursor: pointer;
     width: 100%;
     max-width: 340px;
-    height: 48px;             
+    height: 48px;
     object-fit: cover;
     border-radius: 12px;
     border: 2px solid #4285f4;

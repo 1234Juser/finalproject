@@ -59,6 +59,7 @@ public class MemberService {
                 .memberEndstatus("N")
                 .socialType(memberDTO.getSocialType())
                 .socialAccountId(memberDTO.getSocialAccountId())
+                .adminActive("Y")
                 .build();
 
         MemberEntity savedMember = memberRepository.save(memberEntity);
@@ -282,13 +283,13 @@ public class MemberService {
     }
     //랜덤6자리
     private String generateRandomPassword(int length) {
-       String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-       StringBuilder sb = new StringBuilder();
-       for(int i = 0; i < length; i++) {
-           int index = (int)(Math.random() * chars.length());
-           sb.append(chars.charAt(index));
-       }
-       return sb.toString();
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < length; i++) {
+            int index = (int)(Math.random() * chars.length());
+            sb.append(chars.charAt(index));
+        }
+        return sb.toString();
     }
 
     // 비밀번호 찾기(두번째 방법)

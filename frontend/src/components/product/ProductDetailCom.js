@@ -5,6 +5,7 @@ import { WishButton, Container, ImageSection, InfoSection, Title, PriceWrapper, 
 } from "../../style/product/StyleProductDetail";
 import MapSection from "../../containers/product/MapSection";
 import WeatherSection from "../../containers/product/WeatherSection";
+import ProductReviewCon from "../../containers/review/ProductReviewCon";
 
 
 function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSection}) {
@@ -13,10 +14,17 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
         <Container>
             <MainSectionWrapper>
             <ImageSection>
-                {/* <img src={product.productThumbnail} alt="상품 이미지" /> */}
-                <img src="/static/img/product/london.jpg" alt="상품 이미지" />
+                <img src={
+                    product.productThumbnail?.startsWith('/static/') 
+                        ? product.productThumbnail
+                        : `/upload/product/${product.productThumbnail}`
+                } 
+                    alt="상품 이미지" 
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/static/img/earth.jpg';
+                      }}/>
             </ImageSection>
-
             <InfoSection>
             <DetailText><strong>판매 상태:</strong> {product.productStatus}</DetailText>
             <Title>{product.productTitle}</Title>
@@ -113,8 +121,7 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
                     </WeatherWrapper>
                 </FlexSectionWrapper>
                 <SectionWrapper  id="review">
-                    <SubTitle>💬 리뷰</SubTitle>
-                    <p>아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해 주세요!</p>
+                    <ProductReviewCon productUid={product.productUid} />
                 </SectionWrapper >
             </DetailContentWrapper>
         </Container>

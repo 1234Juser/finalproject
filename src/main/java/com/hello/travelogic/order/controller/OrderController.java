@@ -28,35 +28,4 @@ public class OrderController {
         OrderDTO orderDTO = orderService.getOrder(orderCode);
         return ResponseEntity.ok(orderDTO);
     }
-
-    //    // 본인의 예약 조회
-    //    @GetMapping("/mypagy/reservations/{memberCode}")
-    //    public ResponseEntity<List<OrderDTO>> getMyBookingList(
-    //            @AuthenticationPrincipal MemberDTO member
-    //            ) {
-    //        List<OrderDTO> personalBookingList = orderService.getBookingsByMemberIdAndStatus(memberCode, orderStatus);
-    //        return ResponseEntity.status(HttpStatus.OK).body(personalBookingList);
-    //    }
-    //
-    //    // 지난 여행 조회하기
-    //    @GetMapping("/order/completed/{memberCode}")
-    //    public ResponseEntity<List<OrderDTO>> getCompletedOrders(@PathVariable long memberCode) {
-    //        List<OrderDTO> orders = orderService.getCompletedOrders(memberCode);
-    //        return ResponseEntity.ok(orders);
-    //    }
-    //
-    //    // 지난 여행 내역 조회(isReviewed포함)
-    //    @GetMapping("/past/{memberCode}")
-    //    public ResponseEntity<List<OrderDTO>> getPastTrips(@PathVariable("memberCode") long memberCode) {
-    //        log.debug(">>>>> 지난여행 조회 memberCode = {}", memberCode);
-    //
-    //        List<OrderDTO> pastTrips = orderService.getPastTripsByMember(memberCode);
-    //        return ResponseEntity.ok(pastTrips);
-    //    }
-    //
-    //    // 모든 사용자의 예약 조회 + 10개씩 페이징처리
-    //    @GetMapping("/admin/manage/booking")
-    //    public ResponseEntity getAllMemberBookingList(@RequestParam(value="start", defaultValue="0")int start) {
-    //        return ResponseEntity.status(HttpStatus.OK).body(orderService.getAllMemberBookingList(start));
-    //    }
 }

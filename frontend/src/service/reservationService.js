@@ -8,16 +8,15 @@ const path = "http://localhost:8080";
 //     return res.data;
 // }
 // 최근 6개월 이내 본인예약 조회
-export async function fetchRecentReservations() {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function fetchRecentReservations(accessToken) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     try {
@@ -30,16 +29,15 @@ export async function fetchRecentReservations() {
 }
 
 // 6개월 이전 본인예약 추가 조회
-export async function fetchOldReservations() {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function fetchOldReservations(accessToken) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
 
@@ -53,16 +51,15 @@ export async function fetchOldReservations() {
 }
 
 // 관리자의 예약 관리
-export async function fetchAllReservations(start = 0) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function fetchAllReservations(accessToken, start = 0) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
 
@@ -76,16 +73,15 @@ export async function fetchAllReservations(start = 0) {
 }
 
 // 예약일이 지나면 상태변경
-export async function updateReservationStatus(orderCode) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function updateReservationStatus(accessToken, orderCode) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
 
@@ -99,16 +95,15 @@ export async function updateReservationStatus(orderCode) {
 }
 
 // 관리자가 예약 취소(다중 가능)
-export async function cancelReservations(orderCodeList) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function cancelReservations(orderCodeList, accessToken) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
 
@@ -122,16 +117,15 @@ export async function cancelReservations(orderCodeList) {
 }
 
 // 로그인 사용자가 본인의 예약 취소
-export async function cancelMyReservation(orderCode) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function cancelMyReservation(orderCode, accessToken) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
 
@@ -145,9 +139,8 @@ export async function cancelMyReservation(orderCode) {
 }
 
 // 상품 목록 조회 (관리자 예약 필터용)
-export async function fetchProductListForFilter() {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function fetchProductListForFilter(accessToken) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
@@ -155,7 +148,7 @@ export async function fetchProductListForFilter() {
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
 
@@ -170,9 +163,8 @@ export async function fetchProductListForFilter() {
 
 // 상품별 예약 조회
 // 디폴트인 전체일 경우 /admin/booking으로 요청
-export async function fetchReservationsByProductCode(productCode, start = 1) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
+export async function fetchReservationsByProductCode(productCode, accessToken, start = 1) {
+    if (!accessToken) {
         console.error("accessToken 없음");
         return;
     }
@@ -180,7 +172,7 @@ export async function fetchReservationsByProductCode(productCode, start = 1) {
     const config = {
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
         params: { start }
     };

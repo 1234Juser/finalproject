@@ -128,8 +128,8 @@ public class KaKaoOAuthService {
         if (optionalMember.isPresent()) {
             MemberEntity member = optionalMember.get();
             if (!"Y".equals(member.getAdminActive())) {
-                    throw new RuntimeException("관리자에 의해 비활성화된 계정입니다.");
-                }
+                throw new RuntimeException("관리자에 의해 비활성화된 계정입니다.");
+            }
             // (1) 탈퇴 상태면 재활성
             if ("Y".equals(member.getMemberEndstatus())) {
                 updateMemberAsRejoinedFromKakao(member, nickname, email, profileImageUrl, kakaoId);
@@ -225,6 +225,7 @@ public class KaKaoOAuthService {
                         .socialType("kakao")
                         .socialAccountId(kakaoId)
                         .memberProfileImageUrl(profileImageUrl)
+                        .adminActive("Y")
                         .build();
                 newMember = memberRepository.save(newMember);
 
@@ -271,6 +272,7 @@ public class KaKaoOAuthService {
         member.setMemberProfileImageUrl(profileImageUrl);
         member.setSocialType("kakao");
         member.setSocialAccountId(kakaoId);
+        member.setAdminActive("Y");
     }
 
     //카카오 연동해제

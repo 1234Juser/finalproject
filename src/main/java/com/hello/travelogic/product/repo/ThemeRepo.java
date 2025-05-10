@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.repo;
 
+import com.hello.travelogic.product.domain.CountryEntity;
 import com.hello.travelogic.product.domain.ThemeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -27,7 +27,7 @@ const reducer = (state, action) => {
         case "REMOVE_REVIEW":
             return {
                 ...state,
-                reviews: state.reviews.map(review =>
+                reviews: state.reviews.filter(review =>
                     review.reviewCode !== action.payload)
             };
         case "UPDATE_REVIEW_STATUS":
@@ -41,6 +41,10 @@ const reducer = (state, action) => {
             };
         case "SET_SORT_OPTION":
             return { ...state, sortOption: action.data };
+        case "SET_AVERAGE_RATING":
+            return { ...state, averageRating: action.data };
+        case "SET_REVIEW_COUNT":
+            return { ...state, reviewCount: action.data };
         case "SET_LOADING":
             return { ...state, loading: action.data };
         case "SET_ERROR":

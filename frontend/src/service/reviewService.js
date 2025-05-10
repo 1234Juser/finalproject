@@ -2,6 +2,52 @@ import axios from "axios";
 
 const path ="http://localhost:8080";
 
+// export const getAverageRatingByProductUid = async (productUid) => {
+//     const response = await axios.get(`/review/product/${productUid}/average`);
+//     return response.data;
+// };
+export const getReviewCountByProductUid = async (productUid) => {
+    try {
+        const response = await fetch(`/review/product/${productUid}/count`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`리뷰 개수 조회 실패: ${response.status}`);
+        }
+
+        const reviewCount = await response.json();
+        console.log("리뷰 개수:", reviewCount);
+        return reviewCount;
+    } catch (error) {
+        console.error("리뷰 개수 조회 오류:", error.message);
+        throw error;
+    }
+};
+export const getAverageRatingByProductUid = async (productUid) => {
+    try {
+        const response = await fetch(`/review/product/${productUid}/average`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`평균 평점 조회 실패: ${response.status}`);
+        }
+
+        const averageRating = await response.json();
+        return averageRating;
+    } catch (error) {
+        console.error("평균 평점 조회 오류:", error.message);
+        throw error;
+    }
+};
+
 // 상품 상세페이지 내 해당 상품의 전체 리뷰 조회(디폴트 작성일 내림차순)
 // export async function getReviewsByProduct(productCode, sort = "date") {
 //     const response = await axios.get(`${path}/review/product/${productCode}`, {
@@ -12,9 +58,27 @@ const path ="http://localhost:8080";
 //     });
 //     return await response.json();
 // }
-const getReviewsByProduct = async (productCode, sort = "date") => {
-    return fetch( path+"/review/product/${productCode}", {method:"get"} )
-}
+export const getReviewsByProductUid = async (productUid, sort = "date") => {
+    try {
+        const response = await fetch(`/review/product/${productUid}?sort=${sort}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`리뷰 조회 실패: ${response.status}`);
+        }
+
+        // const reviews = await response.json();
+        // return reviews;
+        return await response.json();
+    } catch (error) {
+        console.error("리뷰 조회 오류:", error.message);
+        throw error;
+    }
+};
 
 // 로그인 된 회원의 선택 주문에 대한 본인 작성 리뷰 조회
 // export async function getMyReview(orderCode) {

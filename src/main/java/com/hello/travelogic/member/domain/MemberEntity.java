@@ -50,7 +50,7 @@ public class MemberEntity {
     private String memberEndstatus = "N";
 
     @Column(name="admin_active", length = 20)
-    private String adminActive;
+    private String adminActive = "Y";
 
     @Column(name="social_type", length=255)
     private String socialType;
