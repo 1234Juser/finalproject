@@ -14,10 +14,6 @@ function ProductCon(){
     const countryId = searchParams.get("country_id");
     const cityId = searchParams.get("city_id");
 
-    console.log("searchParams: ", searchParams);
-    console.log("searchParams countryId: ", countryId);
-    console.log("searchParams cityId: ", cityId);
-
     useEffect( () => {
         if (countryId) {
             // countryId가 있을 경우 국가 기반 상품 조회
@@ -35,19 +31,21 @@ function ProductCon(){
                     console.log("도시별 투어 상품 리스트: ", data);
                     setProducts(data);
                     setOriginalData(data);
+                    setCityName(data[0].cityNameKR)
                 })
                 .catch((err) => console.error("상품 조회 오류 (도시):", err));
         }
 
-        if (cityId) {
-            getCityById(cityId)
-                .then((cityData) => {
-                    setCityName(cityData.cityNameKR)
-                })
-        }
+        // if (cityId) {
+        //     getCityById(cityId)
+        //         .then((cityData) => {
+        //             console.log("getCityById 데이터  : ", cityData);
+        //             setCityName(cityData.cityNameKR)
+        //         })
+        // }
     }, [countryId, cityId])
 
-    console.log("products----->", products);
+    // console.log("products----->", products);
 
 
     const handleSort = (type) => {
@@ -61,7 +59,7 @@ function ProductCon(){
 
     const filteredProducts = useMemo(() => {
         const copied = [...products];
-        console.log("copied 확인.. " , copied);
+        // console.log("copied 확인.. " , copied);
         switch (sortBy) {
             case "low":
                 return copied.sort((a, b) => a.productAdult - b.productAdult);
