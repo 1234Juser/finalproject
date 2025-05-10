@@ -32,6 +32,7 @@ public class ProductDTO {
     private RegionEntity.RegionType regionType;
     private String cityName;
     private String countryName;
+    private String cityNameKR;
     private String fullLocation;
     private String productDescription;
 
@@ -39,29 +40,30 @@ public class ProductDTO {
     @JsonProperty("isWished")
     private boolean wished;
 
-    public ProductDTO(ProductEntity productDTO) {
-        this.productCode = productDTO.getProductCode();
-        this.productUid = productDTO.getProductUid();
-        this.regionCode = productDTO.getRegionCode().getRegionCode();
-        this.countryId = productDTO.getCountryId().getCountryId();
-        this.cityId = productDTO.getCityId().getCityId();
-        this.themeCode = productDTO.getThemeCode().getThemeCode();
-        this.productTitle = productDTO.getProductTitle();
-        this.productContent = productDTO.getProductContent();
-        this.productAdult = productDTO.getProductAdult();
-        this.productChild = productDTO.getProductChild();
-        this.productStartDate = productDTO.getProductStartDate().toString();
-        this.productEndDate = productDTO.getProductEndDate().toString();
-        this.productMinParticipants = productDTO.getProductMinParticipants();
-        this.productMaxParticipants = productDTO.getProductMaxParticipants();
-        this.productStatus = productDTO.getProductStatus();
-        this.productThumbnail = productDTO.getProductThumbnail();
-        this.productType = productDTO.getProductType();
-        this.reviewCount = productDTO.getReviewCount();
-        this.regionType = productDTO.getRegionType();
-        this.cityName = productDTO.getCityName();
-        this.countryName = productDTO.getCountryName();
-        this.fullLocation = productDTO.getFullLocation();
-        this.productDescription = productDTO.getProductDescription();
+    public ProductDTO(ProductEntity productEntity) {
+        this.productCode = productEntity.getProductCode();
+        this.productUid = productEntity.getProductUid();
+        this.regionCode = productEntity.getRegionCode().getRegionCode();
+        this.countryId = productEntity.getCountryId().getCountryId();
+        this.cityId = productEntity.getCityId().getCityId();
+        this.themeCode = productEntity.getThemeCode().getThemeCode();
+        this.productTitle = productEntity.getProductTitle();
+        this.productContent = productEntity.getProductContent();
+        this.productAdult = productEntity.getProductAdult();
+        this.productChild = productEntity.getProductChild();
+        this.productStartDate = productEntity.getProductStartDate().toString();
+        this.productEndDate = productEntity.getProductEndDate().toString();
+        this.productMinParticipants = productEntity.getProductMinParticipants();
+        this.productMaxParticipants = productEntity.getProductMaxParticipants();
+        this.productStatus = productEntity.getProductStatus();
+        this.productThumbnail = productEntity.getProductThumbnail();
+        this.productType = productEntity.getProductType();
+        this.reviewCount = productEntity.getReviewCount();
+        this.regionType = productEntity.getRegionType();
+        this.cityName = productEntity.getCityName();
+        this.countryName = productEntity.getCountryName();
+        this.cityNameKR = productEntity.getCityId().getCityNameKR();
+        this.fullLocation = productEntity.getFullLocation();
+        this.productDescription = productEntity.getProductDescription();
     }
 }
