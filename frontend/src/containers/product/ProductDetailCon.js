@@ -16,7 +16,7 @@ function ProductDetailCon({productCode, initialWishState, memberCode}) {
     });
 
 
-    console.log("선택된 상품의 productUid", productUid);
+    // console.log("선택된 상품의 productUid", productUid);
 
 
     useEffect(() => {
@@ -29,7 +29,7 @@ function ProductDetailCon({productCode, initialWishState, memberCode}) {
             .catch((err) => console.error("상품 조회 오류 (국가):", err));
     }, [productUid])
 
-    console.log("product----->", product);
+    // console.log("product----->", product);
 
     const handleWishToggle = async () => {
         try {

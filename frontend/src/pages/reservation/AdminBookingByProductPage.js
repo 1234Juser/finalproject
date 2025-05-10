@@ -1,9 +1,10 @@
 import AdminBookingByProductCon from "../../containers/booking/AdminBookingByProductCon";
 
 function AdminBookingByProductPage() {
+    const accessToken = localStorage.getItem("accessToken");
     return(
     <>
-        <AdminBookingByProductCon />
+        <AdminBookingByProductCon accessToken={accessToken} />
     </>
     )
 }

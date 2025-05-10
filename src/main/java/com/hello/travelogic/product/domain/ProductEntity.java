@@ -1,6 +1,7 @@
 package com.hello.travelogic.product.domain;
 
 import com.hello.travelogic.product.dto.ProductDTO;
+import com.hello.travelogic.review.domain.ReviewEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -102,6 +103,8 @@ public class ProductEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewEntity> reviews = new ArrayList<>();
 
 
     @PrePersist
@@ -154,4 +157,8 @@ public class ProductEntity {
         HONEYMOON,
         SILVER
     }
+
+//    public void updateReviewCount(int newCount) {
+//        this.reviewCount = newCount;
+//    }
 }

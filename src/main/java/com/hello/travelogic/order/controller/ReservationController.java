@@ -2,7 +2,6 @@ package com.hello.travelogic.order.controller;
 
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.order.dto.OrderDTO;
-//import com.hello.travelogic.order.service.OrderService;
 import com.hello.travelogic.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +44,7 @@ public class ReservationController {
             result = orderService.getAllMemberBookingList(start);
         }
         return ResponseEntity.ok(result);
+        // return ResponseEntity.status(HttpStatus.OK).body(orderService.getAllMemberBookingList(start));
     }
 
     // 로그인 회원의 예약 조회

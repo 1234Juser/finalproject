@@ -74,13 +74,6 @@ public class JwtUtil {
         }
     }
 
-    public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
 
     public List<String> getRolesFromToken(String token) {
         Claims claims = Jwts.parser()

@@ -19,8 +19,8 @@ const TabButton = styled.button`
     background: none;
     border: none;
     cursor: pointer;
-    font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
-    border-bottom: ${({ active }) => (active ? '4px solid black' : 'none')};
+    font-weight: ${({ $active }) => ($active ? 'bold' : 'normal')};
+    border-bottom: ${({ $active }) => ($active ? '4px solid black' : 'none')};
 `;
 
 const activeTabStyle = {
@@ -79,7 +79,7 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         <TabButton
                             key={index}
                             onClick={() => onChangeTab(index)}
-                            active={isActive}
+                            $active={isActive}
                         >
                             {label}
                         </TabButton>

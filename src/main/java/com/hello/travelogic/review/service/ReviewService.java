@@ -15,12 +15,10 @@ import com.hello.travelogic.review.dto.ReviewDTO;
 import com.hello.travelogic.review.repo.ReviewRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +26,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -48,16 +47,16 @@ public class ReviewService {
     private static final String REVIEW_DIR = "upload/review/";
 //    final String DIR = "C:/Users/hi/Desktop/hello_travelogic/upload/review/";
 
-    public List<ReviewDTO> getReviewsByProductCode(long productCode, String sortOption) {
+    public List<ReviewDTO> getReviewsByProductCode(String ProductUid, String sortOption) {
         List<ReviewEntity> entities;
 
         if ("rating".equalsIgnoreCase(sortOption)) {
-            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewRatingDesc(productCode); // 평점 높은순
+            entities = reviewRepo.findByOrder_Product_ProductUidOrderByReviewRatingDesc(ProductUid); // 평점 높은순
         } else {
             // order_code 타고 찾은 product_code
 //            entities = reviewRepo.findByOrder_Product_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
             // product_code가 직접 FK로 들어온 거로 수정 한 후
-            entities = reviewRepo.findByProduct_ProductCodeOrderByReviewDateDesc(productCode); // 최신순
+            entities = reviewRepo.findByProduct_ProductUidOrderByReviewDateDesc(ProductUid); // 최신순
         }
 
         return entities
@@ -321,5 +320,31 @@ public class ReviewService {
             e.printStackTrace();
         }
         return imageBytes;
+    }
+
+    public double getAverageRatingByProductUid(String productUid) {
+        // productUid로 productCode 찾기
+        ProductEntity product = productRepo.findByProductUid(productUid)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        Long productCode = product.getProductCode();
+
+        // 해당 productCode로 리뷰 평균 평점 계산하기
+        List<ReviewEntity> reviews = reviewRepo.findByProduct_ProductCode(productCode);
+        if (reviews.isEmpty()) {
+            return 0.0;
+        }
+
+        double sum = reviews.stream().mapToInt(ReviewEntity::getReviewRating).sum();
+        return sum / reviews.size();
+    }
+
+    public int getReviewCountByProductUid(String productUid) {
+
+        ProductEntity product = productRepo.findByProductUid(productUid)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        Long productCode = product.getProductCode();
+        return reviewRepo.countByProduct_ProductCode(productCode);
     }
 }

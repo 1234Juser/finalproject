@@ -11,6 +11,9 @@ function ProductRegCon() {
     });
     
     const [formInput, setFormInput] = useState({
+        countryId: "",
+        cityId: "",
+        themeCode: "",
         productTitle: "",
         productContent: "",
         productAdult: "",
@@ -24,9 +27,9 @@ function ProductRegCon() {
         productThumbnail : null,
         regionCode : "",
         regionType : "",
-        countryId: "",
-        cityId: "",
-        themeCode: "",
+        cityName : "",
+        countryName : "",
+        fullLocation : "",
     });
     const [regions, setRegions] = useState([]);
     const [countries, setCountries] = useState([]);
@@ -279,6 +282,7 @@ function ProductRegCon() {
             // 등록
            await ProductRegist(formData)
                .then((res) => {
+                    console.log("여기서 formData 확인------>", formData);
                     alert(res.message);
                     navigate("/adminmypage");
                })
