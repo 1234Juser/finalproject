@@ -2,16 +2,15 @@ import axios from "axios";
 
 const path ="http://localhost:8080";
 
-export async function getGroups() {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-        console.error("Token does not exist in localStorage");
+export async function getGroups(accessToken) {
+    if (!accessToken) {
+        console.error("Missing accessToken in getGroups");
         return;
     }
     const config = {
         headers: {
             "Content-Type":"application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     try {
@@ -22,16 +21,15 @@ export async function getGroups() {
         throw error;
     }
 }
-export async function getItemsInGroup(groupCode) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-        console.error("Token does not exist in localStorage");
+export async function getItemsInGroup(groupCode, accessToken) {
+    if (!accessToken) {
+        console.error("Missing accessToken in getItemsInGroup");
         return;
     }
     const config = {
         headers: {
             "Content-Type":"application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     try {
@@ -43,16 +41,15 @@ export async function getItemsInGroup(groupCode) {
     }
 
 }
-export async function deleteWish(wishCode) {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-        console.error("Token does not exist in localStorage");
+export async function deleteWish(wishCode, accessToken) {
+    if (!accessToken) {
+        console.error("Missing accessToken in getItemsInGroup");
         return;
     }
     const config = {
         headers: {
             "Content-Type":"application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     try {
@@ -64,17 +61,15 @@ export async function deleteWish(wishCode) {
     }
 
 }
-export async function deleteGroup(groupCode) {
-    const token = localStorage.getItem("accessToken");
-    // const token = sessionStorage.getItem("token"); // 로그인 시 저장한 JWT 토큰
-    if (!token) {
-        console.error("Token does not exist in localStorage");
+export async function deleteGroup(groupCode, accessToken) {
+    if (!accessToken) {
+        console.error("Missing accessToken in getItemsInGroup");
         return;
     }
     const config = {
         headers: {
             "Content-Type":"application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     };
     try {

@@ -37,6 +37,7 @@ public class ProductDTO {
     private RegionEntity.RegionType regionType;
     private String cityName;
     private String countryName;
+    private String cityNameKR;
     private String fullLocation;
     private String productDescription;
 

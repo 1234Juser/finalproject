@@ -3,7 +3,7 @@ import {useEffect, useReducer, useState} from "react";
 import {cancelReservations, fetchAllReservations} from "../../service/reservationService";
 import {initialState, reservationReducer} from "../../modules/reservationModule";
 
-function AdminBookingCon(){
+function AdminBookingCon({accessToken}){
     const [state, dispatch] = useReducer(reservationReducer, initialState);
     const [selectedOrders, setSelectedOrders] = useState([]);
     const [start, setStart] = useState(1);
@@ -12,10 +12,12 @@ function AdminBookingCon(){
     }
 
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (token) {
+        if (!accessToken) {
+            alert("토큰이 없습니다.");
+            return;
+        }
             try {
-                const decoded = JSON.parse(atob(token.split('.')[1]));
+                const decoded = JSON.parse(atob(accessToken.split('.')[1]));
                 const roles = decoded.roles;
                 if (!roles.includes("ROLE_ADMIN")) {
                     alert("접근 권한이 없습니다. 관리자만 접근할 수 있습니다.");
@@ -23,18 +25,8 @@ function AdminBookingCon(){
                     // navigate("/");
                     return;
                 }
-            } catch (e) {
-                console.error("토큰 디코딩 오류:", e);
-                alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
-                return;
-            }
-        } else {
-            alert("로그인이 필요합니다.");
-            return;
-        }
-
         dispatch({ type: "LOADING" });
-        fetchAllReservations(start)
+        fetchAllReservations(accessToken, start)
             .then(data => {
                 console.log("API 응답 확인:", data);
                 dispatch({ type: "FETCH_SUCCESS", payload: data })
@@ -48,7 +40,11 @@ function AdminBookingCon(){
                 }
                     dispatch({ type: "FETCH_ERROR", payload: err.message });
             });
-    }, [start]);
+            } catch (e) {
+                console.error("토큰 디코딩 오류:", e);
+                alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
+            }
+    }, [accessToken, start]);
 
     const { reservations, loading, currentPage, totalPages } = state;
 
@@ -71,12 +67,12 @@ function AdminBookingCon(){
         if (!confirmed) return;
         try {
             console.log("선택된 예약코드 목록:", selectedOrders);
-            const response = await cancelReservations(selectedOrders);
+            const response = await cancelReservations(selectedOrders, accessToken);
             alert("예약이 성공적으로 취소되었습니다.");
             setSelectedOrders([]); // 선택 초기화
 
             // 목록 갱신
-            const newData = await fetchAllReservations(start);
+            const newData = await fetchAllReservations(accessToken, start);
             dispatch({ type: "FETCH_SUCCESS", payload: newData });
         } catch (err) {
             if (err.response?.status === 403) {
