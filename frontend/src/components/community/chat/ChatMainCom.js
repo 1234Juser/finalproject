@@ -7,7 +7,7 @@ import {
     MessageRow
 } from '../../../style/community/chat/StyledChatMain'
 
-function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage }) {
+function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, currentRoomId }) {
 
     return (
         <Container>
@@ -19,6 +19,8 @@ function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, 
                 )
             </h2>
             <p>사용자: {username}</p>
+            {/* <p>방 번호 : {messages.roomId}</p> */}
+            <p>방 번호 : {currentRoomId}</p>
             <ChatBox>
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
