@@ -1,11 +1,6 @@
-import {
-    ChatBox, ChatButton, ChatForm, ChatInput,
-    ConnectionStatus,
-    Container,
-    JoinMsg,
-    LeaveMsg,
-    MessageRow
+import {ChatBox, ChatButton, ChatForm, ChatInput,ConnectionStatus,Container,JoinMsg,LeaveMsg,MessageRow
 } from '../../../style/community/chat/StyledChatMain'
+import FormatDate from '../../../utils/FormatDate';
 
 function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, currentRoomId }) {
 
@@ -25,7 +20,7 @@ function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, 
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
                         <strong>{msg.sender}</strong> 
-                        ({new Date(msg.sentAt || Date.now()).toISOString()}): {msg.message}
+                        ({FormatDate(msg.sentAt || Date.now())}): {msg.message}
                         {msg.type === "JOIN" && <JoinMsg>님이 입장했습니다.</JoinMsg>}
                         {msg.type === "LEAVE" && <LeaveMsg>님이 퇴장했습니다.</LeaveMsg>}
                     </MessageRow>

@@ -63,19 +63,21 @@ public class ChatController {
         return message;
     }
 
-
-
-    @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")     // 새로운 사용자가 채팅에 참여했음을 알리는 메시지를 모든 클라이언트에게 전송
-    public ChatMessageDTO addUser(@Payload ChatMessageDTO message,
-                               SimpMessageHeaderAccessor headerAccessor) {
+    // 채팅방마다 독립된 입장/퇴장 알림 채널 사용
+    @MessageMapping("/chat.addUser/{roomId}")
+    public ChatMessageDTO addUser(@DestinationVariable String roomId,
+                                  @Payload ChatMessageDTO message,
+                                  SimpMessageHeaderAccessor headerAccessor) {
         if (headerAccessor.getSessionAttributes() != null) {
             headerAccessor.getSessionAttributes().put("username", message.getSender());
-            headerAccessor.getSessionAttributes().put("roomId", message.getRoomId());
+            headerAccessor.getSessionAttributes().put("roomId", roomId);
         }
         // 사용자 추가 이벤트를 로그로 기록
         chatLogger.info("[{}] User: {}", message.getType(), message.getSender());
         generalLogger.debug("User {} joined, broadcasting to /topic/public", message.getSender());
+
+        // roomId에 따라 구독한 유저에게만 입장 알림 전송
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
 
         return message;
     }
