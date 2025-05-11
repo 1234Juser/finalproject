@@ -47,4 +47,26 @@ public class FileUploadUtils {
         System.out.println("file = " + file);
         return fileName;
     }
+
+    public static String saveReviewFile(MultipartFile file) throws IOException {
+        String fileName = null;
+
+        if (file.isEmpty()) {
+            fileName = "nan";
+        } else {
+            fileName = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+        }
+
+        // 리뷰 파일은 upload/review 폴더에 저장
+        String baseDir = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "review" + File.separator;
+
+        Path path = Paths.get(baseDir + fileName);
+        Files.createDirectories(path.getParent());
+
+        if (!file.isEmpty()) {
+            file.transferTo(path);
+        }
+
+        return fileName;
+    }
 }

@@ -1,9 +1,10 @@
 import AdminReviewCon from "../../containers/review/AdminReviewCon";
 
 function AdminReviewPage() {
+    const accessToken = localStorage.getItem("accessToken");
     return(
         <>
-            <AdminReviewCon />
+            <AdminReviewCon accessToken={accessToken} />
         </>
     )
 }

@@ -120,8 +120,19 @@ const DivWrap = styled.div`
     margin: auto;
     width: 70%;
 `;
+// 페이지 버튼들이 모인 구역
+const DivPage = styled.div`
+    margin-top : 20px;
+    text-align : center;
+`;
+// 페이지 버튼 낱개들
+const SpanPage = styled.span`
+    width : 30px;
+    display : inline-block;
+    cursor : pointer;
+`;
 
-function AdminReviewCom({ reviews, loading, error }) {
+function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onClick, accessToken, dispatch }) {
     const [selectedReview, setSelectedReview] = useState(null);
 
     if (loading) {
@@ -134,7 +145,24 @@ function AdminReviewCom({ reviews, loading, error }) {
         return <p>{error}</p>;
     }
 
-    const isEmpty = !Array.isArray(reviews) || reviews.length === 0;
+    const isEmpty = !reviews || reviews.length === 0;
+    const reviewList = reviews || []; // 빈 배열로 초기화
+    let number = []
+
+    if (totalPages > 0) {
+        for(let i = 1; i <= totalPages; i++) {
+            number.push(
+                <SpanPage
+                    key={i}
+                    onClick={() => onClick(i)}
+                    style={{ fontWeight: currentPage === i ? "bold" : "normal" }}
+                >
+                    {i}
+                </SpanPage>
+            )
+        }
+        number.push(<b key={totalPages + 1}>({currentPage}/{totalPages})</b>);
+    }
 
     const handleReviewClick = (review) => {
         console.log("🟢 선택된 리뷰:", review);
@@ -146,7 +174,8 @@ function AdminReviewCom({ reviews, loading, error }) {
     const handleDeleteReview = async (reviewCode) => {
         if (window.confirm("정말 이 리뷰를 삭제하시겠습니까?")) {
             try {
-                await deleteReviewByAdmin(reviewCode);
+                await deleteReviewByAdmin(reviewCode, accessToken);
+                dispatch({ type: "REMOVE_REVIEW", payload: reviewCode });
                 alert("리뷰가 성공적으로 삭제되었습니다.");
                 handleCloseModal();
                 window.location.reload(); // 삭제 후 페이지 새로고침
@@ -206,8 +235,8 @@ function AdminReviewCom({ reviews, loading, error }) {
                                                     : "작성일 없음"}
                                             </td>
                                             <td>
-                                                <StyledStatusBadge status={review.reviewStatus}>
-                                                    {review.reviewStatus || "상태 없음"}
+                                                <StyledStatusBadge status={review.reviewStatus || "ACTIVE"}>
+                                                    {review.reviewStatus || "ACTIVE"}
                                                 </StyledStatusBadge>
                                             </td>
                                         </tr>
@@ -216,6 +245,14 @@ function AdminReviewCom({ reviews, loading, error }) {
                             )}
                             </tbody>
                         </StyledTable>
+                        {!loading && reviews && reviews.length > 0 && (
+                            <>
+                                <div style={{marginTop: "1rem"}}>
+                                    페이지: {currentPage} / {totalPages}
+                                </div>
+                                <DivPage>{number}</DivPage>
+                            </>
+                        )}
                     </DivWrap>
                     {/* 선택된 리뷰가 있으면 모달 열기 */}
                     {selectedReview && (
@@ -229,4 +266,4 @@ function AdminReviewCom({ reviews, loading, error }) {
             </StyleReviewBlock>
         </>)
 }
-export default AdminReviewCom
+export default AdminReviewCom;

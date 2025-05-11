@@ -102,13 +102,21 @@ const ShowMoreButton = styled.button`
         background-color: #0056b3;
     }
 `;
+const Thumbnail = styled.img`
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    margin-right: 16px;
+    object-fit: cover;
+    flex-shrink: 0;
+`;
 
 
 function ProductReviewCom({ reviews = [], loading, error,
-                            sortOption = "date",
-                            onSortChange,
-                            averageRating = 0,
-                            reviewCount = 0 }) {
+                              sortOption = "date",
+                              onSortChange,
+                              averageRating = 0,
+                              reviewCount = 0 }) {
     const [isModalOpen, setModalOpen] = useState(false);
     const top3Reviews = reviews.slice(0, 3);
     const handleModalToggle = () => {
@@ -125,6 +133,13 @@ function ProductReviewCom({ reviews = [], loading, error,
             <ReviewContainer>
                 <HeaderWrapper>
                     <SubTitle>💬 리뷰 {averageRating.toFixed(1)} / 5.0 ({reviewCount}개)</SubTitle>
+                    <SortWrapper>
+                        <label>정렬: </label>
+                        <select value={sortOption} onChange={(e) => onSortChange(e.target.value)}>
+                            <option value="date">작성일 순</option>
+                            <option value="rating">평점 순</option>
+                        </select>
+                    </SortWrapper>
                 </HeaderWrapper>
                 {loading && <p>로딩 중...</p>}
                 {error && <p>에러 발생: {error}</p>}
@@ -135,6 +150,10 @@ function ProductReviewCom({ reviews = [], loading, error,
                                 <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
                                 <Reviewer>{review.memberName}</Reviewer>
                                 <ReviewDate>{review.reviewDate}</ReviewDate>
+                                <Thumbnail
+                                    src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"}
+                                    alt="리뷰 이미지"
+                                />
                                 <ReviewContent>{review.reviewContent}</ReviewContent>
                             </ReviewItem>
                         ))
@@ -165,6 +184,10 @@ function ProductReviewCom({ reviews = [], loading, error,
                                     <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
                                     <Reviewer>{review.memberName}</Reviewer>
                                     <ReviewDate>{review.reviewDate}</ReviewDate>
+                                    <Thumbnail
+                                        src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"}
+                                        alt="리뷰 이미지"
+                                    />
                                     <ReviewContent>{review.reviewContent}</ReviewContent>
                                 </ReviewItem>
                             ))

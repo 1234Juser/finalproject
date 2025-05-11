@@ -48,7 +48,7 @@ public class ReviewEntity {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_code", nullable = false)
+    @JoinColumn(name = "order_code", nullable = false, unique = true)
     private OrderEntity order;      // 주문1 - 리뷰1
 
     @NotNull
