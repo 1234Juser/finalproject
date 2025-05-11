@@ -8,12 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,6 +50,9 @@ public class ChatController {
     @MessageMapping("/chat.send/{roomId}")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomId,
                                       @Payload ChatMessageDTO message) {
+
+        message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));   // 서버 시간
+
         // 수신된 채팅 메시지를 로그로 기록
         chatLogger.info("[{}] roomId: {}, sender: {}, message: {}, sentAt: {}",
                 message.getType(),
@@ -63,16 +67,20 @@ public class ChatController {
         return message;
     }
 
+
     // 채팅방마다 독립된 입장/퇴장 알림 채널 사용
     @MessageMapping("/chat.addUser/{roomId}")
     public ChatMessageDTO addUser(@DestinationVariable String roomId,
                                   @Payload ChatMessageDTO message,
                                   SimpMessageHeaderAccessor headerAccessor) {
+
+        message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
         if (headerAccessor.getSessionAttributes() != null) {
             headerAccessor.getSessionAttributes().put("username", message.getSender());
             headerAccessor.getSessionAttributes().put("roomId", roomId);
         }
-        // 사용자 추가 이벤트를 로그로 기록
+
         chatLogger.info("[{}] User: {}", message.getType(), message.getSender());
         generalLogger.debug("User {} joined, broadcasting to /topic/public", message.getSender());
 
