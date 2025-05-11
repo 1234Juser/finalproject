@@ -36,6 +36,9 @@ import AdminBookingByProductPage from "./pages/reservation/AdminBookingByProduct
 import MyReviewFormPage from "./pages/review/MyReviewFormPage";
 import SearchProductPage from "./pages/search/SearchProductPage";
 import AdminRealTimePage from "./pages/realtime/AdminRealTimePage";
+import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
+import ChatMainPage from "./pages/community/chat/ChatMainPage";
+import CommunityLayout from "./style/community/CommunityLayout";
 
 function App() {
     return (
@@ -90,12 +93,18 @@ function App() {
                 <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
 
+                {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>
                 <Route path="/international" element={<InternationalPage />} />
                 <Route path="/products">
                     <Route path="country" element={<ProductPage />} />
                     <Route path="city" element={<ProductPage />} />
                     <Route path=":productUid" element={<ProductDetailPage/>} />
+                </Route>
+                <Route path="/community" element={<CommunityLayout />} >
+                  <Route index element={<TripBuddyPage />} />
+                  <Route path="tripbuddy" element={<TripBuddyPage/>}/>
+                  <Route path="chat" element={<ChatMainPage/>}/>
                 </Route>
 
             </Routes>

@@ -43,7 +43,7 @@ function NavCom({roles = []}) {
                         <a href="/theme"><FaStar style={{marginRight:6, color:"#ffd465"}} />테마여행</a>
                     </li>
                     <li>
-                        <a href="/community"><FaComments style={{marginRight:6, color:"#a785e9"}} />커뮤니티</a>
+                        <a href="/community/tripbuddy"><FaComments style={{marginRight:6, color:"#a785e9"}} />커뮤니티</a>
                     </li>
                     <li>
                         <span><FaEllipsisH style={{marginRight:6, color:"#bbb"}} />더보기</span>
