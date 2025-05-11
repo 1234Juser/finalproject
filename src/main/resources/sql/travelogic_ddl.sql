@@ -358,6 +358,7 @@ CREATE TABLE tbl_city_view_count (
                                      id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 식별자',
                                      city_id BIGINT NOT NULL COMMENT '도시 코드 (tbl_city 테이블 참조)',
                                      view_count INT NOT NULL DEFAULT 0 COMMENT '도시별 총 조회수',
+                                     city_name_kr VARCHAR(20) NOT NULL COMMENT '도시 이름',
                                      last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '마지막 업데이트 시간',
                                      UNIQUE KEY uk_city_id (city_id), -- 도시당 하나의 집계 레코드만 존재하도록 UNIQUE 제약 조건 추가
                                      FOREIGN KEY (city_id) REFERENCES tbl_city(city_id) -- tbl_city 테이블을 참조하는 외래 키

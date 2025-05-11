@@ -31,6 +31,9 @@ public class CityViewCountEntity {
     @Column(name = "view_count", nullable = false, columnDefinition = "INT DEFAULT 0") // NOT NULL과 DEFAULT 값 설정
     private Integer viewCount = 0; // 초기값 설정
 
+    @Column(name = "city_name_kr", nullable = false, length = 20) // city_name_kr 필드 추가
+    private String cityNameKR;
+
     @Column(name = "last_updated", nullable = false) // NOT NULL 설정
     @UpdateTimestamp // 엔티티 업데이트 시 자동 업데이트
     private LocalDateTime lastUpdated; // TIMESTAMP에 해당하는 자바 타입

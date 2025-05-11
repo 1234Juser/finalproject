@@ -177,17 +177,17 @@ function RealtimeRanking() {
                 {isRankingVisible ? (
                     // 펼쳤을 때 전체 목록 표시
                     displayedRanking.map((item, index) => (
-                        <RankingItem key={index} onClick={() => handleCityClick(item.cityName)} $isVisible={isRankingVisible}>
+                        <RankingItem key={index} onClick={() => handleCityClick(item.cityNameKR)} $isVisible={isRankingVisible}>
                             <span className="rank-number">{index + 1}.</span> {/* 모든 항목에 순위 번호 표시 */}
-                            <span className="city-name">{item.cityName}</span>
+                            <span className="city-name">{item.cityNameKR}</span>
                         </RankingItem>
                     ))
                 ) : (
                     // 접었을 때 현재 인덱스에 해당하는 항목만 표시
                     displayedRanking.length > 0 && (
-                        <RankingItem key={currentRankingIndex} onClick={() => handleCityClick(displayedRanking[currentRankingIndex].cityName)} $isVisible={isRankingVisible}>
+                        <RankingItem key={currentRankingIndex} onClick={() => handleCityClick(displayedRanking[currentRankingIndex].cityNameKR)} $isVisible={isRankingVisible}>
                             <span className="rank-number">{currentRankingIndex + 1}.</span> {/* 현재 인덱스의 순위 번호 */}
-                            <span className="city-name">{displayedRanking[currentRankingIndex].cityName}</span> {/* 현재 인덱스의 도시 이름 */}
+                            <span className="city-name">{displayedRanking[currentRankingIndex].cityNameKR}</span> {/* 현재 인덱스의 도시 이름 */}
                         </RankingItem>
                     )
                 )}

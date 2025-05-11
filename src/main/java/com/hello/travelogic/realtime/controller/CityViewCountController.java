@@ -30,4 +30,14 @@ public class CityViewCountController {
         return ResponseEntity.ok(topCities);
     }
 
+    //모든 도시의 조회수 데이터를 제공
+    @GetMapping("/all-view-counts")
+    public ResponseEntity<List<CityViewCountDTO>> getAllCityViewCounts(){
+        List<CityViewCountDTO> allCities = cityViewCountService.getAllCityViewCounts();
+        return ResponseEntity.ok(allCities);
+    }
+
+
+
+
 }

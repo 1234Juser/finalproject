@@ -35,6 +35,7 @@ import AdminReviewPage from "./pages/review/AdminReviewPage";
 import AdminBookingByProductPage from "./pages/reservation/AdminBookingByProductPage";
 import MyReviewFormPage from "./pages/review/MyReviewFormPage";
 import SearchProductPage from "./pages/search/SearchProductPage";
+import AdminRealTimePage from "./pages/realtime/AdminRealTimePage";
 
 function App() {
     return (
@@ -54,6 +55,8 @@ function App() {
               <Route path="/faq/edit/:faqCode" element={<FaqEditCon />} />
               {/*검색어리스트창*/}
               <Route path="/search" element={<SearchProductPage />} />
+              {/*실시간조회수*/}
+              <Route path="/realtime" element={<AdminRealTimePage />} />
 
 
 

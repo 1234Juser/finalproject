@@ -16,4 +16,8 @@ public interface CityViewCountRepository extends JpaRepository<CityViewCountEnti
 
     // CityEntity의 ID를 기준으로 CityViewCountEntity를 찾는 메서드 추가
     Optional<CityViewCountEntity> findByCity_CityId(Long cityId);
+
+    // 모든 CityViewCountEntity를 가져오는 메서드 추가
+    List<CityViewCountEntity> findAll();
+
 }
