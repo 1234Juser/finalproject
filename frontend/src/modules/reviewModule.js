@@ -10,14 +10,17 @@ const initialState = {
     totalPages: 0,
     currentPage: 1,
     reviewPic: null,
+    averageRating: 0,
+    reviewCount: 0,
 };
 
 const reducer = (state, action) => {
     switch(action.type){
         case "SET_REVIEWS":
+            const reviews = Array.isArray(action.data) ? action.data : action.data.reviews || [];
             return {
                 ...state,
-                reviews: action.data.reviews || [],
+                reviews: reviews,
                 totalPages: action.data.totalPages || 0,
                 currentPage: action.data.currentPage || 1,
                 loading: false,
