@@ -68,6 +68,7 @@ function ChatMainCon() {
                 
                 // 1. 특정 채팅방 구독
                 if (currentRoomId) {
+                    console.log(`구독중인 채팅방 :  /topic/chat/${currentRoomId}`);
                     stompClient.subscribe(`/topic/chat/${currentRoomId}`, (message) => {
                         const receivedChatMessage = JSON.parse(message.body);
                         console.log(`Message received from /topic/chat/${currentRoomId}:`, receivedChatMessage);
@@ -83,13 +84,15 @@ function ChatMainCon() {
                 });
 
                 // 3. 서버에 사용자 참여 메시지 전송 (/app/chat.addUser)
-                stompClient.send("/app/chat.addUser",
+                const joinMessage = {
+                    type: 'JOIN', 
+                    roomId : currentRoomId,
+                    sender: username, 
+                    sentAt : new Date().toISOString()
+                };
+                stompClient.send(`/app/chat.addUser/${currentRoomId}`,
                     {},
-                    JSON.stringify({ 
-                        sender: username, 
-                        type: 'JOIN', 
-                        roomId: currentRoomId   // addUser는 roomId를 경로로 받지 않으므로 DTO에 포함 
-                    })   
+                    JSON.stringify(joinMessage)   
                 );
             },
             (error) => {
@@ -132,6 +135,7 @@ function ChatMainCon() {
                 message: newMessage,
                 sentAt : new Date().toISOString()
             };
+            console.log(`Sending CHAT message to /app/chat.send/${currentRoomId}:`, chatMessage);
             // 메시지를 특정 채팅방의 경로로 전송 
             stompClientRef.current.send(`/app/chat.send/${currentRoomId}`, {}, JSON.stringify(chatMessage));
             setNewMessage('');
@@ -145,7 +149,7 @@ function ChatMainCon() {
         <>
             <ChatMainCom isConnected={isConnected} username={username} messages={messages}
                         sendMessage={sendMessage} newMessage={newMessage} setNewMessage={setNewMessage}
-                        currentRoomId={currentRoomId} />
+                        currentRoomId={currentRoomId}/>
         </>
     )
 }
