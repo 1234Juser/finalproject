@@ -3,6 +3,7 @@ import {HeaderButton, HeaderRight, ProfileImg, StyledHeader, StyledTitle} from "
 import {Link, useNavigate} from "react-router-dom";
 import NavPage from "../../pages/common/NavPage";
 import SearchInputPage from "../../pages/search/SearchInputPage";
+import RealtimeRanking from "../../containers/realtime/RealtimeRanking";
 
 function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
 
@@ -16,9 +17,11 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
                         <Link to="/" className="link">Hello, Travelogic!</Link>
                     </StyledTitle>
                     {/*검색어 입력창*/}
-                    <div style={{flex: 1, display: "flex", justifyContent: "center"}}>
+                    <div style={{flex: 1, display: "flex", alignItems: "center", justifyContent: "center"}}> {/* flexbox 속성 수정 */}
                         <SearchInputPage />
+                        <RealtimeRanking /> {/* 실시간 랭킹 컴포넌트 추가 */}
                     </div>
+
                     {/*로그인버튼*/}
                     <HeaderRight>                        
                         {isLoggedIn ? (

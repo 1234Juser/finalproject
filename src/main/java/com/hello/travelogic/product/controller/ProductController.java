@@ -2,6 +2,7 @@ package com.hello.travelogic.product.controller;
 
 import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.service.ProductService;
+import com.hello.travelogic.realtime.service.CityViewCountService;
 import jakarta.persistence.EntityNotFoundException;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ProductController {
     @Autowired
     private final ProductService productService;
     private final JwtUtil jwtUtil;
+    private final CityViewCountService cityViewCountService;
 
     // 투어 상품 전체 조회
     @GetMapping("")
@@ -46,6 +48,15 @@ public class ProductController {
     @GetMapping("/city")
     public ResponseEntity getProductsByCity(@RequestParam("city_id") Long cityId) {
         log.debug("get products by city ID : {}", cityId);
+        // cityId에 해당하는 투어 상품 목록을 반환하기 전에 조회수 증가 API 호출
+        try {
+            cityViewCountService.incrementViewCount(cityId);
+            log.debug("도시 조회수 증가 API 호출 성공 (cityId: {})", cityId);
+        } catch (Exception e) {
+            log.error("도시 조회수 증가 실패 (cityId: {}): {}", cityId, e.getMessage());
+            // 조회수 증가 실패 시에도 투어 상품 목록은 반환
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCity(cityId));
     }
 
