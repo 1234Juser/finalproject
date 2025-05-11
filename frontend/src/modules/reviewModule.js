@@ -7,12 +7,26 @@ const initialState = {
     sortOptionDefault: "date",  // 디폴트는 작성일 순
     showToast: false,      // 리뷰 작성 성공 메시지
     toastMessage: "",      // 토스트 메시지 내용
+    totalPages: 0,
+    currentPage: 1,
+    reviewPic: null,
 };
 
 const reducer = (state, action) => {
     switch(action.type){
         case "SET_REVIEWS":
-            return { ...state, reviews: action.data };
+            return {
+                ...state,
+                reviews: action.data.reviews || [],
+                totalPages: action.data.totalPages || 0,
+                currentPage: action.data.currentPage || 1,
+                loading: false,
+                error: null,
+            };
+        case "SET_REVIEW_PIC":
+            return { ...state, reviewPic: action.data };
+        case "CLEAR_REVIEW_PIC":
+            return { ...state, reviewPic: null };
         case "SET_MY_REVIEW":
             return { ...state, myReview: action.data };
         case "SET_SELECTED_REVIEW":
@@ -46,7 +60,7 @@ const reducer = (state, action) => {
         case "SET_REVIEW_COUNT":
             return { ...state, reviewCount: action.data };
         case "SET_LOADING":
-            return { ...state, loading: action.data };
+            return { ...state, loading: action.data, error: null };
         case "SET_ERROR":
             return { ...state, error: action.data, loading: false };
         case "HIDE_TOAST":

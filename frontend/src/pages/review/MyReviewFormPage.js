@@ -1,9 +1,10 @@
 import MyReviewWriteCon from "../../containers/review/MyReviewWriteCon";
 
 function MyReviewFormPage() {
+    const accessToken = localStorage.getItem("accessToken");
     return(
         <>
-            <MyReviewWriteCon />
+            <MyReviewWriteCon accessToken={accessToken} />
         </>)
 }
 export default MyReviewFormPage;

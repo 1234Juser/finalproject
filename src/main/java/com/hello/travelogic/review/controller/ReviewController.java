@@ -1,9 +1,14 @@
 package com.hello.travelogic.review.controller;
 
+import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.order.domain.OptionEntity;
+import com.hello.travelogic.order.domain.OrderEntity;
+import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.repo.OptionRepo;
+import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.product.domain.ProductEntity;
+import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.review.domain.ReviewStatus;
 import com.hello.travelogic.review.dto.ReviewDTO;
 import com.hello.travelogic.review.repo.ReviewRepo;
@@ -13,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +26,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -32,11 +41,12 @@ public class ReviewController {
     private final MemberRepository memberRepository;
     private final OptionRepo optionRepo;
     private final ReviewRepo reviewRepo;
+    private final OrderRepo orderRepo;
 
     // 상품 상세페이지 내 리뷰 조회
     @GetMapping("/review/product/{productUid}")
     public ResponseEntity<List<ReviewDTO>> getReviewListByProductUid(@PathVariable("productUid") String productUid,
-                                                                      @RequestParam(defaultValue = "date") String sort) {
+                                                                     @RequestParam(defaultValue = "date") String sort) {
         log.debug("받은 productCode: {}", productUid);
 //        List<ReviewDTO> reviews = reviewService.getReviewsByProductCode(productCode, sort);
 //        log.debug("가져온 리뷰 개수: {}", reviews.size());
@@ -66,7 +76,9 @@ public class ReviewController {
 
     // 관리자는 모든 상품에 대한 모든 회원의 리뷰를 조회 가능
     @GetMapping("/admin/review")
-    public ResponseEntity getAllReviews(Authentication authentication) {
+    public ResponseEntity getAllReviews(@RequestParam(value="start", defaultValue="0")int start,
+                                        @RequestParam(value="productCode", required=false)Long productCode,
+                                        Authentication authentication) {
         String memberId = authentication.getPrincipal().toString();
         boolean isAdmin = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -78,10 +90,17 @@ public class ReviewController {
 //        List<ReviewDTO> allReviews = reviewService.getAllReviews();
 //        return ResponseEntity.ok(allReviews);
         try {
-            log.info("🟢 /admin/manage/review 요청 시작");
-            List<ReviewDTO> reviews = reviewService.getAllReviews();
-            log.info("🟢 리뷰 목록 반환 완료 - 개수: {}", reviews.size());
-            return ResponseEntity.ok(reviews);
+            Map<String, Object> result;
+            if (productCode != null) {
+                result = reviewService.getReviewsByProduct(productCode, start);
+            } else {
+                result = reviewService.getAllReviews(start);
+            }
+            return ResponseEntity.ok(result);
+//            log.info("🟢 /admin/review 요청 시작");
+//            List<ReviewDTO> reviews = reviewService.getAllReviews(productCode, start);
+//            log.info("🟢 리뷰 목록 반환 완료 - 개수: {}", reviews.size());
+//            return ResponseEntity.ok(reviews);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("🔴 리뷰 목록 조회 중 오류 발생", e);
@@ -89,7 +108,6 @@ public class ReviewController {
         }
 //        return ResponseEntity.ok(reviewService.getAllReviews());
     }
-
     // 관리자의 상품별 리뷰 조회
     @GetMapping("/admin/review/by-product/{productCode}")
     public ResponseEntity getReviewsByProductForAdmin(@PathVariable long productCode,
@@ -105,6 +123,7 @@ public class ReviewController {
 //        List<ReviewDTO> reviews = reviewService.getReviewsByProductCodeForAdmin(productCode);
 //        return ResponseEntity.ok(reviews);
     }
+
 
     // 리뷰 작성을 위한 주문 정보 가지고 오기
     @GetMapping("/review/write/info/{orderCode}")
@@ -123,37 +142,45 @@ public class ReviewController {
     public ResponseEntity writeReview(@RequestParam("orderCode") Long orderCode,
                                       @RequestParam("reviewRating") Integer reviewRating,
                                       @RequestParam("reviewContent") String reviewContent,
-                                      @RequestPart(value = "file", required = false) MultipartFile file,
+                                      @RequestPart(value = "reviewPic", required = false) MultipartFile reviewPic,
                                       Authentication authentication) {
         try {
             String memberId = authentication.getPrincipal().toString();
-            Long memberCode = memberRepository.findByMemberId(memberId)
-                    .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
-                    .getMemberCode();
+            MemberEntity member = memberRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+            OrderEntity orderEntity = orderRepo.findById(orderCode)
+                    .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+            if (!orderEntity.getOrderStatus().equals(OrderStatus.COMPLETED)) {
+                throw new IllegalArgumentException("완료된 주문에 대해서만 리뷰를 작성할 수 있습니다.");
+            }
+            boolean alreadyReviewed = reviewRepo.existsByMemberMemberCodeAndOrderOrderCode(member.getMemberCode(), orderEntity.getOrderCode());
+            if (alreadyReviewed) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 작성된 리뷰가 있습니다.");
+            }
+            ProductEntity productEntity = orderEntity.getProduct();
 
             ReviewDTO reviewDTO = new ReviewDTO();
-            reviewDTO.setMemberCode(memberCode);
+            reviewDTO.setMemberCode(member.getMemberCode());
             reviewDTO.setOrderCode(orderCode);
             reviewDTO.setReviewRating(reviewRating);
             reviewDTO.setReviewContent(reviewContent);
-
-            OptionEntity optionEntity = optionRepo.findById(orderCode)
-                    .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
-            ProductEntity productEntity = optionEntity.getProduct();
-
             reviewDTO.setProductEntity(productEntity);
 
-            int result = reviewService.writeReview(reviewDTO, file);
+//            OptionEntity optionEntity = optionRepo.findById(orderCode)
+//                    .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
+
+
+            int result = reviewService.writeReview(reviewDTO, reviewPic);
             if(result == 1) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("리뷰가 성공적으로 작성되었습니다.");
             } else {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 작성된 리뷰가 있습니다.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("리뷰 등록 중 충돌 발생");
             }
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 등록 실패: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 등록 실패");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러로 리뷰 등록 실패");
         }
     }
 
@@ -190,12 +217,17 @@ public class ReviewController {
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
                 .getMemberCode();
 
-        reviewService.deleteMyReview(reviewCode, memberCode);
-        return ResponseEntity.ok().build();
+        try {
+            reviewService.deleteMyReview(reviewCode, memberCode);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("리뷰 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // 관리자가 리뷰 삭제하면 삭제가 아니라 UPDATE
-    @PatchMapping("/admin/reviews/{reviewCode}")
+    @PatchMapping("/admin/review/delete/{reviewCode}")
     public ResponseEntity deleteByAdmin(@PathVariable("reviewCode") long reviewCode,
                                         Authentication authentication) {
         try {
@@ -218,10 +250,26 @@ public class ReviewController {
 
     @GetMapping("/review/{reviewPic}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable(value="reviewPic") String reviewPic) {
-        byte[] imageByte = reviewService.getImage(reviewPic);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
-                .body(imageByte);
+        try {
+            byte[] imageByte = Files.readAllBytes(Paths.get("upload/review/" + reviewPic));
+            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.IMAGE_JPEG); // 기본은 JPEG로 설정
+
+            // 파일 확장자에 따라 Content-Type 동적 설정
+            String extension = reviewPic.substring(reviewPic.lastIndexOf(".") + 1).toLowerCase();
+            if (extension.equals("png")) {
+                headers.setContentType(MediaType.IMAGE_PNG);
+            } else if (extension.equals("gif")) {
+                headers.setContentType(MediaType.IMAGE_GIF);
+            } else {
+                headers.setContentType(MediaType.IMAGE_JPEG); // 기본은 JPEG
+            }
+
+            return new ResponseEntity<>(imageByte, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // 관리자 권한 체크
@@ -251,5 +299,38 @@ public class ReviewController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
         }
+    }
+
+    // 관리자의 상품별 필터링
+    @GetMapping("/admin/review/filter")
+    public ResponseEntity<?> getReviewsByProductCode(
+            @RequestParam(value = "productCode", required = false) Long productCode,
+            @RequestParam(value = "start", defaultValue = "0") int start,
+            Authentication authentication) {
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
+        }
+
+        Map<String, Object> result = reviewService.getReviewsByProduct(productCode, start);
+        return ResponseEntity.ok(result);
+    }
+
+    // 필터링 해서 상품별 조회
+    @GetMapping("/admin/review/products")
+    public ResponseEntity<?> getAllReviewListForFilter(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
+        }
+        List<ProductDTO> productList = reviewService.getReviewListForFilter();
+        return ResponseEntity.ok(productList);
     }
 }

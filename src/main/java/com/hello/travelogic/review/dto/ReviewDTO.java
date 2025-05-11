@@ -30,7 +30,7 @@ public class ReviewDTO {
     private long memberCode;
     private long orderCode;
     private long productCode;
-    private long optionCode;
+    private long optionCode = 0L;
     private Integer reviewRating;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime reviewDate = LocalDateTime.now();
@@ -46,10 +46,15 @@ public class ReviewDTO {
     private LocalDate reservationDate;
 
     public void setOptionEntity(OptionEntity optionEntity) {
-        this.optionCode = optionEntity.getOptionCode();
-        this.reservationDate = optionEntity.getReservationDate();
-        this.productCode = optionEntity.getProduct().getProductCode();
-        this.productTitle = optionEntity.getProduct().getProductTitle();
+        if (optionEntity != null) {
+            this.optionCode = optionEntity.getOptionCode();
+            this.reservationDate = optionEntity.getReservationDate();
+            this.productCode = optionEntity.getProduct().getProductCode();
+            this.productTitle = optionEntity.getProduct().getProductTitle();
+        } else {
+            this.optionCode = 0L;  // 기본값 설정
+             log.debug("OptionEntity가 null입니다. 기본값 0L로 설정");
+        }
     }
 
     public void setProductEntity(ProductEntity productEntity) {
@@ -67,6 +72,7 @@ public class ReviewDTO {
         this.reviewContent = entity.getReviewContent();
         this.reviewPic = entity.getReviewPic();
         this.reviewStatus = entity.getReviewStatus();
+        this.optionCode = 0L;
 
         // 필드 직접 참조 방지
         if (entity.getOrder() != null) {

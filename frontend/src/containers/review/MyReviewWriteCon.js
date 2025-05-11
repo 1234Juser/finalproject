@@ -4,7 +4,7 @@ import {getInfoForWriteReview, submitReview} from '../../service/reviewService';
 import SimpleModal from '../../components/common/SimpleModal';
 import ReviewFormCom from "../../components/review/ReviewFormCom";
 
-function MyReviewWriteCon({ memberCode }) {
+function MyReviewWriteCon({ accessToken }) {
     const { orderCode } = useParams();
     const [productTitle, setProductTitle] = useState("");
     const [selectedRating, setSelectedRating] = useState(0);
@@ -27,15 +27,43 @@ function MyReviewWriteCon({ memberCode }) {
     useEffect(() => {
         const fetchInfo = async () => {
             try {
-                const data = await getInfoForWriteReview(orderCode);
+                const token = localStorage.getItem("accessToken");
+                if (!token) {
+                    alert("로그인이 필요합니다.");
+                    navigate("/login");
+                    return;
+                }
+
+                const data = await getInfoForWriteReview(orderCode, accessToken);
                 console.log("상품명 로드 성공:", data.productTitle);
-                setProductTitle(data.productTitle);
+                if (!data.optionCode || data.optionCode === 0) {
+                    console.warn("옵션 코드가 0이거나 누락되었습니다.");
+                }
+                if (!data.productTitle) {
+                    console.error("상품 제목이 누락되었습니다.");
+                    alert("상품 정보를 불러오는 중 오류가 발생했습니다.");
+                    navigate(-1);
+                    return;
+                }
+                setProductTitle(data.productTitle || "알 수 없는 상품");
+                setSelectedRating(data.reviewRating || 0);
+                setReviewContent(data.reviewContent || "");
+                if (data.reviewPic) {
+                    const imageBlob = await fetch(`/review/${data.reviewPic}/image`);
+                    if (!imageBlob.ok) {
+                        throw new Error("이미지를 불러오는 중 오류가 발생했습니다.");
+                    }
+                    const imageUrl = URL.createObjectURL(await imageBlob.blob());
+                    setImagePreview(imageUrl);
+                }
             } catch (e) {
                 console.error("리뷰 작성 정보 로딩 실패", e);
+                alert("리뷰를 불러오는 중 오류가 발생했습니다.");
+                navigate(-1);
             }
         };
         fetchInfo();
-    }, [orderCode]);
+    }, [orderCode, accessToken, navigate]);
 
     const handlePhotoBoxClick = () => {
         fileInputRef.current?.click(); // 클릭 시 파일 선택 창 열기
@@ -62,8 +90,23 @@ function MyReviewWriteCon({ memberCode }) {
         console.log("파일 선택이 취소되었습니다.");
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("orderCode", orderCode);
+        formData.append("reviewRating", selectedRating);
+        formData.append("reviewContent", reviewContent);
+        if (selectedFileRef.current) {
+            formData.append("reviewPic", selectedFileRef.current);
+        }
         try {
+            const accessToken = localStorage.getItem("accessToken");
+            console.log("Access Token:", accessToken);
+            if (!accessToken || accessToken === "null" || accessToken === "undefined") {
+                alert("로그인이 필요합니다.");
+                window.location.href = "/login";
+                return;
+            }
             if (selectedRating === 0) {
                 alert("별점을 선택해주세요.");
                 return;
@@ -86,7 +129,7 @@ function MyReviewWriteCon({ memberCode }) {
                 return;
             }
 
-            await submitReview(orderCode, selectedRating, reviewContent, selectedFileRef.current);
+            await submitReview(orderCode, selectedRating, trimmedContent, selectedFileRef.current, accessToken);
             setIsModalOpen(true);
         } catch (e) {
             console.error("리뷰 전송 실패:", e);
@@ -117,7 +160,7 @@ function MyReviewWriteCon({ memberCode }) {
                 fileInputRef={fileInputRef}
                 handleFileChange={handleFileChange}
                 handleFileRemove={handleFileRemove}
-                handleSubmit={async () => await handleSubmit()}
+                handleSubmit={handleSubmit}
                 setReviewContent={setReviewContent}
             />
             {isModalOpen && (

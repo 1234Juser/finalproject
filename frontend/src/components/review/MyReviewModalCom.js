@@ -1,5 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
+import axios from "axios";
+import path, {getReviewImage} from "../../service/reviewService";
 
 const Overlay = styled.div`
     position: fixed;
@@ -61,6 +63,7 @@ const Thumbnail = styled.img`
     height: 80px;
     border-radius: 10px;
     object-fit: cover;
+    margin-right: 1rem;
 `;
 
 const ProductTitle = styled.h3`
@@ -124,6 +127,21 @@ const FooterButton = styled.button`
 `;
 
 function MyReviewModalCom({ review, onClose, onDelete }) {
+    const [imageSrc, setImageSrc] = useState("/img/default-review.jpg");
+
+    useEffect(() => {
+        if (review.reviewPic) {
+            getReviewImage(review.reviewPic)
+                .then((blob) => {
+                    const imageUrl = URL.createObjectURL(blob);
+                    setImageSrc(imageUrl);
+                })
+                .catch((error) => {
+                    console.error("리뷰 이미지 로드 실패:", error);
+                });
+        }
+    }, [review.reviewPic]);
+
     return (
         <Overlay onClick={onClose}>
             <Modal onClick={(e) => e.stopPropagation()}>
@@ -133,7 +151,7 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                 </Header>
                 <Content>
                     <ThumbnailTitleWrap>
-                        <Thumbnail src={review.reviewPic || "/img/default-review.jpg"} alt="리뷰 이미지" />
+                        <Thumbnail src={review.reviewPic ? `${path}/review/${encodeURIComponent(review.reviewPic)}` : "/img/default-review.jpg"} alt="리뷰 이미지" />
                         <ProductTitle>{review.productTitle}</ProductTitle>
                     </ThumbnailTitleWrap>
                     <ReviewInfo>

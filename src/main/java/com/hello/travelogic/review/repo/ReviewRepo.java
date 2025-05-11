@@ -3,6 +3,8 @@ package com.hello.travelogic.review.repo;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.review.domain.ReviewEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,7 +51,8 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
     Double findAvgRatingByProductCode(@Param("productCode") Long productCode);
 
     // 리뷰 중복 작성 방지 체크
-    boolean existsByMemberAndOrder(MemberEntity member, OrderEntity order);
+//    boolean existsByMemberAndOrder(MemberEntity member, OrderEntity order);
+    boolean existsByMemberMemberCodeAndOrderOrderCode(Long memberCode, Long orderCode);
 
     @Query("SELECT r FROM ReviewEntity r " +
             "JOIN FETCH r.product p " +
@@ -70,4 +73,10 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
 
     // 상품코드로 리뷰 평균내고 productUid맞춰주기
     List<ReviewEntity> findByProduct_ProductCode(Long productCode);
+
+    @Query("SELECT r FROM ReviewEntity r JOIN FETCH r.product p JOIN FETCH r.member m")
+    Page<ReviewEntity> findAllWithJoins(Pageable pageable);
+
+    // 관리자페이지에서 페이징처리
+    Page<ReviewEntity> findPageByProduct_ProductCode(Long productCode, Pageable pageable);
 }

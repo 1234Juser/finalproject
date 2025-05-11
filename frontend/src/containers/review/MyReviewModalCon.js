@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import {deleteMyReview, getReviewByOrderCode} from "../../service/reviewService";
 import MyReviewModalCom from "../../components/review/MyReviewModalCom";
 
-function MyReviewModalCon({ orderCode, onClose }) {
+function MyReviewModalCon({ orderCode, onClose, accessToken, dispatch }) {
     const [review, setReview] = useState(null);
 
     useEffect(() => {
-        if (!orderCode) return;
+        if (!orderCode || !accessToken) return;
 
         const fetchReview = async () => {
             try {
                 console.log("Fetching review for orderCode:", orderCode);
-                const data = await getReviewByOrderCode(orderCode);
+                const data = await getReviewByOrderCode(orderCode, accessToken);
                 console.log("리뷰 데이터:", data);
                 setReview(data);
             } catch (error) {
@@ -20,12 +20,13 @@ function MyReviewModalCon({ orderCode, onClose }) {
         };
 
         fetchReview();
-    }, [orderCode]);
+    }, [orderCode, accessToken]);
 
     const handleDelete = async () => {
         if (window.confirm("정말 이 리뷰를 삭제하시겠습니까?")) {
             try {
-                await deleteMyReview(review.reviewCode);
+                await deleteMyReview(review.reviewCode, accessToken);
+                dispatch({ type: "REMOVE_REVIEW", payload: review.reviewCode });
                 alert("리뷰가 삭제되었습니다.");
                 onClose();  // 모달 닫기
                 window.location.reload();  // 페이지 새로고침
