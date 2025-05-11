@@ -130,7 +130,7 @@ export async function cancelMyReservation(orderCode, accessToken) {
     };
 
     try {
-        const response = await axios.patch(`${path}/my/reservations/cancel/${orderCode}`, config)
+        const response = await axios.patch(`${path}/my/reservations/cancel/${orderCode}`, {}, config);
         return response.data;
     } catch (error) {
         console.error("cancelMyReservation 실패", error.response?.data || error.message);
@@ -142,7 +142,7 @@ export async function cancelMyReservation(orderCode, accessToken) {
 export async function fetchProductListForFilter(accessToken) {
     if (!accessToken) {
         console.error("accessToken 없음");
-        return;
+        return [];
     }
 
     const config = {
@@ -154,7 +154,14 @@ export async function fetchProductListForFilter(accessToken) {
 
     try {
         const res = await axios.get(`${path}/admin/booking/products`, config);
-        return res.data;
+        // return res.data;
+        // 배열 형태로 반환
+        if (Array.isArray(res.data)) {
+            return res.data;
+        } else {
+            console.warn("예상치 못한 응답 형식:", res.data);
+            return [];
+        }
     } catch (error) {
         console.error("fetchProductListForFilter 실패", error.response?.data || error.message);
         throw error;

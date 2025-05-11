@@ -10,6 +10,7 @@ import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.product.domain.ProductEntity;
+import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.review.repo.ReviewRepo;
 import lombok.RequiredArgsConstructor;
@@ -74,35 +75,6 @@ public class OrderService {
         return map;
     }
 
-    // 관리자의 주문조회
-    // 구버전인데 안지우고..
-//    @Transactional
-//    public Map<String, Object> getAllMemberBookingList(int start) {
-//
-//        start = start > 0? start -1 : start;
-//
-//        int size = 10;
-//        Pageable pageable = PageRequest.of(start, size, Sort.by(Sort.Order.desc("orderDate")));
-//        Page<OrderEntity> page = orderRepo.findAll(pageable);
-//        List<OrderEntity> listE = page.getContent();
-//
-//        LocalDate today = LocalDate.now();
-//        for (OrderEntity order : page.getContent()) {
-//            LocalDate resDate = order.getOption().getReservationDate();
-//            if (order.getOrderStatus() == OrderStatus.SCHEDULED && resDate != null && resDate.isBefore(today)) {
-//                order.setOrderStatus(OrderStatus.COMPLETED);
-//                orderRepo.save(order); // 자동 갱신
-//            }
-//        }
-//
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("list", listE.stream().map(entity -> new OrderDTO(entity)).toList());
-//        map.put("totalPages", page.getTotalPages());
-//        map.put("currentPage", page.getNumber() + 1);
-//
-//        return map;
-//    }
-
     // 로그인 된 회원의 주문내역 조회
     @Transactional(readOnly = true)
     public List<OrderDTO> getRecentOrders(long memberCode) {
@@ -145,20 +117,20 @@ public class OrderService {
         return new OrderDTO(order);
     }
 
-    @Transactional(readOnly = true)
-    public List<OrderDTO> getOrdersByMemberCode(Long memberCode) {
-
-        MemberEntity member = memberRepo.findById(memberCode)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-
-        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
-        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
-
-        return orderPage.getContent().stream()
-                .map(OrderDTO::new)
-                .collect(Collectors.toList());
-    }
-
+//    @Transactional(readOnly = true)
+//    public List<OrderDTO> getOrdersByMemberCode(Long memberCode) {
+//
+//        MemberEntity member = memberRepo.findById(memberCode)
+//                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+//
+//        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
+//        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
+//
+//        return orderPage.getContent().stream()
+//                .map(OrderDTO::new)
+//                .collect(Collectors.toList());
+//    }
+//
 //    @Transactional(readOnly = true)
 //    public List<OrderDTO> getOrdersByUsername(String username) {
 //        MemberEntity member = memberRepo.findByMemberId(username)
@@ -194,6 +166,13 @@ public class OrderService {
         for (Long orderCode : orderCodeList) {
             OrderEntity order = orderRepo.findById(orderCode)
                     .orElseThrow(() -> new IllegalArgumentException("해당 주문이 없습니다: " + orderCode));
+            OrderStatus currentStatus = order.getOrderStatus();
+            if (currentStatus != OrderStatus.SCHEDULED) {
+                throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
+            }
+            if (currentStatus == OrderStatus.COMPLETED) {
+                throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
+            }
 
             order.setOrderStatus(OrderStatus.CANCELED);
             orderRepo.save(order);
@@ -210,6 +189,12 @@ public class OrderService {
         }
         if (order.getOrderStatus() != OrderStatus.SCHEDULED) {
             throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
+        }
+        //if ("COMPLETED".equals(order.getOrderStatus())) {
+        //    throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
+        //}
+        if (order.getOrderStatus() == OrderStatus.COMPLETED) {
+            throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
         }
         if (order.getOrderStatus() == OrderStatus.SCHEDULED) {
             order.setOrderStatus(OrderStatus.CANCELED);
@@ -237,14 +222,19 @@ public class OrderService {
     }
 
     // 필터링 해서 상품별 조회
-    public List<Map<String, Object>> getProductListForFilter() {
+//    public List<Map<String, Object>> getProductListForFilter() {
+//        return productRepo.findAll().stream()
+//                .map(product -> {
+//                    Map<String, Object> map = new HashMap<>();
+//                    map.put("productCode", product.getProductCode());
+//                    map.put("productTitle", product.getProductTitle());
+//                    return map;
+//                })
+//                .collect(Collectors.toList());
+//    }
+    public List<ProductDTO> getProductListForFilter() {
         return productRepo.findAll().stream()
-                .map(product -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("productCode", product.getProductCode());
-                    map.put("productTitle", product.getProductTitle());
-                    return map;
-                })
+                .map(ProductDTO::new)
                 .collect(Collectors.toList());
     }
 }
