@@ -3,6 +3,7 @@ package com.hello.travelogic.order.controller;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.order.service.OrderService;
+import com.hello.travelogic.product.dto.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -131,7 +132,8 @@ public class ReservationController {
         if (!isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
         }
-
-        return ResponseEntity.ok(orderService.getProductListForFilter());
+        List<ProductDTO> productList = orderService.getProductListForFilter();
+        return ResponseEntity.ok(productList);
+//        return ResponseEntity.ok(orderService.getProductListForFilter());
     }
 }

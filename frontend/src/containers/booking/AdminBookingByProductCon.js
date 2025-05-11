@@ -18,37 +18,48 @@ function AdminBookingByProductCon({accessToken}) {
         setStart(page);
     };
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                dispatch({ type: 'LOADING' });
-                const data = await fetchReservationsByProductCode(selectedProductCode); // null이면 전체
-                dispatch({ type: 'FETCH_SUCCESS', payload: data });
-            } catch (error) {
-                console.error("예약 조회 실패:", error);
-                dispatch({ type: 'FETCH_ERROR', payload: error });
-            }
-        }
-
-        fetchData();
-    }, [selectedProductCode]); // 상품이 바뀔 때마다 조회
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         if (!accessToken) {
+    //             alert("토큰이 없습니다.");
+    //             return;
+    //         }
+    //         try {
+    //             dispatch({ type: 'LOADING' });
+    //             const data = await fetchReservationsByProductCode(selectedProductCode); // null이면 전체
+    //             dispatch({ type: 'FETCH_SUCCESS', payload: data });
+    //         } catch (error) {
+    //             console.error("예약 조회 실패:", error);
+    //             dispatch({ type: 'FETCH_ERROR', payload: error });
+    //         }
+    //     }
+    //
+    //     fetchData();
+    // }, [selectedProductCode]); // 상품이 바뀔 때마다 조회
 
     // 상품 목록 불러오기
     useEffect(() => {
-        fetchProductListForFilter()
+        if (!accessToken) {
+            alert("토큰이 없습니다.");
+            return;
+        }
+        fetchProductListForFilter(accessToken)
             .then((res) => {
                 console.log("상품 필터용 product 목록:", res);
                 setProducts(res);
             })
             .catch((e) => console.error("상품 목록 불러오기 실패", e));
-    }, []);
+    }, [accessToken]);
 
     // 예약 목록 불러오기 (상품 필터 기준)
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (token) {
+        if (!accessToken) {
+            alert("토큰이 없습니다.");
+            return;
+        }
+        if (accessToken) {
             try {
-                const decoded = JSON.parse(atob(token.split('.')[1]));
+                const decoded = JSON.parse(atob(accessToken.split('.')[1]));
                 const roles = decoded.roles;
                 if (!roles.includes("ROLE_ADMIN")) {
                     alert("접근 권한이 없습니다. 관리자만 접근할 수 있습니다.");
@@ -69,7 +80,7 @@ function AdminBookingByProductCon({accessToken}) {
 
         dispatch({ type: "LOADING" });
 
-        fetchReservationsByProductCode(selectedProductCode, start)
+        fetchReservationsByProductCode(selectedProductCode, accessToken, start)
             .then((data) => {
                 console.log("예약 데이터 응답:", data);
                 dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -78,7 +89,7 @@ function AdminBookingByProductCon({accessToken}) {
                 console.error("예약 조회 실패:", err.response?.data || err.message);
                 dispatch({ type: "FETCH_ERROR", payload: err.message });
             });
-    }, [selectedProductCode, start]);
+    }, [selectedProductCode, accessToken, start]);      // 상품이 바뀔 때마다 조회
 
     const { reservations, loading, currentPage, totalPages } = state;
 
@@ -101,11 +112,11 @@ function AdminBookingByProductCon({accessToken}) {
         if (!confirmed) return;
 
         try {
-            await cancelReservations(selectedOrders);
+            await cancelReservations(selectedOrders, accessToken);
             alert("예약이 성공적으로 취소되었습니다.");
             setSelectedOrders([]);
 
-            const updated = await fetchReservationsByProductCode(selectedProductCode, start);
+            const updated = await fetchReservationsByProductCode(selectedProductCode, accessToken, start);
             dispatch({ type: "FETCH_SUCCESS", payload: updated });
         } catch (err) {
             console.error("예약 취소 실패:", err.response?.data || err.message);
