@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import axios from "axios";
 import path, {getReviewImage} from "../../service/reviewService";
+import {useNavigate} from "react-router-dom";
 
 const Overlay = styled.div`
     position: fixed;
@@ -128,6 +129,7 @@ const FooterButton = styled.button`
 
 function MyReviewModalCom({ review, onClose, onDelete }) {
     const [imageSrc, setImageSrc] = useState("/img/default-review.jpg");
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (review.reviewPic) {
@@ -141,6 +143,10 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                 });
         }
     }, [review.reviewPic]);
+
+    const handleEdit = () => {
+        navigate(`/review/edit/${review.reviewCode}`);
+    };
 
     return (
         <Overlay onClick={onClose}>
@@ -163,7 +169,7 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     </ReviewInfo>
                 </Content>
                 <Footer>
-                    <FooterButton>수정</FooterButton>
+                    <FooterButton onClick={handleEdit}>수정</FooterButton>
                     <FooterButton onClick={onDelete}>삭제</FooterButton>
                 </Footer>
             </Modal>

@@ -29,7 +29,10 @@ function MyReviewModalCon({ orderCode, onClose, accessToken, dispatch }) {
                 dispatch({ type: "REMOVE_REVIEW", payload: review.reviewCode });
                 alert("리뷰가 삭제되었습니다.");
                 onClose();  // 모달 닫기
-                window.location.reload();  // 페이지 새로고침
+                // window.location.reload();  // 페이지 새로고침
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             } catch (error) {
                 alert("리뷰 삭제에 실패했습니다.");
             }
