@@ -39,6 +39,7 @@ import AdminRealTimePage from "./pages/realtime/AdminRealTimePage";
 import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
 import ChatMainPage from "./pages/community/chat/ChatMainPage";
 import CommunityLayout from "./style/community/CommunityLayout";
+import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
 
 function App() {
     return (
@@ -80,6 +81,7 @@ function App() {
                 </Route>
                 <Route path="/my/reservations" element={<MyBookingPage />} />
                 <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
+                <Route path="/review/edit/:reviewCode" element={<MyReviewEditPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />

@@ -1,33 +1,51 @@
 import {useEffect, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import ReviewFormCom from "../../components/review/ReviewFormCom";
-import {getReviewByOrderCode} from "../../service/reviewService";
+import {getReviewByReviewCode, updateReview} from "../../service/reviewService";
+import MyReviewEditCom from "../../components/review/MyReviewEditCom";
 
 function MyReviewEditCon({ accessToken }) {
     const { reviewCode } = useParams(); // URL에서 reviewCode 가져오기
+    const [state, dispatch] = useState({})
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
-    const [selectedRating, setSelectedRating] = useState(0);
-    const [reviewContent, setReviewContent] = useState("");
+    // const [reviewData, setReviewData] = useState(null);
+    const [reviewData, setReviewData] = useState({
+        selectedRating: 5,
+        reviewContent: "",
+        reviewPicFile: null,
+    });
+    // const [selectedRating, setSelectedRating] = useState(0);
+    // const [reviewContent, setReviewContent] = useState("");
     const [imagePreview, setImagePreview] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [productTitle, setProductTitle] = useState("");
+    // const [productTitle, setProductTitle] = useState("");
 
     // 기존 리뷰 데이터를 불러오는 함수
     useEffect(() => {
         const fetchReviewData = async () => {
             try {
-                const reviewData = await getReviewByOrderCode(reviewCode, accessToken);
-                setSelectedRating(reviewData.reviewRating);
-                setReviewContent(reviewData.reviewContent);
-                setProductTitle(reviewData.productTitle);
+                const reviewData = await getReviewByReviewCode(reviewCode, accessToken);
+                setReviewData({
+                    selectedRating: reviewData.reviewRating || 5,
+                    reviewContent: reviewData.reviewContent || "",
+                    reviewPicFile: null,
+                });
 
                 if (reviewData.reviewPic) {
                     const imageBlob = await fetch(`/review/${reviewData.reviewPic}/image`);
                     const imageUrl = URL.createObjectURL(await imageBlob.blob());
                     setImagePreview(imageUrl);
                 }
+                // dispatch({
+                //     type: "SET_SELECTED_REVIEW",
+                //     data: {
+                //         reviewRating: reviewData.reviewRating || 5,
+                //         reviewContent: reviewData.reviewContent || "",
+                //         reviewPic: reviewData.reviewPic || null,
+                //     },
+                // });
             } catch (error) {
                 console.error("리뷰 데이터 로드 실패:", error);
                 alert("리뷰를 불러오는 중 오류가 발생했습니다.");
@@ -54,11 +72,20 @@ function MyReviewEditCon({ accessToken }) {
     };
 
     // 리뷰 수정 제출 핸들러
-    const handleSubmit = async () => {
+    const handleSubmit = async (reviewData) => {
         try {
+            if (reviewData.reviewRating === undefined || reviewData.reviewRating === null || isNaN(reviewData.reviewRating)) {
+                alert("평점을 입력해주세요.");
+                return;
+            }
+            if (!reviewData.reviewContent || reviewData.reviewContent.trim() === "") {
+                alert("리뷰 내용을 입력해주세요.");
+                return;
+            }
             const formData = new FormData();
-            formData.append("reviewRating", selectedRating);
-            formData.append("reviewContent", reviewContent);
+            // formData.append("reviewRating",reviewData.selectedRating || 0);
+            formData.append("reviewRating", reviewData.reviewRating);
+            formData.append("reviewContent", reviewData.reviewContent);
             if (selectedFile) {
                 formData.append("file", selectedFile);
             }
@@ -66,6 +93,9 @@ function MyReviewEditCon({ accessToken }) {
             const response = await updateReview({
                 reviewCode,
                 formData,
+                // reviewRating: reviewData.selectedRating,
+                // reviewContent: reviewData.reviewContent,
+                // file: selectedFile,
                 accessToken,
             });
 
@@ -80,16 +110,17 @@ function MyReviewEditCon({ accessToken }) {
     };
 
     return (
-        <ReviewFormCom
-            productTitle={productTitle}
-            selectedRating={selectedRating}
-            setSelectedRating={setSelectedRating}
+        <MyReviewEditCom
+            review={reviewData}
+            // productTitle={productTitle}
+            // selectedRating={selectedRating}
+            // setSelectedRating={setSelectedRating}
             imagePreview={imagePreview}
             fileInputRef={fileInputRef}
             handleFileChange={handleFileChange}
             handleFileRemove={handleFileRemove}
             handleSubmit={handleSubmit}
-            setReviewContent={setReviewContent}
+            // setReviewContent={setReviewContent}
         />
     );
 }

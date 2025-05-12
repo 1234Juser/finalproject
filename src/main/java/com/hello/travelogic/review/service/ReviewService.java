@@ -248,24 +248,35 @@ public class ReviewService {
         }
     }
 
+    public ReviewDTO findReviewByCodeAndMember(Long reviewCode, Long memberCode) {
+        ReviewEntity review = reviewRepo.findById(reviewCode)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        if (!review.getMember().getMemberCode().equals(memberCode)) {
+            throw new IllegalArgumentException("리뷰를 조회할 권한이 없습니다.");
+        }
+        return new ReviewDTO(review);
+    }
+
     @Transactional
-    public String modifyReview (Long reviewCode, ReviewDTO reviewDTO, MultipartFile file) {
+    public String modifyReview (Long reviewCode, ReviewDTO reviewDTO, MultipartFile reviewPic) {
         try {
             ReviewEntity review = reviewRepo.findById(reviewCode)
                     .orElseThrow(() -> new RuntimeException("해당 리뷰가 존재하지 않습니다."));
 
             // 수정 가능한 시간인지 확인
             if (review.getReviewDate().plusHours(48).isBefore(LocalDateTime.now())) {
-                throw new RuntimeException("리뷰는 작성 후 48시간 이내에만 수정할 수 있습니다.");
+                throw new IllegalArgumentException("리뷰는 작성 후 48시간 이내에만 수정할 수 있습니다.");
             }
 
             // 수정 가능한 항목만 입력한다.
             review.setReviewRating(reviewDTO.getReviewRating());
             review.setReviewContent(reviewDTO.getReviewContent());
 
-            if (file != null && !file.isEmpty()) {
-                deleteFile(review.getReviewPic(), REVIEW_DIR);
-                String newFileName = saveFile(file, REVIEW_DIR);
+            if (reviewPic != null && !reviewPic.isEmpty()) {
+                if (review.getReviewPic() != null) {
+                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+                }
+                String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
                 review.setReviewPic(newFileName);
             }
             // 수정 후 저장

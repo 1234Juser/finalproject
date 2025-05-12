@@ -138,8 +138,9 @@ public class ReviewController {
     }
 
     // OrderStatus가 COMPLETED인 회원만 리뷰 작성하기
-    @PostMapping(value = "/review/write", consumes = "multipart/form-data")
-    public ResponseEntity writeReview(@RequestParam("orderCode") Long orderCode,
+    @PostMapping(value = "/review/write/{orderCode}", consumes = "multipart/form-data")
+    public ResponseEntity writeReview(@PathVariable Long orderCode,
+//                                      @RequestParam("orderCode") Long orderCode,
                                       @RequestParam("reviewRating") Integer reviewRating,
                                       @RequestParam("reviewContent") String reviewContent,
                                       @RequestPart(value = "reviewPic", required = false) MultipartFile reviewPic,
@@ -184,27 +185,58 @@ public class ReviewController {
         }
     }
 
+    // 리뷰 수정을 위한 리뷰 데이터 가져오기
+    @GetMapping("/review/edit/{reviewCode}")
+    public ResponseEntity<?> getReviewByReviewCode(@PathVariable Long reviewCode,
+                                                   Authentication authentication) {
+        try {
+            String memberId = authentication.getPrincipal().toString();
+            Long memberCode = memberRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                    .getMemberCode();
+            ReviewDTO review = reviewService.findReviewByCodeAndMember(reviewCode, memberCode);
+            return ResponseEntity.ok(review);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 조회 실패");
+        }
+    }
+
     // 리뷰 수정하기
     @PutMapping(value = "/review/edit/{reviewCode}", consumes = "multipart/form-data")
     public ResponseEntity modifyReview(@PathVariable("reviewCode") long reviewCode,
-                                       @RequestParam("reviewRating") int reviewRating,
+                                       @RequestParam("reviewRating") Integer reviewRating,
                                        @RequestParam("reviewContent") String reviewContent,
-                                       @RequestPart(value = "file", required = false) MultipartFile file,
+                                       @RequestPart(value = "reviewPic", required = false) MultipartFile reviewPic,
                                        Authentication authentication) {
-        String memberId = authentication.getPrincipal().toString();
-        Long memberCode = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
-                .getMemberCode();
-
         try {
-            ReviewDTO reviewDTO = new ReviewDTO();
-            reviewDTO.setReviewRating(reviewRating);
-            reviewDTO.setReviewContent(reviewContent);
+            String memberId = authentication.getPrincipal().toString();
+            Long memberCode = memberRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                    .getMemberCode();
+            if (reviewRating == null || reviewContent == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("평점과 리뷰 내용이 필요합니다.");
+            }
 
-            String result = reviewService.modifyReview(reviewCode, reviewDTO, file);
+            ReviewDTO reviewDTO = new ReviewDTO();
+//            reviewDTO.setReviewRating(reviewRating);
+//            reviewDTO.setReviewContent(reviewContent);
+            if (reviewRating != null) {
+                reviewDTO.setReviewRating(reviewRating);
+            }
+            if (reviewContent != null) {
+                reviewDTO.setReviewContent(reviewContent);
+            }
+
+            String result = reviewService.modifyReview(reviewCode, reviewDTO, reviewPic);
             return ResponseEntity.ok(result);
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 수정 실패");
         }
     }
 
