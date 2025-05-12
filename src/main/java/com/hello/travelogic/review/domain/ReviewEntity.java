@@ -92,8 +92,8 @@ public class ReviewEntity {
 //        if (this.reviewDate == null) {
 //            this.reviewDate = LocalDateTime.now();
 //        }
-        if (this.reviewPic == null || this.reviewPic.equals("")) {
-            this.reviewPic = "nan";
+        if (this.reviewPic == null || this.reviewPic.isEmpty()) {
+            this.reviewPic = null;
             log.debug("prePersist 호출됨 - 기존 reviewPic: {}", this.reviewPic);
         }
         if (this.order != null) {

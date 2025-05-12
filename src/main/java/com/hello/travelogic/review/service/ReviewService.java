@@ -272,12 +272,22 @@ public class ReviewService {
             review.setReviewRating(reviewDTO.getReviewRating());
             review.setReviewContent(reviewDTO.getReviewContent());
 
+            // 파일 처리 로직 수정
             if (reviewPic != null && !reviewPic.isEmpty()) {
-                if (review.getReviewPic() != null) {
+                // 기존 파일 삭제
+                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
                     deleteFile(review.getReviewPic(), REVIEW_DIR);
                 }
-                String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
-                review.setReviewPic(newFileName);
+                    String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
+                    review.setReviewPic(newFileName);
+                    log.info("파일 교체 완료: {}", newFileName);
+            } else if (reviewPic == null) {
+                // 파일 삭제 요청 (빈 파일로 초기화)
+                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+                }
+                    review.setReviewPic(null);
+                    log.info("기존 파일 삭제 완료");
             }
             // 수정 후 저장
             reviewRepo.save(review);

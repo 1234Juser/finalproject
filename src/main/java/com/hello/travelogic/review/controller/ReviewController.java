@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -283,6 +284,13 @@ public class ReviewController {
     @GetMapping("/review/{reviewPic}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable(value="reviewPic") String reviewPic) {
         try {
+            if (reviewPic == null || reviewPic.equals("nan")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            Path filePath = Paths.get("upload/review/" + reviewPic);
+            if (!Files.exists(filePath)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
             byte[] imageByte = Files.readAllBytes(Paths.get("upload/review/" + reviewPic));
             HttpHeaders headers = new HttpHeaders();
 //            headers.setContentType(MediaType.IMAGE_JPEG); // 기본은 JPEG로 설정
