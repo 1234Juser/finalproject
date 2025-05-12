@@ -18,15 +18,12 @@ function ProductRegCon() {
 
 
     useEffect(() => {
-        console.log("-------formInput 변경 확인하기-------", formInput);
-        
         getThemes()
             .then( data => dispatch({ type: "SET_THEMES", payload: data }))
             .catch((err) => console.error(err))
 
         // 수정 모드
         if(productUid) {
-            
             getProductModify(productUid)
             .then( data => {
                 console.log("-------수정용 data 확인-------", data);
@@ -45,7 +42,13 @@ function ProductRegCon() {
             .then((regionData) => dispatch({ type: "SET_REGIONS", payload: regionData }))
             .catch(err => console.error(err))
         }
-    }, []);
+    }, [productUid]);
+
+
+    // formInput 로그용
+    useEffect(() => {
+        console.log("-------formInput 변경 확인하기-------", formInput);
+    }, [formInput]);
 
 
     // formInput 상태 관리
