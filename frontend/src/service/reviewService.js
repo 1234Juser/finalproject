@@ -93,8 +93,12 @@ export async function getReviewByOrderCode(orderCode, accessToken) {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        console.log("리뷰 불러오기 성공:", response.data);
-        return response.data;
+        const review = response.data;
+        console.log("리뷰 불러오기 성공:", review);
+        if (!review.reviewStatus) {
+            console.warn("리뷰 상태가 설정되지 않았습니다:", review);
+        }
+        return review;
     } catch (error) {
         console.error("리뷰 불러오기 실패:", error);
         throw error;

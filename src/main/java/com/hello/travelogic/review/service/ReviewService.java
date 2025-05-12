@@ -89,6 +89,8 @@ public class ReviewService {
                     dto.setReviewContent(review.getReviewContent());
                     dto.setReviewDate(review.getReviewDate());
                     dto.setReviewPic(review.getReviewPic());
+                    // ENUM -> 문자열 변환
+                    dto.setReviewStatus(review.getReviewStatus().name());
 
                     // 임시 필드 설정
                     dto.setProductTitle(review.getProduct().getProductTitle());
@@ -197,7 +199,8 @@ public class ReviewService {
 //            }
 
             reviewDTO.setReviewDate(LocalDateTime.now());
-            reviewDTO.setReviewStatus(ReviewStatus.ACTIVE);
+//            reviewDTO.setReviewStatus(ReviewStatus.ACTIVE);
+            reviewDTO.setReviewStatus(ReviewStatus.ACTIVE.name());
             reviewDTO.setProductCode(productEntity.getProductCode());
             reviewDTO.setOptionCode(optionEntity.getOptionCode());
             reviewDTO.setReservationDate(optionEntity.getReservationDate());
