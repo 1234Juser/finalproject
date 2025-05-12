@@ -341,10 +341,15 @@ public class ReviewService {
         review.setReviewStatus(ReviewStatus.DELETE_BY_ADMIN);
         review.setReviewContent("관리자에 의해 삭제된 리뷰입니다.");
 
-        if (review.getReviewPic() != null) {
-            deleteFile(review.getReviewPic(), REVIEW_DIR);
-            review.setReviewPic(null);
+        String reviewPic = review.getReviewPic();
+        if (reviewPic != null && !reviewPic.equals("nan")) {
+            deleteFile(reviewPic, REVIEW_DIR);
+            review.setReviewPic("nan"); // 이미지 필드를 비워줌
         }
+//        if (review.getReviewPic() != null) {
+//            deleteFile(review.getReviewPic(), REVIEW_DIR);
+//            review.setReviewPic(null);
+//        }
 
 //        deleteFile(review.getReviewPic(), REVIEW_DIR);
 //        review.setReviewPic(null); // DB에서도 이미지 제거
