@@ -341,6 +341,36 @@ export async function deleteReviewByAdmin(reviewCode, accessToken) {
     }
 }
 
+// 상품 목록 조회 (관리자 예약 필터용)
+export async function fetchProductListForFilter(accessToken) {
+    if (!accessToken) {
+        console.error("accessToken 없음");
+        return [];
+    }
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+
+    try {
+        const res = await axios.get(`${path}/admin/review/products`, config);
+        // return res.data;
+        // 배열 형태로 반환
+        if (Array.isArray(res.data)) {
+            return res.data;
+        } else {
+            console.warn("예상치 못한 응답 형식:", res.data);
+            return [];
+        }
+    } catch (error) {
+        console.error("fetchProductListForFilter 실패", error.response?.data || error.message);
+        throw error;
+    }
+}
+
 export async function getReviewImage(reviewPic) {
     try {
         const res = await axios.get(`${path}/review/${reviewPic}/image`, {
