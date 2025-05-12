@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import MyReviewModalCom from "./MyReviewModalCom";
 import {useState} from "react";
 import {deleteReviewByAdmin} from "../../service/reviewService";
+import AdminReviewModalCom from "./AdminReviewModalCom";
 
 const StyleReviewBlock = styled.div`
     display: flex;
@@ -132,7 +132,7 @@ const SpanPage = styled.span`
     cursor : pointer;
 `;
 
-function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onClick, accessToken, dispatch }) {
+function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onClick, onDelete }) {
     const [selectedReview, setSelectedReview] = useState(null);
 
     if (loading) {
@@ -171,20 +171,20 @@ function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onCl
 
     const handleCloseModal = () => setSelectedReview(null);
 
-    const handleDeleteReview = async (reviewCode) => {
-        if (window.confirm("정말 이 리뷰를 삭제하시겠습니까?")) {
-            try {
-                await deleteReviewByAdmin(reviewCode, accessToken);
-                dispatch({ type: "REMOVE_REVIEW", payload: reviewCode });
-                alert("리뷰가 성공적으로 삭제되었습니다.");
-                handleCloseModal();
-                window.location.reload(); // 삭제 후 페이지 새로고침
-            } catch (error) {
-                alert("리뷰 삭제에 실패했습니다.");
-                console.error("🔴 리뷰 삭제 실패:", error);
-            }
-        }
-    };
+    // const handleDeleteReview = async (reviewCode) => {
+    //     if (window.confirm("정말 이 리뷰를 삭제하시겠습니까?")) {
+    //         try {
+    //             await deleteReviewByAdmin(reviewCode, accessToken);
+    //             dispatch({ type: "REMOVE_REVIEW", payload: reviewCode });
+    //             alert("리뷰가 성공적으로 삭제되었습니다.");
+    //             handleCloseModal();
+    //             window.location.reload(); // 삭제 후 페이지 새로고침
+    //         } catch (error) {
+    //             alert("리뷰 삭제에 실패했습니다.");
+    //             console.error("🔴 리뷰 삭제 실패:", error);
+    //         }
+    //     }
+    // };
 
     return(
         <>
@@ -256,10 +256,10 @@ function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onCl
                     </DivWrap>
                     {/* 선택된 리뷰가 있으면 모달 열기 */}
                     {selectedReview && (
-                        <MyReviewModalCom
+                        <AdminReviewModalCom
                             review={selectedReview}
                             onClose={handleCloseModal}
-                            onDelete={() => handleDeleteReview(selectedReview.reviewCode)}
+                            onDelete={() => onDelete(selectedReview.reviewCode)}
                         />
                     )}
                 </StyleContentWrap>

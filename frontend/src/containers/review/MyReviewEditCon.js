@@ -12,7 +12,8 @@ function MyReviewEditCon({ accessToken }) {
 
     // const [reviewData, setReviewData] = useState(null);
     const [reviewData, setReviewData] = useState({
-        selectedRating: 5,
+        // selectedRating: null,
+        reviewRating: null,
         reviewContent: "",
         reviewPicFile: null,
     });
@@ -28,7 +29,8 @@ function MyReviewEditCon({ accessToken }) {
             try {
                 const reviewData = await getReviewByReviewCode(reviewCode, accessToken);
                 setReviewData({
-                    selectedRating: reviewData.reviewRating || 5,
+                    // selectedRating: reviewData.reviewRating,
+                    reviewRating: reviewData.reviewRating,
                     reviewContent: reviewData.reviewContent || "",
                     reviewPicFile: null,
                 });
@@ -69,6 +71,10 @@ function MyReviewEditCon({ accessToken }) {
     const handleFileRemove = () => {
         setSelectedFile(null);
         setImagePreview(null);
+        setReviewData((prev) => ({
+            ...prev,
+            reviewPicFile: null,
+        }));
     };
 
     // 리뷰 수정 제출 핸들러
@@ -87,7 +93,10 @@ function MyReviewEditCon({ accessToken }) {
             formData.append("reviewRating", reviewData.reviewRating);
             formData.append("reviewContent", reviewData.reviewContent);
             if (selectedFile) {
-                formData.append("file", selectedFile);
+                formData.append("reviewPic", selectedFile);
+            } else {
+                // 파일 삭제 요청을 위해 빈 파일 추가
+                formData.append("reviewPic", "");
             }
 
             const response = await updateReview({
