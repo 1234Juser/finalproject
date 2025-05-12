@@ -53,7 +53,7 @@ public class ReviewEntity {
 
     @NotNull
     @Column( name = "review_rating", nullable = false )
-    private Integer reviewRating;
+    private Integer reviewRating = 5;
 
     @Size(min = 10, max = 500, message = "리뷰는 10자 이상 500자 이하로 작성해주세요.")
     @Column( name = "review_content", nullable = true, columnDefinition = "TEXT")

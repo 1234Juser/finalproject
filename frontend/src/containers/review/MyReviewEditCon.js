@@ -12,7 +12,8 @@ function MyReviewEditCon({ accessToken }) {
 
     // const [reviewData, setReviewData] = useState(null);
     const [reviewData, setReviewData] = useState({
-        selectedRating: 5,
+        // selectedRating: null,
+        reviewRating: null,
         reviewContent: "",
         reviewPicFile: null,
     });
@@ -28,7 +29,8 @@ function MyReviewEditCon({ accessToken }) {
             try {
                 const reviewData = await getReviewByReviewCode(reviewCode, accessToken);
                 setReviewData({
-                    selectedRating: reviewData.reviewRating || 5,
+                    // selectedRating: reviewData.reviewRating,
+                    reviewRating: reviewData.reviewRating,
                     reviewContent: reviewData.reviewContent || "",
                     reviewPicFile: null,
                 });
