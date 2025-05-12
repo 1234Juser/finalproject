@@ -81,7 +81,12 @@ public class ReviewEntity {
         this.reviewDate = review.getReviewDate();
         this.reviewContent = review.getReviewContent();
         this.reviewPic = review.getReviewPic();
-        this.reviewStatus = review.getReviewStatus();
+        try {
+            this.reviewStatus = ReviewStatus.valueOf(review.getReviewStatus().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            this.reviewStatus = ReviewStatus.ACTIVE;  // 기본값 설정
+            log.warn("잘못된 리뷰 상태입니다. 기본값 ACTIVE로 설정합니다. 입력값: {}", review.getReviewStatus());
+        }
     }
 
     private static final Logger log = LoggerFactory.getLogger(ReviewEntity.class);

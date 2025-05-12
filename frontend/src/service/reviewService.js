@@ -93,8 +93,12 @@ export async function getReviewByOrderCode(orderCode, accessToken) {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        console.log("리뷰 불러오기 성공:", response.data);
-        return response.data;
+        const review = response.data;
+        console.log("리뷰 불러오기 성공:", review);
+        if (!review.reviewStatus) {
+            console.warn("리뷰 상태가 설정되지 않았습니다:", review);
+        }
+        return review;
     } catch (error) {
         console.error("리뷰 불러오기 실패:", error);
         throw error;
@@ -262,11 +266,19 @@ export async function deleteMyReview(reviewCode, accessToken) {
             }
         });
 
-        console.log("리뷰 삭제 성공:", response.data);
-        return response.data;
+        if (response.status === 200 || response.status === 204) {
+            console.log("리뷰 삭제 성공:", response.data);
+            return response.data;
+        } else {
+            console.error("리뷰 삭제 실패 (응답 상태 비정상):", response.status);
+            throw new Error("리뷰 삭제가 실패했습니다.");
+        }
     } catch (error) {
         console.error("리뷰 삭제 실패:", error.response?.data || error.message);
-        throw error;
+        if (error.response && error.response.status === 404) {
+            throw new Error("리뷰가 이미 삭제되었거나 존재하지 않습니다.");
+        }
+        throw new Error("리뷰 삭제 중 오류가 발생했습니다.");
     }
 }
 
@@ -337,6 +349,36 @@ export async function deleteReviewByAdmin(reviewCode, accessToken) {
         return response.data;
     } catch (error) {
         console.error("deleteReviewByAdmin 실패", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// 상품 목록 조회 (관리자 예약 필터용)
+export async function fetchProductListForFilter(accessToken) {
+    if (!accessToken) {
+        console.error("accessToken 없음");
+        return [];
+    }
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+
+    try {
+        const res = await axios.get(`${path}/admin/review/products`, config);
+        // return res.data;
+        // 배열 형태로 반환
+        if (Array.isArray(res.data)) {
+            return res.data;
+        } else {
+            console.warn("예상치 못한 응답 형식:", res.data);
+            return [];
+        }
+    } catch (error) {
+        console.error("fetchProductListForFilter 실패", error.response?.data || error.message);
         throw error;
     }
 }

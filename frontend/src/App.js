@@ -40,6 +40,7 @@ import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
 import ChatMainPage from "./pages/community/chat/ChatMainPage";
 import CommunityLayout from "./style/community/CommunityLayout";
 import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
+import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 
 function App() {
     return (
@@ -94,6 +95,7 @@ function App() {
                 <Route path="/admin/booking" element={<AdminBookingPage />} />
                 <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
+                <Route path="/admin/review/by-product" element={<AdminReviewByProductPage />} />
 
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>
