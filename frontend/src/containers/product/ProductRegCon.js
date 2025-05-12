@@ -2,7 +2,7 @@ import ProductRegCom from "../../components/product/ProductRegCom";
 import {useEffect, useReducer} from "react";
 import { ProductRegist, getRegions, getCountryList, getCitiesByRegion, getCitiesByCountry, getThemes, getProductModify, setProductModify} from "../../service/ProductService";
 import {useNavigate, useParams} from "react-router-dom";
-import {productFormReducer, initialState} from "../../modules/ProductReducer";
+import {productFormReducer, initialState} from "../../modules/productReducer";
 
 
 function ProductRegCon() {

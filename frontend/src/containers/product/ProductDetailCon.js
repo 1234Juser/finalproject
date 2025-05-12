@@ -2,7 +2,7 @@ import ProductDetailCom from "../../components/product/ProductDetailCom";
 import {useEffect, useReducer, useState} from "react";
 import {getProductDetail, toggleWish} from "../../service/ProductService";
 import {useParams} from "react-router-dom";
-import {initialState, productFormReducer} from "../../modules/ProductReducer";
+import {initialState, productFormReducer} from "../../modules/productReducer";
 import { toast } from "react-toastify";
 
 function ProductDetailCon({productCode, initialWishState, memberCode}) {
