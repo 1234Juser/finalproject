@@ -135,8 +135,6 @@ function ProductRegCom({
                             </StyledSelect>
                         </InputWrapper>
                     )}
-
-                    <hr/>
                     <InputWrapper>
                         <StyledLabel htmlFor="themeCode">투어 테마 선택</StyledLabel>
                         <StyledSelect
