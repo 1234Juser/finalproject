@@ -1,8 +1,8 @@
 import AdminReviewByProductCom from "../../components/review/AdminReviewByProductCom";
 import {useEffect, useReducer, useState} from "react";
 import {initialState, reducer} from "../../modules/reviewModule";
-import {deleteReviewByAdmin, getAllReviewsForAdmin, getReviewsByProductForAdmin} from "../../service/reviewService";
-import {fetchProductListForFilter} from "../../service/reservationService";
+import {deleteReviewByAdmin, getReviewsByProductForAdmin} from "../../service/reviewService";
+import {fetchProductListForFilter} from "../../service/reviewService";
 
 function AdminReviewByProductCon({ accessToken }) {
     const [state, dispatch] = useReducer(reducer, initialState);

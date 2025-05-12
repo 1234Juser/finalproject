@@ -262,11 +262,19 @@ export async function deleteMyReview(reviewCode, accessToken) {
             }
         });
 
-        console.log("리뷰 삭제 성공:", response.data);
-        return response.data;
+        if (response.status === 200 || response.status === 204) {
+            console.log("리뷰 삭제 성공:", response.data);
+            return response.data;
+        } else {
+            console.error("리뷰 삭제 실패 (응답 상태 비정상):", response.status);
+            throw new Error("리뷰 삭제가 실패했습니다.");
+        }
     } catch (error) {
         console.error("리뷰 삭제 실패:", error.response?.data || error.message);
-        throw error;
+        if (error.response && error.response.status === 404) {
+            throw new Error("리뷰가 이미 삭제되었거나 존재하지 않습니다.");
+        }
+        throw new Error("리뷰 삭제 중 오류가 발생했습니다.");
     }
 }
 

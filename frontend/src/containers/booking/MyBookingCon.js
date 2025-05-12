@@ -161,7 +161,7 @@ function MyBookingCon({ accessToken }){
                 payload: { orderCode, reviewed: false }
             });
 
-            await refreshReservations();
+            await refreshReservations(accessToken);
             closeReviewModal();  // 모달 닫기
         } catch (error) {
             alert("리뷰 삭제에 실패했습니다.");
