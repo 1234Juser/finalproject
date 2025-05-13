@@ -21,6 +21,7 @@ public class CompanionDetailDTO {
     private LocalDateTime companionCreatedAt;
     private Integer companionViewCount;
     private List<CompanionCommentDTO> comments; // 댓글 목록
+    private LocalDateTime companionModifiedAt; // 수정 시간 추가
 
     public static CompanionDetailDTO fromEntity(CompanionEntity entity, List<CompanionCommentDTO> comments) {
         if (entity == null) return null;
@@ -34,6 +35,7 @@ public class CompanionDetailDTO {
                 .companionCreatedAt(entity.getCompanionCreatedAt())
                 .companionViewCount(entity.getCompanionViewCount())
                 .comments(comments)
+                .companionModifiedAt(entity.getCompanionModifiedAt()) // 수정 시간 매핑
                 .build();
     }
 

@@ -42,6 +42,7 @@ import CommunityLayout from "./style/community/CommunityLayout";
 import CompanionListPage from "./pages/companion/CompanionListPage";
 import CompanionRegisterPage from "./pages/companion/CompanionRegisterPage";
 import CompanionDetailPage from "./pages/companion/CompanionDetailPage";
+import CompanionEditPage from "./pages/companion/CompanionEditPage";
 
 function App() {
     return (
@@ -111,6 +112,7 @@ function App() {
                     <Route path="companion" element={<CompanionListPage/>}/>
                     <Route path="companion/new" element={<CompanionRegisterPage/>}/>
                     <Route path="companion/:companionId" element={<CompanionDetailPage />} />
+                    <Route path="companion/edit/:companionId" element={<CompanionEditPage />} />
                     <Route path="chat" element={<ChatMainPage/>}/>
                 </Route>
 

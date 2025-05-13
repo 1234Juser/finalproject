@@ -9,7 +9,7 @@ function CompanionDetailCon() {
     const navigate = useNavigate();
     const [companion, setCompanion] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // 세미콜론 추가
+    const [error, setError] = useState(null);
     const [canEdit, setCanEdit] = useState(false); // 수정 권한
     const [canDelete, setCanDelete] = useState(false); // 삭제 권한
 
@@ -112,4 +112,4 @@ function CompanionDetailCon() {
     );
 }
 
-export default CompanionDetailCon; // 이 라인을 추가하여 기본 내보내기 설정
+export default CompanionDetailCon;
