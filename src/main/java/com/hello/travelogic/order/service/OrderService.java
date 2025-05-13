@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +235,11 @@ public class OrderService {
 //    }
     public List<ProductDTO> getProductListForFilter() {
         return productRepo.findAll().stream()
+                .sorted(Comparator.comparing(ProductEntity::getProductTitle))
+                // 대소문자 무시
+//                .sorted(Comparator.comparing(
+//                        product -> product.getProductTitle().toLowerCase(),
+//                        String.CASE_INSENSITIVE_ORDER))
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
     }
