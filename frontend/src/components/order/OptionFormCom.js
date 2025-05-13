@@ -29,12 +29,14 @@ function OptionFormCom({ options = [], totalPrice = 0, onAdultCountChange, onChi
                             <CounterValue>{option.adultCount}</CounterValue>
                             <CounterButton onClick={() => onAdultCountChange(index, 1)}>+</CounterButton>
                         </OptionCounter>
-                        <OptionCounter>
-                            <span>아동</span>
-                            <CounterButton onClick={() => onChildCountChange(index, -1)}>-</CounterButton>
-                            <CounterValue>{option.childCount || 0}</CounterValue>
-                            <CounterButton onClick={() => onChildCountChange(index, 1)}>+</CounterButton>
-                        </OptionCounter>
+                        {option.productChild > 0 && (
+                            <OptionCounter>
+                                <span>아동</span>
+                                <CounterButton onClick={() => onChildCountChange(index, -1)}>-</CounterButton>
+                                <CounterValue>{option.childCount || 0}</CounterValue>
+                                <CounterButton onClick={() => onChildCountChange(index, 1)}>+</CounterButton>
+                            </OptionCounter>
+                        )}
                     </OptionItem>
                     )})
                 ) : (
