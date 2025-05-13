@@ -117,7 +117,7 @@ function CompanionDetailCom({
     };
 
     const renderCommentPagination = () => {
-        if (totalCommentPages <= 1) return null; // 페이지가 1개 이하일 경우 페이징 숨김
+        // if (totalCommentPages <= 1) return null; // 페이지가 1개 이하일 경우 페이징 숨김
         const pages = [];
         for (let i = 0; i < totalCommentPages; i++) {
             pages.push(
