@@ -55,6 +55,7 @@ function CompanionListCom({
     const roles = JSON.parse(localStorage.getItem("roles") || "[]");
     const canCreatePost = roles.includes("ROLE_ADMIN") || roles.includes("ROLE_USER");
 
+
     return (
         <Container>
             <PageTitle>커뮤니티 게시판</PageTitle>

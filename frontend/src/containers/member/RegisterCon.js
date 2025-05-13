@@ -10,6 +10,7 @@ export default function RegisterCon() {
         memberEmail: "",
         memberPhone: "",
     });
+
     const [errors, setErrors] = useState({});
     const [showPw, setShowPw] = useState(false);
     const [submitMsg, setSubmitMsg] = useState("");

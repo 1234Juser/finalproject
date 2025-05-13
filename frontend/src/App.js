@@ -111,11 +111,15 @@ function App() {
                     <Route path=":productUid" element={<ProductDetailPage/>} />
                 </Route>
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
-                <Route path="/community" element={<CommunityLayout />} >
+              {/*커뮤니티*/}
+              <Route path="/community" element={<CommunityLayout />} >
                   <Route index element={<TripBuddyPage />} />
-                  <Route path="tripbuddy" element={<TripBuddyPage/>}/>
+                  <Route path="companion" element={<CompanionListPage/>}/>
+                  <Route path="companion/new" element={<CompanionRegisterPage/>}/>
+                  <Route path="companion/:companionId" element={<CompanionDetailPage />} />
+                  <Route path="companion/edit/:companionId" element={<CompanionEditPage />} />
                   <Route path="chat" element={<ChatMainPage/>}/>
-                </Route>
+              </Route>
 
             </Routes>
             <FooterCom/>
