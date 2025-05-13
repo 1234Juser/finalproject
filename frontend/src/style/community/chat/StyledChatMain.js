@@ -45,3 +45,44 @@ export const ChatInput = styled.input`
 export const ChatButton = styled.button`
   padding: 10px;
 `;
+
+export const AuthErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* 전체 뷰포트 높이 */
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa; /* 부드러운 배경색 */
+`;
+
+export const AuthErrorTitle = styled.h1`
+  color: #232222;
+  margin-bottom: 20px;
+`;
+
+export const AuthErrorMessage = styled.p`
+  font-size: 1.2em;
+  margin-bottom: 30px;
+`;
+
+export const AuthErrorButton = styled.button`
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+export const InfoMessage = styled.div`
+  padding: 20px;
+  text-align: center;
+`;
+

@@ -1,7 +1,6 @@
+import path, {getReviewImage} from "../../service/reviewService";
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import axios from "axios";
-import path, {getReviewImage} from "../../service/reviewService";
 import {useNavigate} from "react-router-dom";
 
 const Overlay = styled.div`
@@ -127,12 +126,11 @@ const FooterButton = styled.button`
     }
 `;
 
-function MyReviewModalCom({ review, onClose, onDelete }) {
+function AdminReviewModalCom({ review, onClose, onDelete }) {
     const [imageSrc, setImageSrc] = useState("/img/default-review.jpg");
-    const navigate = useNavigate();
 
     useEffect(() => {
-        if (review && review.reviewPic) {
+        if (review.reviewPic) {
             getReviewImage(review.reviewPic)
                 .then((blob) => {
                     const imageUrl = URL.createObjectURL(blob);
@@ -142,28 +140,14 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     console.error("리뷰 이미지 로드 실패:", error);
                 });
         }
-    // }, [review.reviewPic]);
-    }, [review]);
+    }, [review.reviewPic]);
 
-    useEffect(() => {
-        if (!review || !review.reviewStatus) return;
-
-        console.log("리뷰 상태 확인:", review.reviewStatus);
-    }, [review]);
-
-    const handleEdit = () => {
-        navigate(`/review/edit/${review.reviewCode}`);
-    };
-
-    // const isDeletedByAdmin = review?.reviewStatus === "DELETE_BY_ADMIN";
-    const isDeletedByAdmin = review && review.reviewStatus === "DELETE_BY_ADMIN";
-    console.log("🟡 리뷰 상태:", review?.reviewStatus);
-
-    return (
+    return(
+    <>
         <Overlay onClick={onClose}>
             <Modal onClick={(e) => e.stopPropagation()}>
                 <Header>
-                    <Title>내 후기</Title>
+                    <Title>리뷰관리</Title>
                     <CloseButton onClick={onClose}>&times;</CloseButton>
                 </Header>
                 <Content>
@@ -180,18 +164,10 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     </ReviewInfo>
                 </Content>
                 <Footer>
-                    {!isDeletedByAdmin ? (
-                        <>
-                            <FooterButton onClick={handleEdit}>수정</FooterButton>
-                            <FooterButton onClick={onDelete}>삭제</FooterButton>
-                        </>
-                    ) : (
-                        <p style={{ color: "#999", textAlign: "center" }}>관리자에 의해 삭제된 리뷰입니다.</p>
-                    )}
+                    <FooterButton onClick={onDelete}>삭제</FooterButton>
                 </Footer>
             </Modal>
         </Overlay>
-    );
+    </>)
 }
-
-export default MyReviewModalCom;
+export default AdminReviewModalCom;

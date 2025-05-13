@@ -89,6 +89,8 @@ public class ReviewService {
                     dto.setReviewContent(review.getReviewContent());
                     dto.setReviewDate(review.getReviewDate());
                     dto.setReviewPic(review.getReviewPic());
+                    // ENUM -> 문자열 변환
+                    dto.setReviewStatus(review.getReviewStatus().name());
 
                     // 임시 필드 설정
                     dto.setProductTitle(review.getProduct().getProductTitle());
@@ -197,7 +199,8 @@ public class ReviewService {
 //            }
 
             reviewDTO.setReviewDate(LocalDateTime.now());
-            reviewDTO.setReviewStatus(ReviewStatus.ACTIVE);
+//            reviewDTO.setReviewStatus(ReviewStatus.ACTIVE);
+            reviewDTO.setReviewStatus(ReviewStatus.ACTIVE.name());
             reviewDTO.setProductCode(productEntity.getProductCode());
             reviewDTO.setOptionCode(optionEntity.getOptionCode());
             reviewDTO.setReservationDate(optionEntity.getReservationDate());
@@ -248,25 +251,46 @@ public class ReviewService {
         }
     }
 
+    public ReviewDTO findReviewByCodeAndMember(Long reviewCode, Long memberCode) {
+        ReviewEntity review = reviewRepo.findById(reviewCode)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        if (!review.getMember().getMemberCode().equals(memberCode)) {
+            throw new IllegalArgumentException("리뷰를 조회할 권한이 없습니다.");
+        }
+        return new ReviewDTO(review);
+    }
+
     @Transactional
-    public String modifyReview (Long reviewCode, ReviewDTO reviewDTO, MultipartFile file) {
+    public String modifyReview (Long reviewCode, ReviewDTO reviewDTO, MultipartFile reviewPic) {
         try {
             ReviewEntity review = reviewRepo.findById(reviewCode)
                     .orElseThrow(() -> new RuntimeException("해당 리뷰가 존재하지 않습니다."));
 
             // 수정 가능한 시간인지 확인
             if (review.getReviewDate().plusHours(48).isBefore(LocalDateTime.now())) {
-                throw new RuntimeException("리뷰는 작성 후 48시간 이내에만 수정할 수 있습니다.");
+                throw new IllegalArgumentException("리뷰는 작성 후 48시간 이내에만 수정할 수 있습니다.");
             }
 
             // 수정 가능한 항목만 입력한다.
             review.setReviewRating(reviewDTO.getReviewRating());
             review.setReviewContent(reviewDTO.getReviewContent());
 
-            if (file != null && !file.isEmpty()) {
-                deleteFile(review.getReviewPic(), REVIEW_DIR);
-                String newFileName = saveFile(file, REVIEW_DIR);
-                review.setReviewPic(newFileName);
+            // 파일 처리 로직 수정
+            if (reviewPic != null && !reviewPic.isEmpty()) {
+                // 기존 파일 삭제
+                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+                }
+                    String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
+                    review.setReviewPic(newFileName);
+                    log.info("파일 교체 완료: {}", newFileName);
+            } else if (reviewPic == null) {
+                // 파일 삭제 요청 (빈 파일로 초기화)
+                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+                }
+                    review.setReviewPic(null);
+                    log.info("기존 파일 삭제 완료");
             }
             // 수정 후 저장
             reviewRepo.save(review);
@@ -320,10 +344,15 @@ public class ReviewService {
         review.setReviewStatus(ReviewStatus.DELETE_BY_ADMIN);
         review.setReviewContent("관리자에 의해 삭제된 리뷰입니다.");
 
-        if (review.getReviewPic() != null) {
-            deleteFile(review.getReviewPic(), REVIEW_DIR);
-            review.setReviewPic(null);
+        String reviewPic = review.getReviewPic();
+        if (reviewPic != null && !reviewPic.equals("nan")) {
+            deleteFile(reviewPic, REVIEW_DIR);
+            review.setReviewPic("nan"); // 이미지 필드를 비워줌
         }
+//        if (review.getReviewPic() != null) {
+//            deleteFile(review.getReviewPic(), REVIEW_DIR);
+//            review.setReviewPic(null);
+//        }
 
 //        deleteFile(review.getReviewPic(), REVIEW_DIR);
 //        review.setReviewPic(null); // DB에서도 이미지 제거

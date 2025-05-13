@@ -43,6 +43,8 @@ import CompanionListPage from "./pages/companion/CompanionListPage";
 import CompanionRegisterPage from "./pages/companion/CompanionRegisterPage";
 import CompanionDetailPage from "./pages/companion/CompanionDetailPage";
 import CompanionEditPage from "./pages/companion/CompanionEditPage";
+import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
+import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 
 function App() {
     return (
@@ -84,6 +86,7 @@ function App() {
                 </Route>
                 <Route path="/my/reservations" element={<MyBookingPage />} />
                 <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
+                <Route path="/review/edit/:reviewCode" element={<MyReviewEditPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
@@ -96,6 +99,7 @@ function App() {
                 <Route path="/admin/booking" element={<AdminBookingPage />} />
                 <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
+                <Route path="/admin/review/by-product" element={<AdminReviewByProductPage />} />
 
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>

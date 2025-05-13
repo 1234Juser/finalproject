@@ -1,10 +1,13 @@
-import AdminReviewCom from "../../components/review/AdminReviewCom";
+import AdminReviewByProductCom from "../../components/review/AdminReviewByProductCom";
 import {useEffect, useReducer, useState} from "react";
-import {deleteMyReview, deleteReviewByAdmin, getAllReviewsForAdmin} from "../../service/reviewService";
 import {initialState, reducer} from "../../modules/reviewModule";
+import {deleteReviewByAdmin, getReviewsByProductForAdmin} from "../../service/reviewService";
+import {fetchProductListForFilter} from "../../service/reviewService";
 
-function AdminReviewCon({accessToken}) {
+function AdminReviewByProductCon({ accessToken }) {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [selectedProductCode, setSelectedProductCode] = useState(null);
+    const [products, setProducts] = useState([]);
     const [start, setStart] = useState(1);
     const onClick = (page) => {
         setStart(page);
@@ -31,6 +34,19 @@ function AdminReviewCon({accessToken}) {
     };
     useEffect(() => {
         if (!accessToken) {
+            alert("토큰이 없습니다.");
+            return;
+        }
+        fetchProductListForFilter(accessToken)
+            .then((res) => {
+                console.log("상품 필터용 product 목록:", res);
+                setProducts(res);
+            })
+            .catch((e) => console.error("상품 목록 불러오기 실패", e));
+    }, [accessToken]);
+
+    useEffect(() => {
+        if (!accessToken) {
             alert("로그인이 필요합니다.");
             return;
         }
@@ -46,7 +62,7 @@ function AdminReviewCon({accessToken}) {
             console.log("🟡 관리자 리뷰 목록 조회 시작");
             dispatch({ type: "SET_LOADING", data: true });
 
-            getAllReviewsForAdmin(accessToken, start)
+            getReviewsByProductForAdmin(selectedProductCode, accessToken, start)
                 .then(data => {
                     console.log("API 응답 확인:", data);
                     dispatch({ type: "SET_REVIEWS", data });
@@ -64,21 +80,30 @@ function AdminReviewCon({accessToken}) {
             console.error("토큰 디코딩 오류:", e);
             alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
         }
-    }, [accessToken, start]);
+    }, [selectedProductCode, accessToken, start]);
 
     const { reviews, loading, error, currentPage, totalPages } = state;
 
+    const handleProductChange = (e) => {
+        const value = e.target.value;
+        setStart(1); // 필터 변경 시 1페이지로 초기화
+        setSelectedProductCode(value === "all" ? null : Number(value))
+    };
+
     return(
-        <>
-            <AdminReviewCom
-                reviews={reviews}
-                loading={loading}
-                error={error}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onClick={onClick}
-                onDelete={handleDeleteReview}
-            />
-        </>)
+    <>
+        <AdminReviewByProductCom
+            products={products}
+            selectedProductCode={selectedProductCode}
+            reviews={reviews}
+            loading={loading}
+            error={error}
+            onProductChange={handleProductChange}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onClick={onClick}
+            onDelete={handleDeleteReview}
+        />
+    </>)
 }
-export default AdminReviewCon;
+export default AdminReviewByProductCon;

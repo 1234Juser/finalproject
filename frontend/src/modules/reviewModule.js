@@ -1,7 +1,12 @@
 const initialState = {
     reviews: [],           // 특정 상품의 리뷰 목록
     myReview: null,        // 내 여행(주문)에 대한 단일 리뷰
-    selectedReview: null,  // 관리자 또는 사용자 선택 리뷰
+    // selectedReview: null,  // 관리자 또는 사용자 선택 리뷰
+    selectedReview: {
+        reviewRating: null,
+        reviewContent: "",
+        reviewPic: null,
+    },
     loading: false,
     error: null,
     sortOptionDefault: "date",  // 디폴트는 작성일 순
@@ -33,7 +38,22 @@ const reducer = (state, action) => {
         case "SET_MY_REVIEW":
             return { ...state, myReview: action.data };
         case "SET_SELECTED_REVIEW":
-            return { ...state, selectedReview: action.data };
+            return {
+                ...state,
+                selectedReview: {
+                    reviewRating: action.data.reviewRating !== undefined ? action.data.reviewRating : 5,
+                    reviewContent: action.data.reviewContent || "",
+                    reviewPic: action.data.reviewPic || null,
+                },
+            };
+        case "UPDATE_SELECTED_REVIEW":
+            return {
+                ...state,
+                selectedReview: {
+                    ...state.selectedReview,
+                    ...action.data,
+                },
+            };
         case "ADD_REVIEW":
             return {
                 ...state,

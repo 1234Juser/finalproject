@@ -53,7 +53,7 @@ public class ReviewEntity {
 
     @NotNull
     @Column( name = "review_rating", nullable = false )
-    private Integer reviewRating;
+    private Integer reviewRating = 5;
 
     @Size(min = 10, max = 500, message = "리뷰는 10자 이상 500자 이하로 작성해주세요.")
     @Column( name = "review_content", nullable = true, columnDefinition = "TEXT")
@@ -81,7 +81,12 @@ public class ReviewEntity {
         this.reviewDate = review.getReviewDate();
         this.reviewContent = review.getReviewContent();
         this.reviewPic = review.getReviewPic();
-        this.reviewStatus = review.getReviewStatus();
+        try {
+            this.reviewStatus = ReviewStatus.valueOf(review.getReviewStatus().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            this.reviewStatus = ReviewStatus.ACTIVE;  // 기본값 설정
+            log.warn("잘못된 리뷰 상태입니다. 기본값 ACTIVE로 설정합니다. 입력값: {}", review.getReviewStatus());
+        }
     }
 
     private static final Logger log = LoggerFactory.getLogger(ReviewEntity.class);
@@ -92,8 +97,8 @@ public class ReviewEntity {
 //        if (this.reviewDate == null) {
 //            this.reviewDate = LocalDateTime.now();
 //        }
-        if (this.reviewPic == null || this.reviewPic.equals("")) {
-            this.reviewPic = "nan";
+        if (this.reviewPic == null || this.reviewPic.isEmpty()) {
+            this.reviewPic = null;
             log.debug("prePersist 호출됨 - 기존 reviewPic: {}", this.reviewPic);
         }
         if (this.order != null) {

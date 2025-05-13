@@ -28,9 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -138,8 +140,9 @@ public class ReviewController {
     }
 
     // OrderStatus가 COMPLETED인 회원만 리뷰 작성하기
-    @PostMapping(value = "/review/write", consumes = "multipart/form-data")
-    public ResponseEntity writeReview(@RequestParam("orderCode") Long orderCode,
+    @PostMapping(value = "/review/write/{orderCode}", consumes = "multipart/form-data")
+    public ResponseEntity writeReview(@PathVariable Long orderCode,
+//                                      @RequestParam("orderCode") Long orderCode,
                                       @RequestParam("reviewRating") Integer reviewRating,
                                       @RequestParam("reviewContent") String reviewContent,
                                       @RequestPart(value = "reviewPic", required = false) MultipartFile reviewPic,
@@ -184,27 +187,58 @@ public class ReviewController {
         }
     }
 
+    // 리뷰 수정을 위한 리뷰 데이터 가져오기
+    @GetMapping("/review/edit/{reviewCode}")
+    public ResponseEntity<?> getReviewByReviewCode(@PathVariable Long reviewCode,
+                                                   Authentication authentication) {
+        try {
+            String memberId = authentication.getPrincipal().toString();
+            Long memberCode = memberRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                    .getMemberCode();
+            ReviewDTO review = reviewService.findReviewByCodeAndMember(reviewCode, memberCode);
+            return ResponseEntity.ok(review);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 조회 실패");
+        }
+    }
+
     // 리뷰 수정하기
     @PutMapping(value = "/review/edit/{reviewCode}", consumes = "multipart/form-data")
     public ResponseEntity modifyReview(@PathVariable("reviewCode") long reviewCode,
-                                       @RequestParam("reviewRating") int reviewRating,
+                                       @RequestParam("reviewRating") Integer reviewRating,
                                        @RequestParam("reviewContent") String reviewContent,
-                                       @RequestPart(value = "file", required = false) MultipartFile file,
+                                       @RequestPart(value = "reviewPic", required = false) MultipartFile reviewPic,
                                        Authentication authentication) {
-        String memberId = authentication.getPrincipal().toString();
-        Long memberCode = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
-                .getMemberCode();
-
         try {
-            ReviewDTO reviewDTO = new ReviewDTO();
-            reviewDTO.setReviewRating(reviewRating);
-            reviewDTO.setReviewContent(reviewContent);
+            String memberId = authentication.getPrincipal().toString();
+            Long memberCode = memberRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."))
+                    .getMemberCode();
+            if (reviewRating == null || reviewContent == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("평점과 리뷰 내용이 필요합니다.");
+            }
 
-            String result = reviewService.modifyReview(reviewCode, reviewDTO, file);
+            ReviewDTO reviewDTO = new ReviewDTO();
+//            reviewDTO.setReviewRating(reviewRating);
+//            reviewDTO.setReviewContent(reviewContent);
+            if (reviewRating != null) {
+                reviewDTO.setReviewRating(reviewRating);
+            }
+            if (reviewContent != null) {
+                reviewDTO.setReviewContent(reviewContent);
+            }
+
+            String result = reviewService.modifyReview(reviewCode, reviewDTO, reviewPic);
             return ResponseEntity.ok(result);
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 수정 실패");
         }
     }
 
@@ -240,8 +274,9 @@ public class ReviewController {
             }
             reviewService.deleteReviewByAdmin(reviewCode);
             return ResponseEntity.ok("리뷰가 관리자에 의해 삭제되었습니다.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            log.error("리뷰 삭제 실패 (리뷰 없음) - reviewCode: {}", reviewCode, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 삭제 실패");
@@ -251,6 +286,13 @@ public class ReviewController {
     @GetMapping("/review/{reviewPic}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable(value="reviewPic") String reviewPic) {
         try {
+            if (reviewPic == null || reviewPic.equals("nan")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            Path filePath = Paths.get("upload/review/" + reviewPic);
+            if (!Files.exists(filePath)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
             byte[] imageByte = Files.readAllBytes(Paths.get("upload/review/" + reviewPic));
             HttpHeaders headers = new HttpHeaders();
 //            headers.setContentType(MediaType.IMAGE_JPEG); // 기본은 JPEG로 설정
