@@ -50,10 +50,10 @@ public class ProductEntity {
     private String productContent;
 
     @Column(name = "product_adult", nullable = false)
-    private Integer productAdult;
+    private Integer productAdult = 0;
 
     @Column(name = "product_child", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer productChild;
+    private Integer productChild = 0;
 
     @Column(name = "product_start_date", nullable = false)
     private LocalDate productStartDate;

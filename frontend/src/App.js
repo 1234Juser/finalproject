@@ -45,6 +45,7 @@ import CompanionDetailPage from "./pages/companion/CompanionDetailPage";
 import CompanionEditPage from "./pages/companion/CompanionEditPage";
 import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
 import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
+import OptionFormPage from "./pages/order/OptionFormPage";
 
 function App() {
     return (
@@ -109,15 +110,11 @@ function App() {
                     <Route path="city" element={<ProductPage />} />
                     <Route path=":productUid" element={<ProductDetailPage/>} />
                 </Route>
-
-                {/*커뮤니티*/}
+                <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
                 <Route path="/community" element={<CommunityLayout />} >
-                    <Route index element={<TripBuddyPage />} />
-                    <Route path="companion" element={<CompanionListPage/>}/>
-                    <Route path="companion/new" element={<CompanionRegisterPage/>}/>
-                    <Route path="companion/:companionId" element={<CompanionDetailPage />} />
-                    <Route path="companion/edit/:companionId" element={<CompanionEditPage />} />
-                    <Route path="chat" element={<ChatMainPage/>}/>
+                  <Route index element={<TripBuddyPage />} />
+                  <Route path="tripbuddy" element={<TripBuddyPage/>}/>
+                  <Route path="chat" element={<ChatMainPage/>}/>
                 </Route>
 
             </Routes>
