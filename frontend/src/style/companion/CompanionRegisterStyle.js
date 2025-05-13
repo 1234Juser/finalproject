@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const FormWrapper = styled.div`
-    max-width: 540px;
-    width: 100%;
+    max-width: 580px;
+    min-height: 600px; /* 전체 폼의 최소 높이를 더 크게 설정 */
     margin: 70px auto 0 auto;
     background: #f9fcfe;
     border-radius: 18px;
@@ -34,8 +34,10 @@ export const FormRow = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 8px; // 레이블과 입력 필드 사이의 간격
     box-sizing: border-box;
+    align-items: flex-start; // 왼쪽 정렬
+    flex-shrink: 0; /* 자식 요소의 크기가 줄어들지 않도록 설정 */
 `;
 
 export const Label = styled.label`
@@ -47,7 +49,7 @@ export const Label = styled.label`
 `;
 
 export const StyledInput = styled.input`
-    width: 100%;
+    width: 480px; /* 고정된 가로 길이 */
     min-width: 0;
     box-sizing: border-box;
     padding: 13px 14px;
@@ -61,16 +63,11 @@ export const StyledInput = styled.input`
         border-color: #198dbb;
         background: #eaf6fb;
     }
-    &[type="file"] {
-        padding: 8px 0;
-        font-size: 1rem;
-        border: none;
-        background: none;
-    }
+    display: block; /* 블록 레벨 요소로 설정 */
 `;
 
 export const StyledTextarea = styled.textarea`
-    width: 100%;
+    width: 480px; /* 고정된 가로 길이 */
     min-width: 0;
     min-height: 110px;
     resize: vertical;
@@ -85,43 +82,7 @@ export const StyledTextarea = styled.textarea`
         border-color: #198dbb;
         background: #eaf6fb;
     }
-`;
-
-export const FileInputWrapper = styled.div`
-    width: 100%;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-sizing: border-box;
-`;
-
-export const FileLabel = styled(Label)`
-    margin-bottom: 0;
-    min-width: 65px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-`;
-
-export const PreviewImg = styled.img`
-    width: 82px;
-    height: 62px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #d6e7fa;
-    background: #e6f4fe;
-`;
-
-export const DateRow = styled.div`
-    width: 100%;
-    display: flex;
-    gap: 12px;
-    > div { flex: 1; min-width: 0; }
-    @media (max-width: 600px) {
-        flex-direction: column;
-        gap: 5px;
-    }
+    display: block; /* 블록 레벨 요소로 설정 */
 `;
 
 export const SubmitButton = styled.button`
@@ -141,22 +102,6 @@ export const SubmitButton = styled.button`
     &:hover {
         background: linear-gradient(90deg,#198dbb,#36abc9);
         transform: translateY(-2px) scale(1.017);
-    }
-`;
-
-export const Select = styled.select`
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    padding: 13px 14px;
-    border: 1.6px solid #b5dafc;
-    border-radius: 8px;
-    background: #fff;
-    font-size: 1.09rem;
-    transition: border 0.18s;
-    &:focus {
-        border-color: #198dbb;
-        background: #eaf6fb;
     }
 `;
 
@@ -183,9 +128,10 @@ export const CancelButton = styled.button`
         border-color: #1976d2;
         box-shadow: 0 4px 18px #a1d0f735;
     }
-    & svg {
-        margin-right: 7px;
-        font-size: 1.22em;
-        vertical-align: middle;
-    }
+`;
+
+export const ErrorMessage = styled.p`
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 `;

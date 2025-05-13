@@ -39,6 +39,10 @@ import AdminRealTimePage from "./pages/realtime/AdminRealTimePage";
 import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
 import ChatMainPage from "./pages/community/chat/ChatMainPage";
 import CommunityLayout from "./style/community/CommunityLayout";
+import CompanionListPage from "./pages/companion/CompanionListPage";
+import CompanionRegisterPage from "./pages/companion/CompanionRegisterPage";
+import CompanionDetailPage from "./pages/companion/CompanionDetailPage";
+import CompanionEditPage from "./pages/companion/CompanionEditPage";
 import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
 import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 
@@ -105,10 +109,15 @@ function App() {
                     <Route path="city" element={<ProductPage />} />
                     <Route path=":productUid" element={<ProductDetailPage/>} />
                 </Route>
+
+                {/*커뮤니티*/}
                 <Route path="/community" element={<CommunityLayout />} >
-                  <Route index element={<TripBuddyPage />} />
-                  <Route path="tripbuddy" element={<TripBuddyPage/>}/>
-                  <Route path="chat" element={<ChatMainPage/>}/>
+                    <Route index element={<TripBuddyPage />} />
+                    <Route path="companion" element={<CompanionListPage/>}/>
+                    <Route path="companion/new" element={<CompanionRegisterPage/>}/>
+                    <Route path="companion/:companionId" element={<CompanionDetailPage />} />
+                    <Route path="companion/edit/:companionId" element={<CompanionEditPage />} />
+                    <Route path="chat" element={<ChatMainPage/>}/>
                 </Route>
 
             </Routes>

@@ -125,6 +125,7 @@ export const PagingWrapper = styled.div`
     display: flex;
     justify-content: center;
     margin-top: 38px;
+    margin-bottom: 40px;
     gap: 10px;
 `;
 
