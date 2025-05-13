@@ -281,16 +281,16 @@ public class ReviewService {
                 if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
                     deleteFile(review.getReviewPic(), REVIEW_DIR);
                 }
-                    String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
-                    review.setReviewPic(newFileName);
-                    log.info("파일 교체 완료: {}", newFileName);
+                String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
+                review.setReviewPic(newFileName);
+                log.info("파일 교체 완료: {}", newFileName);
             } else if (reviewPic == null) {
                 // 파일 삭제 요청 (빈 파일로 초기화)
                 if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
                     deleteFile(review.getReviewPic(), REVIEW_DIR);
                 }
-                    review.setReviewPic(null);
-                    log.info("기존 파일 삭제 완료");
+                review.setReviewPic(null);
+                log.info("기존 파일 삭제 완료");
             }
             // 수정 후 저장
             reviewRepo.save(review);
@@ -495,6 +495,11 @@ public class ReviewService {
 
     public List<ProductDTO> getReviewListForFilter() {
         return productRepo.findAll().stream()
+                .sorted(Comparator.comparing(ProductEntity::getProductTitle))
+                // 대소문자 무시
+//                .sorted(Comparator.comparing(
+//                        product -> product.getProductTitle().toLowerCase(),
+//                        String.CASE_INSENSITIVE_ORDER))
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
     }
