@@ -1,8 +1,8 @@
 import {ChatBox, ChatButton, ChatForm, ChatInput,ConnectionStatus,Container,JoinMsg,LeaveMsg,MessageRow
-} from '../../../style/community/chat/StyledChatMain'
+} from '../../../style/community/chat/StyleChatRoom'
 import FormatDate from '../../../utils/FormatDate';
 
-function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, currentRoomId }) {
+function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, roomUid, onDeleteChatRoom }) {
 
     return (
         <Container>
@@ -15,7 +15,14 @@ function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, 
             </h2>
             <p>사용자: {username}</p>
             {/* <p>방 번호 : {messages.roomId}</p> */}
-            <p>방 번호 : {currentRoomId}</p>
+            <p>방 번호 : {roomUid}</p>
+            <button 
+                onClick={() => {onDeleteChatRoom(roomUid)}}
+                style={{backgroundColor:'red', color:'white', marginBottom:'10px'}}
+            >
+                채팅방 삭제
+            </button>
+
             <ChatBox>
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
@@ -43,4 +50,4 @@ function ChatMainCom({isConnected, username, messages, sendMessage, newMessage, 
     )
 }
 
-export default ChatMainCom;
+export default ChatRoomCom;

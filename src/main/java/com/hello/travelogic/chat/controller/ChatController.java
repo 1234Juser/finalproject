@@ -30,22 +30,6 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
 
 
-/*    // 채팅방 생성
-    @PostMapping("/room")
-    public ResponseEntity<ChatDTO> createChatRoom(@RequestParam Long creatorMemberCode,
-                                                  @RequestBody ChatDTO chatDTO) {
-        ChatDTO createdRoom = chatService.createChatRoom(creatorMemberCode, chatDTO);
-        return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
-    }
-
-    // 개설된 채팅방 조회
-    @GetMapping("/rooms")
-    public ResponseEntity<List<ChatDTO>> getAllChatRooms() {
-        List<ChatDTO> chatRooms = chatService.getAllChatRooms();
-        return new ResponseEntity<>(chatRooms, HttpStatus.OK);
-    }*/
-
-
     // roomId 로 메시지 전송
     @MessageMapping("/chat.send/{roomId}")
     public ChatMessageDTO sendMessage(@DestinationVariable String roomId,

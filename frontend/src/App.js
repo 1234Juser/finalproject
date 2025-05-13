@@ -37,8 +37,9 @@ import MyReviewFormPage from "./pages/review/MyReviewFormPage";
 import SearchProductPage from "./pages/search/SearchProductPage";
 import AdminRealTimePage from "./pages/realtime/AdminRealTimePage";
 import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
-import ChatMainPage from "./pages/community/chat/ChatMainPage";
+import ChatRoomPage from "./pages/community/chat/ChatRoomPage";
 import CommunityLayout from "./style/community/CommunityLayout";
+import ChatRoomListPage from "./pages/community/chat/ChatRoomListPage";
 
 function App() {
     return (
@@ -104,8 +105,11 @@ function App() {
                 <Route path="/community" element={<CommunityLayout />} >
                   <Route index element={<TripBuddyPage />} />
                   <Route path="tripbuddy" element={<TripBuddyPage/>}/>
-                  <Route path="chat" element={<ChatMainPage/>}/>
+                  <Route path="chat" element={<ChatRoomListPage/>}/>
+                  <Route path="chat/:roomUid" element={<ChatRoomPage />} />  {/* 상세 경로 추가 */}
+
                 </Route>
+                {/*<Route path="/api/chat/room/:roomUid" element={<ChatRoomPage />} />*/}
 
             </Routes>
             <FooterCom/>
