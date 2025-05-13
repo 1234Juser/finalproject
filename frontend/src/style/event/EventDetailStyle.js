@@ -100,6 +100,8 @@ export const DescArea = styled.pre`
     line-height: 1.78;
     white-space: pre-line;
     box-shadow: 0 2px 23px 0 #6abceb1b;
+    word-break: break-all;
+
 `;
 
 

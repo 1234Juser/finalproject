@@ -97,6 +97,8 @@ export const DescArea = styled.div` // pre 대신 div 사용
     white-space: pre-line; // 줄바꿈 유지
     box-shadow: 0 2px 10px 0 #6abceb1b;
     min-height: 200px; // 최소 높이 설정
+    word-break: break-all;
+
 `;
 
 
@@ -190,20 +192,28 @@ export const CommentContent = styled.p`
     font-size: 1rem;
     color: ${Palette.text};
     line-height: 1.6;
+    white-space: pre-line;
+    word-break: break-all;
+
 `;
 
 export const CommentMeta = styled.div`
     font-size: 0.9rem;
     color: ${Palette.subText};
+    display: flex; // 추가: 자식 요소들을 가로로 정렬
+    align-items: center; // 추가: 자식 요소들을 세로 중앙 정렬
+    flex-wrap: wrap; // 항목이 많아지면 줄바꿈하도록 설정
+
 `;
+
 
 export const CommentAuthor = styled.span`
     font-weight: 600;
-    margin-right: 10px;
+    margin-right: 20px; /* 작성자 이름과 날짜 사이 간격 */
 `;
 
 export const CommentDate = styled.span`
-    // 추가 스타일 필요 시 정의
+    margin-right: 15px; /* 작성일과 최종 수정일 사이 간격 */
 `;
 
 export const NoComment = styled.p`
@@ -212,4 +222,141 @@ export const NoComment = styled.p`
     padding: 20px;
     border: 1px dashed ${Palette.borderGray};
     border-radius: 10px;
+`;
+
+// CommentItem에서 이동된 스타일
+export const CommentActions = styled.div`
+    margin-top: 5px;
+    font-size: 0.9rem;
+`;
+
+export const ActionButton = styled.button`
+    background: none;
+    border: none;
+    color: #198dbb;
+    cursor: pointer;
+    margin-right: 10px;
+    padding: 0;
+    font-size: 0.9rem;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:last-child {
+        margin-right: 0;
+    }
+`;
+
+export const EditForm = styled.form`
+    margin-top: 10px;
+`;
+
+export const EditTextArea = styled.textarea`
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    resize: vertical;
+    font-size: 1rem;
+
+`;
+
+export const SaveButton = styled.button`
+    background: linear-gradient(90deg, #36abc9, #198dbb);
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-right: 5px;
+`;
+
+export const CancelButton = styled.button`
+    background: #ccc;
+    color: #333;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+`;
+// CommentForm에서 이동된 스타일
+export const CommentFormWrapper = styled.div`
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #eee;
+`;
+
+export const CommentTextArea = styled.textarea`
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    resize: vertical;
+    font-size: 1rem;
+    white-space: pre-line; /* 이 줄을 추가하여 줄바꿈을 유지합니다. */
+
+`;
+
+export const SubmitButton = styled.button`
+    background: linear-gradient(90deg, #36abc9, #198dbb);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background: linear-gradient(90deg, #198dbb, #36abc9);
+    }
+
+    &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+`;
+
+export const LoginPrompt = styled.p`
+    text-align: center;
+    color: #666;
+`;
+
+// 페이징 컴포넌트 스타일 추가
+export const CommentPagingWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+`;
+
+export const CommentPagingButton = styled.button`
+    background: ${({ active }) => (active ? Palette.mainGradient : "#f2f6f9")};
+    color: ${({ active }) => (active ? "#fff" : Palette.blue)};
+    font-weight: ${({ active }) => (active ? 600 : 500)};
+    font-size: 1.01rem;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: ${({ active }) => (active ? "0 2px 8px #92c7eb55" : "none")};
+    letter-spacing: -0.5px;
+    &:hover {
+        background: ${Palette.mainGradient};
+        color: #fff;
+    }
+    &:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+    }
 `;
