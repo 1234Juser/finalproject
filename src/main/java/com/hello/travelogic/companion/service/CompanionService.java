@@ -75,10 +75,10 @@ public class CompanionService {
 
         // companionTitle과 companionContent에 대한 null 또는 빈 문자열 체크 추가
         if (companionTitle == null || companionTitle.trim().isEmpty()) {
-            throw new IllegalArgumentException("Companion title cannot be null or empty.");
+            throw new IllegalArgumentException("게시글 제목이 비어있을 수 없습니다..");
         }
         if (companionContent == null || companionContent.trim().isEmpty()) {
-            throw new IllegalArgumentException("Companion content cannot be null or empty.");
+            throw new IllegalArgumentException("게시글 내용이 비어있을 수 없습니다.");
         }
 
         CompanionEntity newCompanion = CompanionEntity.builder()

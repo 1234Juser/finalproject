@@ -291,8 +291,9 @@ CREATE TABLE `tbl_companion_comment` (
                                          companion_comment_id INT AUTO_INCREMENT NOT NULL COMMENT '여행동행게시판 댓글 번호',
                                          member_code INT NOT NULL COMMENT '회원번호',
                                          companion_id INT NOT NULL COMMENT '여행동행게시판 번호',
-                                         companion_content TEXT NOT NULL COMMENT '댓글 내용',
-                                         companion_created_at DATETIME NOT NULL COMMENT '댓글 작성일자',
+                                         companion_comment_content TEXT NOT NULL COMMENT '댓글 내용',
+                                         companion_comment_created_at DATETIME NOT NULL COMMENT '댓글 작성일자',
+                                         companion_comment_modified_at DATETIME NULL COMMENT '댓글 수정일자',
                                          CONSTRAINT `PK_TBL_COMPANION_COMMENT` PRIMARY KEY (`companion_comment_id`), -- 기본 키 수정
                                          CONSTRAINT `FK_tbl_member_TO_tbl_companion_comment_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`),
                                          CONSTRAINT `FK_tbl_companion_TO_tbl_companion_comment_1` FOREIGN KEY (`companion_id`) REFERENCES `tbl_companion` (`companion_id`)
