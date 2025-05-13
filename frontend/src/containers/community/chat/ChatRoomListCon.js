@@ -42,7 +42,7 @@ function ChatRoomListCon() {
                     setError("채팅방 목록을 불러오지 못했어요.");
                 })
         }
-    }, []);
+    }, [isLoggedIn]);
 
 
     const openModal = () => {

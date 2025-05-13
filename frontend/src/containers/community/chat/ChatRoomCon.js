@@ -8,7 +8,6 @@ import {
     AuthErrorContainer,
     AuthErrorMessage,
     AuthErrorTitle,
-    InfoMessage
 } from "../../../style/community/chat/StyleChatRoom";
 import {useNavigate} from "react-router-dom";
 import { deleteChatRoom } from "../../../service/chatService";
@@ -16,7 +15,7 @@ import { deleteChatRoom } from "../../../service/chatService";
 
 function ChatRoomCon({roomUid}) {
     const [state, dispatch] = useReducer(chatReducer, initialState);
-    const { messages, newMessage, username, isConnected, currentRoomId, isLoading, authError } = state;
+    const { messages, newMessage, username, memberCode, isConnected, currentRoomId, isLoading, authError } = state;
     const stompClientRef = useRef(null); // STOMP 클라이언트 인스턴스를 저장하기 위한 ref
     const navigate = useNavigate();
 
@@ -26,18 +25,20 @@ function ChatRoomCon({roomUid}) {
     const getAuthInfo = () => {
         const token = localStorage.getItem('accessToken');
         const loggedInUsername = localStorage.getItem('memberName');
-        if (token) {
+        const loggedInMemberCode = localStorage.getItem('memberCode');
+
+        if (token && loggedInMemberCode) {
             return {
                 token,
-                username: loggedInUsername
+                username: loggedInUsername,
+                memberCode : loggedInMemberCode 
             };
         }
-        return { token: null, username: null };
+        return { token: null, username: null, memberCode : null };
     };
 
-
-
-    // 사용자 인증 (간단한 프롬프트 사용, 실제 앱에서는 로그인 폼 등을 사용)
+    
+    // 사용자 인증
     useEffect(() => {
 
         if (roomUid) {
@@ -46,8 +47,9 @@ function ChatRoomCon({roomUid}) {
             console.log('현재 로그인 정보 확인 : ', authInfo);
 
             // 토근 유무 확인
-            if (authInfo.token && authInfo.username) {
+            if (authInfo.token && authInfo.username && authInfo.memberCode) {
                 dispatch({type: 'SET_USERNAME', payload: authInfo.username});
+                dispatch({type: 'SET_MEMBER_CODE', payload: authInfo.memberCode});
 
                 // 채팅방 ID 입력 받기 (로그인 성공 후)
                 /*const room = prompt(`환영합니다, ${authInfo.username}님! 입장할 채팅방 번호를 입력해주세요:`);
@@ -76,24 +78,24 @@ function ChatRoomCon({roomUid}) {
 
     useEffect(() => {
         // 로딩이 끝났고, 인증 오류가 없고, username과 roomId가 있고, 아직 연결 안 됐으면 연결 시도
+        const authInfo = getAuthInfo();
         if (!isLoading &&
             !authError &&
-            username &&
-            // currentRoomId &&
+            username &&    // UI 표시용 username
+            memberCode &&    // 실제 식별자
             (!stompClientRef.current || !stompClientRef.current.connected)
         ) {
-            console.log(`Attempting to connect with username: ${username}, roomId: ${roomUid}`);
-            const authInfo = getAuthInfo(); // 연결 시점에 다시 토큰 가져오기 (선택적, 이미 위에서 가져왔다면 재사용 가능)
+            console.log(`Attempting to connect with username: ${username}, memberCode: ${memberCode}, roomId: ${roomUid}`);
             connect(authInfo.token);
         }
-    }, [username, roomUid]);
+    }, [username, memberCode, roomUid, isLoading, authError]);
 
 
 
     // 연결 후 메시지 받기 (STOMP 연결 함수)
     const connect = (token) => {
-        // if (!username || !currentRoomId || (stompClientRef.current && stompClientRef.current.connected)) {
-        if (!username || (stompClientRef.current && stompClientRef.current.connected)) {
+        const authInfo = getAuthInfo();
+        if (!username || !memberCode || (stompClientRef.current && stompClientRef.current.connected)) {
             // 이미 연결되어 있거나 username이 없으면 중복 연결 방지
             console.log('Connection prerequisites not met or already connected.');
             return;
@@ -105,7 +107,7 @@ function ChatRoomCon({roomUid}) {
             return;
         }
 
-        console.log(`Connecting to WebSocket with roomId: ${currentRoomId}...`);
+        console.log(`Connecting to WebSocket with roomId: ${roomUid}, username: ${username}, memberCode: ${memberCode}, token: ${token ? 'present' : 'absent'}...`);
         const socket = new SockJS('http://localhost:8080/ws'); // 백엔드 서버 주소
         const stompClient = Stomp.over(socket);
         stompClientRef.current = stompClient; // ref에 클라이언트 저장
@@ -149,7 +151,8 @@ function ChatRoomCon({roomUid}) {
                 const joinMessage = {
                     type: 'JOIN', 
                     roomId : roomUid,
-                    sender: username, 
+                    sender: username,      // JOIN 메시지의 sender는 username (표시용)
+                    memberCode : memberCode,
                     sentAt : new Date().toISOString()
                 };
                 stompClient.send(`/app/chat.addUser/${roomUid}`,
@@ -165,10 +168,10 @@ function ChatRoomCon({roomUid}) {
                     type: 'SET_AUTH_ERROR',
                     payload: "채팅 서버 연결에 실패했습니다. 로그인 상태를 확인하거나 잠시 후 다시 시도해주세요.",
                 });
-                // 연결 실패 시 5초 후 재시도
+                // 연결 실패 시 5초 후 재시도 + 토큰 전달
                 setTimeout(() => {
                     if (!stompClientRef.current || !stompClientRef.current.connected) {
-                         connect();
+                         connect(token);
                     }
                 }, 5000);
             }
@@ -184,14 +187,16 @@ function ChatRoomCon({roomUid}) {
     // 메시지 전송
     const sendMessage = (event) => {
         event.preventDefault();
+        const authInfo = getAuthInfo(); // 메시지 전송 시점에 최신 memberCode 가져옵니다.
 
-        if (newMessage && roomUid && username && stompClientRef.current && stompClientRef.current.connected) {
+        if (newMessage && roomUid && memberCode && stompClientRef.current && stompClientRef.current.connected) {
             const chatMessage = {
                 type: 'CHAT',
                 roomId : roomUid,
-                sender: username,
+                sender: memberCode,      // ★ 서버에서 사용자 식별자로 memberCode를 받고 있음 ★
                 message: newMessage,
-                sentAt : new Date().toISOString()
+                sentAt : new Date().toISOString(),
+                // profileImageUrl은 서버에서 설정하므로 클라이언트에서 보낼 필요는 없습니다.
             };
             console.log(`----------Sending CHAT message to /app/chat.send/${roomUid}:`, chatMessage);
             // 메시지를 특정 채팅방의 경로로 전송 
@@ -199,7 +204,8 @@ function ChatRoomCon({roomUid}) {
             dispatch({ type: 'SET_NEW_MESSAGE', payload: '' });
         } else {
             console.log("Cannot send message. Conditions not met: ",
-                {newMessage, roomUid, connected: stompClientRef.current?.connected});
+                {newMessage, roomUid, memberCode: memberCode, username: username,
+                    connected: stompClientRef.current?.connected});
         }
     };
 
@@ -228,25 +234,25 @@ function ChatRoomCon({roomUid}) {
 
 
     // 채팅방 삭제
-    const onDeleteChatRoom = async (roomUid) => {
-        const token = localStorage.getItem('accessToken');
-
-        if (!token) {
+    const onDeleteChatRoom = async (roomUidToDelete) => {   // 파라미터 이름 변경 (roomUid와의 혼동 방지)
+        const authInfo = getAuthInfo();     // 토큰 확인용으로 계속 사용
+        if (!authInfo.token) {
             alert("로그인이 필요합니다.");
             return;
         }
+
         const confirmDelete = window.confirm("정말 이 채팅방을 삭제할까요?");
         if (!confirmDelete) return;
 
         try {
-            const res = await deleteChatRoom(roomUid, token);
+            const res = await deleteChatRoom(roomUidToDelete, authInfo.token);
             if (res.ok) {
                 console.log("---채팅 삭제---");
                 alert("채팅방을 삭제했습니다.");
-                // 삭제 후 알림창 닫고 목록 페이지로 이동
                 navigate("/community/chat");
             } else {
-                alert("채팅방 삭제에 실패했습니다.");
+                const errorData = await res.json().catch(() => ({ message: "채팅방 삭제에 실패했습니다." }));
+                alert(errorData.message || "채팅방 삭제에 실패했습니다.");
             }
         } catch (err) {
             console.error("삭제 중 오류 발생 : ", err);

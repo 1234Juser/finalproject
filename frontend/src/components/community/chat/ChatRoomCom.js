@@ -1,4 +1,14 @@
-import {ChatBox, ChatButton, ChatForm, ChatInput,ConnectionStatus,Container,JoinMsg,LeaveMsg,MessageRow
+import {
+    ChatBox,
+    ChatButton,
+    ChatForm,
+    ChatInput,
+    ConnectionStatus,
+    Container,
+    JoinMsg,
+    LeaveMsg,
+    messageContentStyle,
+    MessageRow, messageTextStyle, profileImageStyle, senderInfoStyle
 } from '../../../style/community/chat/StyleChatRoom'
 import FormatDate from '../../../utils/FormatDate';
 
@@ -26,10 +36,29 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
             <ChatBox>
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
-                        <strong>{msg.sender}</strong> 
-                        ({FormatDate(msg.sentAt || Date.now())}): {msg.message}
-                        {msg.type === "JOIN" && <JoinMsg>님이 입장했습니다.</JoinMsg>}
-                        {msg.type === "LEAVE" && <LeaveMsg>님이 퇴장했습니다.</LeaveMsg>}
+                        <div style={messageContentStyle}>
+                            {msg.type === "CHAT" && ( // 일반 채팅 메시지(CHAT 타입)일 때만 프로필 이미지 표시
+                                <img
+                                    src={msg.profileImageUrl || "/img/default-profile.jpg"} // 기본 프로필 이미지 경로를 설정해주세요.
+                                    alt="profile"
+                                    style={profileImageStyle}
+                                />
+                            )}
+                            <div style={messageTextStyle}>
+                                {msg.type === "CHAT" && (
+                                    <span style={senderInfoStyle}>
+                                            <strong>{msg.sender}</strong>
+                                            <small> ({FormatDate(msg.sentAt || Date.now())})</small>
+                                        </span>
+                                )}
+                                <span> {/* 실제 메시지 내용 */}
+                                    {msg.message}
+                                     </span>
+                                {msg.type === "JOIN" && <JoinMsg><strong>{msg.sender}</strong>님이 입장했습니다.</JoinMsg>}
+                                {msg.type === "LEAVE" && <LeaveMsg><strong>{msg.sender}</strong>님이 퇴장했습니다.</LeaveMsg>}
+                            </div>
+                        </div>
+
                     </MessageRow>
                 ))}
             </ChatBox>

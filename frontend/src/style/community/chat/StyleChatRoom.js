@@ -86,3 +86,31 @@ export const InfoMessage = styled.div`
   text-align: center;
 `;
 
+// 프로필 이미지 스타일 정의
+export const profileImageStyle = {
+    width: '35px', // 크기 조절
+    height: '35px',
+    borderRadius: '50%', // 원형으로
+    marginRight: '10px', // 메시지와의 간격
+    objectFit: 'cover' // 이미지가 잘리지 않도록
+};
+
+// 메시지 내용(이미지 + 텍스트)을 담을 컨테이너 스타일
+export const messageContentStyle = {
+    display: 'flex',
+    alignItems: 'flex-start', // 이미지 상단과 텍스트 상단 정렬
+    marginBottom: '8px' // 메시지 간 하단 간격
+};
+
+// 메시지 텍스트 부분 스타일 (발신자, 시간, 메시지 내용)
+export const messageTextStyle = {
+    display: 'flex',
+    flexDirection: 'column' // 발신자+시간과 메시지 내용을 세로로 배치
+};
+
+export const senderInfoStyle = {
+    fontSize: '0.9em',
+    color: '#555'
+};
+
+
