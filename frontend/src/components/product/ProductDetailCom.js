@@ -6,9 +6,21 @@ import { WishButton, Container, ImageSection, InfoSection, Title, PriceWrapper, 
 import MapSection from "../../containers/product/MapSection";
 import WeatherSection from "../../containers/product/WeatherSection";
 import ProductReviewCon from "../../containers/review/ProductReviewCon";
+import {useNavigate} from "react-router-dom";
 
 
 function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSection}) {
+    const navigate = useNavigate();
+
+    const handleOptionSelect = () => {
+        console.log("🔵 현재 product:", product);
+        console.log("🔵 현재 productUid:", product.productUid);
+        if (!product.productUid) {
+            console.error("⚠️ productUid가 없습니다.");
+            return;
+        }
+        navigate(`/products/${product.productUid}/option/create`);
+    };
 
     return (
         <Container>
@@ -39,7 +51,7 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
             <WishButton onClick={onToggleWish} aria-label="찜 토글">
                 {isWished ? <FaHeart /> : <FaRegHeart />}
             </WishButton>
-            <PaymentButton>결제하기</PaymentButton>
+            <PaymentButton onClick={handleOptionSelect}>옵션선택</PaymentButton>
              </InfoSection>
             </MainSectionWrapper>
             <DetailTabWrapper>

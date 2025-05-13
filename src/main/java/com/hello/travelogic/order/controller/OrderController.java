@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderController {
-    // 주문 생성(옵션 선택 → 주문 저장) + 결제 요청
+    // 주문 생성(옵션 선택 → 주문 저장) + 결제 요청, 주문 조회
 
     private final OrderService orderService;
 
