@@ -66,6 +66,8 @@ export const AuthorLine = styled.div`
     display: flex;
     align-items: center;
     margin-bottom: 8px; // 다음 줄과의 간격
+    /* 게시글 작성자 이름, 프로필 사진 왼쪽 정렬 */
+    justify-content: flex-start;
 `;
 
 export const AuthorName = styled.span`
@@ -218,11 +220,14 @@ export const CommentContent = styled.p`
 export const CommentMeta = styled.div`
     font-size: 0.9rem;
     color: ${Palette.subText};
-    display: flex;
-    align-items: center;
+    display: flex; /* Flexbox 활성화 */
+    align-items: center; /* 세로 중앙 정렬 */
     flex-wrap: wrap;
-    justify-content: space-between; // 작성자와 날짜 그룹을 양쪽으로 분산
+    /* 댓글 작성자 및 프로필 사진 왼쪽 정렬 */
+    justify-content: flex-start;
+    margin-bottom: 8px; /* 메타 정보와 댓글 내용 사이 간격 추가 */
 `;
+
 
 export const CommentAuthor = styled.span`
     font-weight: 600;
@@ -230,7 +235,10 @@ export const CommentAuthor = styled.span`
     display: flex; // 프로필 이미지와 이름 정렬 위해 추가
     align-items: center; // 프로필 이미지와 이름 정렬 위해 추가
     font-size: 1rem;
-
+    /* 프로필 이미지와의 간격 조정 */
+    img {
+        margin-right: 8px; /* 이미 CompanionDetailCom.js에서 인라인 스타일로 적용된 값과 일치 */
+    }
 `;
 
 export const CommentDates = styled.div`
@@ -242,6 +250,7 @@ export const CommentDates = styled.div`
     & > span:first-child {
         margin-left: 0;
     }
+    margin-left: auto; /* 댓글 작성자 정보와 날짜 정보를 양쪽으로 분산 */
 `;
 
 export const CommentDate = styled.span`
@@ -260,6 +269,8 @@ export const NoComment = styled.p`
 export const CommentActions = styled.div`
     margin-top: 5px;
     font-size: 0.9rem;
+    /* 댓글 수정/삭제 버튼 왼쪽 정렬 */
+    text-align: left;
 `;
 
 export const ActionButton = styled.button`
@@ -393,12 +404,37 @@ export const CommentPagingButton = styled.button`
     }
 `;
 
-export const FollowToggleArea = styled.div`
+/* 댓글 작성자 정보와 팔로우 버튼 그룹을 위한 flex 컨테이너 */
+export const CommentAuthorInfo = styled.div`
     display: flex;
     align-items: center;
-    margin-left: auto; /* 작성자 이름과 날짜 사이에 공간을 만듭니다. */
-    gap: 10px; /* 버튼 사이 간격 추가 */
+    /* 왼쪽 정렬 유지 */
+    justify-content: flex-start;
+    flex-grow: 1; /* 가능한 공간을 모두 차지하여 버튼을 오른쪽으로 밀어냄 */
+    flex-wrap: wrap; /* 필요한 경우 줄바꿈 허용 */
 `;
+
+/* 댓글 팔로우 버튼 그룹을 위한 flex 컨테이너 */
+export const CommentFollowActions = styled.div`
+    display: flex;
+    align-items: center;
+    /* 가운데 정렬 */
+    justify-content: center;
+    gap: 10px; /* 버튼 사이 간격 */
+    width: 100%; /* 부모 너비 전체 사용 */
+    margin-top: 5px; /* 작성자 정보와 버튼 그룹 사이 간격 */
+`;
+
+
+/* 게시글 팔로우 버튼 그룹을 위한 flex 컨테이너 */
+export const PostFollowActions = styled.div`
+    display: flex;
+    align-items: center;
+    /* 오른쪽 정렬 */
+    margin-left: auto; /* 왼쪽에 가능한 모든 공간을 차지하여 오른쪽으로 밀어냄 */
+    gap: 10px; /* 버튼 사이 간격 */
+`;
+
 
 export const FollowButton = styled.button`
     background-color: ${props => (props.isFollowing ? '#dc3545' : '#28a745')}; /* 팔로우 상태에 따라 색상 변경 */
@@ -407,44 +443,130 @@ export const FollowButton = styled.button`
     padding: 5px 10px; /* 패딩 감소 */
     border-radius: 20px; /* 더 둥근 모서리 */
     cursor: pointer;
-    /* margin-left: 10px; /* 작성자 이름과의 간격 - FollowToggleArea의 gap 사용 */
     font-size: 0.8em; /* 폰트 크기 감소 */
     font-weight: 600; /* 폰트 굵기 */
     transition: background-color 0.2s ease, transform 0.1s ease; /* 색상 및 transform 애니메이션 추가 */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* 그림자 효과 */
-
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     &:hover {
-        background-color: ${props => (props.isFollowing ? '#c82333' : '#218838')}; /* 호버 시 색상 변경 */
-        transform: translateY(-1px); /* 약간 위로 이동 */
-    }
-
-    &:active {
-        transform: translateY(0); /* 클릭 시 제자리 */
-        box-shadow: 0 1px 3px rgba(0,0,0,0.15); /* 클릭 시 그림자 변경 */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 `;
 
-// '팔로우 정보' 버튼 스타일 추가
+
 export const FollowInfoButton = styled.button`
-    background: linear-gradient(90deg, #36abc9, #198dbb);
-    color: #fff;
+    background-color: #007bff; /* 파란색 배경 */
+    color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.8em;
-    box-shadow: 0 2px 5px #44c0ee26;
+    padding: 5px 10px; /* 패딩 감소 */
+    border-radius: 20px; /* 더 둥근 모서리 */
     cursor: pointer;
-    transition: background .16s, box-shadow .16s, transform .13s;
+    font-size: 0.8em; /* 폰트 크기 감소 */
+    font-weight: 600; /* 폰트 굵기 */
+    transition: background-color 0.2s ease, transform 0.1s ease; /* 색상 및 transform 애니메이션 추가 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+`;
+
+
+// 모달 관련 스타일 (FollowModalCom에서 사용할 수 있도록 내보내기)
+export const ModalBackdrop = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+`;
+
+export const ModalContent = styled.div`
+    background-color: ${Palette.white};
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: ${Palette.cardShadow};
+    width: 90%;
+    max-width: 400px; /* 모달 최대 너비 설정 */
+    position: relative;
+    max-height: 80vh; /* 모달 최대 높이 설정 */
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+`;
+
+export const ModalTitle = styled.h4`
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: ${Palette.text};
+    text-align: center;
+`;
+
+export const ModalCloseButton = styled.button`
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: ${Palette.subText};
+`;
+
+export const ModalMembersList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0;
+`;
+
+export const ModalMemberItem = styled.li`
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid ${Palette.borderGray};
+    &:last-child {
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+`;
+
+export const ModalProfileImage = styled.img`
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover; /* 이미지 비율 유지 */
+`;
+
+export const ModalMemberName = styled.span`
+    font-weight: 600;
+    color: ${Palette.text};
+    font-size: 1.1rem;
+`;
+
+export const FollowToggleButtons = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 15px;
+`;
+
+export const ToggleButton = styled.button`
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: ${props => (props.active ? '700' : '500')};
+    color: ${props => (props.active ? Palette.blue : Palette.subText)};
+    cursor: pointer;
+    transition: color 0.2s ease;
 
     &:hover {
-        background: linear-gradient(90deg, #198dbb, #36abc9);
-        box-shadow: 0 3px 8px #44c0ee36;
-        transform: translateY(-1px);
-    }
-
-    &:active {
-        transform: translateY(0); /* 클릭 시 제자리 */
-        box-shadow: 0 1px 3px rgba(0,0,0,0.15); /* 클릭 시 그림자 변경 */
+        color: ${Palette.blue};
     }
 `;
