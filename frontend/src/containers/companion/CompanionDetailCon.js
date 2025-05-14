@@ -114,7 +114,7 @@ function CompanionDetailCon() {
         try{
             const token = localStorage.getItem("accessToken");
             // content를 params 대신 요청 본문에 직접 전달
-            const response = await axios.post(`/companions/${companionId}/comments`, null ,{ // null 또는 빈 객체 {}를 본문으로 사용
+            await axios.post(`/companions/${companionId}/comments`, null ,{ // null 또는 빈 객체 {}를 본문으로 사용
                 params: { content: content },
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -138,7 +138,7 @@ function CompanionDetailCon() {
     const handleCommentUpdate = async(commentId, content)=>{
         try{
             const token = localStorage.getItem("accessToken");
-            const response = await axios.put(`/companions/${companionId}/comments/${commentId}`, null, {
+            await axios.put(`/companions/${companionId}/comments/${commentId}`, null, {
                 params: {content: content},
                 headers:{
                     'Authorization': `Bearer ${token}`

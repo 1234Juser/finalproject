@@ -69,8 +69,8 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink,
         ) {
             errs.noChange = "변경할 항목을 입력하세요.";
         }
-        if (form.memberName && form.memberName.trim().length < 2) {
-            errs.memberName = "이름은 두 글자 이상 입력하세요.";
+        if (form.memberName && (form.memberName.trim().length < 2 || form.memberName.trim().length > 6)) {
+            errs.memberName = "이름은 2자 이상 6자 이하여야 합니다.";
         }
         if (!form.memberPhone.match(/^01[016789]-?\d{3,4}-?\d{4}$/))
             errs.memberPhone = "올바른 휴대폰 번호를 입력하세요.";
