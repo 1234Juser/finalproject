@@ -423,11 +423,11 @@ public class MemberService {
 
 
     // 프로필 이미지 URL 조회 메소드 추가
-    public String getProfileImageUrl(String memberId) {
+    public String getProfileImageUrl(String memberName) {
 
-        return memberRepository.findByMemberId(memberId) // Member 엔티티를 memberId로 찾는 메소드가 필요합니다.
-                .map(memberEntity -> memberEntity.getMemberProfileImageUrl()) // Member 엔티티의 프로필 이미지 URL 필드를 가져옵니다.
-                .orElse(null); // 이미지가 없거나 사용자를 찾을 수 없으면 null 또는 기본 이미지 URL을 반환할 수 있습니다.
+        return memberRepository.findByMemberName(memberName)
+                .map(memberEntity -> memberEntity.getMemberProfileImageUrl())
+                .orElse(null);
     }
 
 }

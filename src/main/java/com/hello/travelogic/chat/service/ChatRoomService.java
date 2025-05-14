@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -138,4 +139,47 @@ public class ChatRoomService {
         // 5. 삭제
         chatRoomRepo.delete(chatRoom);
     }
+
+
+    // 채팅방 참가자 추가
+    @Transactional
+    public void addMemberToRoom(String roomId, String memberName) {
+
+        ChatRoomEntity room = chatRoomRepo.findByChatRoomUid(roomId)
+                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
+        log.debug("room = {}", room.getChatRoomId());
+        MemberEntity member = memberRepository.findByMemberName(memberName)
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+        log.debug("member = {}", member.getMemberName());
+
+        // 중복 참여 확인 (채팅방-회원 조합)
+        if (chatRoomMemberRepo.existsByChatRoomIdAndMemberCode(room, member)) {
+            log.debug(">>>>>> 이미 참여 중인 멤버 {} 가 채팅방 {}에 있습니다", memberName, roomId);
+            // 결과가 true면 이미 참여중이란 뜻. (또 넣으면 안되니까 return)
+            return;
+        }
+
+        // 최대 인원 확인 (퇴장하지 않은 멤버)
+        long currentCount = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(room, false);
+        if (currentCount >= room.getChatRoomMaxParticipants()) {
+            // 최대 인원 초과 시 예외 발생
+            log.warn(">>>>>> 채팅방 {} 최대 인원 초과. 현재 {}명, 최대 {}명", roomId, currentCount, room.getChatRoomMaxParticipants());
+            throw new IllegalStateException("채팅방 최대 인원을 초과했습니다.");
+            // 이 예외는 ChatController에서 잡아서 클라이언트에게 적절한 메시지를 보내야 합니다.
+        }
+
+        // 중간 테이블에 멤버 저장
+        ChatRoomMemberEntity newEntry = new ChatRoomMemberEntity();
+        newEntry.setChatRoomId(room);    // ChatRoomMemberEntity가 ChatRoomEntity 객체 전체를 참조하게 만듦. (ChatRoomId는 내부적으로 @ManyToOne 관계에 있는 필드이기 때문에, ChatRoomId로 가져온 엔티티 객체를 넣어줌)
+        newEntry.setMemberCode(member);     // 마찬가지로, memberName 같은 문자열이 아니라 memberEntity 객체 전체를 참조하게 만듦.
+        newEntry.setCrmJoinedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 참여 시간 설정
+        newEntry.setCrmIsExited(false);      // 퇴장 여부 초기값 설정
+        newEntry.setMemberName(memberName);  // memberName String 값 저장 (부가 정보)
+        newEntry.setCreator(false); // isCreator 필드가 있다면 필요에 따라 설정
+
+        chatRoomMemberRepo.save(newEntry);
+        log.debug(">>>>>> 새로운 멤버 {}가 채팅방 {}에 추가되었습니다. 현재 참여 인원: {}", memberName, roomId, currentCount + 1);
+    }
+
+
 }

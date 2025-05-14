@@ -129,7 +129,31 @@ function ChatRoomCon({roomUid}) {
                 dispatch({ type: 'SET_AUTH_ERROR', payload: null });    // 연결 성공 시 이전 인증 오류 해제
                 dispatch({ type: 'SET_CONNECTED', payload: true });
 
-                // 1. 특정 채팅방 구독
+                
+                // 사용자 입장/퇴장 알림 메시지 구독
+                stompClient.subscribe('/topic/public', (message) => {
+                    const receivedPublicMessage = JSON.parse(message.body);
+                    console.log(">>>>> 받은 공개 메시지 확인 : ", receivedPublicMessage);
+                    dispatch({ type: 'ADD_MESSAGE', payload: receivedPublicMessage });
+                    
+                });
+                
+                // 1. >>>>클라이언트<<<가 채팅방에 입장할 때 서버로 메시지 전송
+                const joinMessage = {
+                    type: 'JOIN', 
+                    roomId : roomUid,
+                    sender: username,      // ★★ 실질적으로 서버로 보내는 프로퍼티 ★★
+                    memberCode : memberCode,
+                    sentAt : new Date().toISOString()
+                };
+                stompClient.send(`/app/chat.addUser/${roomUid}`,
+                    {},
+                    JSON.stringify(joinMessage)   
+                );
+                console.log("joinMessage???----->", joinMessage);
+
+                // 2. joinMessage를 받아서 처리한 후, 구독하는 경로로 보냄. (서버 ChatService.addUser에서 보냄)
+                // 특정 채팅방 구독
                 if (roomUid) {
                     console.log(`구독중인 채팅방 :  /topic/chat/${roomUid}`);
                     stompClient.subscribe(`/topic/chat/${roomUid}`, (message) => {
@@ -138,27 +162,6 @@ function ChatRoomCon({roomUid}) {
                         dispatch({ type: 'ADD_MESSAGE', payload: receivedChatMessage });
                     });
                 }
-
-                // 2. 사용자 입장/퇴장 알림 메시지 구독
-                stompClient.subscribe('/topic/public', (message) => {
-                    const receivedPublicMessage = JSON.parse(message.body);
-                    console.log(">>>>> 받은 공개 메시지 확인 : ", receivedPublicMessage);
-                    dispatch({ type: 'ADD_MESSAGE', payload: receivedPublicMessage });
-
-                });
-
-                // 3. 사용자가 채팅방에 입장할 때 서버로 메시지 전송
-                const joinMessage = {
-                    type: 'JOIN', 
-                    roomId : roomUid,
-                    sender: username,      // JOIN 메시지의 sender는 username (표시용)
-                    memberCode : memberCode,
-                    sentAt : new Date().toISOString()
-                };
-                stompClient.send(`/app/chat.addUser/${roomUid}`,
-                    {},
-                    JSON.stringify(joinMessage)   
-                );
             },
             (error) => {
                 // 연결 실패 시 콜백
@@ -190,15 +193,18 @@ function ChatRoomCon({roomUid}) {
         const authInfo = getAuthInfo(); // 메시지 전송 시점에 최신 memberCode 가져옵니다.
 
         if (newMessage && roomUid && memberCode && stompClientRef.current && stompClientRef.current.connected) {
+            // 1. 클라이언트에서 전송
             const chatMessage = {
                 type: 'CHAT',
                 roomId : roomUid,
-                sender: memberCode,      // ★ 서버에서 사용자 식별자로 memberCode를 받고 있음 ★
+                sender: username,      // ★ 서버에서 사용자 식별자로 memberCode를 받고 있음 ★
                 message: newMessage,
                 sentAt : new Date().toISOString(),
                 // profileImageUrl은 서버에서 설정하므로 클라이언트에서 보낼 필요는 없습니다.
             };
             console.log(`----------Sending CHAT message to /app/chat.send/${roomUid}:`, chatMessage);
+            
+            // 2. 서버에서 수신 후 클라이언트로 전송
             // 메시지를 특정 채팅방의 경로로 전송 
             stompClientRef.current.send(`/app/chat.send/${roomUid}`, {}, JSON.stringify(chatMessage));
             dispatch({ type: 'SET_NEW_MESSAGE', payload: '' });
