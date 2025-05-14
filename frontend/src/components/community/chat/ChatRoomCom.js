@@ -12,7 +12,7 @@ import {
 } from '../../../style/community/chat/StyleChatRoom'
 import FormatDate from '../../../utils/FormatDate';
 
-function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, roomUid, onDeleteChatRoom }) {
+function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, roomUid, onDeleteChatRoom, onHandleLeaveChatRoom }) {
 
     return (
         <Container>
@@ -32,6 +32,7 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
             >
                 채팅방 삭제
             </button>
+            <button onClick={onHandleLeaveChatRoom}>채팅방 나가기</button>
 
             <ChatBox>
                 {messages.map((msg, index) => (

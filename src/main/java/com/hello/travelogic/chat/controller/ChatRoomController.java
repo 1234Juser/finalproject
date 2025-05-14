@@ -3,6 +3,8 @@ package com.hello.travelogic.chat.controller;
 import com.hello.travelogic.chat.dto.ChatRoomCreateRequest;
 import com.hello.travelogic.chat.dto.ChatRoomCreateResponse;
 import com.hello.travelogic.chat.service.ChatRoomService;
+import com.hello.travelogic.member.service.MemberService;
+import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,8 @@ import java.util.List;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
+    private final JwtUtil jwtUtil;
+    private final MemberService memberService;
 
 
     // 모든 채팅방 목록 조회
@@ -63,18 +67,6 @@ public class ChatRoomController {
         }
     }
 
-    /**
-     * 특정 ID의 채팅방을 조회하는 API (필요시)
-     * GET /api/chatrooms/{roomId}
-     */
-/*    @GetMapping("/{roomId}")
-    public ResponseEntity<ChatRoomResponse> getChatRoomById(@PathVariable String roomId) {
-        ChatRoomResponse chatRoom = chatRoomService.getChatRoomById(roomId);
-        if (chatRoom != null) {
-            return ResponseEntity.ok(chatRoom);
-        } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
-        }*/
 
     // 채팅방 삭제
     @DeleteMapping("/{chatRoomUid}")
@@ -89,8 +81,39 @@ public class ChatRoomController {
         } catch (Exception e) {
             log.error("채팅방 삭제 실패", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-
         }
+    }
 
+
+    // 채팅방 퇴장
+    @PostMapping("/leave/{chatRoomUid}")
+    public ResponseEntity<Void> exitChatRoom(@PathVariable String chatRoomUid,
+                                             @RequestHeader("Authorization") String token) {
+        try {
+            String parsedToken = token.replace("Bearer ", "");
+
+            // 토큰에서 사용자 정보 (memberName) 추출  (jwtUtil에서 memberName을 가져오는 메소드가 없으므로 memberCode로 DB에서 memberName 조회)
+            Long memberCode = jwtUtil.getMemberCodeFromToken(parsedToken);
+            String memberName = memberService.findByMemberCode(memberCode); // DB에서 이름 조회
+            log.debug("-----------memberName : {}", memberName);
+
+            if (memberName == null) {
+                log.warn("토큰에서 사용자 이름(memberName) 추출 실패 (퇴장)");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 Unauthorized
+            }
+            log.debug("Received exit request for room: {} from user: {}", chatRoomUid, memberName);
+
+            chatRoomService.exitChatRoom(chatRoomUid, memberName);
+
+            log.info("채팅방 {} 퇴장 처리 성공 (요청 사용자: {})", chatRoomUid, memberName);
+            return ResponseEntity.noContent().build(); // 204 No Content (성공)
+
+        } catch (SecurityException e) {
+            log.error("채팅방 퇴장 권한 없음: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 권한 없음
+        } catch (Exception e) {
+            log.error("채팅방 퇴장 로직 오류: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);    // 400 Bad Request (클라이언트에게 오류 메시지 전달 필요 시 body에 담을 수 있음)
+        }
     }
 }

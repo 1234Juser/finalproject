@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -430,4 +431,11 @@ public class MemberService {
                 .orElse(null);
     }
 
+
+    // memberCode로 memberName 조회
+    public String findByMemberCode(Long memberCode) {
+        MemberEntity member = memberRepository.findById(memberCode)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 회원 없음"));
+        return member.getMemberName();
+    }
 }

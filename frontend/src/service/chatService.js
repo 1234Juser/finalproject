@@ -65,3 +65,31 @@ export const deleteChatRoom = async (chatRoomUid, token) => {
         return false;
     }
 };
+
+
+// 채팅방 퇴장 호출
+export const leaveChatRoom = async (chatRoomUid, token) => {
+    try {
+
+        const response = await fetch(`${path}/api/chatrooms/leave/${chatRoomUid}`, { // 백엔드 서버 주소 및 경로 확인
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`, // 토큰을 Authorization 헤더에 포함
+                'Content-Type': 'application/json' // 필요시 Content-Type 설정 (POST 요청에 body가 없어도 명시 가능)
+            },
+            // body: JSON.stringify({}) // POST 요청이지만 body가 필요 없다면 생략하거나 빈 객체 전송
+        });
+        
+        // 응답 상태 코드에 따라 추가 로직 처리 가능 (예: 401, 403 등)
+        if (!response.ok) {
+            console.error(`API 호출 실패: ${response.status}`, response);
+            // 실패 응답의 body를 읽어서 에러 메시지를 포함할 수 있습니다.
+            // const errorBody = await response.json();
+            // throw new Error(errorBody.message || '채팅방 퇴장 API 호출 실패');
+        }
+        
+        return response; // 성공 시 응답 객체 반환 (204 No Content 예상)
+    } catch (error) {
+        console.error('채팅방 퇴장 실패 : ', error);
+    }
+};

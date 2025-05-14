@@ -6,6 +6,7 @@ import {
     RoomItem,
     RoomList, Button, ErrorMessage
 } from "../../../style/community/chat/StyleChatRoomList";
+import FormatDate from "../../../utils/FormatDate";
 
 function ChatRoomListCom({
                              rooms,
@@ -34,12 +35,12 @@ function ChatRoomListCom({
                     <RoomItem key={room.chatRoomId}
                               onClick={() => goToRoom(room)}>
                             <div>
-                                <p>UID 확인 : {room.chatRoomUid}</p>
+                                <p>방 UID : {room.chatRoomUid}</p>
                             <strong>{room.chatRoomTitle}</strong>
                             <p>{room.chatRoomDescription}</p>
                             <p>현재 참여 인원 | {room.currentParticipants}</p>
-                            <p>개설일자 | {room.chatRoomCreateAt}</p>
-                            <small>최대 참여 인원 |  {room.chatRoomMaxParticipants}</small>
+                                <p>개설일자 | {FormatDate(room.chatRoomCreateAt)}</p>
+                                <small>최대 참여 인원 |  {room.chatRoomMaxParticipants}</small>
                         </div>
                     </RoomItem>
                     ))

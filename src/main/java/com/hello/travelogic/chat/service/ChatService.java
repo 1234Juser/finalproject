@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,6 +21,7 @@ public class ChatService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final MemberService memberService;
+    private final ChatRoomService chatRoomService;
 
     // 채팅 메시지 로깅을 위한 Logger 인스턴스 생성
     private static final Logger chatLogger = LoggerFactory.getLogger("ChatLog");
@@ -56,6 +58,7 @@ public class ChatService {
     }
 
 
+    // 입장시 메시지 전송
     public ChatMessageDTO addUser(String roomId, ChatMessageDTO message, SimpMessageHeaderAccessor headerAccessor) {
 
         message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
@@ -71,14 +74,64 @@ public class ChatService {
         if (headerAccessor.getSessionAttributes() != null) {
             headerAccessor.getSessionAttributes().put("username", message.getSender());
             headerAccessor.getSessionAttributes().put("roomId", roomId);
+//            headerAccessor.getSessionAttributes().put("memberCode", message.getMemberCode()); // memberCode도 저장 필요
         }
 
         chatLogger.info("[{}] User: {}", message.getType(), message.getSender());
         generalLogger.debug("User {} joined, broadcasting to /topic/chat/{}", message.getSender(), roomId);
+
+        // 입장 멤버 중간 테이블에 추가 (ChatService.addUser 내부에서 처리하도록 이동 권장)
+        chatRoomService.addMemberToRoom(roomId, message.getSender());
 
         // roomId에 따라 구독한 유저에게만 입장 알림 전송
         messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
 
         return message;
     }
+
+
+    // 퇴장시 메시지 전송
+    public void sendExitMessage(String roomId, ChatMessageDTO message, String memberName) {
+
+        log.debug("sendExitMessage roomId: {}, memberName: {}", roomId, memberName);
+
+        String exitMsg = memberName + "님이 채팅방을 퇴장하였습니다.";
+
+        ChatMessageDTO exitMessage = ChatMessageDTO.builder()
+                .type(ChatMessageDTO.MessageType.valueOf("LEAVE"))
+                .roomId(roomId)
+                .sender("System") // 시스템 메시지로 처리
+                .message(exitMsg)
+                .sentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .build();
+
+        // 다른 사용자에게 퇴장 메시지 전송
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId, exitMessage);
+
+        log.info("[퇴장 메시지] {}: {}", roomId, exitMsg);
+    }
+
+// -------------------------------------
+
+    /*public void sendExitMessage(String roomId, String memberName, String profileImageUrl) {
+
+        log.debug("sendExitMessage roomId: {}, memberName: {}", roomId, memberName);
+
+        String exitMsg = memberName + "님이 채팅방을 퇴장하였습니다.";
+
+        ChatMessageDTO exitMessage = ChatMessageDTO.builder()
+                .type(ChatMessageDTO.MessageType.LEAVE) // LEAVE 타입 사용
+                .roomId(roomId)
+                .sender("System") // 시스템 메시지로 처리 (또는 memberName 사용 가능)
+                .message(exitMsg)
+                .sentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) // ★ sentAt()으로 수정 ★
+                .profileImageUrl(profileImageUrl) // 프로필 이미지 URL 포함 (선택 사항)
+                .build();
+
+        // 다른 사용자에게 퇴장 메시지 전송
+        // ★ 토픽 경로 수정: /topic/chat/{roomId} ★
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId, exitMessage);
+
+        log.info("[퇴장 메시지 발행] {}: {}", roomId, exitMsg);
+    }*/
 }

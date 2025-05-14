@@ -5,6 +5,8 @@ import com.hello.travelogic.chat.domain.ChatRoomMemberEntity;
 import com.hello.travelogic.member.domain.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface ChatRoomMemberRepo extends JpaRepository<ChatRoomMemberEntity, Long> {
 
     // 특정 채팅방(ChatRoomEntity)에 속하고 퇴장하지(crmIsExited = false) 않은 멤버의 수를 카운트
@@ -15,5 +17,9 @@ public interface ChatRoomMemberRepo extends JpaRepository<ChatRoomMemberEntity, 
     // ChatRoomMemberEntity 내에서 ChatRoomEntity/MemberEntity를 참조하는 필드를 조건으로 걸어야함.
     boolean existsByChatRoomIdAndMemberCode(ChatRoomEntity chatRoomId, MemberEntity memberCode);
 
+    // 특정 채팅방에 참여중인 멤버 찾기
+    Optional<ChatRoomMemberEntity> findByChatRoomIdAndMemberCodeAndCrmIsExited(ChatRoomEntity chatRoomId, MemberEntity memberCode, boolean crmIsExited);
 
+    // 특정 채팅방에서 해당 멤버의 가장 최근 기록 찾기
+    Optional<ChatRoomMemberEntity> findTopByChatRoomIdAndMemberCodeOrderByCrmJoinedAtDesc(ChatRoomEntity room, MemberEntity member);
 }
