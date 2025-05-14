@@ -84,4 +84,20 @@ public class JwtUtil {
 
         return claims.get("roles", List.class);
     }
+
+
+    // 사용자 이름 (memberName) 클레임 추출
+    public String getMemberNameFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return claims.get("memberName", String.class); // ★ memberName 클레임 가져오기 ★
+        } catch (Exception e) {
+            // 토큰 파싱 또는 클레임 추출 실패 시
+            return null;
+        }
+    }
 }

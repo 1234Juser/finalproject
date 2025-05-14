@@ -1,9 +1,10 @@
 export const initialState = {
     messages: [],
     newMessage: '',     // 보내는 메시지
-    username: '',
+    username: null,
+    memberCode: null,
     isConnected: false,
-    currentRoomId: '',
+    roomUid: '',
     isLoading: true,
     authError: null,
 };
@@ -18,10 +19,12 @@ export function chatReducer(state, action) {
             return { ...state, newMessage: action.payload };
         case 'SET_USERNAME':
             return { ...state, username: action.payload };
+        case 'SET_MEMBER_CODE':
+            return { ...state, memberCode: action.payload };
         case 'SET_CONNECTED':
             return { ...state, isConnected: action.payload };
         case 'SET_CURRENT_ROOM_ID':
-            return { ...state, currentRoomId: action.payload };
+            return { ...state, roomUid: action.payload };
         case 'SET_LOADING':
             return { ...state, isLoading: action.payload };
         case 'SET_AUTH_ERROR':
