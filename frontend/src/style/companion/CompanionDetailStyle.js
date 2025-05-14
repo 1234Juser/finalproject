@@ -53,13 +53,19 @@ export const DetailTitle = styled.h2`
 `;
 
 export const MetaInfo = styled.div`
-    display: flex; // 자식 요소들을 가로로 정렬
-    align-items: center; // 자식 요소들을 세로 중앙 정렬
+    // display: flex; // 하위 컴포넌트에서 flex 레이아웃 관리
+    // align-items: center;
     color: ${Palette.subText};
     font-size: 1rem;
     margin-bottom: 25px; // 메타 정보 아래 여백
     border-bottom: 1px solid ${Palette.borderGray}; // 아래 줄 추가
     padding-bottom: 15px; // 줄과 정보 사이 여백
+`;
+
+export const AuthorLine = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px; // 다음 줄과의 간격
 `;
 
 export const AuthorName = styled.span`
@@ -68,19 +74,31 @@ export const AuthorName = styled.span`
     // display: inline-block; // 필요시 사용 (flex 컨테이너에서는 기본적으로 인라인 블록처럼 동작)
 `;
 
+export const PostStatsLine = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 0.9em;
+    color: ${Palette.subText};
+    & > span {
+        margin-left: 15px;
+    }
+    & > span:first-child {
+        margin-left: 0;
+    }
+`;
 
 export const CreatedAt = styled.span`
-    margin-right: 15px;
+    // margin-right: 15px; // PostStatsLine에서 관리
 `;
 
 export const ModifiedAt = styled.span`
-    margin-right: 15px;
+    // margin-right: 15px; // PostStatsLine에서 관리
 `;
 
 
 export const ViewCount = styled.span`
-    margin-left: auto; /* 오른쪽 정렬 */
-    // 추가 스타일 필요 시 정의
+    // margin-left: auto; /* PostStatsLine에서 관리 */
 `;
 
 
@@ -200,20 +218,34 @@ export const CommentContent = styled.p`
 export const CommentMeta = styled.div`
     font-size: 0.9rem;
     color: ${Palette.subText};
-    display: flex; // 추가: 자식 요소들을 가로로 정렬
-    align-items: center; // 추가: 자식 요소들을 세로 중앙 정렬
-    flex-wrap: wrap; // 항목이 많아지면 줄바꿈하도록 설정
-
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between; // 작성자와 날짜 그룹을 양쪽으로 분산
 `;
-
 
 export const CommentAuthor = styled.span`
     font-weight: 600;
-    margin-right: 20px; /* 작성자 이름과 날짜 사이 간격 */
+    margin-right: 10px; /* 댓글 작성자와 날짜 그룹 사이의 최소 간격 */
+    display: flex; // 프로필 이미지와 이름 정렬 위해 추가
+    align-items: center; // 프로필 이미지와 이름 정렬 위해 추가
+    font-size: 1rem;
+
+`;
+
+export const CommentDates = styled.div`
+    display: flex;
+    align-items: center;
+    & > span {
+        margin-left: 10px;
+    }
+    & > span:first-child {
+        margin-left: 0;
+    }
 `;
 
 export const CommentDate = styled.span`
-    margin-right: 15px; /* 작성일과 최종 수정일 사이 간격 */
+    // margin-right: 15px; // CommentDates에서 관리
 `;
 
 export const NoComment = styled.p`
@@ -358,5 +390,61 @@ export const CommentPagingButton = styled.button`
     &:disabled {
         opacity: .5;
         cursor: not-allowed;
+    }
+`;
+
+export const FollowToggleArea = styled.div`
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* 작성자 이름과 날짜 사이에 공간을 만듭니다. */
+    gap: 10px; /* 버튼 사이 간격 추가 */
+`;
+
+export const FollowButton = styled.button`
+    background-color: ${props => (props.isFollowing ? '#dc3545' : '#28a745')}; /* 팔로우 상태에 따라 색상 변경 */
+    color: white;
+    border: none;
+    padding: 5px 10px; /* 패딩 감소 */
+    border-radius: 20px; /* 더 둥근 모서리 */
+    cursor: pointer;
+    /* margin-left: 10px; /* 작성자 이름과의 간격 - FollowToggleArea의 gap 사용 */
+    font-size: 0.8em; /* 폰트 크기 감소 */
+    font-weight: 600; /* 폰트 굵기 */
+    transition: background-color 0.2s ease, transform 0.1s ease; /* 색상 및 transform 애니메이션 추가 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* 그림자 효과 */
+
+    &:hover {
+        background-color: ${props => (props.isFollowing ? '#c82333' : '#218838')}; /* 호버 시 색상 변경 */
+        transform: translateY(-1px); /* 약간 위로 이동 */
+    }
+
+    &:active {
+        transform: translateY(0); /* 클릭 시 제자리 */
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15); /* 클릭 시 그림자 변경 */
+    }
+`;
+
+// '팔로우 정보' 버튼 스타일 추가
+export const FollowInfoButton = styled.button`
+    background: linear-gradient(90deg, #36abc9, #198dbb);
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8em;
+    box-shadow: 0 2px 5px #44c0ee26;
+    cursor: pointer;
+    transition: background .16s, box-shadow .16s, transform .13s;
+
+    &:hover {
+        background: linear-gradient(90deg, #198dbb, #36abc9);
+        box-shadow: 0 3px 8px #44c0ee36;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0); /* 클릭 시 제자리 */
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15); /* 클릭 시 그림자 변경 */
     }
 `;

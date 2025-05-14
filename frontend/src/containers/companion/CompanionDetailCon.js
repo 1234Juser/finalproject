@@ -16,6 +16,7 @@ function CompanionDetailCon() {
     const [currentMemberCode, setCurrentMemberCode] = useState(null); // 현재 사용자 memberCode
     const [currentUserRoles, setCurrentUserRoles] = useState([]); // 현재 사용자 역할
 
+
     // 게시글 상세 정보를 불러오는 함수를 useCallback으로 감싸서 메모이제이션
     const fetchCompanionDetail = useCallback(async () => {
         setLoading(true);
@@ -203,4 +204,5 @@ function CompanionDetailCon() {
         />
     );
 }
+
 export default CompanionDetailCon;
