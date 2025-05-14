@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useReducer, useState} from "react";
 import {deleteMyReview, getReviewByOrderCode} from "../../service/reviewService";
 import MyReviewModalCom from "../../components/review/MyReviewModalCom";
+import {initialState, reducer} from "../../modules/reviewModule";
 
-function MyReviewModalCon({ orderCode, onClose, accessToken, dispatch }) {
+function MyReviewModalCon({ orderCode, onClose, accessToken }) {
     const [review, setReview] = useState(null);
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     useEffect(() => {
         if (!orderCode || !accessToken) return;
@@ -29,9 +31,13 @@ function MyReviewModalCon({ orderCode, onClose, accessToken, dispatch }) {
                 dispatch({ type: "REMOVE_REVIEW", payload: review.reviewCode });
                 alert("리뷰가 삭제되었습니다.");
                 onClose();  // 모달 닫기
-                window.location.reload();  // 페이지 새로고침
+                // window.location.reload();  // 페이지 새로고침
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             } catch (error) {
-                alert("리뷰 삭제에 실패했습니다.");
+                console.error("리뷰 삭제 오류:", error.message || error);
+                alert(error.message || "리뷰 삭제에 실패했습니다.");
             }
         }
         // if (review) {

@@ -274,28 +274,43 @@ CREATE TABLE `tbl_product_theme` (
 );
 
 
+# 여행게시판
 CREATE TABLE `tbl_companion` (
-                                 `comp_id` INT AUTO_INCREMENT NOT NULL COMMENT '여행동행게시판 번호',
-                                 `member_code` INT NOT NULL COMMENT '회원번호',
-                                 `comp_member_id` VARCHAR(20) NOT NULL COMMENT '작성자 id',
-                                 `comp_title` VARCHAR(50) NOT NULL COMMENT '글 제목',
-                                 `comp_created_at` DATETIME NOT NULL COMMENT '작성일자',
-                                 `comp_view_count` INT DEFAULT 0 NOT NULL COMMENT '조회수',
-                                 CONSTRAINT `PK_TBL_COMPANION` PRIMARY KEY (`comp_id`),
+                                 companion_id INT AUTO_INCREMENT NOT NULL COMMENT '여행동행게시판 번호',
+                                 member_code INT NOT NULL COMMENT '회원번호',
+                                 companion_title VARCHAR(50) NOT NULL COMMENT '글 제목',
+                                 companion_content TEXT NOT NULL COMMENT '글 내용',
+                                 companion_created_at DATETIME NOT NULL COMMENT '작성일자',
+                                 companion_modified_at DATETIME NULL COMMENT '수정일자',
+                                 companion_view_count INT DEFAULT 0 NOT NULL COMMENT '조회수',
+                                 CONSTRAINT `PK_TBL_COMPANION` PRIMARY KEY (`companion_id`),
                                  CONSTRAINT `FK_tbl_member_TO_tbl_companion_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
-);
-
+)ENGINE=INNODB COMMENT '여행게시판';
+# 여행게시판댓글
 CREATE TABLE `tbl_companion_comment` (
-                                         `com_id` INT AUTO_INCREMENT NOT NULL COMMENT '여행동행게시판 댓글 번호',
-                                         `member_code` INT NOT NULL COMMENT '회원번호',
-                                         `comp_id` INT NOT NULL COMMENT '여행동행게시판 번호',
-                                         `com_member_id` VARCHAR(20) NOT NULL COMMENT '댓글 작성자 id',
-                                         `com_content` VARCHAR(255) NOT NULL COMMENT '댓글 내용',
-                                         `com_created_at` DATETIME NOT NULL COMMENT '댓글 작성일자',
-                                         CONSTRAINT `PK_TBL_COMPANION_COMMENT` PRIMARY KEY (`com_id`),
+                                         companion_comment_id INT AUTO_INCREMENT NOT NULL COMMENT '여행동행게시판 댓글 번호',
+                                         member_code INT NOT NULL COMMENT '회원번호',
+                                         companion_id INT NOT NULL COMMENT '여행동행게시판 번호',
+                                         companion_comment_content TEXT NOT NULL COMMENT '댓글 내용',
+                                         companion_comment_created_at DATETIME NOT NULL COMMENT '댓글 작성일자',
+                                         companion_comment_modified_at DATETIME NULL COMMENT '댓글 수정일자',
+                                         CONSTRAINT `PK_TBL_COMPANION_COMMENT` PRIMARY KEY (`companion_comment_id`), -- 기본 키 수정
                                          CONSTRAINT `FK_tbl_member_TO_tbl_companion_comment_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`),
-                                         CONSTRAINT `FK_tbl_companion_TO_tbl_companion_comment_1` FOREIGN KEY (`comp_id`) REFERENCES `tbl_companion` (`comp_id`)
-);
+                                         CONSTRAINT `FK_tbl_companion_TO_tbl_companion_comment_1` FOREIGN KEY (`companion_id`) REFERENCES `tbl_companion` (`companion_id`)
+)ENGINE=INNODB COMMENT '여행게시판댓글';
+
+# 팔로우/팔로워기능
+CREATE TABLE `tbl_follow` (
+                              follow_id INT AUTO_INCREMENT NOT NULL COMMENT '팔로우 번호',
+                              follower_member_code INT NOT NULL COMMENT '나를 팔로우 하는 회원 번호',
+                              following_member_code INT NOT NULL COMMENT '내가 팔로우 하는 회원 번호',
+                              followed_at DATETIME NOT NULL COMMENT '팔로우 한 날짜',
+                              CONSTRAINT `PK_TBL_FOLLOW` PRIMARY KEY (`follow_id`),
+                              CONSTRAINT `FK_tbl_member_TO_tbl_follow_follower` FOREIGN KEY (`follower_member_code`) REFERENCES `tbl_member` (`member_code`),
+                              CONSTRAINT `FK_tbl_member_TO_tbl_follow_following` FOREIGN KEY (`following_member_code`) REFERENCES `tbl_member` (`member_code`),
+                              CONSTRAINT `UK_follower_following` UNIQUE (`follower_member_code`, `following_member_code`) -- 중복 팔로우 방지
+)ENGINE=INNODB COMMENT '회원 팔로우/팔로워 관계';
+
 
 CREATE TABLE `tbl_chat` (
                             `chat_id` INT AUTO_INCREMENT NOT NULL COMMENT '채팅방 id',

@@ -33,16 +33,22 @@ public class OptionEntity {
 
     @NotNull
     @Column( name = "adult_count", nullable = false )
-    private int adultCount;
+    private Integer adultCount;
 
     @Null
     @Column( name = "child_count", nullable = true )
     private Integer childCount;
 
+    @NotNull
+    @Column( name = "total_price", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int totalPrice = 0;
+
     public OptionEntity(OptionDTO dto, ProductEntity product) {
         this.product = product;
         this.reservationDate = dto.getReservationDate();
         this.adultCount = dto.getAdultCount();
-        this.childCount = dto.getChildCount();
+        this.childCount = dto.getChildCount() != null ? dto.getChildCount() : 0;
+        this.totalPrice = (dto.getAdultCount() * product.getProductAdult()) +
+                ((dto.getChildCount() != null ? dto.getChildCount() : 0) * product.getProductChild());
     }
 }

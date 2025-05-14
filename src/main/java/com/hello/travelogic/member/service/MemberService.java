@@ -438,4 +438,5 @@ public class MemberService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 회원 없음"));
         return member.getMemberName();
     }
+
 }

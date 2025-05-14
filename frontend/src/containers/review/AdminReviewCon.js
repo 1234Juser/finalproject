@@ -1,6 +1,6 @@
 import AdminReviewCom from "../../components/review/AdminReviewCom";
 import {useEffect, useReducer, useState} from "react";
-import {deleteReviewByAdmin, getAllReviewsForAdmin} from "../../service/reviewService";
+import {deleteMyReview, deleteReviewByAdmin, getAllReviewsForAdmin} from "../../service/reviewService";
 import {initialState, reducer} from "../../modules/reviewModule";
 
 function AdminReviewCon({accessToken}) {
@@ -12,6 +12,11 @@ function AdminReviewCon({accessToken}) {
 
     const handleDeleteReview = async (reviewCode) => {
         try {
+            if (!accessToken) {
+                console.error("accessToken 없음");
+                alert("로그인이 필요합니다.");
+                return;
+            }
             await deleteReviewByAdmin(reviewCode, accessToken);
             dispatch({ type: "UPDATE_REVIEW_STATUS",
                 payload: {

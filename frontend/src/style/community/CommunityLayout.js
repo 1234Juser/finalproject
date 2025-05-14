@@ -5,7 +5,7 @@ const CommunityLayout = () => {
   return (
     <div>
       <TabContainer>
-        <StyledTab to="/community/tripbuddy">여행 같이 하실분</StyledTab>
+        <StyledTab to="/community/companion">여행커뮤니티 게시판</StyledTab>
         <StyledTab to="/community/chat">실시간 채팅방</StyledTab>
       </TabContainer>
       <ContentArea>

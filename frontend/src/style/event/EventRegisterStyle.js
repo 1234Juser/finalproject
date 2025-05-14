@@ -189,4 +189,3 @@ export const CancelButton = styled.button`
         vertical-align: middle;
     }
 `;
-

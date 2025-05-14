@@ -171,21 +171,20 @@ INSERT INTO tbl_payment_cancel (payment_code, cancel_time, cancel_amount, pg_tid
 (24, '2025-05-09 11:55:00', 280000, 'pg_cancel_1234567917', 'https://receipt.url/cancel/24');
 
 INSERT INTO tbl_review (member_code, product_code, option_code, order_code, review_rating, review_content, review_date, review_pic, review_status) VALUES
-    (1, 2, 2, 2, 5, '정말 최고의 디즈니 여행이었어요! 애들도 좋아했어요~', '2025-04-09 14:30:00', 'disney_review.jpg', 'ACTIVE'),
-    (2, 4, 4, 4, 1, NULL, '2025-04-24 09:15:00', NULL, 'DELETE_BY_ADMIN'),
-    (3, 5, 5, 5, 4, '재밌었음. 나중에 또오겠음.', '2025-04-24 09:15:00', NULL, 'ACTIVE');
+                                                                                                                                                       (1, 2, 2, 2, 5, '정말 최고의 디즈니 여행이었어요! 애들도 좋아했어요~', '2025-04-09 14:30:00', 'disney_review.jpg', 'ACTIVE'),
+                                                                                                                                                       (2, 4, 4, 4, 1, NULL, '2025-04-24 09:15:00', NULL, 'DELETE_BY_ADMIN'),
+                                                                                                                                                       (3, 5, 5, 5, 4, '재밌었음. 나중에 또오겠음.', '2025-04-24 09:15:00', NULL, 'ACTIVE');
 
 INSERT INTO tbl_review (member_code, product_code, option_code, order_code, review_rating, review_content, review_date, review_pic, review_status) VALUES
-(2, 11, 18, 18, 5, '정말 멋진 경험이었어요!', '2025-06-12 15:00:00', 'product11_review.jpg', 'ACTIVE'),
-(4, 13, 20, 20, 5, '잊지 못할 추억을 만들었어요.', '2025-08-14 17:00:00', 'product13_review.jpg', 'ACTIVE'),
-(2, 15, 22, 22, 4, '기대보다 더 좋았어요.', '2025-10-16 15:00:00', 'product15_review.jpg', 'ACTIVE'),
-(3, 16, 23, 23, 5, '완벽한 여행이었어요.', '2025-11-17 16:00:00', 'product16_review.jpg', 'ACTIVE'),
-(1, 18, 25, 25, 3, '그럭저럭 괜찮았어요.', '2025-05-19 14:00:00', 'product18_review.jpg', 'ACTIVE'),
-(3, 20, 27, 27, 5, '정말 잊을 수 없는 추억이었어요.', '2025-05-07 17:00:00', 'product20_review.jpg', 'ACTIVE'),
-(4, 27, 8, 8, 5, '정말 멋진 경험이었어요. 꼭 다시 가고 싶어요!', '2025-05-05 10:00:00', 'review_8.jpg', 'ACTIVE'),
-(3, 27, 9, 9, 4, '가격 대비 만족스러웠어요. 재방문 의사 있습니다.', '2025-05-06 11:00:00', 'review_10.jpg', 'ACTIVE'),
-(1, 27, 11, 11, 3, '기대보다는 조금 아쉬웠어요. 그래도 괜찮았습니다.', '2025-05-07 12:00:00', 'review_11.jpg', 'ACTIVE'),
-(3, 27, 12, 12, 5, '최고의 여행이었습니다. 다시 가고 싶어요!', '2025-05-08 13:00:00', 'review_12.jpg', 'ACTIVE'),
-(2, 27, 14, 14, 4, '가이드분이 정말 친절하셨습니다. 추천합니다.', '2025-05-09 11:00:00', 'review_14.jpg', 'ACTIVE');
-
+                                                                                                                                                       (2, 11, 18, 18, 5, '정말 멋진 경험이었어요!', '2025-06-12 15:00:00', 'product11_review.jpg', 'ACTIVE'),
+                                                                                                                                                       (4, 13, 20, 20, 5, '잊지 못할 추억을 만들었어요.', '2025-08-14 17:00:00', 'product13_review.jpg', 'ACTIVE'),
+                                                                                                                                                       (2, 15, 22, 22, 4, '기대보다 더 좋았어요.', '2025-10-16 15:00:00', 'product15_review.jpg', 'ACTIVE'),
+                                                                                                                                                       (3, 16, 23, 23, 5, '완벽한 여행이었어요.', '2025-11-17 16:00:00', 'product16_review.jpg', 'ACTIVE'),
+                                                                                                                                                       (1, 18, 25, 25, 3, '그럭저럭 괜찮았어요.', '2025-05-19 14:00:00', 'product18_review.jpg', 'ACTIVE'),
+                                                                                                                                                       (3, 20, 27, 27, 5, '정말 잊을 수 없는 추억이었어요.', '2025-05-07 17:00:00', 'product20_review.jpg', 'ACTIVE'),
+                                                                                                                                                       (4, 27, 8, 8, 5, '정말 멋진 경험이었어요. 꼭 다시 가고 싶어요!', '2025-05-05 10:00:00', 'review_8.jpg', 'ACTIVE'),
+                                                                                                                                                       (3, 27, 9, 9, 4, '가격 대비 만족스러웠어요. 재방문 의사 있습니다.', '2025-05-06 11:00:00', 'review_10.jpg', 'ACTIVE'),
+                                                                                                                                                       (1, 27, 11, 11, 3, '기대보다는 조금 아쉬웠어요. 그래도 괜찮았습니다.', '2025-05-07 12:00:00', 'review_11.jpg', 'ACTIVE'),
+                                                                                                                                                       (3, 27, 12, 12, 5, '최고의 여행이었습니다. 다시 가고 싶어요!', '2025-05-08 13:00:00', 'review_12.jpg', 'ACTIVE'),
+                                                                                                                                                       (2, 27, 14, 14, 4, '가이드분이 정말 친절하셨습니다. 추천합니다.', '2025-05-09 11:00:00', 'review_14.jpg', 'ACTIVE');
 COMMIT;

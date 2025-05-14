@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import axios from "axios";
 import path, {getReviewImage} from "../../service/reviewService";
+import {useNavigate} from "react-router-dom";
 
 const Overlay = styled.div`
     position: fixed;
@@ -128,9 +129,10 @@ const FooterButton = styled.button`
 
 function MyReviewModalCom({ review, onClose, onDelete }) {
     const [imageSrc, setImageSrc] = useState("/img/default-review.jpg");
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (review.reviewPic) {
+        if (review && review.reviewPic) {
             getReviewImage(review.reviewPic)
                 .then((blob) => {
                     const imageUrl = URL.createObjectURL(blob);
@@ -140,7 +142,22 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     console.error("리뷰 이미지 로드 실패:", error);
                 });
         }
-    }, [review.reviewPic]);
+    // }, [review.reviewPic]);
+    }, [review]);
+
+    useEffect(() => {
+        if (!review || !review.reviewStatus) return;
+
+        console.log("리뷰 상태 확인:", review.reviewStatus);
+    }, [review]);
+
+    const handleEdit = () => {
+        navigate(`/review/edit/${review.reviewCode}`);
+    };
+
+    // const isDeletedByAdmin = review?.reviewStatus === "DELETE_BY_ADMIN";
+    const isDeletedByAdmin = review && review.reviewStatus === "DELETE_BY_ADMIN";
+    console.log("🟡 리뷰 상태:", review?.reviewStatus);
 
     return (
         <Overlay onClick={onClose}>
@@ -163,8 +180,14 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     </ReviewInfo>
                 </Content>
                 <Footer>
-                    <FooterButton>수정</FooterButton>
-                    <FooterButton onClick={onDelete}>삭제</FooterButton>
+                    {!isDeletedByAdmin ? (
+                        <>
+                            <FooterButton onClick={handleEdit}>수정</FooterButton>
+                            <FooterButton onClick={onDelete}>삭제</FooterButton>
+                        </>
+                    ) : (
+                        <p style={{ color: "#999", textAlign: "center" }}>관리자에 의해 삭제된 리뷰입니다.</p>
+                    )}
                 </Footer>
             </Modal>
         </Overlay>

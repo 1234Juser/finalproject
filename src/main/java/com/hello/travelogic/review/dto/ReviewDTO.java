@@ -38,7 +38,7 @@ public class ReviewDTO {
     private String reviewContent;
     private String reviewPic;   // 파일 경로 URL 저장용
     @NotNull
-    private ReviewStatus reviewStatus;
+    private String reviewStatus = "ACTIVE";
 
     // 리뷰 폼 출력용 필드
     private String memberName;
@@ -71,7 +71,7 @@ public class ReviewDTO {
         this.reviewDate = entity.getReviewDate();
         this.reviewContent = entity.getReviewContent();
         this.reviewPic = entity.getReviewPic();
-        this.reviewStatus = entity.getReviewStatus();
+        this.reviewStatus = entity.getReviewStatus() != null ? entity.getReviewStatus().name() : "ACTIVE";
         this.optionCode = 0L;
 
         // 필드 직접 참조 방지
@@ -94,6 +94,15 @@ public class ReviewDTO {
             this.optionCode = entity.getOption().getOptionCode();
             this.reservationDate = entity.getOption().getReservationDate();
             log.debug("🟡 OptionEntity 로드 완료 - optionCode: {}, reservationDate: {}", this.optionCode, this.reservationDate);
+        }
+    }
+    public void setReviewStatus(String reviewStatus) {
+        try {
+            // ENUM에 존재하는 값만 허용
+            this.reviewStatus = ReviewStatus.valueOf(reviewStatus.toUpperCase()).name();
+        } catch (IllegalArgumentException e) {
+            this.reviewStatus = "ACTIVE";  // 기본값
+            log.warn("잘못된 리뷰 상태입니다. 기본값 ACTIVE로 설정합니다. 입력값: {}", reviewStatus);
         }
     }
 }

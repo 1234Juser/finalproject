@@ -40,6 +40,13 @@ import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
 import ChatRoomPage from "./pages/community/chat/ChatRoomPage";
 import CommunityLayout from "./style/community/CommunityLayout";
 import ChatRoomListPage from "./pages/community/chat/ChatRoomListPage";
+import CompanionListPage from "./pages/companion/CompanionListPage";
+import CompanionRegisterPage from "./pages/companion/CompanionRegisterPage";
+import CompanionDetailPage from "./pages/companion/CompanionDetailPage";
+import CompanionEditPage from "./pages/companion/CompanionEditPage";
+import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
+import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
+import OptionFormPage from "./pages/order/OptionFormPage";
 
 function App() {
     return (
@@ -81,6 +88,7 @@ function App() {
                 </Route>
                 <Route path="/my/reservations" element={<MyBookingPage />} />
                 <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
+                <Route path="/review/edit/:reviewCode" element={<MyReviewEditPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
@@ -93,6 +101,7 @@ function App() {
                 <Route path="/admin/booking" element={<AdminBookingPage />} />
                 <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
+                <Route path="/admin/review/by-product" element={<AdminReviewByProductPage />} />
 
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>
@@ -102,14 +111,19 @@ function App() {
                     <Route path="city" element={<ProductPage />} />
                     <Route path=":productUid" element={<ProductDetailPage/>} />
                 </Route>
-                <Route path="/community" element={<CommunityLayout />} >
+                <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
+              {/*커뮤니티*/}
+              <Route path="/community" element={<CommunityLayout />} >
                   <Route index element={<TripBuddyPage />} />
                   <Route path="tripbuddy" element={<TripBuddyPage/>}/>
                   <Route path="chat" element={<ChatRoomListPage/>}/>
                   <Route path="chat/:roomUid" element={<ChatRoomPage />} />  {/* 상세 경로 추가 */}
+                  <Route path="companion" element={<CompanionListPage/>}/>
+                  <Route path="companion/new" element={<CompanionRegisterPage/>}/>
+                  <Route path="companion/:companionId" element={<CompanionDetailPage />} />
+                  <Route path="companion/edit/:companionId" element={<CompanionEditPage />} />
+              </Route>
 
-                </Route>
-                {/*<Route path="/api/chat/room/:roomUid" element={<ChatRoomPage />} />*/}
 
             </Routes>
             <FooterCom/>
