@@ -1,16 +1,29 @@
 import styled from 'styled-components';
 import CalendarDisplay from "./CalendarDisplay";
+import {useNavigate} from "react-router-dom";
 
-function OptionFormCom({ options = [], totalPrice = 0, onAdultCountChange, onChildCountChange, onReserve, onOptionChange }) {
+function OptionFormCom({ options = [], reservationDate, totalPrice = 0, onAdultCountChange, onChildCountChange, onDateSelect, onReserve, onOptionChange }) {
     // const { productTitle, adultCount, childCount, totalPrice, productAdult, productChild } = options;
     console.log("🟡 렌더링된 옵션 데이터:", options);
+
+    const navigate = useNavigate();
+
+    // const handleCheckout = () => {
+    //     const accessToken = localStorage.getItem("accessToken");
+    //     if (!accessToken) {
+    //         alert("로그인이 필요한 서비스입니다.");
+    //         navigate("/member/login");
+    //     } else {
+    //         navigate("/checkout");
+    //     }
+    // };
 
 
     return (
         <FormWrapper>
             {/* 달력 컴포넌트 */}
             <CalendarWrapper>
-                <CalendarDisplay />
+                <CalendarDisplay selectedDate={reservationDate} onDateSelect={onDateSelect} />
             </CalendarWrapper>
 
             {/* 옵션 선택 영역 */}
@@ -26,7 +39,7 @@ function OptionFormCom({ options = [], totalPrice = 0, onAdultCountChange, onChi
                         <OptionCounter>
                             <span>일반</span>
                             <CounterButton onClick={() => onAdultCountChange(index, -1)}>-</CounterButton>
-                            <CounterValue>{option.adultCount}</CounterValue>
+                            <CounterValue>{option.adultCount || 0}</CounterValue>
                             <CounterButton onClick={() => onAdultCountChange(index, 1)}>+</CounterButton>
                         </OptionCounter>
                         {option.childPrice !== null && option.childPrice !== undefined && option.childPrice > 0 && (
@@ -51,7 +64,7 @@ function OptionFormCom({ options = [], totalPrice = 0, onAdultCountChange, onChi
             </TotalPriceSection>
 
             {/* 예약 버튼 */}
-            <ReserveButton disabled={totalPrice === 0} onClick={onReserve}>
+            <ReserveButton disabled={!reservationDate || totalPrice === 0} onClick={onReserve} >
                 예약하기
             </ReserveButton>
         </FormWrapper>

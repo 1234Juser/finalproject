@@ -1,9 +1,12 @@
 const initialState = {
     options: [],
-    selectedDate: null,
+    // selectedDate: null,
+    reservationDate: null,
     productTitle: "",
     productAdult: 0,
     productChild: 0,
+    adultCount: 0,
+    childCount: 0,
     totalPrice: 0,
     loading: false,
     error: null,
@@ -25,14 +28,15 @@ const reducer = (state, action) => {
                     {
                         optionCode: 0,
                         productTitle: action.data.productTitle,
-                        adultCount: 1,
+                        adultCount: 0,
                         childCount: 0,
                         adultPrice: action.data.adultPrice,
                         childPrice: action.data.childPrice,
-                        price: action.data.adultPrice * 1 + action.data.childPrice * 0,
+                        price: (action.data.adultPrice || 0) * 0 + (action.data.childPrice || 0) * 0,
                     },
                 ],
-                totalPrice: action.data.adultPrice * 1 + action.data.childPrice * 0,
+                reservationDate: null,
+                totalPrice: (action.data.adultPrice || 0) * 0 + (action.data.childPrice || 0) * 0,
                 loading: false,
                 error: null,
             };
@@ -41,15 +45,20 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 options: action.data || [],
-                totalPrice: (action.data[0]?.adultCount || 0) * (action.data[0]?.adultPrice || 0) +
-                    (action.data[0]?.childCount || 0) * (action.data[0]?.childPrice || 0),
+                totalPrice: state.options.reduce((sum, opt) => sum + opt.price, 0),
             };
-        case "SET_SELECTED_DATE":
+        // case "SET_SELECTED_DATE":
+        //     return {
+        //         ...state,
+        //         selectedDate: action.data,
+        //     };
+        case 'SET_RESERVATION_DATE':
+            console.log("🟢 예약 날짜 설정:", action.data);
             return {
                 ...state,
-                selectedDate: action.data,
+                reservationDate: action.data,
+                totalPrice: state.options.reduce((sum, opt) => sum + opt.price, 0),
             };
-
         case "UPDATE_ADULT_COUNT":
             const updatedAdultOptions = state.options.map((opt, index) =>
                 index === action.data.index

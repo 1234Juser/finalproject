@@ -237,4 +237,31 @@ public class OrderService {
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
     }
+
+//    @Transactional
+//    public void createOrder(Long memberCode, String productUid, String reservationDate, int adultCount, int childCount, int totalPrice) {
+//        ProductEntity product = productRepo.findByProductUid(productUid)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+//
+//        MemberEntity member = memberRepo.findById(memberCode)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
+//
+//        LocalDate date = LocalDate.parse(reservationDate);
+//
+//        // 중복 예약 체크
+//        boolean exists = orderRepo.existsByMemberAndOption_ProductAndReservationDate(member, product, date);
+//        if (exists) {
+//            throw new IllegalStateException("이미 같은 날짜에 동일한 상품에 대한 예약이 존재합니다.");
+//        }
+//
+//        // 실제 예약 생성
+//        OrderEntity order = new OrderEntity();
+//        OptionEntity option = new OptionEntity();
+//        order.setMember(member);
+//        option.setReservationDate(date);
+//        order.setTotalPrice(totalPrice);
+//        option.setAdultCount(adultCount);
+//        option.setChildCount(childCount);
+//        orderRepo.save(order);
+//    }
 }

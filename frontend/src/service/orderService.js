@@ -25,17 +25,48 @@ export const fetchProduct = async (productUid, accessToken) => {
     }
 };
 
-export const fetchOptionForm = async (productUid, accessToken) => {
+export const fetchOptionForm = async (productUid) => {
     try {
-        const response = await axios.get(`${path}/products/${productUid}/option/create`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
+        const response = await axios.get(`${path}/products/${productUid}/option/create`);
         console.log("🟢 옵션 폼 데이터 가져오기 성공:", response.data);
         return response.data;
     } catch (error) {
         console.error("🔴 옵션 폼 데이터 가져오기 실패:", error);
+        throw error;
+    }
+};
+
+export const selectReservationDate = async (productUid, reservationDate) => {
+    try {
+        const response = await axios.patch(
+            `${path}/products/${productUid}/reservation-date`,
+            JSON.stringify({ reservationDate }),{
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error saving reservation date:", error);
+        throw error;
+    }
+};
+
+export const saveReservation = async (productUid, reservationDate, accessToken) => {
+    try {
+        const response = await axios.patch(
+            `${path}/products/${productUid}/reservation`,
+            { reservationDate },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error saving reservation:", error);
         throw error;
     }
 };
@@ -49,6 +80,15 @@ export const fetchOptionsByDate = async (productUid, date) => {
         throw error;
     }
 };
+// export const fetchOptionsByDate = async (productUid) => {
+//     try {
+//         const response = await axios.get(`${path}/products/${productUid}/options`);
+//         return response.data;
+//     } catch (error) {
+//         console.error("🔴 옵션 가격 데이터를 불러오는 데 실패했습니다:", error);
+//         throw error;
+//     }
+// };
 
 export const createOrder = async (orderData, accessToken) => {
     if (!accessToken) {
