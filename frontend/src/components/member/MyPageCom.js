@@ -288,8 +288,6 @@ function MyPageCom({ memberData, followingList, followerList, onEditProfileImage
                     </div>
                 </section>
 
-
-
             </main>
 
             {/* 수정 모달 */}
