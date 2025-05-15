@@ -39,8 +39,8 @@ export default function RegisterCon() {
                 if (!value) {
                     return "이름을 입력하세요";
                 }
-                if (value.length < 2) {
-                    return "이름은 2자 이상이어야 합니다.";
+                if (value.length < 2 || value.length > 6) {
+                    return "이름은 2자 이상 6자 이하여야 합니다.";
                 }
                 break;
             case "memberId":

@@ -53,13 +53,21 @@ export const DetailTitle = styled.h2`
 `;
 
 export const MetaInfo = styled.div`
-    display: flex; // 자식 요소들을 가로로 정렬
-    align-items: center; // 자식 요소들을 세로 중앙 정렬
+    // display: flex; // 하위 컴포넌트에서 flex 레이아웃 관리
+    // align-items: center;
     color: ${Palette.subText};
     font-size: 1rem;
     margin-bottom: 25px; // 메타 정보 아래 여백
     border-bottom: 1px solid ${Palette.borderGray}; // 아래 줄 추가
     padding-bottom: 15px; // 줄과 정보 사이 여백
+`;
+
+export const AuthorLine = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px; // 다음 줄과의 간격
+    /* 게시글 작성자 이름, 프로필 사진 왼쪽 정렬 */
+    justify-content: flex-start;
 `;
 
 export const AuthorName = styled.span`
@@ -68,19 +76,31 @@ export const AuthorName = styled.span`
     // display: inline-block; // 필요시 사용 (flex 컨테이너에서는 기본적으로 인라인 블록처럼 동작)
 `;
 
+export const PostStatsLine = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 0.9em;
+    color: ${Palette.subText};
+    & > span {
+        margin-left: 15px;
+    }
+    & > span:first-child {
+        margin-left: 0;
+    }
+`;
 
 export const CreatedAt = styled.span`
-    margin-right: 15px;
+    // margin-right: 15px; // PostStatsLine에서 관리
 `;
 
 export const ModifiedAt = styled.span`
-    margin-right: 15px;
+    // margin-right: 15px; // PostStatsLine에서 관리
 `;
 
 
 export const ViewCount = styled.span`
-    margin-left: auto; /* 오른쪽 정렬 */
-    // 추가 스타일 필요 시 정의
+    // margin-left: auto; /* PostStatsLine에서 관리 */
 `;
 
 
@@ -200,20 +220,41 @@ export const CommentContent = styled.p`
 export const CommentMeta = styled.div`
     font-size: 0.9rem;
     color: ${Palette.subText};
-    display: flex; // 추가: 자식 요소들을 가로로 정렬
-    align-items: center; // 추가: 자식 요소들을 세로 중앙 정렬
-    flex-wrap: wrap; // 항목이 많아지면 줄바꿈하도록 설정
-
+    display: flex; /* Flexbox 활성화 */
+    align-items: center; /* 세로 중앙 정렬 */
+    flex-wrap: wrap;
+    /* 댓글 작성자 및 프로필 사진 왼쪽 정렬 */
+    justify-content: flex-start;
+    margin-bottom: 8px; /* 메타 정보와 댓글 내용 사이 간격 추가 */
 `;
 
 
 export const CommentAuthor = styled.span`
     font-weight: 600;
-    margin-right: 20px; /* 작성자 이름과 날짜 사이 간격 */
+    margin-right: 10px; /* 댓글 작성자와 날짜 그룹 사이의 최소 간격 */
+    display: flex; // 프로필 이미지와 이름 정렬 위해 추가
+    align-items: center; // 프로필 이미지와 이름 정렬 위해 추가
+    font-size: 1rem;
+    /* 프로필 이미지와의 간격 조정 */
+    img {
+        margin-right: 8px; /* 이미 CompanionDetailCom.js에서 인라인 스타일로 적용된 값과 일치 */
+    }
+`;
+
+export const CommentDates = styled.div`
+    display: flex;
+    align-items: center;
+    & > span {
+        margin-left: 10px;
+    }
+    & > span:first-child {
+        margin-left: 0;
+    }
+    margin-left: auto; /* 댓글 작성자 정보와 날짜 정보를 양쪽으로 분산 */
 `;
 
 export const CommentDate = styled.span`
-    margin-right: 15px; /* 작성일과 최종 수정일 사이 간격 */
+    // margin-right: 15px; // CommentDates에서 관리
 `;
 
 export const NoComment = styled.p`
@@ -228,6 +269,8 @@ export const NoComment = styled.p`
 export const CommentActions = styled.div`
     margin-top: 5px;
     font-size: 0.9rem;
+    /* 댓글 수정/삭제 버튼 왼쪽 정렬 */
+    text-align: left;
 `;
 
 export const ActionButton = styled.button`
@@ -358,5 +401,192 @@ export const CommentPagingButton = styled.button`
     &:disabled {
         opacity: .5;
         cursor: not-allowed;
+    }
+`;
+
+/* 댓글 작성자 정보와 팔로우 버튼 그룹을 위한 flex 컨테이너 */
+export const CommentAuthorInfo = styled.div`
+    display: flex;
+    align-items: center;
+    /* 왼쪽 정렬 유지 */
+    justify-content: flex-start; /* 이 줄을 flex-start로 변경 */
+    flex-grow: 1; /* 가능한 공간을 모두 차지하여 버튼을 오른쪽으로 밀어냄 */
+    flex-wrap: wrap; /* 필요한 경우 줄바꿈 허용 */
+    gap: 20px; /* 댓글 작성자 이름과 팔로우 버튼 그룹 사이의 간격 추가 */
+
+`;
+
+/* 댓글 팔로우 버튼 그룹을 위한 flex 컨테이너 */
+export const CommentFollowActions = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 버튼 사이 간격 */
+`;
+
+
+
+/* 게시글 팔로우 버튼 그룹을 위한 flex 컨테이너 */
+export const PostFollowActions = styled.div`
+    display: flex;
+    align-items: center;
+    /* 오른쪽 정렬 */
+    margin-left: auto; /* 왼쪽에 가능한 모든 공간을 차지하여 오른쪽으로 밀어냄 */
+    gap: 10px; /* 버튼 사이 간격 */
+`;
+
+
+export const FollowButton = styled.button`
+    background: linear-gradient(90deg, #36abc9, #198dbb);
+    color: #fff;
+    border: none;
+    /* 크기를 비슷하게 조정 */
+    padding: 4px 8px; /* FollowInfoButton 크기에 맞춰 조정 */
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 0.85rem; /* FollowInfoButton 크기에 맞춰 조정 */
+    box-shadow: 0 2px 8px #44c0ee26;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: background .16s, box-shadow .16s, transform .13s;
+    margin-left: 10px; /* 댓글 작성자 정보와의 간격 */
+
+    &:hover {
+        background: linear-gradient(90deg, #198dbb, #36abc9);
+        box-shadow: 0 4px 10px #44c0ee36;
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    &.unfollow {
+        background: linear-gradient(90deg, #e35d83, #ef717a);
+        &:hover {
+            background: linear-gradient(90deg, #ef717a, #e35d83);
+        }
+    }
+`;
+
+
+
+
+export const FollowInfoButton = styled.button`
+    background-color: #007bff; /* 파란색 배경 */
+    color: white;
+    border: none;
+    padding: 5px 10px; /* 패딩 감소 */
+    border-radius: 20px; /* 더 둥근 모서리 */
+    cursor: pointer;
+    font-size: 0.8em; /* 폰트 크기 감소 */
+    font-weight: 600; /* 폰트 굵기 */
+    transition: background-color 0.2s ease, transform 0.1s ease; /* 색상 및 transform 애니메이션 추가 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin-left: 6px; /* 댓글 작성자 정보와의 간격 */
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+`;
+
+
+// 모달 관련 스타일 (FollowModalCom에서 사용할 수 있도록 내보내기)
+export const ModalBackdrop = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+`;
+
+export const ModalContent = styled.div`
+    background-color: ${Palette.white};
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: ${Palette.cardShadow};
+    width: 90%;
+    max-width: 400px; /* 모달 최대 너비 설정 */
+    position: relative;
+    max-height: 80vh; /* 모달 최대 높이 설정 */
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+`;
+
+export const ModalTitle = styled.h4`
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: ${Palette.text};
+    text-align: center;
+`;
+
+export const ModalCloseButton = styled.button`
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: ${Palette.subText};
+`;
+
+export const ModalMembersList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0;
+`;
+
+export const ModalMemberItem = styled.li`
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid ${Palette.borderGray};
+    &:last-child {
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+`;
+
+export const ModalProfileImage = styled.img`
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover; /* 이미지 비율 유지 */
+`;
+
+export const ModalMemberName = styled.span`
+    font-weight: 600;
+    color: ${Palette.text};
+    font-size: 1.1rem;
+`;
+
+export const FollowToggleButtons = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 15px;
+`;
+
+export const ToggleButton = styled.button`
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: ${props => (props.active ? '700' : '500')};
+    color: ${props => (props.active ? Palette.blue : Palette.subText)};
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: ${Palette.blue};
     }
 `;

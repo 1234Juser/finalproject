@@ -5,34 +5,72 @@ import {useNavigate} from "react-router-dom";
 
 function MyPageCon() {
     const [memberData, setMemberData] = useState(null);
+    const [followingList, setFollowingList] = useState([]);
+    const [followerList, setFollowerList] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-
-        // JWT 토큰 필요시 헤더에 추가
         const token = localStorage.getItem("accessToken");
         if (!token) {
             navigate("/login");
             return;
         }
 
-        axios.get("/member/mypage", {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-        })
-            .then(res => setMemberData(res.data))
-            .catch(err => {
+        const fetchMemberData = async () => {
+            try {
+                const res = await axios.get("/member/mypage", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                console.log('API Response - /member/mypage:', res.data); // <--- 이 로그를 추가해보세요.
+                setMemberData(res.data);
+                // memberData가 성공적으로 로드된 후 팔로우 정보 가져오기
+                if (res.data && res.data.memberCode) {
+                    fetchFollowData(res.data.memberCode, token);
+                } else {
+                    console.log('fetchFollowData 호출 조건 실패:', 'res.data:', res.data, 'res.data.memberCode:', res.data ? res.data.memberCode : 'N/A'); // <--- 조건 실패 시 로그 추가
+                }
+            } catch (err) {
                 if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-                    // 토큰 만료 혹은 인증 에러 처리
-                    localStorage.removeItem("accessToken"); // 토큰 제거
+                    localStorage.removeItem("accessToken");
                     setError("로그인이 만료되었습니다. 다시 로그인해주세요.");
-                    setTimeout(() => navigate("/login"), 2000); // 2초 뒤 로그인 페이지로 이동
+                    setTimeout(() => navigate("/login"), 2000);
                 } else {
                     setError("마이페이지 정보를 불러오지 못했습니다. 다시 로그인해주세요");
                 }
                 setMemberData(null);
-            });
+            }
+        };
+
+        const fetchFollowData = async (memberCode, token) => {
+            try {
+                const [followingRes, followersRes] = await Promise.all([
+                    axios.get(`/follow/${memberCode}/following`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get(`/follow/${memberCode}/followers`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                ]);
+
+                // API 응답 데이터 확인용 로그 추가
+                console.log('API Response - Following List:', followingRes.data);
+                console.log('API Response - Follower List:', followersRes.data);
+
+                setFollowingList(followingRes.data);
+                setFollowerList(followersRes.data);
+            } catch (err) {
+                console.error("팔로우 정보를 가져오는데 실패했습니다.", err);
+                // 팔로우 정보 로드 실패 시 빈 배열로 설정하거나, 사용자에게 알림을 줄 수 있습니다.
+                setFollowingList([]);
+                setFollowerList([]);
+            }
+        };
+
+        fetchMemberData();
+
     }, [navigate]);
+
 
     //회원정보 수정 핸들러
     const handleEditInfo = async (form) =>{
@@ -137,11 +175,16 @@ function MyPageCon() {
     };
 
     if (error) return <div>{error}</div>;
+    if (!memberData) return <div>로딩중...</div>; // memberData가 로드될 때까지 로딩 표시
+
 
     // 추후 프로필/정보수정 핸들러 바인딩
     return (
         <MyPageCom
             memberData={memberData}
+            followingList={followingList}
+            followerList={followerList}
+
             onEditProfileImage={handleEditProfileImage}
             onEditInfo={handleEditInfo}
             onKakaoUnlink = {handleKakaoUnlink}

@@ -14,15 +14,27 @@ import {
     infoFieldCard,
     infoFieldLabelRow,
     infoFieldValue,
-    iconWrapper
+    iconWrapper,
+    followInfoBoxStyle,
+    followSectionTitleStyle,
+    followListContainerStyle,
+    followListWrapperStyle,
+    followListTitleStyle,
+    followListStyle,
+    followItemStyle,
+    followItemImageStyle,
+    followItemNameStyle,
+    noFollowDataStyle
 } from '../../style/member/MyPageStyle';
+
 import { FaUser, FaPhone, FaLock, FaEnvelope, FaIdCard} from "react-icons/fa6";
 import { SiKakaotalk} from "react-icons/si";
 import { FaGoogle } from "react-icons/fa6";   // 구글 아이콘 추가
 
+const DEFAULT_PROFILE_IMAGE = "/img/default-profile.jpg";
 
 
-function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink, onGoogleUnlink }) {
+function MyPageCom({ memberData, followingList, followerList, onEditProfileImage, onEditInfo,  onKakaoUnlink, onGoogleUnlink }) {
 
     const [editMode, setEditMode] = useState(false);
     const [form, setForm] = useState(memberData);
@@ -69,8 +81,8 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink,
         ) {
             errs.noChange = "변경할 항목을 입력하세요.";
         }
-        if (form.memberName && form.memberName.trim().length < 2) {
-            errs.memberName = "이름은 두 글자 이상 입력하세요.";
+        if (form.memberName && (form.memberName.trim().length < 2 || form.memberName.trim().length > 6)) {
+            errs.memberName = "이름은 2자 이상 6자 이하여야 합니다.";
         }
         if (!form.memberPhone.match(/^01[016789]-?\d{3,4}-?\d{4}$/))
             errs.memberPhone = "올바른 휴대폰 번호를 입력하세요.";
@@ -128,6 +140,26 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink,
         if(file){
             onEditProfileImage(file);
         }
+    };
+
+    const renderFollowList = (list, title) => {
+        if (!list || list.length === 0) {
+            return <div style={noFollowDataStyle}>{title} 중인 사용자가 없습니다.</div>;
+        }
+        return (
+            <ul style={followListStyle}>
+                {list.map(user => (
+                    <li key={user.memberCode} style={followItemStyle}>
+                        <img
+                            src={user.memberProfileImageUrl || DEFAULT_PROFILE_IMAGE}
+                            alt={user.memberName}
+                            style={followItemImageStyle}
+                        />
+                        <span style={followItemNameStyle}>{user.memberName}</span>
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
 
@@ -241,6 +273,22 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink,
                         )}
                     </div>
                 </section>
+                {/* 팔로우 정보 섹션 추가 */}
+                <section style={followInfoBoxStyle}>
+                    <div style={followSectionTitleStyle}>팔로우 정보</div>
+                    <div style={followListContainerStyle}>
+                        <div style={followListWrapperStyle}>
+                            <h3 style={followListTitleStyle}>팔로잉 ({followingList.length})</h3>
+                            {renderFollowList(followingList, "팔로잉")}
+                        </div>
+                        <div style={followListWrapperStyle}>
+                            <h3 style={followListTitleStyle}>팔로워 ({followerList.length})</h3>
+                            {renderFollowList(followerList, "팔로워")}
+                        </div>
+                    </div>
+                </section>
+
+
 
             </main>
 

@@ -34,6 +34,12 @@ function GoogleCallbackPage() {
                 localStorage.setItem("memberName", res.data.memberName);
                 localStorage.setItem("memberProfileImageUrl", res.data.memberProfileImageUrl);
                 localStorage.setItem("loginType", "google");
+                localStorage.setItem("memberCode", res.data.memberCode); // memberCode 저장
+
+                if(res.data.memberCode){
+                    console.log("멤버코드 왔나", res.data.memberCode);
+                }
+
 
                 // 필요한 추가 정보 저장
 
