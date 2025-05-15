@@ -8,13 +8,13 @@ function WishGroupPage() {
     const [accessToken, setAccessToken] = useState(null); // accessToken 상태 추가
 
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
+        const accessToken = localStorage.getItem("accessToken");
 
-        if (!token) {
+        if (!accessToken) {
             navigate("/login");
             return;
         }
-        setAccessToken(token);
+        setAccessToken(accessToken);
         setIsReady(true); // 렌더링 허용
     }, [navigate]);
 
@@ -22,8 +22,7 @@ function WishGroupPage() {
 
     return(
         <>
-            <WishCon accessToken={accessToken}
-            />
+            <WishCon accessToken={accessToken} />
         </>
     )
 }
