@@ -25,9 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -92,29 +94,6 @@ public class OrderService {
         return orderRepo.findOldOrders(member, cutoff).stream()
                 .map(OrderDTO::new)
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public Long createOrder(OrderDTO dto) {
-        ProductEntity product = productRepo.findById(dto.getProductCode())
-                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-        OptionEntity option = optionRepo.findById(dto.getOptionCode())
-                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
-        MemberEntity member = memberRepo.findById(dto.getMemberCode())
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-
-        OrderEntity order = new OrderEntity(dto, product, option, member);
-        order = orderRepo.save(order);
-        return order.getOrderCode();
-    }
-
-    @Transactional(readOnly = true)
-    public OrderDTO getOrder(Long orderCode) {
-        OrderEntity order = orderRepo.findById(orderCode)
-                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-//        OptionEntity option = optionRepo.findById(dto.getOptionCode())
-//                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
-        return new OrderDTO(order);
     }
 
 //    @Transactional(readOnly = true)
@@ -264,4 +243,83 @@ public class OrderService {
 //        option.setChildCount(childCount);
 //        orderRepo.save(order);
 //    }
+
+    @Transactional
+    public Long createOrder(OrderDTO orderDTO) {
+        if (orderDTO.getProductCode() == 0 || orderDTO.getOptionCode() == 0 || orderDTO.getMemberCode() == 0) {
+            throw new IllegalArgumentException("상품 코드, 옵션 코드, 회원 코드는 필수입니다.");
+        }
+        ProductEntity product = productRepo.findById(orderDTO.getProductCode())
+                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+        OptionEntity option = optionRepo.findById(orderDTO.getOptionCode())
+                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
+        MemberEntity member = memberRepo.findById(orderDTO.getMemberCode())
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+//        String bookingUid = UUID.randomUUID().toString();
+        String bookingUid = BookingUidUtil.generateBookingUid();
+
+//        OrderEntity order = new OrderEntity(orderDTO, product, option, member);
+//        order = orderRepo.save(order);
+        OrderEntity order = new OrderEntity();
+        order.setProduct(product);
+        order.setOption(option);
+        order.setMember(member);
+        order.setBookingUid(bookingUid);
+        order.setOrderAdultPrice(orderDTO.getOrderAdultPrice());
+        order.setOrderChildPrice(orderDTO.getOrderChildPrice());
+        order.setTotalPrice(orderDTO.getTotalPrice());
+        order.setOrderDate(LocalDateTime.now());
+        order.setOrderStatus(OrderStatus.PENDING); // 기본 상태는 결제 대기
+
+        orderRepo.save(order);
+        log.info("🟢 주문 생성 완료: orderCode = {}, bookingUid = {}", order.getOrderCode(), bookingUid);
+
+        return order.getOrderCode();
+    }
+
+    // 주문 생성
+    @Transactional(readOnly = true)
+    public OrderDTO getOrder(Long orderCode) {
+        OrderEntity order = orderRepo.findById(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+//        OptionEntity option = optionRepo.findById(dto.getOptionCode())
+//                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
+        return new OrderDTO(order);
+    }
+
+    // 주문 완료 처리 (결제 대기 상태에서 결제 완료로)
+    @Transactional
+    public void completeOrder(Long orderCode, String paymentMethod, int totalPrice) {
+        OrderEntity order = orderRepo.findById(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+
+        // PENDING 상태가 아니면 결제 불가
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new IllegalStateException("PENDING 상태의 주문만 결제할 수 있습니다.");
+        }
+
+        // 결제 완료 처리
+        order.setOrderStatus(OrderStatus.SCHEDULED); // 결제 완료 후 예약 확정
+        order.setTotalPrice(totalPrice);
+        orderRepo.save(order);
+
+        log.info("🟢 주문 완료: orderCode = {}, paymentMethod = {}", orderCode, paymentMethod);
+    }
+
+    // PENDING 상태의 주문 삭제 (결제 실패 or 취소)
+    @Transactional
+    public void deletePendingOrder(Long orderCode) {
+        OrderEntity order = orderRepo.findById(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+
+        // PENDING 상태가 아닌 경우 삭제 불가
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new IllegalStateException("PENDING 상태의 주문만 삭제할 수 있습니다.");
+        }
+
+        // 삭제 처리
+        orderRepo.delete(order);
+        log.info("🟢 PENDING 주문 삭제 완료: orderCode = {}", orderCode);
+    }
 }

@@ -8,11 +8,17 @@ import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.repo.ProductRepo;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDate;
 
@@ -72,12 +78,13 @@ public class OptionService {
 
     // 실제 예약 옵션 생성 : 회원만 접근 가능
     @Transactional
-    public void saveReservation(String productUid, String reservationDate, Authentication authentication) {
+    public Long saveReservation(String productUid, String reservationDate, Authentication authentication) {
         ProductEntity product = productRepo.findByProductUid(productUid)
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
 
-        Long memberCode = Long.parseLong(authentication.getName());
-        MemberEntity member = memberRepository.findByMemberCode(memberCode)
+        String memberId = authentication.getName();
+
+        MemberEntity member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
 
         LocalDate date = LocalDate.parse(reservationDate);
@@ -96,5 +103,10 @@ public class OptionService {
         option.setAdultCount(0); // 기본값 설정
         option.setChildCount(0);
         optionRepo.save(option);
+
+        log.info("🟢 옵션 저장 완료: optionCode = {}", option.getOptionCode());
+
+        // 저장된 옵션 반환
+        return option.getOptionCode();
     }
 }

@@ -46,6 +46,7 @@ import CompanionEditPage from "./pages/companion/CompanionEditPage";
 import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
 import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 import OptionFormPage from "./pages/order/OptionFormPage";
+import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
 
 function App() {
     return (
@@ -111,6 +112,7 @@ function App() {
                     <Route path=":productUid" element={<ProductDetailPage/>} />
                 </Route>
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
+                <Route path="/products/:productUid/order/create/:optionCode" element={<OrderCheckoutPage/>} />
                 <Route path="/community" element={<CommunityLayout />} >
                   <Route index element={<TripBuddyPage />} />
                   <Route path="tripbuddy" element={<TripBuddyPage/>}/>

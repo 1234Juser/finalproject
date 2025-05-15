@@ -13,7 +13,7 @@ import {initialState, reducer} from "../../modules/optionModule";
 
 
 function OptionFormCon({ accessToken }){
-    const { productUid } = useParams();
+    const { productUid, optionCode } = useParams();
     const [state, dispatch] = useReducer(reducer, initialState);
     // const [optionData, setOptionData] = useState(null);
     //
@@ -92,14 +92,28 @@ function OptionFormCon({ accessToken }){
     const handleSaveReservation = async () => {
         if (!accessToken) {
             alert("로그인이 필요한 서비스입니다.");
-            navigate("/member/login");
+            // 현재 페이지 URL 저장 (옵션 진행 중인 페이지)
+            const currentPath = window.location.pathname + window.location.search;
+            localStorage.setItem("redirectAfterLogin", currentPath);
+
+            navigate("/login");
             return;
         }
 
         try {
-            await saveReservation(productUid, state.reservationDate, accessToken);
+            const optionCode = await saveReservation(productUid, state.reservationDate, accessToken);
+            const optionData = {
+                optionCode,
+                productTitle: state.productTitle,
+                reservationDate: state.reservationDate,
+                adultCount: state.adultCount,
+                childCount: state.childCount,
+                totalPrice: state.totalPrice
+            };
+            localStorage.setItem("optionCode", optionCode);
+            localStorage.setItem("optionData", JSON.stringify(optionData));
             alert("옵션이 성공적으로 저장되었습니다.");
-            navigate(`/order/create/${productUid}`);
+            navigate(`/products/${productUid}/order/create/${optionCode}`);
         } catch (error) {
             console.error("🔴 옵션 저장 실패:", error);
             alert("옵션 저장에 실패했습니다.");

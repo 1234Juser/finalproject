@@ -76,10 +76,14 @@ public class OptionController {
         String reservationDate = requestBody.get("reservationDate");
 
         try {
-            optionService.saveReservation(productUid, reservationDate, authentication);
-            return ResponseEntity.ok("예약이 성공적으로 저장되었습니다.");
+            if (reservationDate == null || reservationDate.isBlank()) {
+                return ResponseEntity.badRequest().body("예약 날짜가 비어있습니다.");
+            }
+            Long optionCode = optionService.saveReservation(productUid, reservationDate, authentication);
+            return ResponseEntity.ok(optionCode);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("예약 저장 실패: " + e.getMessage());
+            log.error("🔴 예약 저장 실패:", e);
+            return ResponseEntity.status(500).body(null);
         }
     }
 
