@@ -5,6 +5,7 @@ import {
 } from "react-icons/fa";
 import React from "react";
 import styled from "styled-components";
+import {MdChat} from "react-icons/md";
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 const NavContentWrapper = styled.div`
@@ -68,6 +69,7 @@ function NavCom({roles = []}) {
                                 <a href="/mypage">
                                     <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                     마이페이지
+                                    <MdChat style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer' }} title="1:1 문의 채팅" />
                                 </a>
                             )
                         }
