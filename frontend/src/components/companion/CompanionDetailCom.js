@@ -78,24 +78,39 @@ function CompanionDetailCom({
 
     useEffect(() => {
         const checkFollowStatus = async () => {
-            if (isLoggedIn && companion?.authorMemberCode && currentMemberCode !== companion.authorMemberCode) {
-                try {
-                    const token = localStorage.getItem("accessToken");
-                    const response = await axios.get(`/follow/is-following/${companion.authorMemberCode}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    setIsFollowing(response.data);
-                } catch (error) {
-                    console.error("팔로우 상태 확인 실패:", error);
-                    setIsFollowing(false);
+            if (isLoggedIn && currentMemberCode) {
+                const membersToCheck = new Set();
+                if (companion?.authorMemberCode && currentMemberCode !== companion.authorMemberCode) {
+                    membersToCheck.add(companion.authorMemberCode);
                 }
+                companion?.comments?.forEach(comment => {
+                    if (comment.authorMemberCode && currentMemberCode !== comment.authorMemberCode) {
+                        membersToCheck.add(comment.authorMemberCode);
+                    }
+                });
+
+                const followStatuses = {};
+                const token = localStorage.getItem("accessToken");
+
+                for (const memberCode of membersToCheck) {
+                    try {
+                        const response = await axios.get(`/follow/is-following/${memberCode}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        followStatuses[memberCode] = response.data;
+                    } catch (error) {
+                        console.error(`멤버 ${memberCode} 팔로우 상태 확인 실패:`, error);
+                        followStatuses[memberCode] = false;
+                    }
+                }
+                setIsFollowing(followStatuses);
             } else {
-                setIsFollowing(false);
+                setIsFollowing({});
             }
         };
 
         checkFollowStatus();
-    }, [isLoggedIn, companion?.authorMemberCode, currentMemberCode]);
+    }, [isLoggedIn, currentMemberCode, companion?.authorMemberCode, companion?.comments]);
 
 
     const handleBackClick = () => {
@@ -193,28 +208,37 @@ function CompanionDetailCom({
         );
     };
 
-    const handleFollowClick = async () => {
+    // 팔로우/언팔로우 버튼 클릭 핸들러 (게시글 작성자 및 댓글 작성자 모두 사용)
+    const handleFollowClick = async (memberCodeToFollow, isCurrentlyFollowing) => {
         if (!isLoggedIn) {
             alert("로그인 후 팔로우할 수 있습니다.");
             return;
         }
 
+        if (currentMemberCode === memberCodeToFollow) {
+            alert("자신을 팔로우할 수 없습니다.");
+            return;
+        }
+
         const token = localStorage.getItem("accessToken");
-        const followingMemberCode = companion.authorMemberCode;
 
         try {
-            if (isFollowing) {
-                await axios.delete(`/follow/${followingMemberCode}`, {
+            if (isCurrentlyFollowing) {
+                await axios.delete(`/follow/${memberCodeToFollow}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 alert("언팔로우 되었습니다.");
             } else {
-                await axios.post(`/follow/${followingMemberCode}`, null, {
+                await axios.post(`/follow/${memberCodeToFollow}`, null, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 alert("팔로우 되었습니다.");
             }
-            setIsFollowing(!isFollowing); // 팔로우/언팔로우 상태를 바로 토글하여 버튼 상태 업데이트
+            // 해당 멤버의 팔로우 상태만 토글하여 업데이트
+            setIsFollowing(prevStatus => ({
+                ...prevStatus,
+                [memberCodeToFollow]: !isCurrentlyFollowing
+            }));
         } catch (error) {
             console.error("팔로우/언팔로우 실패:", error);
             if (error.response?.status === 400 || error.response?.status === 409) {
