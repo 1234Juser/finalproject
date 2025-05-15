@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {FaHeart} from "react-icons/fa6";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft } from 'react-icons/fa6';
 import emptyImage from "../../style/empty/empty-list.jpeg";
 
 const StyleLikeBlock = styled.div`
