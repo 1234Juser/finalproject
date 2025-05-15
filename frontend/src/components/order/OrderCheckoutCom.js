@@ -1,0 +1,190 @@
+import styled from "styled-components";
+
+function OrderCheckoutCom({ optionData, loading, error, onCheckout }) {
+    if (!optionData) return <p>옵션 정보가 없습니다.</p>;
+    const {
+        productTitle = "상품명 없음",
+        reservationDate = "예약일 없음",
+        adultCount = 0,
+        childCount = 0,
+        totalPrice = 0,
+    } = optionData;
+
+    return(
+    <>
+        <Wrapper>
+            {/* 예약 정보 */}
+            <Section>
+                <Title>예약하기</Title>
+                <ProductInfo>
+                    <ProductImage src={optionData?.productImage || ''} alt={optionData?.productTitle || '상품명 없음'} />
+                    <ProductDetails>
+                        <ProductTitleText>{optionData?.productTitle || '상품명 없음'}</ProductTitleText>
+                        <ReservationDate>{optionData?.reservationDate || '예약일 없음'}</ReservationDate>
+                        <TotalPrice>{(optionData?.totalPrice || 0).toLocaleString()}원</TotalPrice>
+                    </ProductDetails>
+                </ProductInfo>
+            </Section>
+
+            {/* 결제 정보 */}
+            <Sidebar>
+                <PaymentInfo>
+                    <PriceTitle>결제 정보</PriceTitle>
+                    <PriceRow>
+                        <span>주문 금액</span>
+                        <span>{totalPrice.toLocaleString()}원</span>
+                    </PriceRow>
+                    <TotalAmount>
+                        <span>총 결제 금액</span>
+                        <Amount>{(optionData?.totalPrice || 0).toLocaleString()}원</Amount>
+                    </TotalAmount>
+                </PaymentInfo>
+
+                <Terms>
+                    <TermTitle>약관 안내</TermTitle>
+                    <TermItem>개인정보 수집 및 이용 동의 (필수)</TermItem>
+                    <TermItem>개인정보 제공 동의 (필수)</TermItem>
+                </Terms>
+
+                <CancelPolicy>
+                    <CancelTitle>예약 취소 규정</CancelTitle>
+                    <ul>
+                        <li>여행시작 30일 전까지: 전액 환불</li>
+                        <li>여행시작 20일 전까지: 상품 요금의 20% 공제</li>
+                        <li>여행시작 7일 전까지: 상품 요금의 30% 공제</li>
+                        <li>여행시작 4일 전까지: 상품 요금의 50% 공제</li>
+                        <li>여행시작 3일 전까지: 취소/환불 불가</li>
+                    </ul>
+                </CancelPolicy>
+
+                <PaymentButton>결제하기</PaymentButton>
+            </Sidebar>
+        </Wrapper>
+    </>)
+}
+export default OrderCheckoutCom;
+
+const Wrapper = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2rem;
+    background-color: #f9f9f9;
+`;
+
+const Section = styled.div`
+    flex: 2;
+    margin-right: 2rem;
+`;
+
+const Sidebar = styled.div`
+    flex: 1;
+    min-width: 300px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h2`
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+`;
+
+const ProductInfo = styled.div`
+    display: flex;
+    margin-bottom: 2rem;
+`;
+
+const ProductImage = styled.img`
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 1rem;
+`;
+
+const ProductDetails = styled.div`
+    flex: 1;
+`;
+
+const ProductTitleText = styled.h3`
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+`;
+
+const ReservationDate = styled.div`
+    color: #666;
+    margin-bottom: 0.5rem;
+`;
+
+const TotalPrice = styled.div`
+    font-size: 1.2rem;
+    font-weight: bold;
+`;
+
+const PaymentInfo = styled.div`
+    margin-bottom: 1.5rem;
+`;
+
+const PriceTitle = styled.h3`
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+`;
+
+const PriceRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+`;
+
+const TotalAmount = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #3399ff;
+`;
+
+const Amount = styled.span`
+    color: #3399ff;
+`;
+
+const Terms = styled.div`
+    margin-bottom: 1.5rem;
+`;
+
+const TermTitle = styled.h4`
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+`;
+
+const TermItem = styled.div`
+    margin-bottom: 0.3rem;
+    color: #666;
+`;
+
+const CancelPolicy = styled.div`
+    margin-bottom: 1.5rem;
+`;
+
+const CancelTitle = styled.h4`
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+`;
+
+const PaymentButton = styled.button`
+    width: 100%;
+    padding: 1rem;
+    background-color: #3399ff;
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #287ac6;
+    }
+`;

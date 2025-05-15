@@ -27,17 +27,16 @@ public class OptionEntity {
     @JoinColumn(name = "product_code", nullable = false)
     private ProductEntity product;      // 상품1 - 옵션N
 
-    @Null
     @Column( name = "reservation_date", nullable = true )
     private LocalDate reservationDate;
 
     @NotNull
     @Column( name = "adult_count", nullable = false )
-    private Integer adultCount;
+    private Integer adultCount = 0;
 
-    @Null
-    @Column( name = "child_count", nullable = true )
-    private Integer childCount;
+    @NotNull
+    @Column( name = "child_count", nullable = false )
+    private Integer childCount = 0;
 
     @NotNull
     @Column( name = "total_price", nullable = false, columnDefinition = "INT DEFAULT 0")

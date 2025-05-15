@@ -4,6 +4,7 @@ import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.dto.OrderDTO;
+import com.hello.travelogic.product.domain.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,4 +56,7 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
     @Query(value = "SELECT o FROM OrderEntity o JOIN FETCH o.option JOIN FETCH o.product JOIN FETCH o.member",
             countQuery = "SELECT COUNT(o) FROM OrderEntity o")
     Page<OrderEntity> findAllWithJoins(Pageable pageable);
+
+    // 한 사람이 한 날에 같은 상품의 옵션 여러개 생성하는거 방지
+    boolean existsByMemberAndProductAndOption_ReservationDate(MemberEntity member, ProductEntity product, LocalDate reservationDate);
 }
