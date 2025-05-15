@@ -3,19 +3,19 @@ import React, { useEffect, useReducer } from "react";
 import { reducer, initialState } from "../../modules/wishModule";
 import WishListCom from "../../components/wish/WishListCom";
 import {getGroups, getItemsInGroup, deleteWish, deleteGroup} from "../../service/wishService";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 
 // accessToken prop 추가
-function WishCon({groupCode, accessToken}) {
+function WishCon({accessToken}) {
+    const { groupCode } = useParams();
     const [state, dispatch] = useReducer(reducer, initialState);
     const { groups, selectedGroupCode, wishList } = state;
     const isGroupView = !groupCode;
     const isListView = !!groupCode && !isNaN(parseInt(groupCode, 10));
     const selectedGroup = groups.find(group => group.groupCode === selectedGroupCode);
+    // const accessToken = localStorage.getItem("accessToken");
     const navigate = useNavigate();
-
-
 
     // <ThumbImg />클릭시 해당 그룹에 담긴 위시상품들 리스트 페이지로 이동한다.
     const handleClickGroup = (groupCode) => {
@@ -27,10 +27,9 @@ function WishCon({groupCode, accessToken}) {
 
     useEffect(() => {
         // props로 받은 accessToken 사용
-        if (!accessToken) {
-            return;
-        }
-        console.log("사용 중인 token: ", accessToken); // accessToken 로그 출력
+        if (!accessToken) return;
+        console.log("사용 중인 accessToken: ", accessToken);
+
         getGroups(accessToken)
             .then((data) => {
                 console.log("받은 그룹 목록:", data);
@@ -42,7 +41,7 @@ function WishCon({groupCode, accessToken}) {
     }, [accessToken]); // 의존성 배열에 accessToken 추가
 
     useEffect(() => {
-        if (groupCode && accessToken) { // accessToken이 있을 때만 호출
+        if (groupCode && accessToken) { // groupCode와 accessToken이 모두 있을 때만 호출
             const groupCodeNum = parseInt(groupCode, 10);
             dispatch({ type: "SET_SELECTED_GROUP", data: groupCodeNum });
 
@@ -89,6 +88,7 @@ function WishCon({groupCode, accessToken}) {
             });
     };
 
+    // 이껀 찜 페이지에서 필요한 내용이 아니긴함
     const handleAddWish = async (productCode) => {
         try {
             const response = await axios.post(`/wish/toggle/${productCode}`, {}, {
@@ -130,6 +130,7 @@ function WishCon({groupCode, accessToken}) {
                 selectedGroupCode={selectedGroupCode}
                 groupTitle={selectedGroup?.groupTitle}
                 onClickProduct={handleClickProduct}
+                onBack={() => navigate("/wish/groups")}
             />)}
         </>
     );
