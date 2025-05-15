@@ -47,7 +47,7 @@ INSERT INTO tbl_wish (member_code, group_code, product_code) VALUES
     (1, 19, 27);
 
 INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count) VALUES
-(1, '2025-05-20', 2, NULL),
+(1, '2025-05-20', 2, 0),
 (2, '2025-04-08', 2, 3),
 (3, '2025-06-15', 1, 1),
 (4, '2025-04-23', 1, 1),
@@ -71,17 +71,17 @@ INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count
 INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count) VALUES
 (10, '2025-05-09', 3, 2),
 (11, '2025-05-09', 2, 1),
-(12, '2025-05-09', 4, NULL),
+(12, '2025-05-09', 4, 0),
 #20
 (13, '2025-05-09', 2, 2),
 (14, '2025-05-09', 1, 3),
-(15, '2025-05-09', 2, NULL),
+(15, '2025-05-09', 2, 0),
 (16, '2025-05-09', 5, 1),
-(17, '2025-05-09', 1, NULL),
-(18, '2025-05-09', 2, NULL),
+(17, '2025-05-09', 1, 0),
+(18, '2025-05-09', 2, 0),
 #26
 (19, '2025-05-09', 3, 2),
-(20, '2025-05-09', 4, NULL);
+(20, '2025-05-09', 4, 0);
 
 
 INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, order_adult_price, order_child_price, total_price, order_date, order_status, is_reviewed) VALUES

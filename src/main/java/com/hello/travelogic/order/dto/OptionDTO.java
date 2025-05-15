@@ -1,5 +1,6 @@
 package com.hello.travelogic.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hello.travelogic.order.domain.OptionEntity;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ public class OptionDTO {
 
     private long optionCode;
     private long productCode;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate reservationDate;
     private Integer adultCount = 0;
     private Integer childCount = 0;
