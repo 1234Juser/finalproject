@@ -18,6 +18,7 @@ public class ChatMessageDTO {
     private String sender;
     private String message;
     private LocalDateTime sentAt;
+    private String profileImageUrl;
 
     public enum MessageType {
         CHAT,

@@ -28,11 +28,15 @@ public class CompanionCommentEntity {
     @JoinColumn(name = "companion_id", nullable = false)
     private CompanionEntity companion;
 
-    @Column(name = "companion_content", nullable = false, columnDefinition = "TEXT")
-    private String companionContent;
+    @Column(name = "companion_comment_content", nullable = false, columnDefinition = "TEXT")
+    private String companionCommentContent;
 
-    @Column(name = "companion_created_at", nullable = false)
-    private LocalDateTime companionCreatedAt;
+    @Column(name = "companion_comment_created_at", nullable = false)
+    private LocalDateTime companionCommentCreatedAt;
+
+    @Column(name = "companion_comment_modified_at")
+    private LocalDateTime companionCommentModifiedAt;
+
 
 }
 

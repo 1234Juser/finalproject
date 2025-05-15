@@ -1,6 +1,9 @@
 package com.hello.travelogic.chat.controller;
 
 import com.hello.travelogic.chat.dto.ChatMessageDTO;
+import com.hello.travelogic.chat.service.ChatRoomService;
+import com.hello.travelogic.chat.service.ChatService;
+import com.hello.travelogic.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -11,6 +14,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
@@ -22,28 +26,8 @@ import java.time.ZoneId;
 @Slf4j
 public class ChatController {
 
-    // 채팅 메시지 로깅을 위한 Logger 인스턴스 생성
-    private static final Logger chatLogger = LoggerFactory.getLogger("ChatLog");
-    // 일반 디버깅 및 정보 로그용
-    private static final Logger generalLogger = LoggerFactory.getLogger(ChatController.class);
-
-    private final SimpMessagingTemplate messagingTemplate;
-
-
-/*    // 채팅방 생성
-    @PostMapping("/room")
-    public ResponseEntity<ChatDTO> createChatRoom(@RequestParam Long creatorMemberCode,
-                                                  @RequestBody ChatDTO chatDTO) {
-        ChatDTO createdRoom = chatService.createChatRoom(creatorMemberCode, chatDTO);
-        return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
-    }
-
-    // 개설된 채팅방 조회
-    @GetMapping("/rooms")
-    public ResponseEntity<List<ChatDTO>> getAllChatRooms() {
-        List<ChatDTO> chatRooms = chatService.getAllChatRooms();
-        return new ResponseEntity<>(chatRooms, HttpStatus.OK);
-    }*/
+    private final ChatService chatService;
+    private final ChatRoomService chatRoomService;
 
 
     // roomId 로 메시지 전송
@@ -51,44 +35,51 @@ public class ChatController {
     public ChatMessageDTO sendMessage(@DestinationVariable String roomId,
                                       @Payload ChatMessageDTO message) {
 
-        message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));   // 서버 시간
-
-        // 수신된 채팅 메시지를 로그로 기록
-        chatLogger.info("[{}] roomId: {}, sender: {}, message: {}, sentAt: {}",
-                message.getType(),
-                message.getRoomId(),
-                message.getSender(),
-                message.getMessage(),
-                message.getSentAt());
-        generalLogger.debug("Broadcasting message from {} to /topic/public", message.getSender(), roomId);
-
-        messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
-
-        return message;
+        return chatService.sendMessage(roomId, message);
     }
 
 
-    // 채팅방마다 독립된 입장/퇴장 알림 채널 사용
+    // 사용자 입장시 메시지 전송 핸들러 (채팅방마다 독립된 입장/퇴장 알림 채널)
     @MessageMapping("/chat.addUser/{roomId}")
     public ChatMessageDTO addUser(@DestinationVariable String roomId,
                                   @Payload ChatMessageDTO message,
                                   SimpMessageHeaderAccessor headerAccessor) {
+        log.debug("addUser roomId: {}, message: {}", roomId, message);
 
-        message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+        // ChatService의 addUser 메서드 내부에서 세션 저장 및 DB 추가 로직을 모두 처리하도록 변경하는 것이 좋습니다.
+        // 현재 코드는 컨트롤러에서 chatRoomService.addMemberToRoom을 호출한 후 chatService.addUser를 다시 호출하고 있습니다.
+        // ChatService의 addUser가 DB 추가 로직을 포함하도록 수정하면 이 부분을 간결하게 만들 수 있습니다.
+        // 일단 현재 구조를 유지하며 진행하겠습니다.
 
-        if (headerAccessor.getSessionAttributes() != null) {
-            headerAccessor.getSessionAttributes().put("username", message.getSender());
-            headerAccessor.getSessionAttributes().put("roomId", roomId);
-        }
 
-        chatLogger.info("[{}] User: {}", message.getType(), message.getSender());
-        generalLogger.debug("User {} joined, broadcasting to /topic/public", message.getSender());
+        // 세션에 유저 정보 저장 (ChatService.addUser 내부에서 처리하도록 이동 권장)
+//        headerAccessor.getSessionAttributes().put("username", message.getSender());
+//        headerAccessor.getSessionAttributes().put("roomId", roomId);
+        // headerAccessor.getSessionAttributes().put("memberCode", message.getMemberCode()); // memberCode도 저장 필요
 
-        // roomId에 따라 구독한 유저에게만 입장 알림 전송
-        messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
+        // 입장 멤버 중간 테이블에 추가 (ChatService.addUser 내부에서 처리하도록 이동 권장)
+//        chatRoomService.addMemberToRoom(roomId, message.getSender());
 
-        return message;
+        // 입장 메시지 및 브로드캐스트
+        // ChatService.addUser는 DB 저장 및 메시지 발행을 모두 하므로, 위 두 줄은 ChatService.addUser 내부로 옮기는 것이 좋습니다.
+        return chatService.addUser(roomId, message, headerAccessor);
     }
 
+
+    // 사용자 퇴장시 메시지 전송 핸들러. 별도의 응답을 클라이언트에게 보내지 않음 (void)
+    @MessageMapping("/chat.leave/{roomId}")
+    public void handleLeave(@DestinationVariable String roomId,
+                                      @Payload ChatMessageDTO message) {
+        log.debug("Received LEAVE message for room: {} from sender: {}", roomId, message.getSender());      // message.getSender()는 memberName
+
+        // message.getMemberCode()를 사용하여 ChatRoomMemberEntity를 찾고 업데이트합니다.
+        if (message.getSender() != null) {
+            // 퇴장 메시지 전송
+            chatService.sendExitMessage(roomId, message, message.getSender());
+        } else {
+            log.warn("Received LEAVE message without memberCode for room: {}. Cannot process leave.", roomId);
+            // memberCode가 없는 경우 로깅 또는 클라이언트에게 오류 알림
+        }
+    }
 
 }

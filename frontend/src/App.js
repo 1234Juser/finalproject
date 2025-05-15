@@ -37,8 +37,9 @@ import MyReviewFormPage from "./pages/review/MyReviewFormPage";
 import SearchProductPage from "./pages/search/SearchProductPage";
 import AdminRealTimePage from "./pages/realtime/AdminRealTimePage";
 import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
-import ChatMainPage from "./pages/community/chat/ChatMainPage";
+import ChatRoomPage from "./pages/community/chat/ChatRoomPage";
 import CommunityLayout from "./style/community/CommunityLayout";
+import ChatRoomListPage from "./pages/community/chat/ChatRoomListPage";
 import CompanionListPage from "./pages/companion/CompanionListPage";
 import CompanionRegisterPage from "./pages/companion/CompanionRegisterPage";
 import CompanionDetailPage from "./pages/companion/CompanionDetailPage";
@@ -112,12 +113,20 @@ function App() {
                     <Route path=":productUid" element={<ProductDetailPage/>} />
                 </Route>
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
-                <Route path="/products/:productUid/order/create/:optionCode" element={<OrderCheckoutPage/>} />
-                <Route path="/community" element={<CommunityLayout />} >
+                <Route path="/products/:productUid/order/create/:optionCode" element={<OrderCheckoutPage/>} />>
+
+              {/*커뮤니티*/}
+              <Route path="/community" element={<CommunityLayout />} >
                   <Route index element={<TripBuddyPage />} />
                   <Route path="tripbuddy" element={<TripBuddyPage/>}/>
-                  <Route path="chat" element={<ChatMainPage/>}/>
-                </Route>
+                  <Route path="chat" element={<ChatRoomListPage/>}/>
+                  <Route path="chat/:roomUid" element={<ChatRoomPage />} />  {/* 상세 경로 추가 */}
+                  <Route path="companion" element={<CompanionListPage/>}/>
+                  <Route path="companion/new" element={<CompanionRegisterPage/>}/>
+                  <Route path="companion/:companionId" element={<CompanionDetailPage />} />
+                  <Route path="companion/edit/:companionId" element={<CompanionEditPage />} />
+              </Route>
+
 
             </Routes>
             <FooterCom/>
