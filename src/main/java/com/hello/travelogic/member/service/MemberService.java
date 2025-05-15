@@ -132,6 +132,7 @@ public class MemberService {
         MemberEntity member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
         return MyPageResponseDTO.builder()
+                .memberCode(member.getMemberCode())
                 .memberName(member.getMemberName())
                 .memberId(member.getMemberId())
                 .memberEmail(member.getMemberEmail())
@@ -159,6 +160,7 @@ public class MemberService {
                 .findFirst()
                 .orElse("");
         return AdminMyPageResponseDTO.builder()
+                .memberCode(member.getMemberCode())
                 .memberName(member.getMemberName())
                 .memberId(member.getMemberId())
                 .memberEmail(member.getMemberEmail())

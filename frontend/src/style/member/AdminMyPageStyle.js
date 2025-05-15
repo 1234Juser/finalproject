@@ -200,4 +200,82 @@ export const infoFieldValue = {
     wordBreak: "break-all"
 };
 
+// 팔로우 정보 섹션 스타일 추가
+export const followInfoBoxStyle = {
+    backgroundColor: '#f9f9f9', // 개인 정보 섹션과 유사한 배경색
+    padding: '20px',
+    borderRadius: '8px',
+    marginTop: '20px', // 개인 정보 섹션과의 간격
+};
 
+export const followSectionTitleStyle = {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    marginBottom: '16px',
+    color: '#333', // 제목 색상
+};
+
+export const followListContainerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between', // 팔로잉, 팔로워 목록을 양쪽에 배치
+    gap: '20px', // 목록 사이 간격
+};
+
+export const followListWrapperStyle = {
+    flex: 1, // 각 목록이 동일한 너비를 가지도록 설정
+    background: '#fff', // 목록 배경색 추가
+    borderRadius: '8px', // 모서리 둥글게
+    padding: '15px', // 내부 여백
+    boxShadow: '0 1px 4px rgba(0,0,0,0.08)', // 은은한 그림자 효과
+};
+
+export const followListTitleStyle = {
+    fontWeight: '600',
+    fontSize: '17px', // 글씨 크기 살짝 키움
+    marginBottom: '12px', // 여백 조정
+    color: '#444', // 색상 변경
+    paddingBottom: '8px', // 하단 구분선 위한 여백
+    borderBottom: '1px solid #eee' // 구분선 추가
+};
+
+export const followListStyle = {
+    listStyle: 'none',
+    padding: '0px 5px', // 좌우 패딩 추가
+    margin: '0',
+    maxHeight: '285px', // 5개 아이템 높이 (5 * (36px + 10px*2 + 1px))
+    overflowY: 'auto',
+
+    // maxHeight 및 overflowY는 MyPageCom.js에서 동적으로 제어
+};
+
+export const followItemStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '10px 5px', // 패딩 조정
+    borderBottom: '1px solid #f5f5f5', // 아이템 구분선 연하게
+    transition: 'background-color 0.2s ease',
+};
+
+export const followItemImageStyle = {
+    width: '36px', // 이미지 크기 증가
+    height: '36px', // 이미지 크기 증가
+    borderRadius: '50%',
+    marginRight: '12px', // 여백 증가
+    objectFit: 'cover',
+    border: '1px solid #eee', // 이미지 테두리 연하게
+};
+
+export const followItemNameStyle = {
+    fontSize: '15px', // 이름 폰트 크기
+    color: '#333',
+    fontWeight: '500', // 폰트 두께
+};
+
+export const noFollowDataStyle = {
+    fontSize: '14px',
+    color: '#888', // 색상 변경
+    textAlign: 'center',
+    padding: '30px 0', // 여백 증가
+    background: '#fafafa', // 배경색 살짝 추가
+    borderRadius: '6px',
+};

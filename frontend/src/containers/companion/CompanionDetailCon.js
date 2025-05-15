@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react'; // useCallback 임포트 추가
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CompanionDetailCom from '../../components/companion/CompanionDetailCom'; // 컴포넌트 임포트 확인
+import CompanionDetailCom from '../../components/companion/CompanionDetailCom';
 import { jwtDecode } from 'jwt-decode'; // 기본 임포트 대신 명명된 임포트 사용
 
 function CompanionDetailCon() {

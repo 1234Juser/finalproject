@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class MyPageResponseDTO {
+    private Long memberCode;
     private String memberName;
     private String memberId;
     private String memberEmail;

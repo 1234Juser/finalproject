@@ -12,16 +12,48 @@ import {
     infoFieldCard,
     infoFieldLabelRow,
     infoFieldValue,
-} from '../../style/member/MyPageStyle';
+    followInfoBoxStyle,
+    followSectionTitleStyle,
+    followListContainerStyle,
+    followListWrapperStyle,
+    followListTitleStyle,
+    followListStyle,
+    followItemStyle,
+    followItemImageStyle,
+    followItemNameStyle,
+    noFollowDataStyle
+} from '../../style/member/AdminMyPageStyle';
 import { FaUser, FaPhone, FaEnvelope, FaIdCard } from "react-icons/fa6";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 
-function AdminMyPageCom({ memberData }) {
+const DEFAULT_PROFILE_IMAGE = "/img/default-profile.jpg";
+
+function AdminMyPageCom({ memberData, followingList, followerList }) {
     if (!memberData) return <div>로딩중...</div>;
 
-    // 마스킹 등 필요시
     const phoneMasked = memberData.memberPhone?.replace(/(\d{3})\d{2,3}(\d{3,4})/, '$1****$2');
     const emailMasked = memberData.memberEmail?.replace(/(.{2}).*(@.*)/, '$1***$2');
+
+    const renderFollowList = (list, title) => {
+        if (!list || list.length === 0) {
+            return <div style={noFollowDataStyle}>{title} 중인 사용자가 없습니다.</div>;
+        }
+        return (
+            <ul style={followListStyle}>
+                {list.map(user => (
+                    <li key={user.memberCode} style={followItemStyle}>
+                        <img
+                            src={user.memberProfileImageUrl || DEFAULT_PROFILE_IMAGE}
+                            alt={user.memberName}
+                            style={followItemImageStyle}
+                        />
+                        <span style={followItemNameStyle}>{user.memberName}</span>
+                    </li>
+                ))}
+            </ul>
+        );
+    };
+
 
     return (
         <div style={containerStyle}>
@@ -67,6 +99,22 @@ function AdminMyPageCom({ memberData }) {
                         </div>
                     </div>
                 </section>
+
+                {/* 팔로우/팔로워 정보 섹션 추가 */}
+                <section style={followInfoBoxStyle}>
+                    <div style={followSectionTitleStyle}>팔로우 정보</div>
+                    <div style={followListContainerStyle}>
+                        <div style={followListWrapperStyle}>
+                            <div style={followListTitleStyle}>팔로잉 ({followingList?.length || 0}명)</div>
+                            {renderFollowList(followingList, '팔로잉')}
+                        </div>
+                        <div style={followListWrapperStyle}>
+                            <div style={followListTitleStyle}>팔로워 ({followerList?.length || 0}명)</div>
+                            {renderFollowList(followerList, '팔로워')}
+                        </div>
+                    </div>
+                </section>
+
             </main>
         </div>
     );

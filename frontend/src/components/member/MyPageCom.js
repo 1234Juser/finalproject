@@ -14,15 +14,27 @@ import {
     infoFieldCard,
     infoFieldLabelRow,
     infoFieldValue,
-    iconWrapper
+    iconWrapper,
+    followInfoBoxStyle,
+    followSectionTitleStyle,
+    followListContainerStyle,
+    followListWrapperStyle,
+    followListTitleStyle,
+    followListStyle,
+    followItemStyle,
+    followItemImageStyle,
+    followItemNameStyle,
+    noFollowDataStyle
 } from '../../style/member/MyPageStyle';
+
 import { FaUser, FaPhone, FaLock, FaEnvelope, FaIdCard} from "react-icons/fa6";
 import { SiKakaotalk} from "react-icons/si";
 import { FaGoogle } from "react-icons/fa6";   // 구글 아이콘 추가
 
+const DEFAULT_PROFILE_IMAGE = "/img/default-profile.jpg";
 
 
-function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink, onGoogleUnlink }) {
+function MyPageCom({ memberData, followingList, followerList, onEditProfileImage, onEditInfo,  onKakaoUnlink, onGoogleUnlink }) {
 
     const [editMode, setEditMode] = useState(false);
     const [form, setForm] = useState(memberData);
@@ -129,6 +141,27 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink,
             onEditProfileImage(file);
         }
     };
+
+    const renderFollowList = (list, title) => {
+        if (!list || list.length === 0) {
+            return <div style={noFollowDataStyle}>{title} 중인 사용자가 없습니다.</div>;
+        }
+        return (
+            <ul style={followListStyle}>
+                {list.map(user => (
+                    <li key={user.memberCode} style={followItemStyle}>
+                        <img
+                            src={user.memberProfileImageUrl || DEFAULT_PROFILE_IMAGE}
+                            alt={user.memberName}
+                            style={followItemImageStyle}
+                        />
+                        <span style={followItemNameStyle}>{user.memberName}</span>
+                    </li>
+                ))}
+            </ul>
+        );
+    };
+
 
     return (
         <div style={containerStyle}>
@@ -240,6 +273,22 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink,
                         )}
                     </div>
                 </section>
+                {/* 팔로우 정보 섹션 추가 */}
+                <section style={followInfoBoxStyle}>
+                    <div style={followSectionTitleStyle}>팔로우 정보</div>
+                    <div style={followListContainerStyle}>
+                        <div style={followListWrapperStyle}>
+                            <h3 style={followListTitleStyle}>팔로잉 ({followingList.length})</h3>
+                            {renderFollowList(followingList, "팔로잉")}
+                        </div>
+                        <div style={followListWrapperStyle}>
+                            <h3 style={followListTitleStyle}>팔로워 ({followerList.length})</h3>
+                            {renderFollowList(followerList, "팔로워")}
+                        </div>
+                    </div>
+                </section>
+
+
 
             </main>
 
