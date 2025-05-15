@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "tbl_chat")
+@Table(name = "tbl_chat_room")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString

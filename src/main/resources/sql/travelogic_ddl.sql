@@ -88,66 +88,81 @@ CREATE TABLE tbl_password_reset_code (
                                          expired_at DATETIME NOT NULL COMMENT '인증번호 만료 시간'
 );
 
+-- 권역 테이블
 CREATE TABLE `tbl_region` (
-                              `region_code` INT AUTO_INCREMENT NOT NULL COMMENT '지역 id',
-                              `region_uid` VARCHAR(20) NOT NULL COMMENT '지역고유코드',
-                              `region_type` ENUM('DOMESTIC', 'INTERNATIONAL') NOT NULL COMMENT '국내/해외 구분',
-                              `region_name` VARCHAR(20) NOT NULL COMMENT '지역명(서울/중부권, 아시아 등)',
+                              `region_code` BIGINT NOT NULL COMMENT '권역 코드 (PK)',
+                              `region_uid` VARCHAR(20) NOT NULL COMMENT '권역 고유 코드',
+                              `region_type` ENUM('DOMESTIC', 'INTERNATIONAL') NOT NULL COMMENT '권역 타입 (국내/해외)',
+                              `region_name` VARCHAR(20) NOT NULL COMMENT '권역명(서울/중부권, 아시아 등)',
                               PRIMARY KEY (`region_code`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='권역 정보';
 
+-- 테마 테이블
 CREATE TABLE `tbl_theme` (
-                             `theme_code` INT AUTO_INCREMENT NOT NULL COMMENT '테마id',
-                             `theme_uid` VARCHAR(20) NOT NULL COMMENT '테마고유코드',
-                             `theme_name` VARCHAR(20) NOT NULL COMMENT '도시명',
-                             CONSTRAINT `PK_TBL_THEME` PRIMARY KEY (`theme_code`)
-);
+                             `theme_code` BIGINT NOT NULL COMMENT '테마 ID',
+                             `theme_uid` VARCHAR(20) NOT NULL COMMENT '테마 고유 코드',
+                             `theme_name` VARCHAR(20) NOT NULL COMMENT '테마 이름',
+                             PRIMARY KEY (`theme_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='테마 정보';
 
 CREATE TABLE `tbl_country` (
-                               `country_id` INT AUTO_INCREMENT NOT NULL COMMENT '국가id',
-                               `country_code` INT NOT NULL UNIQUE COMMENT '국가코드',
-                               `region_code` INT NOT NULL COMMENT '지역 고유번호',
-                               `country_uid` VARCHAR(20) NOT NULL COMMENT '국가고유코드',
+                               `country_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '국가 ID (PK)',
+                               `country_code` BIGINT NOT NULL UNIQUE COMMENT '국가 코드',
+                               `region_code` BIGINT NOT NULL COMMENT '지역 코드 (FK)',
+                               `country_uid` VARCHAR(20) NOT NULL COMMENT '국가 고유 코드',
                                `country_name` VARCHAR(20) NOT NULL COMMENT '국가명',
-                               CONSTRAINT `FK_tbl_region_TO_tbl_country_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`),
-                               CONSTRAINT PK_TBL_COUNTRY PRIMARY KEY (country_id)
-) ENGINE=INNODB COMMENT '국가정보' AUTO_INCREMENT = 01;
+                               `country_name_kr` VARCHAR(20) NOT NULL COMMENT '국가명(한글)',
+                               PRIMARY KEY (`country_id`),
+                               CONSTRAINT `FK_country_region` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='국가 정보';
 
 CREATE TABLE `tbl_city` (
-                            `city_id` INT AUTO_INCREMENT NOT NULL COMMENT '도시id',
-                            `city_code` varchar(4)  NOT NULL UNIQUE COMMENT '도시코드',
-                            `country_id` INT NOT NULL COMMENT '국가고유코드',
-                            `region_code` INT NOT NULL COMMENT '지역코드',
-                            `city_uid` VARCHAR(20) NOT NULL COMMENT '도시고유코드',
-                            `city_name` VARCHAR(50) NOT NULL COMMENT '도시명',
-                            `city_name_kr` varchar(50) not null comment '도시명(한국)',
-                            CONSTRAINT `FK_tbl_country_TO_tbl_city_1` FOREIGN KEY (`country_id`) REFERENCES `tbl_country` (`country_id`),
-                            CONSTRAINT `FK_tbl_region_TO_tbl_city_1` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`),
-                            CONSTRAINT pk_city_id PRIMARY KEY (city_id)
-) ENGINE=INNODB COMMENT '도시정보' AUTO_INCREMENT = 0101;
+                            `city_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '도시 ID (PK)',
+                            `city_code` BIGINT NOT NULL UNIQUE COMMENT '도시 코드',
+                            `country_id` BIGINT NOT NULL COMMENT '국가 ID (FK)',
+                            `region_code` BIGINT NOT NULL COMMENT '지역 코드 (FK)',
+                            `city_uid` VARCHAR(20) NOT NULL COMMENT '도시 고유 코드',
+                            `city_name` VARCHAR(20) NOT NULL COMMENT '도시명',
+                            `city_name_kr` VARCHAR(50) NOT NULL COMMENT '도시명 (한글)',
+                            PRIMARY KEY (`city_id`),
+                            CONSTRAINT `FK_city_country` FOREIGN KEY (`country_id`) REFERENCES `tbl_country` (`country_id`),
+                            CONSTRAINT `FK_city_region` FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도시 정보';
 
+-- 상품 테이블
 CREATE TABLE `tbl_product` (
-                               `product_code` INT AUTO_INCREMENT NOT NULL COMMENT '투어상품 id',
-                               `product_uid` VARCHAR(20) NOT NULL COMMENT '상품 고유 코드',
-                               `country_id` INT NOT NULL COMMENT '국가고유번호',
-                               `city_id` INT NOT NULL COMMENT '도시고유번호',
-                               `theme_code` INT NULL COMMENT '테마코드',
-                               `product_title` VARCHAR(255) NOT NULL COMMENT '투어상품 제목',
-                               `product_content` TEXT NOT NULL COMMENT '투어상품 상세내용',
-                               `product_adult` INT NOT NULL COMMENT '성인금액',
-                               `product_child` INT DEFAULT 0 COMMENT '소인금액',
-                               `product_start_date` DATETIME NOT NULL COMMENT '판매 시작일',
-                               `product_end_date` DATETIME NOT NULL COMMENT '판매 종료일',
-                               `product_min_participants` INT NOT NULL COMMENT '투어 출발 최소 인원',
-                               `product_max_participants` INT NOT NULL COMMENT '투어 출발 최대 인원',
-                               `product_status` ENUM('ON_SALE', 'SOLD_OUT', 'CLOSED') NOT NULL COMMENT '상품 판매 상태',
-                               `product_thumbnail` VARCHAR(255) NOT NULL COMMENT '대표 이미지 URL',
+                               `product_code` BIGINT AUTO_INCREMENT NOT NULL COMMENT '투어상품 ID',
+                               `product_uid` VARCHAR(20) NOT NULL UNIQUE COMMENT '상품 고유 코드',
+                               `region_code` BIGINT NOT NULL COMMENT '지역 코드 (RegionEntity 참조)',
+                               `country_id` BIGINT NOT NULL COMMENT '국가 ID',
+                               `city_id` BIGINT NOT NULL COMMENT '도시 ID',
+                               `theme_code` BIGINT NULL COMMENT '테마 코드 (단일 테마일 경우, N:M 관계면 삭제 가능)',
+
+                               `product_title` VARCHAR(255) NOT NULL COMMENT '상품 제목',
+                               `product_content` TEXT NOT NULL COMMENT '상품 상세 내용',
+                               `product_adult` INT NOT NULL DEFAULT 0 COMMENT '성인 금액',
+                               `product_child` INT NOT NULL DEFAULT 0 COMMENT '소인 금액',
+                               `product_start_date` DATE NOT NULL COMMENT '판매 시작일',
+                               `product_end_date` DATE NOT NULL COMMENT '판매 종료일',
+                               `product_min_participants` INT NOT NULL COMMENT '최소 인원',
+                               `product_max_participants` INT NOT NULL COMMENT '최대 인원',
+                               `product_status` ENUM('ON_SALE', 'SOLD_OUT', 'CLOSED') NOT NULL COMMENT '상품 상태',
+                               `product_type` ENUM('TOUR', 'GOLF', 'CRUISE', 'KIDS', 'HONEYMOON', 'SILVER') NOT NULL COMMENT '상품 타입',
+                               `product_thumbnail` VARCHAR(255) NOT NULL COMMENT '대표 이미지',
                                `review_count` INT NOT NULL DEFAULT 0 COMMENT '리뷰 수',
-                               CONSTRAINT `PK_TBL_PRODUCT` PRIMARY KEY (`product_code`),
-                               CONSTRAINT `FK_tbl_country_TO_tbl_product` FOREIGN KEY (`country_id`) REFERENCES `tbl_country` (`country_id`),
-                               CONSTRAINT `FK_tbl_city_TO_tbl_product` FOREIGN KEY (`city_id`) REFERENCES `tbl_city` (`city_id`),
-                               CONSTRAINT `FK_tbl_theme_TO_tbl_product` FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
-);
+
+                               `region_type` ENUM('DOMESTIC', 'INTERNATIONAL') NOT NULL COMMENT '지역 타입',
+                               `city_name` VARCHAR(50) NOT NULL COMMENT '도시명 (표시용)',
+                               `country_name` VARCHAR(50) NOT NULL COMMENT '국가명 (표시용)',
+                               `full_location` VARCHAR(100) NOT NULL COMMENT '도시+국가 (ex. 파리, 프랑스)',
+                               `product_description` TEXT COMMENT '상품 설명',
+
+                               PRIMARY KEY (`product_code`),
+                               FOREIGN KEY (`region_code`) REFERENCES `tbl_region` (`region_code`),
+                               FOREIGN KEY (`country_id`) REFERENCES `tbl_country` (`country_id`),
+                               FOREIGN KEY (`city_id`) REFERENCES `tbl_city` (`city_id`),
+                               FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='상품';
 
 CREATE TABLE tbl_wish_group (
     group_code INT NOT NULL AUTO_INCREMENT COMMENT '찜그룹고유번호',
@@ -161,7 +176,7 @@ CREATE TABLE tbl_wish_group (
 CREATE TABLE tbl_wish (
     wish_code INT NOT NULL AUTO_INCREMENT COMMENT '찜고유번호',
     group_code INT NOT NULL COMMENT '찜그룹고유번호',
-    product_code INT NOT NULL COMMENT '상품고유번호',
+    product_code BIGINT NOT NULL COMMENT '상품고유번호',
     member_code INT NOT NULL COMMENT '회원번호',
     PRIMARY KEY (wish_code),
     FOREIGN KEY (group_code) REFERENCES tbl_wish_group (group_code),
@@ -172,7 +187,7 @@ CREATE TABLE tbl_wish (
 
 CREATE TABLE tbl_option (
     option_code INT NOT NULL AUTO_INCREMENT COMMENT '옵션고유번호',
-    product_code INT NOT NULL COMMENT '투어상품 고유번호',
+    product_code BIGINT NOT NULL COMMENT '투어상품 고유번호',
     reservation_date DATE NULL COMMENT '선택된 예약 날짜',
     adult_count INT NOT NULL COMMENT '기본(성인) 수량',
     child_count INT NULL COMMENT '아동 수량',
@@ -183,7 +198,7 @@ CREATE TABLE tbl_option (
 
 CREATE TABLE tbl_order (
     order_code INT NOT NULL AUTO_INCREMENT COMMENT '예약고유번호',
-    product_code INT NOT NULL COMMENT '투어상품 고유번호',
+    product_code BIGINT NOT NULL COMMENT '투어상품 고유번호',
     option_code INT NOT NULL COMMENT '옵션고유번호',
     member_code INT NOT NULL COMMENT '예약자 정보',
     booking_uid VARCHAR(50) NOT NULL COMMENT '고객용예약번호',
@@ -232,7 +247,7 @@ CREATE TABLE tbl_payment_cancel (
 CREATE TABLE tbl_review (
     review_code INT NOT NULL AUTO_INCREMENT COMMENT '리뷰고유번호',
     member_code INT NOT NULL COMMENT '회원고유번호',
-    product_code INT NOT NULL COMMENT '상품고유번호',
+    product_code BIGINT NOT NULL COMMENT '상품고유번호',
     order_code INT NOT NULL COMMENT '예약정보',
     review_rating TINYINT NOT NULL CHECK (review_rating BETWEEN 1 AND 5) COMMENT '상품평점',
     review_content TEXT NULL COMMENT '리뷰내용',
@@ -264,14 +279,15 @@ CREATE TABLE tbl_faq (
                          faq_content VARCHAR(255) NOT NULL COMMENT '내용'
 )ENGINE=INNODB COMMENT 'FAQ';
 
+-- 상품-테마 매핑 중간 테이블
 CREATE TABLE `tbl_product_theme` (
-                                     `pt_id` INT AUTO_INCREMENT NOT NULL COMMENT '상품테마 id',
-                                     `product_code` INT NOT NULL COMMENT '투어상품 id',
-                                     `theme_code` INT NOT NULL COMMENT '테마id',
-                                     CONSTRAINT `PK_TBL_PRODUCT_THEME` PRIMARY KEY (`pt_id`, `product_code`, `theme_code`),
-                                     CONSTRAINT `FK_tbl_product_TO_tbl_product_theme_1` FOREIGN KEY (`product_code`) REFERENCES `tbl_product` (`product_code`),
-                                     CONSTRAINT `FK_tbl_theme_TO_tbl_product_theme_1` FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`)
-);
+                                     `pt_id` BIGINT AUTO_INCREMENT NOT NULL COMMENT '상품테마 ID',
+                                     `product_code` BIGINT NOT NULL COMMENT '상품 ID',
+                                     `theme_code` BIGINT NOT NULL COMMENT '테마 ID',
+                                     PRIMARY KEY (`pt_id`),
+                                     FOREIGN KEY (`product_code`) REFERENCES `tbl_product` (`product_code`) ON DELETE CASCADE,
+                                     FOREIGN KEY (`theme_code`) REFERENCES `tbl_theme` (`theme_code`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='상품-테마 매핑 중간 테이블';
 
 
 # 여행게시판
@@ -312,27 +328,31 @@ CREATE TABLE `tbl_follow` (
 )ENGINE=INNODB COMMENT '회원 팔로우/팔로워 관계';
 
 
-CREATE TABLE `tbl_chat` (
-                            `chat_id` INT AUTO_INCREMENT NOT NULL COMMENT '채팅방 id',
-                            `member_code` INT NOT NULL COMMENT '회원번호',
-                            `chat_uid` VARCHAR(20) NOT NULL COMMENT '채팅방고유코드',
-                            `chat_title` VARCHAR(50) NOT NULL COMMENT '채팅방 제목',
-                            `chat_create_at` DATETIME NOT NULL COMMENT '개설일자',
-                            CONSTRAINT `FK_tbl_member_TO_tbl_chat_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`),
-                            CONSTRAINT `PK_TBL_CHAT` PRIMARY KEY (`chat_id`)
-);
+CREATE TABLE `tbl_chat_room` (
+                                 `chat_room_id` INT AUTO_INCREMENT NOT NULL COMMENT '채팅방 고유 ID',
+                                 `member_code` INT NOT NULL COMMENT '생성한 회원 고유 번호',
+                                 `chat_room_uid` VARCHAR(20) NOT NULL UNIQUE COMMENT '클라이언트용 채팅방 고유 코드',
+                                 `chat_room_title` VARCHAR(50) NOT NULL COMMENT '채팅방 제목',
+                                 `chat_room_create_at` DATETIME NOT NULL COMMENT '개설일자',
+                                 `chat_room_description` VARCHAR(50) DEFAULT NULL COMMENT '채팅방 설명',
+                                 `chat_room_max_participants` INT NOT NULL COMMENT '최대 참여자 수',
+                                 PRIMARY KEY (`chat_room_id`),
+                                 CONSTRAINT `FK_member_to_chat_room` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='채팅방';;
 
 CREATE TABLE `tbl_chat_room_member` (
-                                        `crm_id` INT AUTO_INCREMENT NOT NULL COMMENT '중간 테이블 고유ID',
-                                        `chat_id` INT NOT NULL COMMENT '채팅방 id',
-                                        `member_code` INT NOT NULL COMMENT '회원번호',
+                                        `crm_id` INT AUTO_INCREMENT NOT NULL COMMENT '채팅방 참여자 고유 ID',
+                                        `chat_room_id` INT NOT NULL COMMENT '채팅방 고유 ID',
+                                        `member_code` INT NOT NULL COMMENT '회원 고유 번호',
                                         `crm_joined_at` DATETIME NOT NULL COMMENT '채팅방 참여 시간',
                                         `crm_is_exited` BOOLEAN NOT NULL COMMENT '퇴장 여부',
-                                        `crm_exited_at` DATETIME NULL COMMENT '퇴장 시간',
-                                        CONSTRAINT `PK_TBL_CHAT_ROOM_MEMBER` PRIMARY KEY (`crm_id`),
-                                        CONSTRAINT `FK_tbl_chat_TO_tbl_chat_room_member_1` FOREIGN KEY (`chat_id`) REFERENCES `tbl_chat` (`chat_id`),
-                                        CONSTRAINT `FK_tbl_member_TO_tbl_chat_room_member_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
-);
+                                        `crm_exited_at` DATETIME DEFAULT NULL COMMENT '퇴장 시간',
+                                        `member_name` VARCHAR(255) NOT NULL COMMENT '참여자 이름',
+                                        `crm_is_creator` BOOLEAN NOT NULL COMMENT '개설자인지 여부',
+                                        PRIMARY KEY (`crm_id`),
+                                        CONSTRAINT `FK_chat_room_to_crm` FOREIGN KEY (`chat_room_id`) REFERENCES `tbl_chat_room` (`chat_room_id`),
+                                        CONSTRAINT `FK_member_to_crm` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='채팅방-회원 매핑 중간 테이블';
 
 CREATE TABLE `tbl_inquiry_chat` (
                                     `ic_id` INT AUTO_INCREMENT NOT NULL COMMENT '1:1 문의 채팅 id',

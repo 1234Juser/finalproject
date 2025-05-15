@@ -39,7 +39,7 @@ public class ChatRoomMemberEntity {
     @Column(name = "member_name", nullable = false)
     private String memberName;
 
-    @Column(name = "crum_is_creator", nullable = false)
+    @Column(name = "crm_is_creator", nullable = false)
     private boolean isCreator;
 
 }
