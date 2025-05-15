@@ -130,7 +130,6 @@ function MyPageCom({ memberData, onEditProfileImage, onEditInfo,  onKakaoUnlink,
         }
     };
 
-
     return (
         <div style={containerStyle}>
             {/* 왼쪽: 사이드바만 */}

@@ -53,7 +53,10 @@ function CompanionListCom({
     if (error) return <Container><p>{error}</p></Container>;
 
     const roles = JSON.parse(localStorage.getItem("roles") || "[]");
-    const canCreatePost = roles.includes("ROLE_ADMIN") || roles.includes("ROLE_USER");
+    const loginType = localStorage.getItem("loginType");
+
+// ROLE_ADMIN 또는 ROLE_USER 역할을 가지고 있거나, 소셜 로그인 (카카오 또는 구글)으로 로그인한 사용자에게 등록 버튼 표시
+    const canCreatePost = roles.includes("ROLE_ADMIN") || roles.includes("ROLE_USER") || loginType === "kakao" || loginType === "google";
 
 
     return (

@@ -121,12 +121,19 @@ function CompanionDetailCom({
 
     const handleCommentFormSubmit = (e) => {
         e.preventDefault();
+        console.log("댓글 등록 버튼 클릭됨"); // 이 줄을 추가
+
         if (commentContent.trim() === '') {
             alert('댓글 내용을 입력해주세요.');
+            console.log("댓글 내용이 비어있습니다."); // 이 줄을 추가
+
             return;
         }
+        console.log("댓글 내용:", commentContent); // 이 줄을 추가
         onCommentSubmit(commentContent);
+        console.log("onCommentSubmit 호출됨"); // 이 줄을 추가
         setCommentContent('');
+
     };
 
     const handleEditClick = (comment) => {
@@ -418,12 +425,19 @@ function CompanionDetailCom({
                             <CommentContent>{comment.companionCommentContent}</CommentContent>
                         )}
 
-                        {isLoggedIn && (comment.authorMemberCode === currentMemberCode || currentUserRoles.includes("ROLE_ADMIN")) && editingCommentId !== comment.companionCommentId && (
+                        {isLoggedIn && editingCommentId !== comment.companionCommentId && (
                             <CommentActions>
-                                <ActionButton onClick={() => handleEditClick(comment)}>수정</ActionButton>
-                                <ActionButton onClick={() => handleDeleteClick(comment.companionCommentId)}>삭제</ActionButton>
+                                {/* 댓글 작성자만 수정 가능 */}
+                                {comment.authorMemberCode === currentMemberCode && (
+                                    <ActionButton onClick={() => handleEditClick(comment)}>수정</ActionButton>
+                                )}
+                                {/* 댓글 작성자 또는 관리자만 삭제 가능 */}
+                                {(comment.authorMemberCode === currentMemberCode || currentUserRoles.includes("ROLE_ADMIN")) && (
+                                    <ActionButton onClick={() => handleDeleteClick(comment.companionCommentId)}>삭제</ActionButton>
+                                )}
                             </CommentActions>
                         )}
+
                     </CommentItem>
                 ))
             ) : (

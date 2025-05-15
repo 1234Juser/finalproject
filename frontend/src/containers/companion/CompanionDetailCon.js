@@ -28,7 +28,11 @@ function CompanionDetailCon() {
             // 현재 로그인된 사용자 정보 가져오기
             const token = localStorage.getItem("accessToken");
             if (token) {
+                console.log("토큰 존재:", token); // 이 줄을 추가
+
                 setIsLoggedIn(true);
+                console.log("로그인 상태 설정: true"); // 이 줄을 추가
+
                 try {
                     const decodedToken = jwtDecode(token);
                     const memberCode = decodedToken.memberCode;
@@ -48,6 +52,7 @@ function CompanionDetailCon() {
                     if (isAdmin) {
                         setCanDelete(true);
                     }
+                    console.log("현재 사용자 코드:", memberCode, "역할:", userRoles); // 이 줄을 추가
 
                 } catch (decodeError) {
                     console.error("토큰 디코딩 실패:", decodeError);
@@ -57,6 +62,7 @@ function CompanionDetailCon() {
                     setCurrentUserRoles([]);
                     setCanEdit(false);
                     setCanDelete(false);
+                    console.log("로그인 상태 설정: false (토큰 디코딩 실패)"); // 이 줄을 추가
                 }
             } else {
                 // 토큰이 없으면 권한 없음 및 로그인 상태 false
@@ -65,6 +71,8 @@ function CompanionDetailCon() {
                 setCurrentUserRoles([]);
                 setCanEdit(false);
                 setCanDelete(false);
+                console.log("로그인 상태 설정: false (토큰 없음)"); // 이 줄을 추가
+
             }
 
         } catch (err) {
@@ -114,12 +122,14 @@ function CompanionDetailCon() {
         try{
             const token = localStorage.getItem("accessToken");
             // content를 params 대신 요청 본문에 직접 전달
-            await axios.post(`/companions/${companionId}/comments`, null ,{ // null 또는 빈 객체 {}를 본문으로 사용
+             await axios.post(`/companions/${companionId}/comments`, null ,{ // null 또는 빈 객체 {}를 본문으로 사용
                 params: { content: content },
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
+
+            console.log("댓글 등록 API 호출 성공"); // 이 줄을 추가
 
             //댓글 등록 성공 후 댓글 목록 새로고침 (게시글 정보 재조회)
             fetchCompanionDetail(); // 이제 fetchCompanionDetail 호출 가능
