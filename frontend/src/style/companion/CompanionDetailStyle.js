@@ -409,21 +409,20 @@ export const CommentAuthorInfo = styled.div`
     display: flex;
     align-items: center;
     /* 왼쪽 정렬 유지 */
-    justify-content: flex-start;
+    justify-content: flex-start; /* 이 줄을 flex-start로 변경 */
     flex-grow: 1; /* 가능한 공간을 모두 차지하여 버튼을 오른쪽으로 밀어냄 */
     flex-wrap: wrap; /* 필요한 경우 줄바꿈 허용 */
+    gap: 20px; /* 댓글 작성자 이름과 팔로우 버튼 그룹 사이의 간격 추가 */
+
 `;
 
 /* 댓글 팔로우 버튼 그룹을 위한 flex 컨테이너 */
 export const CommentFollowActions = styled.div`
     display: flex;
     align-items: center;
-    /* 가운데 정렬 */
-    justify-content: center;
-    gap: 10px; /* 버튼 사이 간격 */
-    width: 100%; /* 부모 너비 전체 사용 */
-    margin-top: 5px; /* 작성자 정보와 버튼 그룹 사이 간격 */
+    gap: 8px; /* 버튼 사이 간격 */
 `;
+
 
 
 /* 게시글 팔로우 버튼 그룹을 위한 flex 컨테이너 */
@@ -437,21 +436,40 @@ export const PostFollowActions = styled.div`
 
 
 export const FollowButton = styled.button`
-    background-color: ${props => (props.isFollowing ? '#dc3545' : '#28a745')}; /* 팔로우 상태에 따라 색상 변경 */
-    color: white;
+    background: linear-gradient(90deg, #36abc9, #198dbb);
+    color: #fff;
     border: none;
-    padding: 5px 10px; /* 패딩 감소 */
-    border-radius: 20px; /* 더 둥근 모서리 */
+    /* 크기를 비슷하게 조정 */
+    padding: 4px 8px; /* FollowInfoButton 크기에 맞춰 조정 */
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 0.85rem; /* FollowInfoButton 크기에 맞춰 조정 */
+    box-shadow: 0 2px 8px #44c0ee26;
+    letter-spacing: -0.01em;
     cursor: pointer;
-    font-size: 0.8em; /* 폰트 크기 감소 */
-    font-weight: 600; /* 폰트 굵기 */
-    transition: background-color 0.2s ease, transform 0.1s ease; /* 색상 및 transform 애니메이션 추가 */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background .16s, box-shadow .16s, transform .13s;
+    margin-left: 10px; /* 댓글 작성자 정보와의 간격 */
+
     &:hover {
+        background: linear-gradient(90deg, #198dbb, #36abc9);
+        box-shadow: 0 4px 10px #44c0ee36;
         transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    &.unfollow {
+        background: linear-gradient(90deg, #e35d83, #ef717a);
+        &:hover {
+            background: linear-gradient(90deg, #ef717a, #e35d83);
+        }
     }
 `;
+
+
 
 
 export const FollowInfoButton = styled.button`
@@ -465,6 +483,8 @@ export const FollowInfoButton = styled.button`
     font-weight: 600; /* 폰트 굵기 */
     transition: background-color 0.2s ease, transform 0.1s ease; /* 색상 및 transform 애니메이션 추가 */
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    margin-left: 6px; /* 댓글 작성자 정보와의 간격 */
+
     &:hover {
         transform: translateY(-1px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.3);

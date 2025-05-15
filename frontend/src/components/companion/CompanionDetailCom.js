@@ -37,7 +37,6 @@ import {
     CommentPagingButton,
     FollowButton,
     FollowInfoButton, // FollowInfoButton 임포트
-    /* 새로 추가된 스타일 컴포넌트 임포트 */
     CommentAuthorInfo,
     CommentFollowActions,
     PostFollowActions
@@ -322,7 +321,7 @@ function CompanionDetailCom({
                         {isLoggedIn && companion.authorMemberCode && currentMemberCode !== companion.authorMemberCode && (
                             <FollowButton
                                 onClick={() => handleFollowClick(companion.authorMemberCode, isFollowing[companion.authorMemberCode])}
-                                isFollowing={isFollowing[companion.authorMemberCode]}
+                                className={isFollowing[companion.authorMemberCode] ? 'unfollow' : ''} // 언팔로우 상태일 때 unfollow 클래스 추가
                             >
                                 {isFollowing[companion.authorMemberCode] ? '언팔로우' : '팔로우'}
                             </FollowButton>
@@ -336,7 +335,9 @@ function CompanionDetailCom({
                 </AuthorLine>
                 <PostStatsLine>
                     <CreatedAt>작성일: {createdDate}</CreatedAt>
-                    {modifiedDateText && <ModifiedAt> (수정됨: {modifiedDateText})</ModifiedAt>}
+                    {modifiedDateText && (
+                        <ModifiedAt>{`(수정됨: ${modifiedDateText})`}</ModifiedAt>
+                    )}
                         <ViewCount>조회수: {companion.companionViewCount || 0}</ViewCount>
             </PostStatsLine>
         </MetaInfo>
@@ -373,34 +374,36 @@ function CompanionDetailCom({
                                         style={{ width: '25px', height: '25px', borderRadius: '50%', marginRight: '8px' }}
                                     />
                                     {comment.authorName || '익명'}
+                                    {/* 댓글 팔로우 버튼 그룹  */}
+                                    {isLoggedIn && comment.authorMemberCode && ( // 조건 단순화 및 괄호 사용
+                                        <CommentFollowActions>
+                                            {comment.authorMemberCode && currentMemberCode !== comment.authorMemberCode && (
+                                                <FollowButton
+                                                    onClick={() => handleFollowClick(comment.authorMemberCode, isFollowing[comment.authorMemberCode])}
+                                                    className={isFollowing[comment.authorMemberCode] ? 'unfollow' : ''} // 언팔로우 상태일 때 unfollow 클래스 추가
+                                                >
+                                                    {isFollowing[comment.authorMemberCode] ? '언팔로우' : '팔로우'}
+                                                </FollowButton>
+                                            )}
+                                            {comment.authorMemberCode && (
+                                                <FollowInfoButton onClick={() => handleShowFollowInfo(comment.authorMemberCode)}>
+                                                    팔로우 정보
+                                                </FollowInfoButton>
+                                            )}
+                                        </CommentFollowActions>
+
+                                    )}
                                 </CommentAuthor>
                                 <CommentDates>
-                                    <CommentDate>{formatDate(comment.companionCommentCreatedAt)}</CommentDate>
+                                    <CommentDate>작성일 : {formatDate(comment.companionCommentCreatedAt)}</CommentDate>
                                     {comment.companionCommentModifiedAt && comment.companionCommentModifiedAt !== comment.companionCommentCreatedAt && (
-                                        <ModifiedAt> (수정됨: {formatDate(comment.companionCommentModifiedAt)})</ModifiedAt>
-                                        )}
+                                        <ModifiedAt>{`(수정됨: ${formatDate(comment.companionCommentModifiedAt)})`}</ModifiedAt>
+                                    )}
                                 </CommentDates>
                             </CommentAuthorInfo>
                         </CommentMeta>
 
-                        {/* 댓글 팔로우 버튼 그룹 (가운데 정렬) */}
-                        {isLoggedIn && (comment.authorMemberCode && currentMemberCode !== comment.authorMemberCode || comment.authorMemberCode === currentMemberCode) && (
-                            <CommentFollowActions>
-                                {comment.authorMemberCode && currentMemberCode !== comment.authorMemberCode && (
-                                    <FollowButton
-                                        onClick={() => handleFollowClick(comment.authorMemberCode, isFollowing[comment.authorMemberCode])}
-                                        isFollowing={isFollowing[comment.authorMemberCode]}
-                                    >
-                                        {isFollowing[comment.authorMemberCode] ? '언팔로우' : '팔로우'}
-                                    </FollowButton>
-                                )}
-                                {comment.authorMemberCode && (
-                                    <FollowInfoButton onClick={() => handleShowFollowInfo(comment.authorMemberCode)}>
-                                        팔로우 정보
-                                    </FollowInfoButton>
-                                )}
-                            </CommentFollowActions>
-                        )}
+
 
                         {editingCommentId === comment.companionCommentId ? (
                             <EditForm onSubmit={(e) => { e.preventDefault(); handleSaveClick(comment.companionCommentId); }}>
@@ -431,17 +434,17 @@ function CompanionDetailCom({
         {renderCommentPagination()}
 
     </CommentSection>
-{/* FollowModalCom 컴포넌트 렌더링 */}
-    <FollowModal
-        show={showFollowModal}
-        onClose={handleCloseFollowModal}
-        title={modalTitle}
-        members={modalMembers}
-        showFollowingList={showFollowingList} // 상태 전달
-        setShowFollowingList={setShowFollowingList} // 상태 업데이트 함수 전달
-    />
-</CompanionDetailWrapper>
-);
+    {/* FollowModalCom 컴포넌트 렌더링 */}
+        <FollowModal
+            show={showFollowModal}
+            onClose={handleCloseFollowModal}
+            title={modalTitle}
+            members={modalMembers}
+            showFollowingList={showFollowingList} // 상태 전달
+            setShowFollowingList={setShowFollowingList} // 상태 업데이트 함수 전달
+        />
+    </CompanionDetailWrapper>
+    );
 }
 
 export default CompanionDetailCom;
