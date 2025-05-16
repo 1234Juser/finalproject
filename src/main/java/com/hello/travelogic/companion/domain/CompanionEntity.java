@@ -4,6 +4,7 @@ import com.hello.travelogic.member.domain.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@DynamicInsert //  기본값 적용을 위해 추가
 public class CompanionEntity {
 
     @Id
@@ -41,4 +43,7 @@ public class CompanionEntity {
     @ColumnDefault("0")
     private Integer companionViewCount;
 
+    @Column(name="companion_notice", nullable = false)
+    @ColumnDefault("false") //데이터에비스 레벨 기본값
+    private boolean companionNotice = false;
 }

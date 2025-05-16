@@ -17,6 +17,7 @@ public class CompanionListDTO {
     private String authorProfileImageUrl; // 작성자 프로필 이미지 URL
     private LocalDateTime companionCreatedAt;
     private Integer companionViewCount;
+    private boolean companionNotice;
 
     public static CompanionListDTO fromEntity(CompanionEntity entity) {
         if (entity == null) return null;
@@ -27,6 +28,7 @@ public class CompanionListDTO {
                 .authorProfileImageUrl(entity.getMember() != null ? entity.getMember().getMemberProfileImageUrl() : null)
                 .companionCreatedAt(entity.getCompanionCreatedAt())
                 .companionViewCount(entity.getCompanionViewCount())
+                .companionNotice(entity.isCompanionNotice())
                 .build();
     }
 

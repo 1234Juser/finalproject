@@ -9,6 +9,8 @@ function CompanionEditCon() {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [isNotice, setIsNotice] = useState(false); // 공지사항 상태 추가
+    const [isAdmin, setIsAdmin] = useState(false); // 관리자 여부 상태 추가
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [titleError, setTitleError] = useState('');
@@ -17,28 +19,45 @@ function CompanionEditCon() {
     const [initialDataLoaded, setInitialDataLoaded] = useState(false); // 초기 데이터 로드 여부
 
     useEffect(() => {
+
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                const roles = decodedToken.roles || []; // 토큰에 역할 정보가 있다고 가정
+                if (roles.includes('ROLE_ADMIN')) {
+                    setIsAdmin(true);
+                }
+            } catch (e) {
+                console.error("Error decoding token for role check:", e);
+            }
+        }
+
         const fetchCompanionDetail = async () => {
             setLoading(true);
             setError(null);
             try {
                 const response = await axios.get(`/companions/${companionId}`);
+                console.log('응답확인:', response.data);
                 setTitle(response.data.companionTitle);
                 setContent(response.data.companionContent);
+                setIsNotice(response.data.companionNotice || false);
                 setInitialDataLoaded(true); // 데이터 로드 완료 표시
 
                 // 현재 로그인된 사용자가 작성자인지 확인하여 수정 권한 부여
-                const token = localStorage.getItem("accessToken");
+                // const token = localStorage.getItem("accessToken");
                 if (token) {
                     try {
                         const decodedToken = jwtDecode(token); //사용자가 맞는지 토큰
                         const currentMemberCode = decodedToken.memberCode;
                         const authorMemberCode = response.data.authorMemberCode;
+                        const roles = decodedToken.roles || [];
 
-                        if (authorMemberCode && authorMemberCode !== currentMemberCode) {
-                            // 작성자가 아니면 상세 페이지로 리다이렉트 또는 에러 처리
+                        if (!roles.includes('ROLE_ADMIN') && authorMemberCode && authorMemberCode !== currentMemberCode) {
                             alert("게시글 수정 권한이 없습니다.");
                             navigate(`/community/companion/${companionId}`);
                         }
+
                     } catch (decodeError) {
                         console.error("토큰 디코딩 실패:", decodeError);
                         alert("인증 정보가 유효하지 않습니다. 다시 로그인해주세요.");
@@ -97,6 +116,10 @@ function CompanionEditCon() {
         const params = new URLSearchParams();
         params.append('companionTitle', title);
         params.append('companionContent', content);
+        // 관리자인 경우 또는 공지사항 상태가 변경된 경우에만 isNotice 파라미터 추가
+        if (isAdmin) {
+            params.append('isNotice', isNotice);
+        }
 
         try {
             await axios.put(
@@ -137,6 +160,10 @@ function CompanionEditCon() {
         navigate(`/community/companion/${companionId}`); // 상세 페이지로 돌아가기
     };
 
+    const handleIsNoticeChange = (e) => {
+        setIsNotice(e.target.checked);
+    };
+
     // 로딩 또는 에러 상태 처리
     if (loading) return <div>게시글 정보를 불러오는 중...</div>;
     if (error) return <div>{error}</div>;
@@ -162,6 +189,10 @@ function CompanionEditCon() {
             titleError={titleError}
             contentError={contentError}
             formError={formError}
+            isNotice={isNotice} // 공지사항 상태 전달
+            onIsNoticeChange={handleIsNoticeChange} // 공지사항 변경 핸들러 전달
+            isAdmin={isAdmin} // 관리자 여부 전달
+
         />
     );
 }
