@@ -135,3 +135,24 @@ export const ErrorMessage = styled.p`
     font-size: 0.875rem;
     margin-top: 0.25rem;
 `;
+
+// 추가된 체크박스 관련 스타일
+export const CheckboxWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    margin-top: 10px; // 필요에 따라 간격 조정
+`;
+
+
+export const CheckboxInput = styled.input`
+    margin-right: 8px;
+    width: 16px; // 체크박스 크기
+    height: 16px; // 체크박스 크기
+    cursor: pointer;
+`;
+
+export const CheckboxLabel = styled.label`
+    font-size: 0.95rem;
+    color: #333;
+    cursor: pointer;
+`;

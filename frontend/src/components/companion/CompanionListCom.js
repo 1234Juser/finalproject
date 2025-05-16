@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaCaretDown } from "react-icons/fa"; // FaCaretDown 아이콘 추가
+import { FaCaretDown, FaBullhorn } from "react-icons/fa"; // FaBullhorn 아이콘 추가 (공지용)
 import {
     Container,
     PageTitle,
@@ -16,7 +16,8 @@ import {
     SearchOptionsContainer,
     ToggleButton,
     DropdownMenu,
-    DropdownItem
+    DropdownItem,
+    NoticeBadge // 공지사항 뱃지 스타일 (CompanionListStyle.js에 추가 필요)
 } from "../../style/companion/CompanionListStyle";
 
 const DEFAULT_PROFILE_IMAGE = "/img/default-profile.jpg";
@@ -100,6 +101,12 @@ function CompanionListCom({
         onSearchSubmit(e);
     };
 
+    const Palette = {
+        blue: "#198dbb", // 예시 색상, 실제 Palette 객체 값 사용
+        // ... 기타 필요한 색상들
+    };
+
+
     return (
         <Container>
             <PageTitle>커뮤니티 게시판</PageTitle>
@@ -117,7 +124,7 @@ function CompanionListCom({
                     <SearchOptionsContainer ref={dropdownRef}>
                         <ToggleButton onClick={toggleDropdown}>
                             {searchType === "title" ? "제목" : "작성자"}
-                            <FaCaretDown style={{ marginLeft: '5px' }} /> {/* 아이콘 추가 */}
+                            <FaCaretDown style={{ marginLeft: '5px' }} />
                         </ToggleButton>
                         {isDropdownOpen && (
                             <DropdownMenu>
@@ -151,18 +158,31 @@ function CompanionListCom({
                 <tbody>
                 {companions.length > 0 ? (
                     companions.map((companion, index) => (
-                        <tr key={companion.companionId} onClick={() => onRowClick(companion.companionId)}>
+                        <tr
+                            key={companion.companionId}
+                            onClick={() => onRowClick(companion.companionId)}
+                            className={companion.companionNotice ? 'notice-row' : ''}
+                        >
                             <td>
-                                {index + 1 + (currentPage * itemsPerPage)}
+                                {companion.companionNotice ? (
+                                    <FaBullhorn style={{ color: Palette.blue, marginRight: '5px' }} />
+                                ) : (
+                                    index + 1 + (currentPage * itemsPerPage)
+                                )}
                             </td>
-                            <td>{companion.companionTitle}</td>
-                            <td style={{ display: 'flex', alignItems: 'center' }}>
-                                <img
-                                    src={companion.authorProfileImageUrl || DEFAULT_PROFILE_IMAGE}
-                                    alt={`${companion.authorName || '익명'} 프로필`}
-                                    style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
-                                />
-                                {companion.authorName || '익명'}
+                            <td>
+                                {companion.companionNotice && <NoticeBadge>[공지]</NoticeBadge>}
+                                {companion.companionTitle}
+                            </td>
+                            <td>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <img
+                                        src={companion.authorProfileImageUrl || DEFAULT_PROFILE_IMAGE}
+                                        alt={`${companion.authorName || '익명'} 프로필`}
+                                        style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
+                                    />
+                                    {companion.authorName || '익명'}
+                                </div>
                             </td>
                             <td>{new Date(companion.companionCreatedAt).toLocaleDateString()}</td>
                             <td>{companion.companionViewCount}</td>

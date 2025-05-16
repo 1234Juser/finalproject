@@ -20,16 +20,17 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/companions")
-@Validated // 클래스 레벨에 @Validated 추가하여 파라미터 유효성 검사 활성화
+@Validated
 public class CompanionController {
     private final CompanionService companionService;
 
-    // 게시글 목록 조회 (누구나 접근 가능, 기본 10개, 최신순)
+    // 게시글 목록 조회 (누구나 접근 가능, 기본 10개, 공지사항 상단, 최신순)
     @GetMapping
     public ResponseEntity<Page<CompanionListDTO>> getAllCompanions(
-            @RequestParam(name = "searchKeyword", required = false) String searchKeyword, // 검색어 파라미터 추가
-            @RequestParam(name = "searchType", required = false) String searchType,
-            @PageableDefault(size = 10, sort = "companionCreatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @RequestParam(name = "searchKeyword", required = false) String searchKeyword,
+            @RequestParam(name = "searchType", required = false, defaultValue = "title") String searchType, // 기본값 title로 설정
+            // PageableDefault 에서 sort 는 서비스 레이어에서 제어하므로 여기서는 제거하거나 기본값만 둡니다.
+            @PageableDefault(size = 10) Pageable pageable) {
         log.info("검색요청 searchKeyword: '{}', searchType: '{}', pageable: {}", searchKeyword, searchType, pageable);
         Page<CompanionListDTO> companions = companionService.getAllCompanions(searchKeyword, searchType, pageable);
         return ResponseEntity.ok(companions);
@@ -48,33 +49,33 @@ public class CompanionController {
     public ResponseEntity<Void> createCompanion(
             @RequestParam String companionTitle,
             @RequestParam String companionContent,
+            @RequestParam(required = false) Boolean isNotice, // 공지사항 여부 파라미터 추가
             Authentication authentication
     ) {
         String token = (String) authentication.getCredentials();
-        // 추가: 파라미터 및 토큰 로깅
-        log.info("createCompanion called with title: '{}', content: '{}'", companionTitle, companionContent);
+//        log.info("createCompanion called with title: '{}', content: '{}', isNotice: {}", companionTitle, companionContent, isNotice);
         if (token == null || token.isEmpty()) {
             log.warn("Token is null or empty!");
-        } else {
-            log.info("Token received: {}", token);
         }
 
-        companionService.createCompanion(companionTitle, companionContent, token);
+        companionService.createCompanion(companionTitle, companionContent, token, isNotice);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     // 게시글 수정 (작성자 본인만 가능)
+    // 공지사항 수정 기능도 필요하면, isNotice 파라미터 및 관련 로직 추가 필요
     @PutMapping("/{companionId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> updateCompanion(
             @PathVariable Integer companionId,
             @RequestParam String companionTitle,
             @RequestParam String companionContent,
+            @RequestParam(required = false) Boolean isNotice, // 공지사항 여부 파라미터 추가
             Authentication authentication
     ) {
         String token = (String) authentication.getCredentials();
-        companionService.updateCompanion(companionId, companionTitle, companionContent, token);
+        companionService.updateCompanion(companionId, companionTitle, companionContent, token, isNotice);
         return ResponseEntity.ok().build();
     }
 

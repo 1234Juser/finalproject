@@ -13,8 +13,12 @@ const Palette = {
     text: "#273a69",
     subText: "#6a87a9",
     white: "#fff",
-    tabShadow: "0 2px 8px #92c7eb55"
+    tabShadow: "0 2px 8px #92c7eb55",
+    noticeBg: "#fffbea", // 공지사항 배경색
+    noticeHoverBg: "#fff5cc", // 공지사항 호버 배경색
+    noticeColor: "#c09853" // 공지사항 텍스트/뱃지 색상
 };
+// ... (기존 스타일 코드)
 
 export const Container = styled.div`
     padding: 20px;
@@ -36,12 +40,11 @@ export const SearchContainer = styled.div`
     align-items: center;
 `;
 
-// 검색 관련 요소들을 감싸는 컨테이너 추가
 export const SearchInputContainer = styled.div`
     display: flex;
     align-items: center;
-    flex-grow: 1; // 등록 버튼을 제외한 나머지 공간 차지
-    margin-right: 10px; // 등록 버튼과의 간격
+    flex-grow: 1; 
+    margin-right: 10px; 
 `;
 
 export const SearchForm = styled.form`
@@ -82,15 +85,13 @@ export const StyledFaSearch = styled(FaSearch)`
     cursor: pointer;
 `;
 
-// 검색 기준 컨테이너 스타일 수정
 export const SearchOptionsContainer = styled.div`
-    position: relative; // 드롭다운 메뉴를 위한 position 설정
+    position: relative; 
     display: flex;
     align-items: center;
     margin-left: 10px;
 `;
 
-// 기존 ToggleButton 스타일은 유지하거나 필요시 수정
 export const ToggleButton = styled.button`
     padding: 0.5em 0.8em;
     background-color: ${Palette.blueLight};
@@ -101,25 +102,24 @@ export const ToggleButton = styled.button`
     font-size: 0.9rem;
     font-weight: 500;
     transition: background-color 0.3s;
-    min-width: 70px; // 버튼 최소 너비 설정
+    min-width: 70px; 
 
     &:hover {
         background-color: ${Palette.blue};
     }
 `;
 
-// 드롭다운 메뉴 스타일 추가
 export const DropdownMenu = styled.div`
     position: absolute;
-    top: 100%; // 버튼 바로 아래에 위치
+    top: 100%; 
     left: 0;
     background-color: ${Palette.white};
     border: 1px solid ${Palette.borderGray};
     border-radius: 8px;
     box-shadow: ${Palette.shadow};
     z-index: 10;
-    margin-top: 5px; // 버튼과의 간격
-    width: 100%; // 버튼 너비에 맞춤
+    margin-top: 5px; 
+    width: 100%; 
 `;
 
 export const DropdownItem = styled.div`
@@ -137,14 +137,6 @@ export const DropdownItem = styled.div`
     }
 `;
 
-// SearchTypeText는 더 이상 사용하지 않으므로 주석 처리 또는 삭제 가능
-// export const SearchTypeText = styled.span`
-//     font-size: 0.9rem;
-//     color: ${Palette.subText};
-//     margin-right: 8px;
-// `;
-
-
 export const CompanionTable = styled.table`
     width: 100%;
     border-collapse: collapse;
@@ -158,6 +150,10 @@ export const CompanionTable = styled.table`
         padding: 12px 15px;
         text-align: left;
         color: ${Palette.text};
+        vertical-align: middle; // 아이콘과 텍스트 정렬을 위해 추가
+        white-space: nowrap; /* 내용이 길어도 한 줄로 표시 */
+        text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
+
     }
 
     th {
@@ -166,6 +162,14 @@ export const CompanionTable = styled.table`
         font-weight: 600;
         color: ${Palette.text};
     }
+
+    /* 컬럼 너비 설정 */
+    th:nth-child(1), td:nth-child(1) { width: 10%; } /* 번호 */
+    th:nth-child(2), td:nth-child(2) { width: 50%; white-space: normal; } /* 제목 - 여러 줄 표시 가능하도록 */
+    th:nth-child(3), td:nth-child(3) { width: 20%; } /* 작성자 */
+    th:nth-child(4), td:nth-child(4) { width: 10%; } /* 작성일 */
+    th:nth-child(5), td:nth-child(5) { width: 10%; } /* 조회수 */
+
 
     tbody tr {
         background-color: ${Palette.white};
@@ -177,10 +181,37 @@ export const CompanionTable = styled.table`
         cursor: pointer;
     }
 
+    /* 공지사항 행 스타일 */
+    tbody tr.notice-row {
+        background-color: ${Palette.noticeBg};
+        font-weight: 500; /* 공지사항 텍스트 약간 굵게 */
+    }
+
+    tbody tr.notice-row:hover {
+        background-color: ${Palette.noticeHoverBg};
+    }
+    
+    tbody tr.notice-row td {
+        color: ${Palette.text}; /* 공지사항 텍스트 색상은 기본 유지 또는 필요시 변경 */
+    }
+
+
     td img {
         border: 1px solid ${Palette.borderGray};
     }
 `;
+
+/* 공지사항 뱃지 스타일 */
+export const NoticeBadge = styled.span`
+    background-color: ${Palette.blueLight};
+    color: ${Palette.white};
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-right: 8px;
+`;
+
 
 export const ButtonContainer = styled.div`
     display: flex;

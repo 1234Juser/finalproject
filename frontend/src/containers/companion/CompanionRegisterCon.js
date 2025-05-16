@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CompanionRegisterCom from '../../components/companion/CompanionRegisterCom';
@@ -6,10 +6,20 @@ import CompanionRegisterCom from '../../components/companion/CompanionRegisterCo
 function CompanionRegisterCon() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [isNotice, setIsNotice] = useState(false); // 공지사항 상태 추가
+    const [isAdmin, setIsAdmin] = useState(false); // 관리자 여부 상태 추가
     const [titleError, setTitleError] = useState('');
     const [contentError, setContentError] = useState('');
     const [formError, setFormError] = useState(''); // 폼 전체 에러 메시지
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // 사용자 역할 확인 (예: localStorage 사용)
+        const roles = JSON.parse(localStorage.getItem('roles') || '[]');
+        if (roles.includes('ROLE_ADMIN')) {
+            setIsAdmin(true);
+        }
+    }, []);
 
     const validateForm = () => {
         let isValid = true;
@@ -49,6 +59,10 @@ function CompanionRegisterCon() {
         const params = new URLSearchParams();
         params.append('companionTitle', title);
         params.append('companionContent', content);
+        if (isAdmin) { // 관리자인 경우에만 isNotice 파라미터 추가
+            params.append('isNotice', isNotice);
+        }
+
 
         // 추가: 전송 직전 값 확인
         console.log('Submitting data:', { title, content, token });
@@ -96,6 +110,11 @@ function CompanionRegisterCon() {
         navigate('/community/companion');
     };
 
+    const handleIsNoticeChange = (e) => {
+        setIsNotice(e.target.checked);
+    };
+
+
     return (
         <CompanionRegisterCom
             title={title}
@@ -115,6 +134,9 @@ function CompanionRegisterCon() {
             titleError={titleError}
             contentError={contentError}
             formError={formError}
+            isNotice={isNotice}
+            onIsNoticeChange={handleIsNoticeChange}
+            isAdmin={isAdmin}
         />
     );
 }

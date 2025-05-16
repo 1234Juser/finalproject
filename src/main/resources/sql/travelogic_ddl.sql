@@ -299,6 +299,7 @@ CREATE TABLE `tbl_companion` (
                                  companion_created_at DATETIME NOT NULL COMMENT '작성일자',
                                  companion_modified_at DATETIME NULL COMMENT '수정일자',
                                  companion_view_count INT DEFAULT 0 NOT NULL COMMENT '조회수',
+                                 companion_notice BOOLEAN DEFAULT false NOT NULL COMMENT '공지사항',
                                  CONSTRAINT `PK_TBL_COMPANION` PRIMARY KEY (`companion_id`),
                                  CONSTRAINT `FK_tbl_member_TO_tbl_companion_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
 )ENGINE=INNODB COMMENT '여행게시판';
