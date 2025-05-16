@@ -26,6 +26,16 @@ function reservationReducer(state = initialState, action) {
                 loading: false,
             };
         case 'REMOVE_RESERVATION':
+            const reservation = state.reservations.find(res => res.orderCode === action.payload);
+            if (!reservation) return state;
+            if (reservation.orderStatus === "CANCELED") {
+                alert("이미 취소된 여행입니다.");
+                return state;
+            }
+            if (reservation.orderStatus === "COMPLETED") {
+                alert("종료된 여행이므로 취소할 수 없습니다.");
+                return state;
+            }
             return {
                 ...state,
                 reservations: state.reservations.map(res =>

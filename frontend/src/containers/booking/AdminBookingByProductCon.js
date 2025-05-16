@@ -112,6 +112,23 @@ function AdminBookingByProductCon({accessToken}) {
         if (!confirmed) return;
 
         try {
+            // 선택된 예약 상태 체크
+            const invalidOrders = reservations.filter(reservation =>
+                selectedOrders.includes(reservation.orderCode) &&
+                (reservation.orderStatus === "CANCELED" || reservation.orderStatus === "COMPLETED")
+            );
+            if (invalidOrders.length > 0) {
+                invalidOrders.forEach(res => {
+                    if (res.orderStatus === "CANCELED") {
+                        alert(`예약 번호 ${res.orderCode}는 이미 취소된 여행입니다.`);
+                    }
+                    if (res.orderStatus === "COMPLETED") {
+                        alert(`예약 번호 ${res.orderCode}는 종료된 여행이므로 취소할 수 없습니다.`);
+                    }
+                });
+                return;
+            }
+            // 예약 취소 요청
             await cancelReservations(selectedOrders, accessToken);
             alert("예약이 성공적으로 취소되었습니다.");
             setSelectedOrders([]);
