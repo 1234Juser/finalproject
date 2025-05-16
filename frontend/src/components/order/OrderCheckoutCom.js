@@ -8,7 +8,12 @@ function OrderCheckoutCom({ optionData, loading, error, onCheckout }) {
         adultCount = 0,
         childCount = 0,
         totalPrice = 0,
+        productThumbnail = null,
     } = optionData;
+
+    const imagePath = productThumbnail
+        ? `/upload/product/${encodeURIComponent(productThumbnail)}`
+        : "/img/default-product.jpg";
 
     return(
     <>
@@ -17,13 +22,21 @@ function OrderCheckoutCom({ optionData, loading, error, onCheckout }) {
             <Section>
                 <Title>예약하기</Title>
                 <ProductInfo>
-                    <ProductImage src={optionData?.productImage || ''} alt={optionData?.productTitle || '상품명 없음'} />
+                    <ProductImage src={optionData?.productThumbnail || ''} alt={optionData?.productTitle || '상품명 없음'} />
                     <ProductDetails>
                         <ProductTitleText>{optionData?.productTitle || '상품명 없음'}</ProductTitleText>
                         <ReservationDate>{optionData?.reservationDate || '예약일 없음'}</ReservationDate>
+                        <TotalPrice>일반 총 금액{(optionData?.productAdult || 0).toLocaleString()}원</TotalPrice>
+                        <TotalPrice>아동 총 금액{(optionData?.productChild || 0).toLocaleString()}원</TotalPrice>
                         <TotalPrice>{(optionData?.totalPrice || 0).toLocaleString()}원</TotalPrice>
                     </ProductDetails>
                 </ProductInfo>
+                <div>
+                    구매자 정보
+                </div>
+                <div>
+                    결제수단 선택
+                </div>
             </Section>
 
             {/* 결제 정보 */}
@@ -69,6 +82,11 @@ const Wrapper = styled.div`
     flex-wrap: wrap;
     padding: 2rem;
     background-color: #f9f9f9;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
 `;
 
 const Section = styled.div`
@@ -79,6 +97,7 @@ const Section = styled.div`
 const Sidebar = styled.div`
     flex: 1;
     min-width: 300px;
+    max-width: 250px;
     background-color: #fff;
     border-radius: 12px;
     padding: 1.5rem;
@@ -96,11 +115,15 @@ const ProductInfo = styled.div`
 `;
 
 const ProductImage = styled.img`
-    width: 150px;
-    height: 100px;
-    object-fit: cover;
+    width: 100%;
+    max-width: 400px;
+    max-height: 400px;
+    aspect-ratio: auto;
+    object-fit: contain;
+    //object-fit: cover;
     border-radius: 8px;
     margin-right: 1rem;
+    align-self: flex-start;
 `;
 
 const ProductDetails = styled.div`
@@ -166,6 +189,16 @@ const TermItem = styled.div`
 
 const CancelPolicy = styled.div`
     margin-bottom: 1.5rem;
+    ul {
+        padding-left: 0;
+        margin-left: 0;
+        list-style-position: inside;
+    }
+
+    li {
+        margin-bottom: 0.2rem;
+        font-size: 0.9rem;
+    }
 `;
 
 const CancelTitle = styled.h4`

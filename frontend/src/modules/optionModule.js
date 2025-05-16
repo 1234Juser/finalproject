@@ -9,6 +9,7 @@ const initialState = {
     childCount: 0,
     totalPrice: 0,
     productMaxParticipants: null,
+    productThumbnail : null,
     loading: false,
     error: null,
     fromDate: new Date(),
