@@ -21,6 +21,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -45,12 +48,48 @@ public class OptionService {
         optionDTO.setProductChild(productEntity.getProductChild());
         optionDTO.setAdultCount(0);
         optionDTO.setChildCount(0);
+        optionDTO.setProductMaxParticipants(productEntity.getProductMaxParticipants());
         optionDTO.setReservationDate(null);
 //        optionDTO.setTotalPrice(0); // 초기 가격은 0으로 설정
 
         // 초기 가격은 이미 0으로 설정되어 있으므로 추가 설정 불필요
         log.info("🟢 OptionService - OptionDTO 생성: {}", optionDTO);
         return optionDTO;
+    }
+
+    public List<OptionDTO> getOptionsByDate(String productUid, String startDate, String endDate) {
+        try {
+            // 문자열로 받은 날짜를 LocalDate로 변환
+//            LocalDate date = LocalDate.parse(reservationDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//            LocalDate parsedDate = LocalDate.parse(reservationDate.trim());
+//            log.info("📝 검색할 reservationDate: {}", parsedDate);
+            LocalDate start = LocalDate.parse(startDate.trim());
+            LocalDate end = LocalDate.parse(endDate.trim());
+
+            log.info("📝 검색할 예약 날짜 범위: {} ~ {}", start, end);
+
+            // DB에서 옵션 조회
+            List<OptionEntity> options = optionRepo.findByProduct_ProductUidAndReservationDate(productUid, start, end);
+            log.info("🟢 예약 가능한 옵션 조회 ({}개): {}", options.size(), options);
+
+            // 조회된 옵션을 DTO로 변환하여 반환
+//            List<OptionDTO> optionDTOs = options.stream()
+//                    .map(OptionDTO::new)
+//                    .collect(Collectors.toList());
+//
+//            log.info("🟢 예약 가능한 옵션 조회: {}", optionDTOs);
+//            return optionDTOs;
+            // DTO로 변환
+            return options.stream()
+                    .map(OptionDTO::new)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+//            log.error("🔴 예약 가능한 옵션 조회 실패:", e);
+//            throw new RuntimeException("예약 가능한 옵션 조회 실패: " + e.getMessage());
+            log.error("🔴 예약 가능한 옵션 조회 실패: {}", e.getMessage());
+            throw e;
+        }
     }
 
     @Transactional
@@ -60,6 +99,7 @@ public class OptionService {
         if (reservationDate == null || reservationDate.isBlank()) {
             throw new IllegalArgumentException("예약 날짜가 비어있습니다.");
         }
+        LocalDate parsedDate = LocalDate.parse(reservationDate);
 
         OptionEntity option = new OptionEntity();
         option.setProduct(product);
@@ -67,7 +107,7 @@ public class OptionService {
         if (reservationDate != null && !reservationDate.isBlank()) {
             option.setReservationDate(LocalDate.parse(reservationDate));
         } else {
-            option.setReservationDate(null);  // 명시적으로 null 설정
+            option.setReservationDate(parsedDate);  // 명시적으로 null 설정
         }
         option.setAdultCount(0); // 기본값 설정
         option.setChildCount(0);
@@ -76,9 +116,9 @@ public class OptionService {
         log.info("🟢 예약 날짜 저장 완료: productUid = {}, reservationDate = {}", productUid, reservationDate);
     }
 
-    // 실제 예약 옵션 생성 : 회원만 접근 가능
+    // 실제 예약 옵션 생성(중복예약 방지, 날짜별 최대 예약인원 체크) : 회원만 접근 가능
     @Transactional
-    public Long saveReservation(String productUid, String reservationDate, Authentication authentication) {
+    public Long saveReservation(String productUid, String reservationDate, int adultCount, int childCount, Authentication authentication) {
         ProductEntity product = productRepo.findByProductUid(productUid)
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
 
@@ -96,12 +136,23 @@ public class OptionService {
             throw new IllegalStateException("해당 날짜에 이미 동일 상품에 대한 예약이 존재합니다.");
         }
 
+        // **최대 예약 인원 체크**
+        int currentParticipants = optionRepo.getTotalParticipantsByDate(productUid, date);
+        int newParticipants = adultCount + childCount;
+        int maxParticipants = product.getProductMaxParticipants();
+
+        if (currentParticipants + newParticipants > maxParticipants) {
+            throw new IllegalStateException("최대 예약 인원을 초과했습니다.");
+        }
+
         OptionEntity option = new OptionEntity();
         option.setProduct(product);
 //        option.setReservationDate(date);
         option.setReservationDate(reservationDate != null ? LocalDate.parse(reservationDate) : null);
-        option.setAdultCount(0); // 기본값 설정
-        option.setChildCount(0);
+//        option.setAdultCount(0); // 기본값 설정
+//        option.setChildCount(0);
+        option.setAdultCount(adultCount);
+        option.setChildCount(childCount);
         optionRepo.save(option);
 
         log.info("🟢 옵션 저장 완료: optionCode = {}", option.getOptionCode());

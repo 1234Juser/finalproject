@@ -72,12 +72,19 @@ export const saveReservation = async (productUid, reservationDate, accessToken) 
     }
 };
 
-export const fetchOptionsByDate = async (productUid, date) => {
+export const fetchOptionsByDate = async (productUid, reservationDate) => {
     try {
-        const response = await axios.get(`${path}/products/${productUid}/options?date=${date}`);
+        const formattedDate = reservationDate instanceof Date
+            ? reservationDate.toISOString().split("T")[0]
+            : reservationDate;
+
+        const response = await axios.get(`${path}/products/${productUid}/option`, {
+            params: { date: reservationDate },
+        });
+        console.log("🟢 옵션 가격 데이터 가져오기 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("옵션 조회 실패:", error);
+        console.error("🔴 옵션 가격 데이터를 불러오는 데 실패했습니다:", error);
         throw error;
     }
 };
@@ -90,6 +97,18 @@ export const fetchOptionsByDate = async (productUid, date) => {
 //         throw error;
 //     }
 // };
+export const fetchOptionsByDateRange = async (productUid, startDate, endDate) => {
+    try {
+        const response = await axios.get(`${path}/products/${productUid}/option`, {
+            params: { startDate, endDate },
+        });
+        console.log("🟢 옵션 가격 데이터 가져오기 성공:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("🔴 옵션 가격 데이터를 불러오는 데 실패했습니다:", error);
+        throw error;
+    }
+};
 
 // 주문 생성
 export const createOrder = async (productUid, optionData, accessToken) => {

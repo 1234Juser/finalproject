@@ -8,6 +8,7 @@ import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.repo.ProductRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,10 +42,23 @@ public class OptionController {
         return ResponseEntity.ok(optionDTO);
     }
 
-//    @GetMapping("/option/date/{date}")
-//    public List<OptionEntity> getOptionsByDate(@PathVariable String reservationDate) {
-//        return optionRepo.findByDate(reservationDate);
-//    }
+    // 옵션들 정보 가져오기
+    @GetMapping("/products/{productUid}/option")
+    public ResponseEntity<?> getOptionsByDate(
+            @PathVariable String productUid,
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) {
+
+        try {
+            List<OptionDTO> options = optionService.getOptionsByDate(productUid, startDate, endDate);
+            log.info("🟢 조회된 옵션들: {}", options);
+            return ResponseEntity.ok(options);
+        } catch (Exception e) {
+            log.error("🔴 옵션 데이터 조회 실패:", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("옵션 데이터 조회 실패");
+        }
+    }
+
     // 예약 날짜 선택 : 비회원도 접근 가능
     @PatchMapping("/products/{productUid}/reservation-date")
     public ResponseEntity<?> selectReservationDate(
@@ -74,18 +88,20 @@ public class OptionController {
             Authentication authentication) {
 
         String reservationDate = requestBody.get("reservationDate");
+        Integer adultCount = Integer.parseInt(String.valueOf(requestBody.getOrDefault("adultCount", "0")));
+        Integer childCount = Integer.parseInt(String.valueOf(requestBody.getOrDefault("childCount", "0")));
 
         try {
             if (reservationDate == null || reservationDate.isBlank()) {
                 return ResponseEntity.badRequest().body("예약 날짜가 비어있습니다.");
             }
-            Long optionCode = optionService.saveReservation(productUid, reservationDate, authentication);
+            Long optionCode = optionService.saveReservation(productUid, reservationDate, adultCount, childCount, authentication);
             return ResponseEntity.ok(optionCode);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             log.error("🔴 예약 저장 실패:", e);
             return ResponseEntity.status(500).body(null);
         }
     }
-
-
 }

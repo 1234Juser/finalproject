@@ -27,6 +27,7 @@ public class OptionDTO {
     private String productTitle;
     private Integer productAdult;
     private Integer productChild;
+    private int productMaxParticipants;
 
     public OptionDTO(OptionEntity entity) {
         this.optionCode = entity.getOptionCode();
@@ -41,6 +42,7 @@ public class OptionDTO {
             this.productTitle = entity.getProduct().getProductTitle();
             this.productAdult = entity.getProduct().getProductAdult();
             this.productChild = entity.getProduct().getProductChild();
+            this.productMaxParticipants = entity.getProduct().getProductMaxParticipants();
             log.debug("🟡 ProductEntity 로드 완료 - productCode: {}, productTitle: {}", this.productCode, this.productTitle);
         }
     }
