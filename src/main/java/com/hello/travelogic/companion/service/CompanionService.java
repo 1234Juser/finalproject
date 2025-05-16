@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,13 +32,27 @@ public class CompanionService {
     private final CompanionRepository companionRepository;
     private final CompanionCommentRepository companionCommentRepository;
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil; // JwtUtil 주입
+    private final JwtUtil jwtUtil;
 
     // 게시글 목록 조회 (누구나 가능)
-    public Page<CompanionListDTO> getAllCompanions(Pageable pageable) {
+    public Page<CompanionListDTO> getAllCompanions(String searchKeyword, String searchType, Pageable pageable) {
         // 기본 페이지 크기를 10으로 설정하고, 최신순으로 정렬
         Pageable newPageable = PageRequest.of(pageable.getPageNumber(), 10, Sort.by(Sort.Direction.DESC, "companionCreatedAt"));
-        Page<CompanionEntity> companions = companionRepository.findAll(newPageable);
+        Page<CompanionEntity> companions;
+
+        if (StringUtils.hasText(searchKeyword)) { // 검색어가 있는 경우
+            if ("author".equalsIgnoreCase(searchType)) {
+                log.info("작성자 검색 : {}", searchKeyword);
+                companions = companionRepository.findByMember_MemberNameContainingIgnoreCase(searchKeyword, newPageable);
+            } else {
+                log.info("게시글 제목 검색: {}", searchKeyword);
+                companions = companionRepository.findByCompanionTitleContaining(searchKeyword, newPageable);
+            }
+        } else { // 검색어가 없는 경우
+            log.info("모든 게시판");
+            companions = companionRepository.findAll(newPageable);
+        }
+
         return companions.map(CompanionListDTO::fromEntity);
     }
 
