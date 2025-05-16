@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {FaHeart} from "react-icons/fa6";
 import { FaArrowLeft } from 'react-icons/fa6';
+import { FaAngleLeft } from 'react-icons/fa6';
 import emptyImage from "../../style/empty/empty-list.jpeg";
 
 const StyleLikeBlock = styled.div`
@@ -55,7 +56,7 @@ const GridWrap = styled.div`
 
 const Card = styled.div`
     width: 800px;
-    height: 140px;
+    height: 160px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     background: #fff;
@@ -69,9 +70,10 @@ const Card = styled.div`
 
 const ThumbImg = styled.img`
     width: 100%;
-    height: 110px;
+    height: 120px;
     object-fit: cover;
     border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 `;
 
 const CardBody = styled.div`
@@ -85,6 +87,11 @@ const CardBody = styled.div`
 const Title = styled.h4`
     font-size: 1rem;
     margin-bottom: 0.5rem;
+    word-break: keep-all;  // 단어 단위로 줄바꿈 방지
+    white-space: nowrap;   // 긴 제목이 한 줄로 유지
+    overflow: hidden;      // 너비를 넘어가는 경우 넘치는 텍스트 숨김
+    text-overflow: ellipsis;  // ... 말줄임 표시
+    text-align: center;
 `;
 
 const DeleteBtn = styled.button`
@@ -104,13 +111,21 @@ const DeleteBtn = styled.button`
 const Left = styled.div`
     flex: 1;
     max-width: 33%;
+    height: 160px;
+    padding: 5px;
+    align-items: center;
+    justify-content: center;
 `;
 
 const Center = styled.div`
-    flex: 1;
+    flex: 2;
     max-width: 33%;
+    min-width: 300px;
+    margin-left: 1rem;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    //align-items: center;
+    align-items: flex-start;
     justify-content: center;
 `;
 
@@ -132,61 +147,65 @@ function WishListCom({ wishList, onDeleteWish, selectedGroupCode, groupTitle, on
     const hasNoLists = !wishList || wishList.length === 0;
 
     return(
-    <>
-        <StyleLikeBlock>
-            <StyleContentWrap>
-                <TitleWrapper>
-                    <BackButton onClick={onBack}>
-                        <FaArrowLeft size={20} />
-                    </BackButton>
-                    <ListTitle>{groupTitle}의 위시리스트</ListTitle>
-                </TitleWrapper>
-                {hasNoLists ? (
-                    <div style={{ textAlign: "center", padding: "4rem 2rem" }}>
-                        <img
-                            src={emptyImage}
-                            alt="찜 상품 없음"
-                            style={{ width: "480px", marginBottom: "1.5rem", opacity: 0.7 }}
-                        />
-                        <p style={{ padding: "2rem", color: "#888", textAlign: "center" }}>
-                            아직 좋아요가 눌린 상품이 없어요.<br />
-                        </p>
-                    </div>
-                ) : (
-                    <GridWrap>
-                        <ul style={{ listStyle: "none", padding: 0 }}>
-                            {wishList && wishList.map(item => (
-                                <Card key={item.wishCode} style={{ marginBottom: "1rem" }}>
-                                    <CardBody style={{ display: "flex", justifyContent: "space-between" }}>
-                                        <Left>
-                                            <ThumbImg src={item.productThumbnail || "/img/empty/empty-list.jpeg"} alt="썸네일" />
-                                        </Left>
-                                        <Center>
-                                            <div>
-                                                <Title onClick={() => onClickProduct(item.productUid)}
-                                                        style={{ cursor: "pointer" }}>
-                                                    {item.productTitle || `상품코드 ${item.productCode}`}
-                                                </Title>
-                                                <p style={{ fontSize: "13px", color: "#999", marginTop: "0.3rem" }}>
-                                                    ⭐ {item.reviewAvg?.toFixed(1) || "0.0"}점 ({item.reviewCount ?? 0}개)
-                                                </p>
-                                                <p style={{ fontSize: "14px", color: "#666", marginTop: "0.2rem" }}>
-                                                    {item.productAdult?.toLocaleString()}원
-                                                </p>
-                                            </div>
-                                        </Center>
-                                        <Right>
-                                            <DeleteBtn onClick={() => onDeleteWish(item.wishCode)}><FaHeart color="red" /></DeleteBtn>
-                                        </Right>
-                                    </CardBody>
-                                </Card>
-                            ))}
-                        </ul>
-                    </GridWrap>
-                )}
-            </StyleContentWrap>
-        </StyleLikeBlock>
-    </>
+        <>
+            <StyleLikeBlock>
+                <StyleContentWrap>
+                    <TitleWrapper>
+                        <BackButton onClick={onBack}>
+                            <FaAngleLeft size={20} />
+                        </BackButton>
+                        <ListTitle>{groupTitle}의 위시리스트</ListTitle>
+                    </TitleWrapper>
+                    {hasNoLists ? (
+                        <div style={{ textAlign: "center", padding: "4rem 2rem" }}>
+                            <img
+                                src={emptyImage}
+                                alt="찜 상품 없음"
+                                style={{ width: "480px", marginBottom: "1.5rem", opacity: 0.7 }}
+                            />
+                            <p style={{ padding: "2rem", color: "#888", textAlign: "center" }}>
+                                아직 좋아요가 눌린 상품이 없어요.<br />
+                            </p>
+                        </div>
+                    ) : (
+                        <GridWrap>
+                            <ul style={{ listStyle: "none", padding: 0 }}>
+                                {wishList && wishList.map(item => (
+                                    <Card key={item.wishCode} style={{ marginBottom: "1rem" }}>
+                                        <CardBody style={{ display: "flex", justifyContent: "space-between" }}>
+                                            <Left>
+                                                <ThumbImg
+                                                    src={item.productThumbnail || "/img/empty/empty-list.jpeg"} alt="썸네일"
+                                                    onClick={() => onClickProduct(item.productUid)}
+                                                    style={{ cursor: "pointer" }}
+                                                />
+                                            </Left>
+                                            <Center>
+                                                <div>
+                                                    <Title onClick={() => onClickProduct(item.productUid)}
+                                                            style={{ cursor: "pointer" }}>
+                                                        {item.productTitle || `상품코드 ${item.productCode}`}
+                                                    </Title>
+                                                    <p style={{ fontSize: "13px", color: "#999", marginTop: "0.3rem" }}>
+                                                        ⭐ {item.reviewAvg?.toFixed(1) || "0.0"}점 ({item.reviewCount ?? 0}개)
+                                                    </p>
+                                                    <p style={{ fontSize: "14px", color: "#666", marginTop: "0.2rem" }}>
+                                                        {item.productAdult?.toLocaleString()}원
+                                                    </p>
+                                                </div>
+                                            </Center>
+                                            <Right>
+                                                <DeleteBtn onClick={() => onDeleteWish(item.wishCode)}><FaHeart color="red" /></DeleteBtn>
+                                            </Right>
+                                        </CardBody>
+                                    </Card>
+                                ))}
+                            </ul>
+                        </GridWrap>
+                    )}
+                </StyleContentWrap>
+            </StyleLikeBlock>
+        </>
     )
 }
 export default WishListCom;

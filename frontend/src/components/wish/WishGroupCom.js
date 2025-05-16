@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
 import emptyImage from "../../style/empty/empty-list.jpeg"
+import { FaRegTrashCan } from "react-icons/fa6";
 
 const StyleLikeBlock = styled.div`
     display: flex;
@@ -41,7 +42,8 @@ const LikeCard = styled.div`
 `;
 const ThumbImg = styled.img`
     width: 100%;
-    height: 140px;
+    height: 100%;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
 `;
 const CardTitle = styled.p`
@@ -49,10 +51,38 @@ const CardTitle = styled.p`
     font-weight: bold;
     margin: 10px;
 `;
+const GroupActionWrap = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
 const SavedCount = styled.p`
     font-size: 14px;
     color: #666;
-    margin: 0 10px 10px 10px;
+    margin: 5px 5px 5px 5px;
+`;
+const GroupDeleteBtn = styled.button`
+    background-color: transparent;
+    color: #ff4d4f;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-weight: 600;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;;
+    &:hover {
+        color: #ff7875;
+        transform: scale(1.05);
+    }
+    &:active {
+        transform: scale(0.98);
+    }
+    &:focus {
+        outline: none;
+    }
 `;
 
 function WishGroupCom({ groups, onClickGroup, onDeleteGroup }) {
@@ -89,8 +119,12 @@ function WishGroupCom({ groups, onClickGroup, onDeleteGroup }) {
                                         />
                                     </LikeCard>
                                     <CardTitle>{group.groupTitle}</CardTitle>
-                                    <SavedCount>{group.wishCount}개 저장됨</SavedCount>
-                                    <button onClick={() => onDeleteGroup(group.groupCode)}>삭제</button>
+                                    <GroupActionWrap>
+                                        <SavedCount>{group.wishCount}개 저장됨</SavedCount>
+                                        <GroupDeleteBtn onClick={() => onDeleteGroup(group.groupCode)}>
+                                            <FaRegTrashCan size={20} />
+                                        </GroupDeleteBtn>
+                                    </GroupActionWrap>
                                 </div>
                             ))}
                         </GridWrap>
