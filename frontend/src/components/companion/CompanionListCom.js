@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { FaCaretDown } from "react-icons/fa"; // FaCaretDown 아이콘 추가
 import {
     Container,
     PageTitle,
@@ -6,7 +7,16 @@ import {
     ButtonContainer,
     StyledLink,
     PagingWrapper,
-    PagingButton
+    PagingButton,
+    SearchContainer,
+    SearchInputContainer,
+    SearchForm,
+    SearchInput,
+    StyledFaSearch,
+    SearchOptionsContainer,
+    ToggleButton,
+    DropdownMenu,
+    DropdownItem
 } from "../../style/companion/CompanionListStyle";
 
 const DEFAULT_PROFILE_IMAGE = "/img/default-profile.jpg";
@@ -19,8 +29,36 @@ function CompanionListCom({
                               totalPages,
                               onRowClick,
                               onPageChange,
-                              itemsPerPage = 10 // 페이지 당 아이템 수, 번호 매기기에 사용
+                              itemsPerPage = 10,
+                              searchKeyword,
+                              onSearchChange,
+                              onSearchSubmit,
+                              searchType,
+                              onSearchTypeChange
                           }) {
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+    const handleSearchTypeSelect = (type) => {
+        onSearchTypeChange(type);
+        setIsDropdownOpen(false);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [dropdownRef]);
+
 
     const renderPagination = () => {
         if (totalPages === 0) return null;
@@ -55,18 +93,51 @@ function CompanionListCom({
     const roles = JSON.parse(localStorage.getItem("roles") || "[]");
     const loginType = localStorage.getItem("loginType");
 
-// ROLE_ADMIN 또는 ROLE_USER 역할을 가지고 있거나, 소셜 로그인 (카카오 또는 구글)으로 로그인한 사용자에게 등록 버튼 표시
     const canCreatePost = roles.includes("ROLE_ADMIN") || roles.includes("ROLE_USER") || loginType === "kakao" || loginType === "google";
 
+    const handleIconClickSearch = (e) => {
+        e.preventDefault();
+        onSearchSubmit(e);
+    };
 
     return (
         <Container>
             <PageTitle>커뮤니티 게시판</PageTitle>
-            {canCreatePost && (
-                <ButtonContainer>
-                    <StyledLink to="/community/companion/new">등록</StyledLink>
-                </ButtonContainer>
-            )}
+            <SearchContainer>
+                <SearchInputContainer>
+                    <SearchForm onSubmit={onSearchSubmit}>
+                        <StyledFaSearch onClick={handleIconClickSearch} />
+                        <SearchInput
+                            type="text"
+                            placeholder="검색어를 입력하세요"
+                            value={searchKeyword}
+                            onChange={onSearchChange}
+                        />
+                    </SearchForm>
+                    <SearchOptionsContainer ref={dropdownRef}>
+                        <ToggleButton onClick={toggleDropdown}>
+                            {searchType === "title" ? "제목" : "작성자"}
+                            <FaCaretDown style={{ marginLeft: '5px' }} /> {/* 아이콘 추가 */}
+                        </ToggleButton>
+                        {isDropdownOpen && (
+                            <DropdownMenu>
+                                <DropdownItem onClick={() => handleSearchTypeSelect("title")}>
+                                    제목
+                                </DropdownItem>
+                                <DropdownItem onClick={() => handleSearchTypeSelect("author")}>
+                                    작성자
+                                </DropdownItem>
+                            </DropdownMenu>
+                        )}
+                    </SearchOptionsContainer>
+                </SearchInputContainer>
+                {canCreatePost && (
+                    <ButtonContainer style={{ margin: 0 }}>
+                        <StyledLink to="/community/companion/new">등록</StyledLink>
+                    </ButtonContainer>
+                )}
+            </SearchContainer>
+
             <CompanionTable>
                 <thead>
                 <tr>
@@ -85,7 +156,7 @@ function CompanionListCom({
                                 {index + 1 + (currentPage * itemsPerPage)}
                             </td>
                             <td>{companion.companionTitle}</td>
-                            <td style={{ display: 'flex', alignItems: 'center' }}> {/* 작성자 셀 스타일 추가 */}
+                            <td style={{ display: 'flex', alignItems: 'center' }}>
                                 <img
                                     src={companion.authorProfileImageUrl || DEFAULT_PROFILE_IMAGE}
                                     alt={`${companion.authorName || '익명'} 프로필`}
@@ -93,15 +164,15 @@ function CompanionListCom({
                                 />
                                 {companion.authorName || '익명'}
                             </td>
-
-
                             <td>{new Date(companion.companionCreatedAt).toLocaleDateString()}</td>
                             <td>{companion.companionViewCount}</td>
                         </tr>
                     ))
                 ) : (
                     <tr>
-                        <td colSpan="5" style={{ textAlign: 'center' }}>게시글이 없습니다.</td>
+                        <td colSpan="5" style={{ textAlign: 'center' }}>
+                            {"검색 결과가 없습니다."}
+                        </td>
                     </tr>
                 )}
                 </tbody>

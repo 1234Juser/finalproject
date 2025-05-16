@@ -26,8 +26,12 @@ public class CompanionController {
 
     // 게시글 목록 조회 (누구나 접근 가능, 기본 10개, 최신순)
     @GetMapping
-    public ResponseEntity<Page<CompanionListDTO>> getAllCompanions(@PageableDefault(size = 10, sort = "companionCreatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<CompanionListDTO> companions = companionService.getAllCompanions(pageable);
+    public ResponseEntity<Page<CompanionListDTO>> getAllCompanions(
+            @RequestParam(name = "searchKeyword", required = false) String searchKeyword, // 검색어 파라미터 추가
+            @RequestParam(name = "searchType", required = false) String searchType,
+            @PageableDefault(size = 10, sort = "companionCreatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("검색요청 searchKeyword: '{}', searchType: '{}', pageable: {}", searchKeyword, searchType, pageable);
+        Page<CompanionListDTO> companions = companionService.getAllCompanions(searchKeyword, searchType, pageable);
         return ResponseEntity.ok(companions);
     }
 
