@@ -49,10 +49,20 @@ const reducer = (state, action) => {
         case "UPDATE_SELECTED_REVIEW":
             return {
                 ...state,
-                selectedReview: {
-                    ...state.selectedReview,
-                    ...action.data,
-                },
+                // selectedReview: {
+                //     ...state.selectedReview,
+                //     ...action.data,
+                // },
+                reviews: state.reviews.map(review =>
+                    review.reviewCode === action.payload.reviewCode
+                        ? {
+                            ...review,
+                            reviewStatus: action.payload.reviewStatus,
+                            reviewContent: action.payload.reviewStatus === "DELETE_BY_ADMIN" ? "" : review.reviewContent,
+                            reviewPic: action.payload.reviewStatus === "DELETE_BY_ADMIN" ? null : review.reviewPic,
+                        }
+                        : review
+                )
             };
         case "ADD_REVIEW":
             return {
