@@ -17,12 +17,19 @@ function AdminReviewCon({accessToken}) {
                 alert("로그인이 필요합니다.");
                 return;
             }
+            // 네, 아니요 버튼이 있는 기본 확인 창
+            const confirmed = window.confirm("정말 이 리뷰를 삭제하시겠습니까?");
+            if (!confirmed) return;
+
             await deleteReviewByAdmin(reviewCode, accessToken);
             dispatch({ type: "UPDATE_REVIEW_STATUS",
                 payload: {
                     reviewCode,
                     reviewStatus: "DELETE_BY_ADMIN"
                 } });
+            // 삭제 후 목록 갱신
+            const updatedReviews = await getAllReviewsForAdmin(accessToken, 1);
+            dispatch({ type: "SET_REVIEWS", data: updatedReviews });
             alert("리뷰가 성공적으로 삭제되었습니다.");
         } catch (error) {
             console.error("리뷰 삭제 실패:", error);
