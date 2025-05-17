@@ -20,12 +20,12 @@ public class InquiryChatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ic_id")
-    private Integer inquiryChatId;
+    private Long inquiryChatId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "member_code", referencedColumnName = "member_code"),
-            @JoinColumn(name = "authority_code", referencedColumnName = "authority_code")
+            @JoinColumn(name = "member_code", referencedColumnName = "member_code", nullable = false),
+            @JoinColumn(name = "authority_code", referencedColumnName = "authority_code", nullable = false)
     })
     private MemberRoleEntity memberRole;
 
@@ -42,10 +42,7 @@ public class InquiryChatEntity {
     @Column(name = "member_id", nullable = false)
     private String memberId;
 
-    @Column(name = "member_email", nullable = false)
-    private String memberEmail;
-
-    @OneToMany(mappedBy = "inquiryChatId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "inquiryChat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InquiryChatMessageEntity> messages = new ArrayList<>();
     // messages 는 채팅방 안에 있는 모든 메시지들의 목록임. InquiryChatMessageEntity의 inquiryChatMessage를 가리키는게 아님.
     // messages 는 InquiryChatMessageEntity 객체들의 리스트임.

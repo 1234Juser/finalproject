@@ -12,10 +12,9 @@ import java.time.LocalDateTime;
 @ToString
 public class InquiryChatDTO {
     private Integer icId;
-    private Integer memberCode;
+    private Long memberCode;
     private Integer authorityCode;
     private String memberId;
-    private String memberEmail;
     private LocalDateTime icStartDate;
     private LocalDateTime icEndDate;
     private String icChatStatus;
