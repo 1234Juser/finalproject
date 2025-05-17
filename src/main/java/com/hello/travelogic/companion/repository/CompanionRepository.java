@@ -28,7 +28,8 @@ public interface CompanionRepository extends JpaRepository<CompanionEntity, Inte
 
     // 작성자 이름(MemberEntity의 memberName 필드 기준)으로 부분 일치 검색 (페이징 처리, 대소문자 무시)
     Page<CompanionEntity> findByMember_MemberNameContainingIgnoreCase(String memberName, Pageable pageable);
-
+    //마이페이지 내게시글조회
+    Page<CompanionEntity> findByMember_MemberCodeOrderByCompanionCreatedAtDesc(Long memberCode, Pageable pageable);
 
 }
 

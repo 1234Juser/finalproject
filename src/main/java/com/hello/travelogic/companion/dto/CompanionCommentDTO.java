@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Builder
 public class CompanionCommentDTO {
     private Integer companionCommentId;
+    private Integer companionId; // 게시글 ID 추가
+    private String companionTitle; // 게시글 제목 추가
     private String authorName; // 댓글 작성자 이름
     private Long authorMemberCode; // 댓글 작성자 회원 코드 추가
     private String authorProfileImageUrl; // 댓글 작성자 프로필 이미지 URL
@@ -24,6 +26,8 @@ public class CompanionCommentDTO {
         if (entity == null) return null;
         return CompanionCommentDTO.builder()
                 .companionCommentId(entity.getCompanionCommentId())
+                .companionId(entity.getCompanion().getCompanionId())
+                .companionTitle(entity.getCompanion().getCompanionTitle())
                 .authorName(entity.getMember() != null ? entity.getMember().getMemberName() : null)
                 .authorMemberCode(entity.getMember() != null ? entity.getMember().getMemberCode() : null) // memberCode 매핑 추가
                 .authorProfileImageUrl(entity.getMember() != null ? entity.getMember().getMemberProfileImageUrl() : null)
