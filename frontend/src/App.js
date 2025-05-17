@@ -48,6 +48,7 @@ import MyReviewEditPage from "./pages/review/MyReveiwEditPage";
 import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 import OptionFormPage from "./pages/order/OptionFormPage";
 import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
+import CompanionMyPagePage from "./pages/companion/CompanionMyPagePage";
 
 function App() {
     return (
@@ -86,6 +87,7 @@ function App() {
                 <Route path="/mypage">
                     <Route path="" element={<MyPagePage />} />
                     <Route path="withdrawl" element={<WithdrawlPage />} />
+                    <Route path="community" element={<CompanionMyPagePage/>}/>
                 </Route>
                 <Route path="/my/reservations" element={<MyBookingPage />} />
                 <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />

@@ -188,4 +188,17 @@ public class CompanionService {
 
         companionRepository.delete(companion);
     }
+
+    //내가 작성한 게시글 목록 조회(최신순, 페이징)
+    public Page<CompanionListDTO> getMyCompanions(String token, Pageable pageable) {
+        if(token == null || token.isEmpty()) {
+            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
+        }
+        Long memberCode = jwtUtil.getMemberCodeFromToken(token);
+        Pageable newPageable = PageRequest.of(pageable.getPageNumber(), 10, Sort.by(Sort.Direction.DESC, "companionCreatedAt"));
+        Page<CompanionEntity> companions = companionRepository.findByMember_MemberCodeOrderByCompanionCreatedAtDesc(memberCode, newPageable);
+
+        return companions.map(CompanionListDTO::fromEntity);
+
+    }
 }

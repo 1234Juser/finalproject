@@ -10,6 +10,10 @@ import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,10 +135,22 @@ public class CompanionCommentService {
             throw new SecurityException("댓글 삭제 권한이 없습니다.");
         }
 
-        companionCommentRepository.delete(comment);
-    }
+        companionCommentRepository.delete(comment);    }
+
 
     // CompanionDetailDTO에 comments 필드를 추가했으므로, CompanionService의 getCompanionById에서도 댓글 목록을 함께 가져오도록 수정해야 합니다.
     // 이미 제공된 CompanionService.java 코드에서는 이 부분이 구현되어 있습니다.
+
+    //내가 작성한 댓글 목록 조회(최신순,페이징)
+    @Transactional(readOnly = true)
+    public Page<CompanionCommentDTO> getMyCompanionComments(String token, Pageable pageable) {
+        if(token == null || token.isEmpty()){
+            throw new IllegalArgumentException("토큰이 요휴하지 않습니다.");
+        }
+        Long memberCode = jwtUtil.getMemberCodeFromToken(token);
+        Pageable newPageable = PageRequest.of(pageable.getPageNumber(), 10, Sort.by(Sort.Direction.DESC, "companionCommentCreatedAt"));
+        Page<CompanionCommentEntity> comments = companionCommentRepository.findByMember_MemberCodeOrderByCompanionCommentCreatedAtDesc(memberCode, newPageable);
+        return comments.map(CompanionCommentDTO::fromEntity);
+    }
 
 }
