@@ -104,4 +104,28 @@ public class OptionController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    // 옵션 단일 조회 (optionCode로 조회)
+    @GetMapping("/products/{productUid}/option/{optionCode}")
+    public ResponseEntity<?> getOptionByCode(
+            @PathVariable String productUid,
+            @PathVariable Long optionCode) {
+
+        try {
+            OptionEntity optionEntity = optionRepo.findById(optionCode)
+                    .orElseThrow(() -> new RuntimeException("해당 옵션을 찾을 수 없습니다."));
+
+            // 상품 UID가 일치하는지 확인 (보안 강화)
+            if (!optionEntity.getProduct().getProductUid().equals(productUid)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 UID가 일치하지 않습니다.");
+            }
+
+            OptionDTO optionDTO = optionService.getOptionByCode(optionCode);
+            log.info("🟢 조회된 옵션: {}", optionDTO);
+            return ResponseEntity.ok(optionDTO);
+        } catch (Exception e) {
+            log.error("🔴 옵션 조회 실패:", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("옵션 조회 실패");
+        }
+    }
 }

@@ -165,7 +165,7 @@ export const fetchOrderDetails = async (bookingUid, accessToken) => {
 // 옵션 상세 조회 (OrderCheckoutCon에서 사용)
 export const fetchOptionDetails = async (productUid, optionCode, accessToken) => {
     try {
-        const response = await axios.get(`${path}/products/${productUid}/options/${optionCode}`, {
+        const response = await axios.get(`${path}/products/${productUid}/option/${optionCode}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

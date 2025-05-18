@@ -3,23 +3,44 @@ import {createOrder, fetchOptionDetails} from "../../service/orderService";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-function OrderCheckoutCon({ optionCode, optionData, accessToken }) {
-    const { productUid } = useParams();
+function OrderCheckoutCon({ accessToken }) {
+    const { productUid, optionCode } = useParams();
+    const [optionData, setOptionData] = useState(null);
     const [loadedOptionData, setLoadedOptionData] = useState(optionData || null);
     const [loading, setLoading] = useState(!optionData);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     // 옵션 데이터 불러오기 (props로 optionData가 없을 때만 로드)
+    // useEffect(() => {
+    //     const loadOptionData = async () => {
+    //         if (!optionCode || !accessToken) return;
+    //         try {
+    //             // 이미 props로 전달된 데이터가 있으면 로드하지 않음
+    //             if (optionData && Object.keys(optionData).length > 0) return;
+    //
+    //             const data = await fetchOptionDetails(productUid, optionCode, accessToken);
+    //             setLoadedOptionData(data);
+    //             console.log("🟢 옵션 데이터 로드 성공:", data);
+    //         } catch (error) {
+    //             console.error("🔴 옵션 데이터 로드 실패:", error);
+    //             setError("옵션 데이터를 불러오는 데 실패했습니다.");
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //
+    //     if (!loadedOptionData && optionCode && accessToken) {
+    //         loadOptionData();
+    //     }
+    // }, [optionCode, accessToken, productUid, optionData]);
+
     useEffect(() => {
         const loadOptionData = async () => {
-            if (!optionCode || !accessToken) return;
+            if (!productUid || !optionCode || !accessToken) return;
             try {
-                // 이미 props로 전달된 데이터가 있으면 로드하지 않음
-                if (optionData && Object.keys(optionData).length > 0) return;
-
                 const data = await fetchOptionDetails(productUid, optionCode, accessToken);
-                setLoadedOptionData(data);
+                setOptionData(data);
                 console.log("🟢 옵션 데이터 로드 성공:", data);
             } catch (error) {
                 console.error("🔴 옵션 데이터 로드 실패:", error);
@@ -29,10 +50,8 @@ function OrderCheckoutCon({ optionCode, optionData, accessToken }) {
             }
         };
 
-        if (!loadedOptionData && optionCode && accessToken) {
-            loadOptionData();
-        }
-    }, [optionCode, accessToken, productUid, optionData]);
+        loadOptionData();
+    }, [productUid, optionCode, accessToken]);
 
     // 결제하기 버튼 클릭 시
     const handleCheckout = async () => {
@@ -59,7 +78,8 @@ function OrderCheckoutCon({ optionCode, optionData, accessToken }) {
     return(
     <>
         <OrderCheckoutCom
-            optionData={loadedOptionData}
+            optionData={optionData}
+            // optionData={loadedOptionData}
             loading={loading}
             error={error}
             onCheckout={handleCheckout}
