@@ -56,7 +56,7 @@ public class InquiryChatMessageEntity {
         CHAT,             // 일반 대화 메시지
 //        JOIN,             // 사용자 입장 알림 (DB 저장 여부 선택)
 //        LEAVE,            // 사용자 퇴장 알림 (DB 저장 여부 선택)
-        SYSTEM_WELCOME,   // 시스템 환영 메시지
+        SYSTEM,         // 시스템 메시지
         INFO              // 기타 정보성 시스템 메시지
     }
 }

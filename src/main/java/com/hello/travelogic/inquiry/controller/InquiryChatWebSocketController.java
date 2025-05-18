@@ -28,9 +28,11 @@ public class InquiryChatWebSocketController {
         return inquiryChatWebSocketService.sendInquiryMessage(icId, message);
     }
 
-/*
+    
 // 이 메소드는 프론트에서 처리
     // 사용자가 1:1 문의 채팅방에 입장했음을 알리고, 시스템 환영 메시지를 처리합니다.
+    // handleUserJoin 메소드는 InquiryChatWebSocketService에서 해당 로직이 제거/변경됨에 따라 호출 의미가 없을 수 있음
+// 필요 없다면 컨트롤러에서도 제거하거나 주석 처리
     @MessageMapping("/inquiry/join/{icId}")
     public InquiryChatMessageDTO handleUserJoin(@DestinationVariable Long icId,
                                          @Payload InquiryChatMessageDTO message,
@@ -41,6 +43,6 @@ public class InquiryChatWebSocketController {
 
         return inquiryChatWebSocketService.handleUserJoin(icId, message, headerAccessor);
     }
-
- */
+    
+    
 }

@@ -18,7 +18,7 @@ const NavContentWrapper = styled.div`
     align-items: center;
 `;
 
-function NavCom({roles = [], showChat, toggleChat, chatAnchorRef, chatPosition}) {
+function NavCom({roles = [], toggleChat, chatAnchorRef}) {
     const isAdmin = Array.isArray(roles) && roles.includes("ROLE_ADMIN");
 
     return (
@@ -85,11 +85,6 @@ function NavCom({roles = [], showChat, toggleChat, chatAnchorRef, chatPosition})
                     </li>
                 </NavRight>
             </NavContentWrapper>
-            {showChat && (
-                <ChatFloatingWrapper top={chatPosition.top} $left={chatPosition.left}>
-                    <InquiryChatCom />
-                </ChatFloatingWrapper>
-            )}
         </StyledNav>
     );
 }

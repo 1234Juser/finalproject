@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 public class InquiryChatDTO {
-    private Integer icId;
+    private Long icId;
     private Long memberCode;
     private Integer authorityCode;
     private String memberId;

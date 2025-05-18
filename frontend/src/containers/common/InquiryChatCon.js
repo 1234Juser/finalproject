@@ -1,284 +1,301 @@
 import InquiryChatCom from "../../components/common/InquiryChatCom";
-import {useCallback, useEffect, useReducer, useRef, useState} from "react";
-import { chatReducer, initialState } from "../../modules/inquiryReducer";
+import { useCallback, useEffect, useReducer, useRef } from "react"; // useState 제거 (필요시 다시 추가)
+import { chatReducer, initialState as originalInitialState } from "../../modules/inquiryReducer";
 import SockJS from "sockjs-client";
-import {ChatWrapper, ErrorMessageUI, Header, Title} from "../../style/common/InquiryChatStyle";
-import {getStartInquiry} from "../../service/inquiryService";
+import { Stomp } from "@stomp/stompjs";
+import { getStartInquiry } from "../../service/inquiryService";
 
+// isLoading, isLoadingHistory를 제외한 initialState 정의
+const initialState = {
+    ...originalInitialState,
+    isLoading: false, // 초기값은 false로 두되, 사용하지 않음
+    isLoadingHistory: false, // 초기값은 false로 두되, 사용하지 않음
+};
 
 // localStorage에서 인증 정보 가져오기
 const getAuthInfoFromStorage = () => {
-        const token = localStorage.getItem('accessToken');
-        const username = localStorage.getItem('memberName');
-        const memberCode = localStorage.getItem('memberCode');
-        const roles = JSON.parse(localStorage.getItem('roles'));    // roles는 배열 형태 
-        // const authorityCode = localStorage.getItem('authorityCode'); // 필요하다면 추가
-        console.log('로그인 유저의 roles확인(authorityCode 추출하기위한용도)', roles);
+    const token = localStorage.getItem('accessToken');
+    const username = localStorage.getItem('memberName');
+    const memberCodeString = localStorage.getItem('memberCode');
+    const memberCode = memberCodeString ? parseInt(memberCodeString, 10) : null;
+    const rolesString = localStorage.getItem('roles');
+    const roles = rolesString ? JSON.parse(rolesString) : [];
 
-        if (token && memberCode) {
-            return { token, username, memberCode, roles};
-        }
-        return { token: null, username: null, memberCode: null, roles:[] };
-}
+    console.log('로그인 유저의 membercode 확인', memberCode);
+    return { token, username, memberCode, roles };
+};
 
 
-
-
-function InquiryChatCon(){
+function InquiryChatCon({ isVisible, key: componentKey }) { // 'key' prop 이름 변경 (React 예약어와 충돌 방지)
     const [state, dispatch] = useReducer(chatReducer, initialState);
     const {
         messages, newMessage, currentUser, currentInquiryChatId,
-        isConnected, isLoading, isLoadingHistory, error, selectedTopic
+        isConnected, error, isUserLoggedIn// isLoading, isLoadingHistory 제거
     } = state;
+
     const stompClientRef = useRef(null);
-    const messageEndRef = useRef(null);     // 메시지 목록 맨 아래로 스크롤하기 위한 ref
-    const inputRef = useRef(null);      // 입력 필드 참조
-    
+    const messageEndRef = useRef(null);
+    const inputRef = useRef(null);
 
-    
+    // currentUser에서 필요한 값들을 추출 (useEffect 의존성 배열에 사용하기 위함)
+    const userToken = currentUser?.token;
+    const userMemberCode = currentUser?.memberCode;
+    const currentUsername = currentUser?.username;
+    const currentUserRoles = currentUser?.roles;
 
-    // 1. 초기 사용자 인증 및 정보 설정
+
+    // ----------------------------------------------------------------------------------------1. 초기 사용자 인증 정보 설정
     useEffect(() => {
         console.log("---------컴포넌트 마운트: 사용자 인증 정보 로드 시도-----------");
-        dispatch({ type: 'SET_LOADING', payload: true });
-        const authInfo  = getAuthInfoFromStorage();
+        const authInfo = getAuthInfoFromStorage();
         console.log("로드된 인증 정보:", authInfo);
-        
-        if (authInfo.token && authInfo.memberCode) {
+
+        if (authInfo.token && authInfo.memberCode !== null) { // memberCode도 유효한지 확인
             dispatch({ type: 'SET_CURRENT_USER', payload: authInfo });
-            dispatch({ type: 'CLEAR_ERROR' });
-        } else {
-            dispatch({ type: 'SET_ERROR', payload: "채팅 서비스는 로그인이 필요합니다." });
+            dispatch({ type: 'SET_USER_LOGGED_IN', payload: true });
+        } else { // 비회원 또는 토큰/memberCode 없는 경우
+            dispatch({ type: 'SET_CURRENT_USER', payload: { token: null, memberCode: null, username: '비회원', roles: [] } });
+            dispatch({ type: 'SET_USER_LOGGED_IN', payload: false });
+            console.log("비회원 사용자이거나 인증 정보가 불완전합니다. currentUser를 비회원 상태로 설정.");
         }
-        dispatch({ type: 'SET_LOADING', payload: false });
-    }, []);
+        dispatch({ type: 'CLEAR_ERROR' }); // 초기 에러 클리어
+    }, []); // 마운트 시 1회 실행
 
 
-    // 2. 채팅방 시작 (REST API) -> currentInquiryChatId 설정
-    const handleTopicSelect = useCallback(async () => {
-        console.log("------------1:1 채팅 시작-----------현재 currentUser:", currentUser);
-        if (!currentUser.token || !currentUser.memberCode) {
-            dispatch({ type: 'SET_ERROR', payload: "로그인 후 이용해주세요." });
-            return;
-        }
-        dispatch({ type: 'SET_LOADING', payload: true });
+    // ----------------------------------------------------------------------------------------2. 채팅방 시작 (REST API 또는 비회원 처리) -> currentInquiryChatId 설정
+    const createInquiryChat = useCallback(async () => {
+        console.log("------------1:1 채팅 시작-----------현재 userMemberCode:", userMemberCode);
         dispatch({ type: 'CLEAR_ERROR' });
 
         try {
-            // InquiryChatDTO 구성
-            const inquiryChatRequest = {
-                memberCode: currentUser.memberCode,
-                authorityCode: null,
-                memberId : currentUser.username,
-                // authorityCode: 이 필드는 currentUser.roles를 기반으로 설정하거나,
-            //                백엔드에서 memberCode나 memberId로 조회하여 설정할 수 있습니다.
-            //                (자세한 내용은 이전 답변의 'authorityCode 처리' 부분 참고)
-            };
+            // const isUserLoggedIn = userToken && userMemberCode !== null;
+            console.log(">>>>>>>>로그인 상태<<<<<<<<", isUserLoggedIn);
 
-            const userRole = currentUser.roles.find(role => role === "ROLE_USER");
-            if (userRole) {
-                inquiryChatRequest.authorityCode = 2;
-            } else if (currentUser.roles.includes("ROLE_ADMIN")) {
-                inquiryChatRequest.authorityCode = 1;
+            // 2-1. 비회원 처리
+            if (!isUserLoggedIn) {
+                console.log("비회원 사용자입니다. icId를 0으로 설정합니다. (API 호출 안 함)");
+                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: 0 }); // 비회원용 채팅 ID (예: 0)
+                return;
             }
 
-            console.log("채팅방 생성 요청 DTO:", inquiryChatRequest);
-            console.log("사용 토큰:", currentUser.token);
-
-            // REST API로 채팅방 생성 요청
-            getStartInquiry(inquiryChatRequest, currentUser.token)
-            .then((data) => {
-                console.log("-------채팅방 생성 정보 data 수신-------> ", data);
-                if (data && data.icId) { // 서버가 반환하는 채팅방 ID 필드명이 'icId'라고 가정
-                    dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: data.icId });
-                } else {
-                    console.error("응답 데이터에서 채팅방 ID(icId)를 찾을 수 없습니다.", data);
-                    dispatch({ type: 'SET_ERROR', payload: "채팅방 정보를 올바르게 받지 못했습니다." });
-                }
-            })
-            .catch((err) => {
-                console.error("채팅방 생성/조회 API 호출 실패:", err);
-                let errorMessage = "채팅방 시작 중 오류가 발생했습니다.";
-                if (err.response && err.response.data && err.response.data.message) {
-                    errorMessage = err.response.data.message; // 서버에서 보낸 에러 메시지 사용
-                } else if (err.message) {
-                    errorMessage = err.message;
-                }
-                dispatch({ type: 'SET_ERROR', payload: errorMessage });
-                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: null });
-            })
-        
-         } finally {
-            dispatch({ type: 'SET_LOADING', payload: false });
-        }
-    }, [currentUser]);
-
-
-    // 3. currentInquiryChatId 설정 시 -> 이전 대화내역 로드 (REST API)
-    useEffect(() => {
-        if (currentInquiryChatId && currentUser.token) {
-            const fetchHistory = async () => {
-                dispatch({ type: 'SET_LOADING_HISTORY', payload: true });
-                dispatch({ type: 'CLEAR_ERROR' });
-                try {
-                    const response = await fetch(`/api/inquiry/messages/${currentInquiryChatId}`, {
-                        headers: { 'Authorization': `Bearer ${currentUser.token}` },
-                    });
-                    if (!response.ok) throw new Error('이전 대화내역 로딩 실패');
-                    const historyMessages = await response.json(); // List<InquiryChatMessageEntity>
-                    
-                    // 서버에서 받은 메시지 형식을 클라이언트 UI에 맞게 변환 (필요시)
-                    const formattedMessages = historyMessages.map(msg => ({
-                        ...msg,
-                        // senderName: msg.senderType === 'ADMIN' ? '상담원' : (msg.memberCode === currentUser.memberCode ? '나' : '고객'),
-                        type: msg.senderType === 'SYSTEM' ? 'SYSTEM' : 'CHAT' // 기본 CHAT 타입
-                    }));
-                    dispatch({ type: 'SET_MESSAGES', payload: formattedMessages });
-
-                } catch (err) {
-                    console.error("Error fetching message history:", err);
-                    dispatch({ type: 'SET_ERROR', payload: err.message || "대화내역 로딩 중 오류" });
-                } finally {
-                    dispatch({ type: 'SET_LOADING_HISTORY', payload: false });
-                }
+            // 2-2. 회원인 경우 API 호출
+            const inquiryChatRequest = {
+                memberCode: userMemberCode,
+                authorityCode: null,
+                memberId: currentUsername || "회원", // username이 없을 경우 대비
             };
-            fetchHistory();
+            if (currentUserRoles && Array.isArray(currentUserRoles)) {
+                const userRole = currentUserRoles.find(role => role === "ROLE_USER");
+                if (userRole) {
+                    inquiryChatRequest.authorityCode = 2;
+                } else if (currentUserRoles.includes("ROLE_ADMIN")) {
+                    inquiryChatRequest.authorityCode = 1;
+                }
+            }
+            console.log("채팅방 생성 요청 DTO:", inquiryChatRequest);
+
+            // 2-3. 채팅방 생성 요청
+            const response
+                = await getStartInquiry(inquiryChatRequest);
+            console.log("-------채팅방 생성 정보 response\n 수신-------> ", response);
+
+            if (response && response.icId !== undefined && response.icId !== null) { // icId 유효성 검사 강화
+                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: response.icId });
+                console.log("채팅방이 성공적으로 생성되었습니다. icId:", response.icId);
+            }
+
+        } catch (err) {
+            console.error("채팅방 생성/조회 처리 중 오류:", err);
+            dispatch({ type: 'SET_ERROR', payload: err.message });
+            dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: null }); // 오류 발생 시 ID 초기화
         }
-    }, [currentInquiryChatId, currentUser.token]);
+    }, [isUserLoggedIn, userMemberCode, currentUsername, currentUserRoles]);
 
 
-    // 4. WebSocket 연결 로직 (currentInquiryChatId, 인증정보 유효 시)
+    // ----------------------------------------------------------------------------------------3. 채팅방 시작 로직 호출 (isVisible, currentInquiryChatId, currentUser 변경 시)
+    useEffect(() => {
+        // isVisible이 true이고, currentInquiryChatId가 아직 설정되지 않았으며, currentUser 정보가 로드된 후 실행
+        // 일단 currentUser 지웠는데 여기서 currenUser 확인해보자
+        console.log("-----여기서 currentUser 정보 확인 ------->", currentUser)
+        if (isVisible && currentInquiryChatId === null ) {
+            console.log("InquiryChatCon: 채팅창 활성화 및 채팅방 정보 로드 시도. createInquiryChat 호출.");
+            createInquiryChat();
+        }
+        // 이전 대화 내역 로드 로직은 현재 주석 처리되어 있으므로 생략
+    }, [isVisible, currentInquiryChatId, createInquiryChat, componentKey]); // componentKey 추가 (컴포넌트 키 변경 시 재시도)
+
+
+    // ----------------------------------------------------------------------------------------4. WebSocket 연결 로직 (currentInquiryChatId가 설정되면 연결 시도)
     const connectWebSocket = useCallback(() => {
-        if (!currentInquiryChatId || !currentUser.token || !currentUser.memberCode || (stompClientRef.current && stompClientRef.current.connected)) {
-            if (stompClientRef.current && stompClientRef.current.connected) console.log('Already connected or connection in progress.');
-            else console.log('WebSocket connection prerequisites not met.');
+        console.log("[connectWebSocket] Called. currentInquiryChatId:", currentInquiryChatId, "isConnected:", isConnected, "userMemberCode:", userMemberCode);
+
+        if (currentInquiryChatId === null || (stompClientRef.current && stompClientRef.current.connected) || isConnected) {
+            if (stompClientRef.current && stompClientRef.current.connected) console.log('[웹소켓 연결] Already connected.');
+            else if (currentInquiryChatId === null) console.log('[웹소켓 연결] Prerequisites not met (currentInquiryChatId is null).');
+            else if (isConnected) console.log('[웹소켓 연결] Already connected (state.isConnected).');
             return;
         }
 
-        dispatch({ type: 'SET_LOADING', payload: true }); // 연결 시도 중 로딩 표시
         dispatch({ type: 'CLEAR_ERROR' });
-        console.log(`Attempting to connect WebSocket for inquiryChatId: ${currentInquiryChatId}`);
+        console.log(`Attempting to connect WebSocket for ID: ${currentInquiryChatId}`);
 
-        const socket = new SockJS('http://localhost:8080/ws'); // 실제 WebSocket 엔드포인트
-        const stompClient = Stomp.over(socket);
-        stompClientRef.current = stompClient;
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stomp = Stomp.over(socket);
+        stompClientRef.current = stomp; // Ref 할당은 connect 콜백 외부에서도 가능하나, 성공 시가 더 명확할 수 있음.
 
-        const connectHeaders = {
-            'Authorization': `Bearer ${currentUser.token}`,
-            // 'memberCode': currentUser.memberCode // 헤더 또는 STOMP 메시지 본문에 포함 가능
-        };
+        const connectHeaders = {};
+        if (userToken) { // 회원인 경우에만 토큰 추가
+            connectHeaders['Authorization'] = `Bearer ${userToken}`;
+        }
+        console.log("WebSocket 연결 헤더:", connectHeaders);
 
-        stompClient.connect(
+        stomp.connect(
             connectHeaders,
-            (frame) => { // 연결 성공
-                console.log('STOMP Connected: ' + frame);
+            (frame) => {
+                console.log("✅ WebSocket 연결 성공", frame);
                 dispatch({ type: 'SET_CONNECTED', payload: true });
-                dispatch({ type: 'SET_LOADING', payload: false });
 
-                // 특정 문의 채팅방 구독
-                stompClient.subscribe(`/topic/inquiry/chat/${currentInquiryChatId}`, (message) => {
-                    const receivedMessage = JSON.parse(message.body); // InquiryChatMessageDTO 형태 예상
-                    console.log(`Message from /topic/inquiry/chat/${currentInquiryChatId}:`, receivedMessage);
-                    
-                    // 메시지 타입에 따른 처리 (JOIN, LEAVE, CHAT, INFO 등)
-                    // 예: receivedMessage.type, receivedMessage.senderType 등 활용
-                    dispatch({ type: 'ADD_MESSAGE', payload: {
-                        ...receivedMessage,
-                        // senderName: receivedMessage.senderType === 'ADMIN' ? '상담원' : (receivedMessage.memberCode === currentUser.memberCode ? '나' : '고객'),
-                    } });
-                });
-
-                // 입장 메시지 전송 (서버에서 필요시)
-                // const joinMessagePayload = {
-                //     type: 'JOIN', // 서버에서 정의한 타입
-                //     icId: currentInquiryChatId,
-                //     memberCode: currentUser.memberCode,
-                //     senderName: currentUser.username, // 서버에서 memberCode로 조회할 수도 있음
-                //     message: `${currentUser.username}님이 입장했습니다.`, // 시스템 메시지 내용
-                //     senderType: 'SYSTEM', // 또는 USER 타입으로 보내고 서버가 SYSTEM으로 변경
-                //     sentAt: new Date().toISOString(),
-                // };
-                // stompClient.send(`/app/inquiry/join/${currentInquiryChatId}`, {}, JSON.stringify(joinMessagePayload));
-                // console.log("Sent JOIN message:", joinMessagePayload);
+                if (userMemberCode === null) { // 비회원 (currentUser.memberCode가 null)
+                    console.log("👤 비회원입니다. 공용 채널 (/topic/inquiry/public) 구독합니다.");
+                    stomp.subscribe("/topic/inquiry/public", (message) => {
+                        try {
+                            const payload = JSON.parse(message.body);
+                            console.log("📢 [비회원] 공용 메시지 수신:", payload);
+                            // 서버에서 오는 메시지 형식에 맞게 dispatch
+                            // 예: payload.content가 실제 메시지 내용이라고 가정
+                            dispatch({
+                                type: 'ADD_MESSAGE',
+                                payload: {
+                                    // icmId: payload.id, // 서버가 ID를 준다면
+                                    icId: 0, // 비회원용 채팅방 ID
+                                    memberCode: null, // 시스템 또는 공용 메시지 발신자
+                                    senderType: payload.senderType || 'SYSTEM', // 서버에서 오는 타입 사용
+                                    senderName: payload.senderName || '안내', // 서버에서 오는 발신자명 사용
+                                    message: payload.message || payload.content || "안내 메시지가 도착했습니다.", // 실제 필드명 확인
+                                    sentAt: payload.sentAt || new Date().toISOString(),
+                                    type: payload.type || 'SYSTEM', // 메시지 타입 (UI 표시용)
+                                },
+                            });
+                        } catch (e) {
+                            console.error("비회원 공용 메시지 처리 중 오류:", e, message.body);
+                        }
+                    });
+                } else { // 회원
+                    console.log(`✅ 회원입니다 (memberCode: ${userMemberCode}). 개인 채널 (/topic/inquiry/${currentInquiryChatId}) 구독합니다.`);
+                    const userSpecificTopic = `/topic/inquiry/${currentInquiryChatId}`;
+                    stomp.subscribe(userSpecificTopic, (message) => {
+                        try {
+                            const receivedMessage = JSON.parse(message.body);
+                            console.log("<<<<< [회원] 메시지 수신 FROM SERVER:", receivedMessage);
+                            dispatch({
+                                type: 'ADD_MESSAGE',
+                                payload: { // 서버 응답에 맞게 필드 매핑
+                                    ...receivedMessage,
+                                    sentAt: receivedMessage.sentAt || receivedMessage.sendAt || new Date().toISOString(), // 오타 가능성 고려
+                                    senderType: String(receivedMessage.senderType).toUpperCase(),
+                                    type: String(receivedMessage.messageType || 'CHAT').toUpperCase(),
+                                },
+                            });
+                        } catch (e) {
+                            console.error("회원 메시지 처리 중 오류:", e, message.body);
+                        }
+                    });
+                }
             },
-            (error) => { // 연결 실패
-                console.error('STOMP Connection error: ' + error);
+            (errorCallback) => {
+                console.error("❌ WebSocket 연결 실패:", errorCallback);
                 dispatch({ type: 'SET_CONNECTED', payload: false });
-                dispatch({ type: 'SET_ERROR', payload: "채팅 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요." });
-                dispatch({ type: 'SET_LOADING', payload: false });
-                // 재연결 로직 (선택 사항)
-                // setTimeout(() => connectWebSocket(), 5000);
+                // dispatch({ type: 'SET_ERROR', payload: '웹소켓 연결에 실패했습니다. 잠시 후 다시 시도해주세요.' });
             }
         );
-        // stompClient.debug = (str) => { console.log("STOMP DEBUG: " + str); }; // 디버그 로그
-    }, [currentInquiryChatId, currentUser]);
+        stomp.debug = (str) => { console.log("STOMP DEBUG: " + str); };
 
-    // WebSocket 연결 실행
+    }, [currentInquiryChatId, isConnected, userToken, userMemberCode, dispatch]); // 의존성 배열에 userToken, userMemberCode 추가
+
+    // WebSocket 연결 실행 Effect
     useEffect(() => {
-        if (currentInquiryChatId && currentUser.token && !isLoading && !isConnected) {
+        // currentInquiryChatId가 null이 아니고 (즉, 채팅방 ID가 설정되었고), 아직 연결되지 않았을 때
+        if (currentInquiryChatId !== null && !isConnected) {
+            console.log(`[WebSocket 연결 실행] currentInquiryChatId: ${currentInquiryChatId}, isConnected: ${isConnected}. connectWebSocket 호출!`);
             connectWebSocket();
         }
-        // 컴포넌트 언마운트 또는 currentInquiryChatId 변경 시 연결 해제
+
+        // 컴포넌트 언마운트 또는 currentInquiryChatId/connectWebSocket 함수 변경 시 연결 해제
         return () => {
             if (stompClientRef.current && stompClientRef.current.connected) {
-                console.log(`Disconnecting STOMP for inquiryChatId: ${currentInquiryChatId}...`);
-                // 퇴장 메시지 전송 (선택 사항)
-                // const leaveMessage = { type: 'LEAVE', ... };
-                // stompClientRef.current.send(`/app/inquiry-chat.leaveUser/${currentInquiryChatId}`, {}, JSON.stringify(leaveMessage));
+                console.log(`Disconnecting STOMP for ID: ${currentInquiryChatId}...`);
                 stompClientRef.current.disconnect(() => {
                     console.log('STOMP Disconnected.');
                     dispatch({ type: 'SET_CONNECTED', payload: false });
                 });
+                stompClientRef.current = null; // 참조 제거
             }
         };
-    }, [currentInquiryChatId, currentUser.token, isLoading, isConnected, connectWebSocket]);
+    }, [currentInquiryChatId, isConnected, connectWebSocket, dispatch]); // dispatch 추가
 
 
-    // 5. 메시지 전송 로직 (WebSocket)
+    // --------------------------------------------------------------------------5. 메시지 전송 로직 (WebSocket)
     const handleSendMessage = useCallback(() => {
-        if (!newMessage.trim() || !stompClientRef.current || !stompClientRef.current.connected || !currentInquiryChatId) {
-            dispatch({ type: 'SET_ERROR', payload: "메시지를 입력하거나 연결 상태를 확인해주세요."});
+        if (!newMessage.trim()) return;
+        if (currentInquiryChatId === null) {
+            dispatch({ type: 'SET_ERROR', payload: "채팅방에 연결되지 않았습니다." });
             return;
         }
-        dispatch({ type: 'CLEAR_ERROR' });
+        if (!stompClientRef.current || !stompClientRef.current.connected) {
+            dispatch({ type: 'SET_ERROR', payload: "채팅 서버 연결이 끊어졌습니다." });
+            return;
+        }
 
+        // 비회원은 메시지 전송 불가 (요청사항 1,2번 목표에 집중)
+        if (userMemberCode === null) {
+            console.log("비회원은 메시지를 전송할 수 없습니다.");
+            // 필요시 사용자에게 알림 dispatch({ type: 'SET_ERROR', payload: "비회원은 메시지를 전송할 수 없습니다." });
+            dispatch({ type: 'SET_NEW_MESSAGE', payload: '' }); // 입력창 비우기
+            if (inputRef.current) inputRef.current.style.height = 'inherit';
+            return;
+        }
+
+        // 회원 메시지 전송
         const messagePayload = {
-            // InquiryChatMessageDTO 구조에 맞게
-            icId: currentInquiryChatId,
-            memberCode: currentUser.memberCode,
-            // authorityCode: currentUser.authorityCode, // 필요시
-            senderType: 'USER', // 사용자가 보내는 메시지
+            icId: currentInquiryChatId, // 서버 DTO에 맞게 icId 또는 inquiryChatId 사용
+            memberCode: userMemberCode,
+            senderType: 'USER',
             message: newMessage.trim(),
-            // sentAt은 서버에서 설정하거나, 클라이언트에서 임시로 설정 후 서버 값으로 교체
-            sentAt: new Date().toISOString(), // 임시 시간
-            type: 'CHAT', // 메시지 타입
-            senderName: currentUser.username, // UI 표시용
+            // sentAt: new Date().toISOString(), // 서버에서 설정하는 것이 일반적
+            messageType: 'CHAT', // 또는 서버 DTO에 맞는 필드명 사용
+            // senderName: currentUsername, // 서버에서 memberCode 기준으로 처리 가능
         };
 
-        // Optimistic update: 먼저 UI에 추가
-        dispatch({ type: 'ADD_MESSAGE', payload: messagePayload });
-        dispatch({ type: 'SET_NEW_MESSAGE', payload: '' });
-        if(inputRef.current) inputRef.current.style.height = 'inherit';
+        const tempId = `temp-${Date.now()}`; // 임시 ID (낙관적 업데이트용)
+        dispatch({
+            type: 'ADD_MESSAGE',
+            payload: {
+                ...messagePayload,
+                tempId,
+                sentAt: new Date().toISOString(), // UI 즉시 표시용 시간
+                senderName: currentUsername || "나",
+            }
+        });
 
         stompClientRef.current.send(
-            `/app/inquiry/chat.sendMessage/${currentInquiryChatId}`,
+            `/app/inquiry/${currentInquiryChatId}/send`, // 서버의 @MessageMapping 경로 확인 필요
             {},
-            JSON.stringify({ ...messagePayload})
+            JSON.stringify(messagePayload)
         );
 
-    }, [newMessage, currentInquiryChatId, currentUser, isConnected]);
+        dispatch({ type: 'SET_NEW_MESSAGE', payload: '' });
+        if (inputRef.current) inputRef.current.style.height = 'inherit';
 
+    }, [newMessage, currentInquiryChatId, userMemberCode, currentUsername, dispatch, isConnected]); // isConnected 추가
 
     // 메시지 입력 핸들러
     const handleInputChange = (e) => {
         dispatch({ type: 'SET_NEW_MESSAGE', payload: e.target.value });
-        // 자동 높이 조절
         e.target.style.height = 'inherit';
         const scrollHeight = e.target.scrollHeight;
         const maxHeight = parseInt(getComputedStyle(e.target).maxHeight || '100px', 10);
         e.target.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
     };
-
 
     // Enter 키 전송 (Shift+Enter는 줄바꿈)
     const handleKeyPress = (e) => {
@@ -288,39 +305,25 @@ function InquiryChatCon(){
         }
     };
 
-
     // 메시지 목록 변경 시 스크롤 맨 아래로
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
-
-
-     // 초기 인증/설정 오류 (채팅방 진입 전)
-    if (error && !currentInquiryChatId) {
-         return (
-            <ChatWrapper>
-                <Header><Title>오류</Title></Header>
-                <ErrorMessageUI>{error}</ErrorMessageUI>
-                {/* 로그인 페이지로 이동하는 버튼 등을 추가할 수 있습니다. */}
-            </ChatWrapper>
-        );
-    }
 
     return (
         <>
-
-            {/* 보여줄 때만 위치 스타일과 함께 InquiryChatCom 사용 */}
-            <InquiryChatCom isLoading={isLoading} isLoadingHistory={isLoadingHistory}
-                            messagesEndRef={messageEndRef} messages={messages}
-                            inputRef={inputRef} newMessage={newMessage}
-                            error={error} selectedTopic={selectedTopic}
-                            handleSendMessage={handleSendMessage} handleInputChange={handleInputChange}
-                            isConnected={isConnected} handleKeyPress={handleKeyPress}
-                            currentInquiryChatId={currentInquiryChatId}
-                            currentUser={currentUser} handleTopicSelect={handleTopicSelect}/>
-
+            <InquiryChatCom
+                // isLoading, isLoadingHistory 제거
+                messagesEndRef={messageEndRef} messages={messages}
+                inputRef={inputRef} newMessage={newMessage}
+                error={error}
+                handleSendMessage={handleSendMessage} handleInputChange={handleInputChange}
+                isConnected={isConnected} handleKeyPress={handleKeyPress}
+                currentInquiryChatId={currentInquiryChatId}
+                currentUser={currentUser}
+            />
         </>
-    )
+    );
 }
 
 export default InquiryChatCon;

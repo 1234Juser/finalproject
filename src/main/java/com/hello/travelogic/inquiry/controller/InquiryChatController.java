@@ -25,13 +25,13 @@ public class InquiryChatController {
 
     // 1:1 채팅 시작 (채팅방 생성)
     @PostMapping("/start")
-    public ResponseEntity<InquiryChatEntity> startChat(@RequestBody InquiryChatDTO inquiryChatDTO) {
-        InquiryChatEntity newChat = inquiryChatService.startChat(inquiryChatDTO);
+    public ResponseEntity<InquiryChatDTO> startChat(@RequestBody InquiryChatDTO inquiryChatDTO) {
+        InquiryChatDTO newChat = inquiryChatService.startChat(inquiryChatDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newChat);
     }
 
 
-    // 메시지 DB 저장
+    // 메시지 DB 저장        // 이 엔드포인트는 WebSocket 사용 시 주로 사용되지 않을 수 있음
     @PostMapping("/message")
     public ResponseEntity<InquiryChatMessageEntity> sendMessage(@RequestBody InquiryChatMessageDTO inquiryChatMessageDTO) {
         InquiryChatMessageEntity savedMessage = inquiryChatService.saveMessage(inquiryChatMessageDTO);
@@ -39,7 +39,7 @@ public class InquiryChatController {
     }
 
 
-    // 특정 채팅방에 대한 모든 메시지 기록 불러오기 (페이지 진입 시 기존 메시지 조회)
+    // 특정 채팅방에 대한 모든 메시지 기록 불러오기 (페이지 진입 시 기존 메시지 조회)   // icId는 문자열로 받을 수 있도록 함 (guest-UUID 형태 포함)
     @GetMapping("/messages/{icId}")
     public ResponseEntity<List<InquiryChatMessageEntity>> getMessages(@PathVariable Long icId) {
         List<InquiryChatMessageEntity> messages = inquiryChatService.getMessages(icId);
