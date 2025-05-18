@@ -7,6 +7,9 @@ const orderInitialState = {
     childCount: 0,
     totalPrice: 0,
     memberCode: null,
+    memberName: "",
+    memberEmail: "",
+    memberPhone: "",
     optionCode: null,
     loading: false,
     error: null,
@@ -22,8 +25,20 @@ const orderReducer = (state, action) => {
                 bookingUid: action.data.bookingUid || null,
                 memberCode: action.data.memberCode || null,
                 optionCode: action.data.optionCode || null,
+                memberName: action.data.memberName || "",
+                memberEmail: action.data.memberEmail || "",
+                memberPhone: action.data.memberPhone || "",
                 loading: false,
                 error: null,
+            };
+
+        case "SET_MEMBER_INFO":
+            return {
+                ...state,
+                memberCode: action.data.memberCode || null,
+                memberName: action.data.memberName || "",
+                memberEmail: action.data.memberEmail || "",
+                memberPhone: action.data.memberPhone || "",
             };
 
         case "SET_LOADING":
