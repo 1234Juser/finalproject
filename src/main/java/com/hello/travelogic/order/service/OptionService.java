@@ -160,4 +160,22 @@ public class OptionService {
         // 저장된 옵션 반환
         return option.getOptionCode();
     }
+
+    public OptionDTO getOptionByCode(Long optionCode) {
+
+        OptionEntity optionEntity = optionRepo.findById(optionCode)
+                .orElseThrow(() -> new RuntimeException("해당 옵션을 찾을 수 없습니다."));
+
+        ProductEntity productEntity = optionEntity.getProduct();
+        OptionDTO optionDTO = new OptionDTO();
+        optionDTO.setOptionCode(optionEntity.getOptionCode());
+        optionDTO.setProductTitle(productEntity.getProductTitle());
+        optionDTO.setProductThumbnail(productEntity.getProductThumbnail());
+        optionDTO.setReservationDate(optionEntity.getReservationDate());
+        optionDTO.setAdultCount(optionEntity.getAdultCount());
+        optionDTO.setChildCount(optionEntity.getChildCount());
+        optionDTO.setTotalPrice(optionEntity.getTotalPrice());
+
+        return optionDTO;
+    }
 }
