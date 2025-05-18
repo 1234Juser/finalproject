@@ -31,6 +31,8 @@ public class OrderDTO {
     private boolean isReviewed;
     // OneToOne에서 ManyToOne으로 바꾸며 생긴 오류 해결법
     private String memberName;
+    private String memberEmail;
+    private String memberPhone;
     private String productTitle;
     private int adultCount;
     private Integer childCount;
@@ -51,6 +53,8 @@ public class OrderDTO {
         this.orderStatus = entity.getOrderStatus();
         this.isReviewed = entity.hasReview();
         this.memberName = entity.getMember().getMemberName();
+        this.memberEmail = entity.getMember().getMemberEmail();
+        this.memberPhone = entity.getMember().getMemberPhone();
         this.productTitle = entity.getProduct().getProductTitle();
         this.adultCount = entity.getOption().getAdultCount();
         this.childCount = entity.getOption().getChildCount();

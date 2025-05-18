@@ -441,4 +441,19 @@ public class MemberService {
         return member.getMemberName();
     }
 
+    // 주문검토 페이지에서 주문자 정보 출력
+    public MemberDTO getMemberInfo(String memberId) {
+        // memberId로 회원 정보 조회
+        MemberEntity member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+
+        // DTO로 변환하여 반환
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setMemberCode(member.getMemberCode());
+        memberDTO.setMemberName(member.getMemberName());
+        memberDTO.setMemberEmail(member.getMemberEmail());
+        memberDTO.setMemberPhone(member.getMemberPhone());
+
+        return memberDTO;
+    }
 }

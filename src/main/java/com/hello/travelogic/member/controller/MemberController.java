@@ -153,4 +153,12 @@ public class MemberController {
         memberService.updateMemberEndstatus(memberId, newStatus);
         return ResponseEntity.ok("상태가 변경되었습니다.");
     }
+
+    // 주문검토 페이지에서 주문자 정보 출력
+    @GetMapping("/info")
+    public ResponseEntity<?> getMemberInfo(Authentication authentication) {
+        String memberId = authentication.getName(); // JWT에서 memberId 추출
+        MemberDTO memberDTO = memberService.getMemberInfo(memberId);
+        return ResponseEntity.ok(memberDTO);
+    }
 }

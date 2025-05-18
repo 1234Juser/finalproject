@@ -1,5 +1,5 @@
 import OrderCheckoutCom from "../../components/order/OrderCheckoutCom";
-import {createOrder, fetchOptionDetails} from "../../service/orderService";
+import {createOrder, fetchMemberInfo, fetchOptionDetails} from "../../service/orderService";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -7,6 +7,7 @@ function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
     const [optionData, setOptionData] = useState(null);
     const [loadedOptionData, setLoadedOptionData] = useState(optionData || null);
+    const [memberInfo, setMemberInfo] = useState(null);
     const [loading, setLoading] = useState(!optionData);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -42,6 +43,9 @@ function OrderCheckoutCon({ accessToken }) {
                 const data = await fetchOptionDetails(productUid, optionCode, accessToken);
                 setOptionData(data);
                 console.log("🟢 옵션 데이터 로드 성공:", data);
+                const memberData = await fetchMemberInfo(accessToken);
+                setMemberInfo(memberData);
+
             } catch (error) {
                 console.error("🔴 옵션 데이터 로드 실패:", error);
                 setError("옵션 데이터를 불러오는 데 실패했습니다.");
@@ -50,7 +54,9 @@ function OrderCheckoutCon({ accessToken }) {
             }
         };
 
-        loadOptionData();
+        if (productUid && optionCode && accessToken) {
+            loadOptionData();
+        }
     }, [productUid, optionCode, accessToken]);
 
     // 결제하기 버튼 클릭 시
@@ -80,6 +86,7 @@ function OrderCheckoutCon({ accessToken }) {
         <OrderCheckoutCom
             optionData={optionData}
             // optionData={loadedOptionData}
+            memberInfo={memberInfo}
             loading={loading}
             error={error}
             onCheckout={handleCheckout}

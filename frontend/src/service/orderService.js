@@ -177,3 +177,19 @@ export const fetchOptionDetails = async (productUid, optionCode, accessToken) =>
         throw error;
     }
 };
+
+// 주문검토페이지에서 사용
+export const fetchMemberInfo = async (accessToken) => {
+    try {
+        const response = await axios.get(`${path}/member/info`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        console.log("🟢 회원정보 조회 성공:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("🔴 회원 정보 가져오기 실패:", error);
+        throw error;
+    }
+};

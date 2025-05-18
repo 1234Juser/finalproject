@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-function OrderCheckoutCom({ optionData, loading, error, onCheckout }) {
+function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, loading, error, onCheckout }) {
     if (!optionData) return <p>옵션 정보가 없습니다.</p>;
     const {
         productTitle = "상품명 없음",
@@ -10,6 +10,12 @@ function OrderCheckoutCom({ optionData, loading, error, onCheckout }) {
         totalPrice = 0,
         productThumbnail = null,
     } = optionData;
+
+    const {
+        memberName = "이름 없음",
+        memberEmail = "이메일 없음",
+        memberPhone = "전화번호 없음",
+    } = memberInfo;
 
     const imagePath = productThumbnail
         ? `/upload/product/${encodeURIComponent(productThumbnail)}`
@@ -31,11 +37,25 @@ function OrderCheckoutCom({ optionData, loading, error, onCheckout }) {
                         <TotalPrice>{(optionData?.totalPrice || 0).toLocaleString()}원</TotalPrice>
                     </ProductDetails>
                 </ProductInfo>
+                {/* 구매자 정보 */}
                 <div>
-                    구매자 정보
+                    <h3>구매자 정보</h3>
+                    <ul>
+                        <li>이름: {memberName}</li>
+                        <li>이메일: {memberEmail}</li>
+                        <li>전화번호: {memberPhone}</li>
+                    </ul>
                 </div>
+                {/* 결제수단 선택 */}
                 <div>
-                    결제수단 선택
+                    <h3>결제수단 선택</h3>
+                    <select>
+                        <option value="">결제수단 선택</option>
+                        <option value="CARD">카드</option>
+                        <option value="BANK_TRANSFER">무통장 입금</option>
+                        <option value="PAYPAL">페이팔</option>
+                        <option value="KAKAO_PAY">카카오페이</option>
+                    </select>
                 </div>
             </Section>
 
