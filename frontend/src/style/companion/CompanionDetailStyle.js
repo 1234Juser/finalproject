@@ -77,17 +77,85 @@ export const AuthorName = styled.span`
 `;
 
 export const PostStatsLine = styled.div`
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        font-size: 0.9em;
+        color: ${Palette.subText};
+        
+        /* 자식 요소들 (CreatedAt, ModifiedAt, ViewCount, LikeButton, LikeCount) 사이의 간격 설정 */
+        & > span, & > button {
+            margin-left: 15px;
+        }
+        /* 첫 번째 자식 요소의 왼쪽 마진 제거 */
+        & > span:first-child, & > button:first-child {
+            margin-left: 0;
+        }
+`;
+
+
+
+// 좋아요 버튼 스타일 추가
+export const LikeButton = styled.button`
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: -8px; /* 좋아요 개수와의 간격 */
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    //font-size: 1em;
+    color: ${props => props.liked ? 'red' : '#555'}; /* 좋아요 상태에 따라 색상 변경 */
+
+    &:hover {
+        color: red;
+    }
+
+    svg {
+        width: 1em;
+        height: 1em;
+        vertical-align: middle;
+    }
+`;
+
+export const OtherLikeButton = styled.button`
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 5px; /* 좋아요 개수와의 간격 */
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    color: ${props => props.liked ? 'red' : '#555'}; /* 좋아요 상태에 따라 색상 변경 */
+
+    &:hover {
+        color: red;
+    }
+
+    svg {
+        width: 1em;
+        height: 1em;
+        vertical-align: middle;
+    }
+`;
+
+// 좋아요 개수 스타일 추가
+export const LikeCount = styled.span`
     font-size: 0.9em;
-    color: ${Palette.subText};
-    & > span {
-        margin-left: 15px;
-    }
-    & > span:first-child {
-        margin-left: 0;
-    }
+    color: #555;
+    display: flex;
+    align-items: center;
+    margin-left: 0; /* LikeButton에 이미 margin-right가 있으므로 LikeCount의 margin-left를 0으로 설정 */
+
+`;
+
+export const OtherLikeCount = styled.span`
+    font-size: 1em;
+    color: #555;
+    display: flex;
+    align-items: center;
+    margin-left: 0; 
 `;
 
 export const CreatedAt = styled.span`
@@ -271,6 +339,10 @@ export const CommentActions = styled.div`
     font-size: 0.9rem;
     /* 댓글 수정/삭제 버튼 왼쪽 정렬 */
     text-align: left;
+    display: flex; /* Flexbox 활성화 */
+    align-items: center; /* 세로 중앙 정렬 */
+    justify-content: flex-end; /* 요소들을 오른쪽 끝으로 정렬 */
+
 `;
 
 export const ActionButton = styled.button`

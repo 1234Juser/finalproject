@@ -39,12 +39,17 @@ import {
     FollowInfoButton,
     CommentFollowActions, PostFollowActions,
     CommentAuthorInfo,
-
+    LikeButton,
+    LikeCount,
+    OtherLikeButton,
+    OtherLikeCount
 } from "../../style/companion/CompanionDetailStyle";
 import { useNavigate } from "react-router-dom";
 import FollowModal from "../companion/FollowModalCom";
 import axios from "axios";
 import { format } from 'date-fns';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+
 
 const DEFAULT_PROFILE_IMAGE = "/img/default-profile.jpg";
 const COMMENTS_PER_PAGE = 10;
@@ -60,7 +65,13 @@ function CompanionDetailCom({
                                 currentUserRoles,
                                 onCommentSubmit,
                                 onCommentUpdate,
-                                onCommentDelete
+                                onCommentDelete,
+                                isCompanionLiked,
+                                companionLikeCount,
+                                commentLikeStatuses, // 각 댓글의 좋아요 상태
+                                commentLikeCounts, // 각 댓글의 좋아요 수
+                                onToggleCompanionLike, // 게시물 좋아요 토글 핸들러
+                                onToggleCommentLike // 댓글 좋아요 토글 핸들러
                             }) {
     const navigate = useNavigate();
     const [commentContent, setCommentContent] = useState('');
@@ -339,6 +350,16 @@ function CompanionDetailCom({
                         <ModifiedAt>{`(수정됨: ${modifiedDateText})`}</ModifiedAt>
                     )}
                     <ViewCount>조회수: {companion.companionViewCount || 0}</ViewCount>
+                    {/* 게시물 좋아요 버튼 및 개수 표시 */}
+                    {isLoggedIn && onToggleCompanionLike && (
+                        <>
+                            <LikeButton onClick={onToggleCompanionLike}>
+                                좋아요 {isCompanionLiked ?  <FaHeart color="red" /> : <FaRegHeart />}
+                            </LikeButton>
+                            <LikeCount>{companionLikeCount}</LikeCount>
+                        </>
+                    )}
+
                 </PostStatsLine>
             </MetaInfo>
 
@@ -429,6 +450,16 @@ function CompanionDetailCom({
                                         {/* 댓글 작성자 또는 관리자만 삭제 가능 */}
                                         {(comment.authorMemberCode === currentMemberCode || currentUserRoles.includes("ROLE_ADMIN")) && (
                                             <ActionButton onClick={() => handleDeleteClick(comment.companionCommentId)}>삭제</ActionButton>
+                                        )}
+
+                                        {/* 댓글 좋아요 버튼 및 개수 표시 */}
+                                        {isLoggedIn && onToggleCommentLike && (
+                                            <>
+                                                <OtherLikeButton onClick={() => onToggleCommentLike(comment.companionCommentId)}>
+                                                     {commentLikeStatuses[comment.companionCommentId] ? <FaHeart color="red" /> : <FaRegHeart />}
+                                                </OtherLikeButton>
+                                                <OtherLikeCount>{commentLikeCounts[comment.companionCommentId] || 0}</OtherLikeCount>
+                                            </>
                                         )}
                                     </CommentActions>
                                 )}
