@@ -95,6 +95,8 @@ function NavCon() {
                 left: leftPos,
             });
         }
+
+        console.log("isVisible 상태 확인---------showChat: ", showChat);
     }, [showChat]);
 
     return  (

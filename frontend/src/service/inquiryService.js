@@ -13,6 +13,7 @@ export const getStartInquiry = async ({inquiryMessage, token}) => {
         });
 
         const data = await response.json();
+        console.log("API 응답 데이터 ::::: ", data);
         
         if (!response.ok) {
             console.error("서버 응답 오류:", data);
@@ -23,5 +24,7 @@ export const getStartInquiry = async ({inquiryMessage, token}) => {
         
     } catch (error) {
         console.error("문의 전송 오류 : ", error);
+        throw error; // 에러를 다시 던져 상위에서 처리할 수 있도록 함
+
     }
 }

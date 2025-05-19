@@ -76,7 +76,7 @@ function InquiryChatCon({ isVisible, key: componentKey }) { // 'key' prop 이름
             // 2-1. 비회원 처리
             if (!isUserLoggedIn) { // 비회원 처리 (state에서 가져온 isUserLoggedIn 사용)
                 console.log("비회원 사용자입니다. icId를 0으로 설정합니다. (API 호출 안 함)");
-                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: 0 }); // 비회원용 채팅 ID (예: 0)
+                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: 0 });
                 return;
             } 
 
@@ -86,6 +86,7 @@ function InquiryChatCon({ isVisible, key: componentKey }) { // 'key' prop 이름
                 authorityCode: null,
                 memberId: currentUsername || "회원", // username이 없을 경우 대비
             };
+
             if (currentUserRoles && Array.isArray(currentUserRoles)) {
                 const userRole = currentUserRoles.find(role => role === "ROLE_USER");
                 if (userRole) {
@@ -97,22 +98,33 @@ function InquiryChatCon({ isVisible, key: componentKey }) { // 'key' prop 이름
             console.log("채팅방 생성 요청 DTO:", inquiryChatRequest);
 
             // 2-3. 채팅방 생성 요청
-            const response = await getStartInquiry({
-                inquiryMessage: inquiryChatRequest, // inquiryChatRequest 객체를 inquiryMessage 키로 전달
+/*            const data = await getStartInquiry({
+                inquiryMessage: inquiryChatRequest,
                 token: userToken
             });
-            console.log("-------채팅방 생성 정보 response\n 수신-------> ", response);
+            console.log("-------채팅방 생성 정보 data\n 수신-------> ", data);
 
             // currentInquiryChatId가 이전과 같다면 dispatch를 호출하지 않습니다.
-            if (response?.icId && response.icId !== state.currentInquiryChatId) {
-                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: response.icId });
-                console.log("채팅방이 성공적으로 생성되었습니다. icId:", response.icId);
+            if (data?.icId && data.icId !== state.currentInquiryChatId) {
+                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: data.icId });
+                console.log("채팅방이 성공적으로 생성되었습니다. icId:", data.icId);
+            }*/
+            // getStartInquiry가 반환하는 데이터에 inquiryChatId가 포함되어 있는지 확인할 것 !!! <<<<
+            const data = await getStartInquiry({
+                inquiryMessage: inquiryChatRequest,
+                token: userToken
+            });
+            if (data && data.currentInquiryChatId) {
+                dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: data.currentInquiryChatId });  // data.inquiryChatId일 수도 있음,,
+            } else {
+                console.error("채팅방 ID가 응답에 포함되어 있지 않습니다.");
+                dispatch({ type: 'SET_ERROR', payload: '채팅방을 시작하지 못했습니다.' });
             }
+
 
         } catch (err) {
             console.error("채팅방 생성/조회 처리 중 오류:", err);
             dispatch({ type: 'SET_ERROR', payload: err.message });
-            dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: null }); // 오류 발생 시 ID 초기화
         }
     }, [isUserLoggedIn, userMemberCode, currentUsername, currentUserRoles, userToken]);
 
@@ -120,12 +132,18 @@ function InquiryChatCon({ isVisible, key: componentKey }) { // 'key' prop 이름
     // ----------------------------------------------------------------------------------------3. 채팅방 시작 로직 호출 (isVisible, currentInquiryChatId, currentUser 변경 시)
     useEffect(() => {
         console.log("-----여기서 currentUser 정보 확인 ------->", currentUser);
+
+        console.log("isVisible:", isVisible);
+        console.log("currentInquiryChatId:", currentInquiryChatId);
+
+
         // 이전 값과 같다면 실행하지 않음
         if (previousInquiryChatIdRef.current === currentInquiryChatId) return;
 
 
         const initializeInquiryChat = async () => {
             if (currentUser && currentUser.username !== null && isVisible && currentInquiryChatId === null) {
+                console.log("InquiryChatCon: 조건 충족 - 채팅창 활성화 및 채팅방 정보 로드 시도.");
                 console.log("InquiryChatCon: 채팅창 활성화 및 채팅방 정보 로드 시도. currentUser 로드 완료.", "isUserLoggedIn:", isUserLoggedIn);
                 try {
                     await createInquiryChat(); // Promise를 반드시 처리 (await 또는 then 사용)
@@ -261,6 +279,9 @@ function InquiryChatCon({ isVisible, key: componentKey }) { // 'key' prop 이름
 
     // --------------------------------------------------------------------------5. 메시지 전송 로직 (WebSocket)
     const handleSendMessage = useCallback(() => {
+
+        console.log("메시지 전송 버튼 클릭됨");
+
         if (!newMessage.trim()) return;
 
         if (currentInquiryChatId === null) {
