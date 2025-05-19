@@ -117,6 +117,7 @@ function OptionFormCon({ accessToken }){
         }
 
         try {
+            // const selectedOption = state.options[0];
             const optionData = {
                 optionCode: state.options[0].optionCode || undefined,
                 productTitle: state.productTitle,
@@ -125,10 +126,18 @@ function OptionFormCon({ accessToken }){
                 // childCount: state.childCount,
                 adultCount: state.options[0].adultCount || 0,
                 childCount: state.options[0].childCount || 0,
-                totalPrice: state.totalPrice
+                // totalPrice: state.totalPrice
+                totalPrice: state.options[0].price || 0,
             };
             // 서버에서 생성된 optionCode 가져오기
-            const optionCode = await saveReservation(productUid, state.reservationDate, accessToken);
+            // const optionCode = await saveReservation(productUid, state.reservationDate, accessToken);
+            const optionCode = await saveReservation(
+                productUid,
+                optionData.reservationDate,
+                optionData.adultCount,
+                optionData.childCount,
+                accessToken
+            );
             // 옵션 코드와 옵션 데이터 저장
             optionData.optionCode = optionCode;
             localStorage.setItem("optionCode", optionCode);

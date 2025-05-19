@@ -53,11 +53,15 @@ export const selectReservationDate = async (productUid, reservationDate) => {
     }
 };
 
-export const saveReservation = async (productUid, reservationDate, accessToken) => {
+export const saveReservation = async (productUid, reservationDate, adultCount, childCount, accessToken) => {
     try {
         const response = await axios.patch(
             `${path}/products/${productUid}/reservation`,
-            JSON.stringify({ reservationDate }),
+            JSON.stringify({
+                reservationDate,
+                adultCount,
+                childCount,
+            }),
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -65,6 +69,7 @@ export const saveReservation = async (productUid, reservationDate, accessToken) 
                 },
             }
         );
+        console.log("🟢 예약 저장 성공:", response.data);
         return response.data;
     } catch (error) {
         console.error("Error saving reservation:", error);
