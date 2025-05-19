@@ -47,7 +47,10 @@ public class OptionEntity {
         this.reservationDate = dto.getReservationDate();
         this.adultCount = dto.getAdultCount();
         this.childCount = dto.getChildCount() != null ? dto.getChildCount() : 0;
-        this.totalPrice = (dto.getAdultCount() * product.getProductAdult()) +
-                ((dto.getChildCount() != null ? dto.getChildCount() : 0) * product.getProductChild());
+//        this.totalPrice = (dto.getAdultCount() * product.getProductAdult()) +
+//                ((dto.getChildCount() != null ? dto.getChildCount() : 0) * product.getProductChild());
+        int adultTotalPrice = this.adultCount * (product.getProductAdult() != null ? product.getProductAdult() : 0);
+        int childTotalPrice = this.childCount * (product.getProductChild() != null ? product.getProductChild() : 0);
+        this.totalPrice = adultTotalPrice + childTotalPrice;
     }
 }

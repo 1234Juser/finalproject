@@ -109,8 +109,8 @@ public class OptionService {
         } else {
             option.setReservationDate(parsedDate);  // 명시적으로 null 설정
         }
-        option.setAdultCount(0); // 기본값 설정
-        option.setChildCount(0);
+//        option.setAdultCount(0); // 기본값 설정
+//        option.setChildCount(0);
         optionRepo.save(option);
 
         log.info("🟢 예약 날짜 저장 완료: productUid = {}, reservationDate = {}", productUid, reservationDate);
@@ -145,6 +145,10 @@ public class OptionService {
             throw new IllegalStateException("최대 예약 인원을 초과했습니다.");
         }
 
+        // 상품 정보 초기화
+//        int productAdultPrice = product.getProductAdult();
+//        int productChildPrice = product.getProductChild();
+
         OptionEntity option = new OptionEntity();
         option.setProduct(product);
 //        option.setReservationDate(date);
@@ -153,9 +157,18 @@ public class OptionService {
 //        option.setChildCount(0);
         option.setAdultCount(adultCount);
         option.setChildCount(childCount);
+
+        Integer productAdultPrice = product.getProductAdult() != null ? product.getProductAdult() : 0;
+        Integer productChildPrice = product.getProductChild() != null ? product.getProductChild() : 0;
+        int totalPrice = (adultCount * productAdultPrice) + (childCount * productChildPrice);
+        option.setTotalPrice(totalPrice);
         optionRepo.save(option);
 
-        log.info("🟢 옵션 저장 완료: optionCode = {}", option.getOptionCode());
+//        log.info("🟢 옵션 저장 완료: optionCode = {}", option.getOptionCode());
+//        log.info("🟢 옵션 저장 완료 - optionCode: {}, totalPrice: {}", option.getOptionCode(), option.getTotalPrice());
+        log.info("🟢 옵션 저장 완료 - optionCode: {}, adultCount: {}, childCount: {}, totalPrice: {}",
+                option.getOptionCode(), option.getAdultCount(), option.getChildCount(), option.getTotalPrice());
+
 
         // 저장된 옵션 반환
         return option.getOptionCode();
@@ -167,15 +180,32 @@ public class OptionService {
                 .orElseThrow(() -> new RuntimeException("해당 옵션을 찾을 수 없습니다."));
 
         ProductEntity productEntity = optionEntity.getProduct();
+        if (productEntity == null) {
+            throw new RuntimeException("옵션에 연결된 상품이 없습니다.");
+        }
         OptionDTO optionDTO = new OptionDTO();
         optionDTO.setOptionCode(optionEntity.getOptionCode());
+        optionDTO.setProductCode(productEntity.getProductCode());
         optionDTO.setProductTitle(productEntity.getProductTitle());
         optionDTO.setProductThumbnail(productEntity.getProductThumbnail());
         optionDTO.setReservationDate(optionEntity.getReservationDate());
         optionDTO.setAdultCount(optionEntity.getAdultCount());
         optionDTO.setChildCount(optionEntity.getChildCount());
-        optionDTO.setTotalPrice(optionEntity.getTotalPrice());
+//        optionDTO.setTotalPrice(optionEntity.getTotalPrice());
 
+//        Integer productAdultPrice = productEntity.getProductAdult() != null ? productEntity.getProductAdult() : 0;
+//        Integer productChildPrice = productEntity.getProductChild() != null ? productEntity.getProductChild() : 0;
+//        int adultTotalPrice = optionEntity.getAdultCount() * productAdultPrice;
+//        int childTotalPrice = optionEntity.getChildCount() * productChildPrice;
+        int adultTotalPrice = optionEntity.getAdultCount() * productEntity.getProductAdult();
+        int childTotalPrice = optionEntity.getChildCount() * productEntity.getProductChild();
+        int totalPrice = adultTotalPrice + childTotalPrice;
+        optionDTO.setTotalPrice(totalPrice);
+        optionDTO.setProductAdult(adultTotalPrice);
+        optionDTO.setProductChild(childTotalPrice);
+        optionDTO.setProductMaxParticipants(productEntity.getProductMaxParticipants() != null ? productEntity.getProductMaxParticipants() : 0);
+
+        log.info("🟢 OptionService - OptionDTO 생성: {}", optionDTO);
         return optionDTO;
     }
 }

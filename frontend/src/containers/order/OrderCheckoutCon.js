@@ -6,7 +6,7 @@ import {useNavigate, useParams} from "react-router-dom";
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
     const [optionData, setOptionData] = useState(null);
-    const [loadedOptionData, setLoadedOptionData] = useState(optionData || null);
+    // const [loadedOptionData, setLoadedOptionData] = useState(optionData || null);
     const [memberInfo, setMemberInfo] = useState(null);
     const [loading, setLoading] = useState(!optionData);
     const [error, setError] = useState(null);
@@ -43,9 +43,9 @@ function OrderCheckoutCon({ accessToken }) {
                 const data = await fetchOptionDetails(productUid, optionCode, accessToken);
                 setOptionData(data);
                 console.log("🟢 옵션 데이터 로드 성공:", data);
+
                 const memberData = await fetchMemberInfo(accessToken);
                 setMemberInfo(memberData);
-
             } catch (error) {
                 console.error("🔴 옵션 데이터 로드 실패:", error);
                 setError("옵션 데이터를 불러오는 데 실패했습니다.");
@@ -68,7 +68,7 @@ function OrderCheckoutCon({ accessToken }) {
         }
 
         try {
-            const bookingUid = await createOrder(productUid, loadedOptionData, accessToken);
+            const bookingUid = await createOrder(productUid, optionData, accessToken);
             console.log("🟢 주문 생성 성공:", bookingUid);
             alert("결제가 완료되었습니다. 예약 번호: " + bookingUid);
             navigate(`/order/complete/${bookingUid}`);
@@ -82,15 +82,15 @@ function OrderCheckoutCon({ accessToken }) {
     if (error) return <p>{error}</p>;
 
     return(
-    <>
-        <OrderCheckoutCom
-            optionData={optionData}
-            // optionData={loadedOptionData}
-            memberInfo={memberInfo}
-            loading={loading}
-            error={error}
-            onCheckout={handleCheckout}
-        />
-    </>)
+        <>
+            <OrderCheckoutCom
+                optionData={optionData}
+                // optionData={loadedOptionData}
+                memberInfo={memberInfo}
+                loading={loading}
+                error={error}
+                onCheckout={handleCheckout}
+            />
+        </>)
 }
 export default OrderCheckoutCon;
