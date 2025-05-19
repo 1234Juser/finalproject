@@ -31,7 +31,7 @@ public class CompanionController {
             @RequestParam(name = "searchType", required = false, defaultValue = "title") String searchType, // 기본값 title로 설정
             // PageableDefault 에서 sort 는 서비스 레이어에서 제어하므로 여기서는 제거하거나 기본값만 둡니다.
             @PageableDefault(size = 10) Pageable pageable) {
-        log.info("검색요청 searchKeyword: '{}', searchType: '{}', pageable: {}", searchKeyword, searchType, pageable);
+//        log.info("검색요청 searchKeyword: '{}', searchType: '{}', pageable: {}", searchKeyword, searchType, pageable);
         Page<CompanionListDTO> companions = companionService.getAllCompanions(searchKeyword, searchType, pageable);
         return ResponseEntity.ok(companions);
     }

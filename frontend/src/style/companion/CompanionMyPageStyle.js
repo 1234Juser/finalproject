@@ -10,6 +10,7 @@ export const Palette = {
     textColor: "#333", // 기본 텍스트 색상
     secondaryTextColor: "#555", // 보조 텍스트 색상
     iconColor: "#198dbb", // 아이콘 색상
+    heartRed: "#ff6347", // 빨간색 하트 색상 추가 (Tomato 색상 사용)
 };
 
 export const contentStyle = {
