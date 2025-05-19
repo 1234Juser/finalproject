@@ -1,6 +1,7 @@
 package com.hello.travelogic.order.controller;
 
 import com.hello.travelogic.member.repository.MemberRepository;
+import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.order.service.OrderService;
 import com.hello.travelogic.product.dto.ProductDTO;
@@ -69,10 +70,15 @@ public class ReservationController {
     }
 
     // 예약 상태 실시간 반영(reservationDate이 지난날이 되면 orderStatus가 SCHEDULED에서 COMPLETED로)
-    @PostMapping("/reservation/update-status/completed/{orderCode}")
-    public ResponseEntity<String> updateCompletedStatus(@PathVariable Long orderCode) {
-        int updated = orderService.updateOrderStatusIfCompleted(orderCode);
-        return ResponseEntity.ok(updated == 1 ? "COMPLETED로 상태 변경됨" : "변경 사항 없음");
+//    @PatchMapping("/reservation/update-status/completed/{orderCode}")
+//    public ResponseEntity<String> updateCompletedStatus(@PathVariable Long orderCode) {
+//        int updated = orderService.updateOrderStatusIfCompleted(orderCode);
+//        return ResponseEntity.ok(updated == 1 ? "COMPLETED로 상태 변경됨" : "변경 사항 없음");
+//    }
+    @GetMapping("/reservations")
+    public ResponseEntity<List<OrderEntity>> getAllReservations() {
+        List<OrderEntity> updatedOrders = orderService.findAllWithAutoUpdate();
+        return ResponseEntity.ok(updatedOrders);
     }
 
     // 한 주문건만 예약 취소가 아니라 관리자는 여러 건의 주문을 동시에 취소 할 수 있어야 하기에

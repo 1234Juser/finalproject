@@ -33,11 +33,13 @@ public class OrderEntity {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_code", nullable = false)
+    @JsonIgnore
     private OptionEntity option;    // 옵션1 - 주문1
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_code", nullable = false)
+    @JsonIgnore
     private MemberEntity member;     // 회원1 - 주문N
 
     @NotNull

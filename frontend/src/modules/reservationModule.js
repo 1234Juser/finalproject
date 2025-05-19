@@ -25,6 +25,13 @@ function reservationReducer(state = initialState, action) {
                 currentPage: payload.currentPage || 1,
                 loading: false,
             };
+        case 'SET_RESERVATIONS':
+            return {
+                ...state,
+                reservations: action.payload || [],
+                loading: false,
+                error: null,
+            };
         case 'REMOVE_RESERVATION':
             const reservation = state.reservations.find(res => res.orderCode === action.payload);
             if (!reservation) return state;

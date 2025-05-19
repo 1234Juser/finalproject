@@ -2,10 +2,11 @@ import MyBookingCom from "../../components/booking/MyBookingCom";
 import {useEffect, useReducer, useState} from "react";
 import {cancelMyReservation, fetchRecentReservations, fetchOldReservations} from "../../service/reservationService";
 import {initialState, reservationReducer} from "../../modules/reservationModule";
-import MyReviewModalCon from "../review/MyReviewModalCon";
+import ReviewModalCon from "../review/MyReviewModalCon";
 import {deleteMyReview} from "../../service/reviewService";
+import MyReviewModalCon from "../review/MyReviewModalCon";
 
-function MyBookingCon({ accessToken }){
+function MyBookingCon({accessToken}){
     const [selectedTab, setSelectedTab] = useState(0);
     const [state, dispatch] = useReducer(reservationReducer, initialState);
     const [showMoreSchedule, setShowMoreSchedule] = useState(true);
@@ -14,59 +15,57 @@ function MyBookingCon({ accessToken }){
     const [selectedOrderCode, setSelectedOrderCode] = useState(null);
     const [memberCode, setMemberCode] = useState(null);
 
-    const refreshReservations = async (accessToken) => {
-        try {
-            const updatedReservations = await fetchRecentReservations(accessToken);  // 최신 예약 목록 불러오기
-            dispatch({ type: "SET_RESERVATIONS", payload: updatedReservations });
-        } catch (error) {
-            console.error("예약 목록 갱신 실패", error);
-        }
-    };
-
     useEffect(() => {
         if (!accessToken) {
             alert("로그인이 필요합니다.");
             return;
         }
-        // let memberCode = null;
-        try {
-            const payload = JSON.parse(atob(accessToken.split('.')[1]));
-            const parsedMemberCode = payload.memberCode;
-            // if (memberCode) {
-            //     console.log("memberCode from token:", memberCode);
-            //     localStorage.setItem("memberCode", memberCode);
-            // }
-            if (!parsedMemberCode || isNaN(parsedMemberCode)) {
-                console.error("유효하지 않은 memberCode");
-                alert("로그인 정보가 유효하지 않습니다.");
-                return;
-            }
-            setMemberCode(parsedMemberCode);
-            console.log("로그인된 memberCode:", parsedMemberCode);
-            // } catch (e) {
-            //     console.error("토큰 파싱 실패", e);
-            //     return;
-            // }
+        if (accessToken) {
+            // let memberCode = null;
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const parsedMemberCode = payload.memberCode;
+                // const memberCode = payload.memberCode;
+                // if (memberCode) {
+                //     console.log("memberCode from token:", memberCode);
+                //     localStorage.setItem("memberCode", memberCode);
+                // }
+                // if (!memberCode || isNaN(memberCode)) {
+                if (!parsedMemberCode || isNaN(parsedMemberCode)) {
+                    console.error("유효하지 않은 memberCode");
+                    alert("로그인 정보가 유효하지 않습니다.");
+                    return;
+                }
+                setMemberCode(parsedMemberCode);
+                console.log("로그인된 memberCode:", parsedMemberCode);
+                // console.log("로그인된 memberCode:", memberCode);
+                // } catch (e) {
+                //     console.error("토큰 파싱 실패", e);
+                //     return;
+                // }
 
-            // useEffect(() => {
-            // console.log("로그인된 memberCode:", memberCode);
-            // if (!memberCode || isNaN(memberCode)) {
-            //     console.error("로그인 정보가 없습니다.");
-            //     return;
-            // }
-            // const loadRecent = async () => {
-            dispatch({ type: "LOADING" });
-            fetchRecentReservations(accessToken)
-                .then(data => {
-                    dispatch({ type: "FETCH_SUCCESS", payload: data });
-                })
-                .catch((err) => {
-                    console.error("예약 조회 실패:", err.message);
-                    dispatch({ type: "FETCH_ERROR", payload: err.message });
-                });
-        } catch (e) {
-            console.error("토큰 파싱 실패", e);
-            alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
+                // useEffect(() => {
+                // console.log("로그인된 memberCode:", memberCode);
+                // if (!memberCode || isNaN(memberCode)) {
+                //     console.error("로그인 정보가 없습니다.");
+                //     return;
+                // }
+                // const loadRecent = async () => {
+                dispatch({ type: "LOADING" });
+                fetchRecentReservations(accessToken)
+                    .then(data => {
+                        dispatch({ type: "FETCH_SUCCESS", payload: data });
+                    })
+                    .catch((err) => {
+                        console.error("예약 조회 실패:", err.message);
+                        dispatch({ type: "FETCH_ERROR", payload: err.message });
+                    });
+            } catch (e) {
+                console.error("토큰 파싱 실패", e);
+                alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
+            }
+        } else {
+            alert("로그인이 필요합니다.");
         }
     }, [accessToken]);
     //         try {
@@ -161,7 +160,6 @@ function MyBookingCon({ accessToken }){
                 payload: { orderCode, reviewed: false }
             });
 
-            await refreshReservations(accessToken);
             closeReviewModal();  // 모달 닫기
         } catch (error) {
             alert("리뷰 삭제에 실패했습니다.");
@@ -187,9 +185,7 @@ function MyBookingCon({ accessToken }){
             {selectedOrderCode &&
                 <MyReviewModalCon orderCode={selectedOrderCode}
                                   onClose={closeReviewModal}
-                                  onDeleteReview={handleDeleteReview}
-                                  accessToken={accessToken}
-                />}
+                                  onDeleteReview={handleDeleteReview} />}
         </>)
 }
 export default MyBookingCon;

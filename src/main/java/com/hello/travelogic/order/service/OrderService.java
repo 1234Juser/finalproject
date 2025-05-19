@@ -15,6 +15,7 @@ import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.review.repo.ReviewRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,13 +75,14 @@ public class OrderService {
         return map;
     }
 
-    // 로그인 된 회원의 주문내역 조회
+    // 로그인 된 회원의 주문내역 조회 + reservationDate 기준으로 내림차순 정렬 추가
     @Transactional(readOnly = true)
     public List<OrderDTO> getRecentOrders(long memberCode) {
         MemberEntity member = memberRepo.findById(memberCode).orElseThrow();
         LocalDate cutoff = LocalDate.now().minusMonths(6);
         return orderRepo.findRecentOrders(member, cutoff).stream()
                 .map(OrderDTO::new)
+                .sorted((o1, o2) -> o2.getReservationDate().compareTo(o1.getReservationDate()))
                 .collect(Collectors.toList());
     }
 
@@ -90,6 +92,7 @@ public class OrderService {
         LocalDate cutoff = LocalDate.now().minusMonths(6);
         return orderRepo.findOldOrders(member, cutoff).stream()
                 .map(OrderDTO::new)
+                .sorted((o1, o2) -> o2.getReservationDate().compareTo(o1.getReservationDate()))
                 .collect(Collectors.toList());
     }
 
@@ -106,34 +109,46 @@ public class OrderService {
 //                .map(OrderDTO::new)
 //                .collect(Collectors.toList());
 //    }
+
+//    @Transactional
+//    public int updateOrderStatusIfCompleted(Long orderCode) {
 //
-//    @Transactional(readOnly = true)
-//    public List<OrderDTO> getOrdersByUsername(String username) {
-//        MemberEntity member = memberRepo.findByMemberId(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+//        OrderEntity order = orderRepo.findById(orderCode)
+//                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 //
-//        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
-//        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
-//
-//        return orderPage.getContent().stream()
-//                .map(OrderDTO::new)
-//                .collect(Collectors.toList());
+//        LocalDate resDate = order.getOption().getReservationDate();
+//        LocalDate today = LocalDate.now();
+    ////        if (resDate != null && resDate.isBefore(LocalDate.now())) {
+//        if (resDate != null && resDate.isBefore(today)) {
+//            order.setOrderStatus(OrderStatus.COMPLETED);
+//            orderRepo.save(order);
+//            log.info("🟢 상태 업데이트 완료: " + orderCode);
+//            return 1; // 상태가 바뀐 경우
+//        }
+//        log.info("🔴 상태 변경 조건 불충족: " + orderCode);
+//        return 0;
 //    }
-
     @Transactional
-    public int updateOrderStatusIfCompleted(Long orderCode) {
+    public List<OrderEntity> findAllWithAutoUpdate() {
+        List<OrderEntity> orders = orderRepo.findAll();
 
-        OrderEntity order = orderRepo.findById(orderCode)
-                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+        for (OrderEntity order : orders) {
 
-        LocalDate resDate = order.getOption().getReservationDate();
-        if (resDate != null && resDate.isBefore(LocalDate.now())) {
-            order.setOrderStatus(OrderStatus.COMPLETED);
-            orderRepo.save(order);
-            return 1; // 상태가 바뀐 경우
+            Hibernate.initialize(order.getOption());
+            Hibernate.initialize(order.getMember());
+
+            LocalDate resDate = order.getOption().getReservationDate();
+            LocalDate today = LocalDate.now();
+
+            // 예약일이 지났고 아직 상태가 SCHEDULED인 경우
+            if (resDate != null && resDate.isBefore(today) && order.getOrderStatus() == OrderStatus.SCHEDULED) {
+                order.setOrderStatus(OrderStatus.COMPLETED);
+                orderRepo.save(order);
+                System.out.println("상태 업데이트 완료: " + order.getOrderCode());
+            }
         }
 
-        return 0;
+        return orders;
     }
 
     @Transactional

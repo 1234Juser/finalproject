@@ -2,7 +2,7 @@ import { useEffect, useReducer, useState } from "react";
 import {
     cancelReservations,
     fetchReservationsByProductCode,
-    fetchProductListForFilter
+    fetchProductListForFilter, updateReservationStatus
 } from "../../service/reservationService";
 import { initialState, reservationReducer } from "../../modules/reservationModule";
 import AdminBookingByProductCom from "../../components/booking/AdminBookingByProductCom";
@@ -17,25 +17,6 @@ function AdminBookingByProductCon({accessToken}) {
     const onClick = (page) => {
         setStart(page);
     };
-
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         if (!accessToken) {
-    //             alert("토큰이 없습니다.");
-    //             return;
-    //         }
-    //         try {
-    //             dispatch({ type: 'LOADING' });
-    //             const data = await fetchReservationsByProductCode(selectedProductCode); // null이면 전체
-    //             dispatch({ type: 'FETCH_SUCCESS', payload: data });
-    //         } catch (error) {
-    //             console.error("예약 조회 실패:", error);
-    //             dispatch({ type: 'FETCH_ERROR', payload: error });
-    //         }
-    //     }
-    //
-    //     fetchData();
-    // }, [selectedProductCode]); // 상품이 바뀔 때마다 조회
 
     // 상품 목록 불러오기
     useEffect(() => {
@@ -84,6 +65,27 @@ function AdminBookingByProductCon({accessToken}) {
             .then((data) => {
                 console.log("예약 데이터 응답:", data);
                 dispatch({ type: "FETCH_SUCCESS", payload: data });
+
+                // 예약 상태 자동 업데이트 함수
+                if (data.reservations && data.reservations.length > 0) {
+                    const updatePromises = data.reservations.map((reservation) => {
+                        const reservationDate = new Date(reservation.reservationDate);
+                        const today = new Date();
+
+                        // 예약일이 지났는지 확인
+                        if (reservationDate < today && reservation.orderStatus === "SCHEDULED") {
+                            return updateReservationStatus(accessToken, reservation.orderCode)
+                                .then(() => console.log(`예약 상태 업데이트 완료: ${reservation.orderCode}`))
+                                .catch(err => console.error(`예약 상태 업데이트 실패: ${reservation.orderCode}`, err));
+                        }
+
+                        return Promise.resolve(); // 상태 변경이 필요하지 않은 경우
+                    });
+
+                    // 모든 상태 업데이트가 완료된 후 로그 출력
+                    Promise.all(updatePromises).then(() => console.log("모든 예약 상태 업데이트 완료"));
+                }
+
             })
             .catch((err) => {
                 console.error("예약 조회 실패:", err.response?.data || err.message);
