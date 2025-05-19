@@ -73,7 +73,7 @@ export async function fetchAllReservations(accessToken, start = 0) {
 }
 
 // 예약일이 지나면 상태변경
-export async function updateReservationStatus(accessToken, orderCode) {
+export async function updateReservationStatus(accessToken) {
     if (!accessToken) {
         console.error("accessToken 없음");
         return;
@@ -86,8 +86,9 @@ export async function updateReservationStatus(accessToken, orderCode) {
     };
 
     try {
-        const res = await axios.post(`${path}/reservation/update-status/completed/${orderCode}`, config);
-        return res.data;
+        // const response = await axios.patch(`${path}/reservation/update-status/completed/${orderCode}`, {}, config);
+        const response = await axios.get("/reservations", config);
+        return response.data;
     } catch (error) {
         console.error("updateReservationStatus 실패", error.response?.data || error.message);
         throw error;

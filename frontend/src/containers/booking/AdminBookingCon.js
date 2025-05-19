@@ -1,6 +1,6 @@
 import AdminBookingCom from "../../components/booking/AdminBookingCom";
 import {useEffect, useReducer, useState} from "react";
-import {cancelReservations, fetchAllReservations} from "../../service/reservationService";
+import {cancelReservations, fetchAllReservations, updateReservationStatus} from "../../service/reservationService";
 import {initialState, reservationReducer} from "../../modules/reservationModule";
 
 function AdminBookingCon({accessToken}){
@@ -16,34 +16,57 @@ function AdminBookingCon({accessToken}){
             alert("토큰이 없습니다.");
             return;
         }
-            try {
-                const decoded = JSON.parse(atob(accessToken.split('.')[1]));
-                const roles = decoded.roles;
-                if (!roles.includes("ROLE_ADMIN")) {
-                    alert("접근 권한이 없습니다. 관리자만 접근할 수 있습니다.");
-                    // 필요 시 아래처럼 리다이렉트도 가능
-                    // navigate("/");
-                    return;
-                }
-        dispatch({ type: "LOADING" });
-        fetchAllReservations(accessToken, start)
-            .then(data => {
-                console.log("API 응답 확인:", data);
-                dispatch({ type: "FETCH_SUCCESS", payload: data })
-            })
-            .catch(err => {
-                if (err.response?.status === 403) {
-                    alert("접근 권한이 없습니다. 관리자만 조회할 수 있습니다.");
-                } else {
-                    console.error("예약 조회 실패:", err.message);
-                    alert("예약 목록 조회에 실패했습니다.");
-                }
-                    dispatch({ type: "FETCH_ERROR", payload: err.message });
-            });
-            } catch (e) {
-                console.error("토큰 디코딩 오류:", e);
-                alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
+        try {
+            const decoded = JSON.parse(atob(accessToken.split('.')[1]));
+            const roles = decoded.roles;
+            if (!roles.includes("ROLE_ADMIN")) {
+                alert("접근 권한이 없습니다. 관리자만 접근할 수 있습니다.");
+                // 필요 시 아래처럼 리다이렉트도 가능
+                // navigate("/");
+                return;
             }
+            dispatch({ type: "LOADING" });
+            const fetchAndUpdateReservations = async () => {
+                try {
+                    const data = await fetchAllReservations(accessToken, start);
+                    console.log("API 응답 확인:", data);
+
+                    // 예약 상태 자동 업데이트 함수
+                    if (data.reservations && data.reservations.length > 0) {
+                        const updatePromises = data.reservations.map((reservation) => {
+                            const reservationDate = new Date(reservation.reservationDate);
+                            const today = new Date();
+
+                            // 예약일이 지났는지 확인
+                            if (reservationDate < today && reservation.orderStatus === "SCHEDULED") {
+                                return updateReservationStatus(accessToken, reservation.orderCode)
+                                    .then(() => console.log(`예약 상태 업데이트 완료: ${reservation.orderCode}`))
+                                    .catch(err => console.error(`예약 상태 업데이트 실패: ${reservation.orderCode}`, err));
+                            }
+                            return Promise.resolve(); // 상태 변경이 필요하지 않은 경우
+                        });
+                        // 모든 상태 업데이트가 완료된 후 로그 출력
+                        await Promise.all(updatePromises);
+                        console.log("모든 예약 상태 업데이트 완료");
+                    }
+
+                    dispatch({type: "FETCH_SUCCESS", payload: data})
+                } catch (err) {
+                    if (err.response?.status === 403) {
+                        alert("접근 권한이 없습니다. 관리자만 조회할 수 있습니다.");
+                    } else {
+                        console.error("예약 조회 실패:", err.message);
+                        alert("예약 목록 조회에 실패했습니다.");
+                    }
+                    dispatch({type: "FETCH_ERROR", payload: err.message});
+                }
+            };
+            // 비동기 함수
+            fetchAndUpdateReservations();
+        } catch (e) {
+            console.error("토큰 디코딩 오류:", e);
+            alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
+        }
     }, [accessToken, start]);
 
     const { reservations, loading, currentPage, totalPages } = state;
