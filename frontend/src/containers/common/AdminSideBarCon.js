@@ -22,6 +22,7 @@ const adminMenuList = [
     },
     { label: "이벤트관리", path: "/event" },
     { label: "FAQ관리", path: "/faq" },
+    { label: "여행커뮤니티관리", path: "/community/companion" },
     { label: "1:1문의관리(채팅)", path: "/admin/event" },
     { label: "실시간조회수관리", path: "/realtime"}
 ];

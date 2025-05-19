@@ -54,20 +54,21 @@ VALUES
     ('자주 묻는 질문 12', '열두 번째 FAQ 내용');
 
 -- 게시물테이블 중복삭제
+DELETE FROM tbl_like;
 DELETE FROM tbl_companion_comment;
 DELETE FROM tbl_companion;
-INSERT INTO tbl_companion (companion_id, member_code, companion_title, companion_content, companion_created_at, companion_modified_at, companion_view_count) VALUES
-                                                                                                                                                                 (1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 1', '1번 동행글 내용입니다.', NOW() - INTERVAL 10 DAY, NULL, 12),
-                                                                                                                                                                 (2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 2', '2번 동행글 내용입니다.', NOW() - INTERVAL 9 DAY, NULL, 34),
-                                                                                                                                                                 (3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 3', '3번 동행글 내용입니다.', NOW() - INTERVAL 8 DAY, NULL, 56),
-                                                                                                                                                                 (4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '제목 4', '4번 동행글 내용입니다.', NOW() - INTERVAL 7 DAY, NULL, 21),
-                                                                                                                                                                 (5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 5', '5번 동행글 내용입니다.', NOW() - INTERVAL 6 DAY, NULL, 0),
-                                                                                                                                                                 (6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 6', '6번 동행글 내용입니다.', NOW() - INTERVAL 5 DAY, NULL, 13),
-                                                                                                                                                                 (7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 7', '7번 동행글 내용입니다.', NOW() - INTERVAL 4 DAY, NULL, 88),
-                                                                                                                                                                 (8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '제목 8', '8번 동행글 내용입니다.', NOW() - INTERVAL 3 DAY, NULL, 45),
-                                                                                                                                                                 (9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 9', '9번 동행글 내용입니다.', NOW() - INTERVAL 2 DAY, NULL, 7),
-                                                                                                                                                                 (10, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 10', '10번 동행글 내용입니다.', NOW() - INTERVAL 1 DAY, NULL, 99),
-                                                                                                                                                                 (11, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 11', '11번 동행글 내용입니다.', NOW(), NULL, 3);
+INSERT INTO tbl_companion (companion_id, member_code, companion_title, companion_content, companion_created_at, companion_modified_at, companion_view_count,companion_notice) VALUES
+                                                                                                                                                                 (1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 1', '1번 동행글 내용입니다.', NOW() - INTERVAL 10 DAY, NULL, 12, true),
+                                                                                                                                                                 (2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 2', '2번 동행글 내용입니다.', NOW() - INTERVAL 9 DAY, NULL, 34, false),
+                                                                                                                                                                 (3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 3', '3번 동행글 내용입니다.', NOW() - INTERVAL 8 DAY, NULL, 56, false),
+                                                                                                                                                                 (4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '제목 4', '4번 동행글 내용입니다.', NOW() - INTERVAL 7 DAY, NULL, 21, false),
+                                                                                                                                                                 (5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 5', '5번 동행글 내용입니다.', NOW() - INTERVAL 6 DAY, NULL, 0, false),
+                                                                                                                                                                 (6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 6', '6번 동행글 내용입니다.', NOW() - INTERVAL 5 DAY, NULL, 13, false),
+                                                                                                                                                                 (7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 7', '7번 동행글 내용입니다.', NOW() - INTERVAL 4 DAY, NULL, 88, false),
+                                                                                                                                                                 (8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '제목 8', '8번 동행글 내용입니다.', NOW() - INTERVAL 3 DAY, NULL, 45, false),
+                                                                                                                                                                 (9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 9', '9번 동행글 내용입니다.', NOW() - INTERVAL 2 DAY, NULL, 7, false),
+                                                                                                                                                                 (10, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 10', '10번 동행글 내용입니다.', NOW() - INTERVAL 1 DAY, NULL, 99, false),
+                                                                                                                                                                 (11, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 11', '11번 동행글 내용입니다.', NOW(), NULL, 3, false);
 
 
 -- 여행커뮤니티댓글테이블
@@ -94,6 +95,33 @@ INSERT INTO tbl_companion_comment (companion_comment_id, member_code, companion_
                                                                                                                                                                                 (19, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 9, '9번 게시물의 댓글', NOW() - INTERVAL 3 DAY, NULL),
                                                                                                                                                                                 (20, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 10, '10번 게시물의 댓글', NOW() - INTERVAL 2 DAY, NULL),
                                                                                                                                                                                 (21, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 11, '11번 게시물의 댓글', NOW() - INTERVAL 1 DAY, NULL);
+
+-- tbl_like 테이블 더미 데이터 삽입
+INSERT INTO tbl_like (member_code, companion_id, companion_comment_id, created_at)
+VALUES
+    -- 게시글 좋아요 (companion_id만 NULL이 아님)
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, NULL, NOW() - INTERVAL 5 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, NULL, NOW() - INTERVAL 4 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, NULL, NOW() - INTERVAL 3 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, NULL, NOW() - INTERVAL 2 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 2, NULL, NOW() - INTERVAL 6 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 2, NULL, NOW() - INTERVAL 5 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 3, NULL, NOW() - INTERVAL 7 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 4, NULL, NOW() - INTERVAL 8 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 5, NULL, NOW() - INTERVAL 9 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 6, NULL, NOW() - INTERVAL 10 DAY),
+    -- 댓글 좋아요 (companion_comment_id만 NULL이 아님)
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NULL, 1, NOW() - INTERVAL 5 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NULL, 1, NOW() - INTERVAL 4 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), NULL, 2, NOW() - INTERVAL 3 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NULL, 2, NOW() - INTERVAL 2 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NULL, 3, NOW() - INTERVAL 6 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NULL, 4, NOW() - INTERVAL 5 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), NULL, 5, NOW() - INTERVAL 7 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NULL, 6, NOW() - INTERVAL 8 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NULL, 7, NOW() - INTERVAL 9 DAY),
+    ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NULL, 8, NOW() - INTERVAL 10 DAY);
+
 
 INSERT IGNORE INTO tbl_region (region_code, region_uid, region_name, region_type)
 VALUES

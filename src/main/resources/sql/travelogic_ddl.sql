@@ -328,6 +328,21 @@ CREATE TABLE `tbl_follow` (
                               CONSTRAINT `UK_follower_following` UNIQUE (`follower_member_code`, `following_member_code`) -- 중복 팔로우 방지
 )ENGINE=INNODB COMMENT '회원 팔로우/팔로워 관계';
 
+# 게시글좋아요/테이블
+CREATE TABLE tbl_like (
+                          like_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL COMMENT '좋아요 번호',
+                          member_code BIGINT NOT NULL COMMENT '회원번호',
+                          companion_id INT NULL COMMENT '게시글 번호',        -- 게시물 좋아요 (게시물이 아니면 NULL)
+                          companion_comment_id INT NULL COMMENT '댓글 번호', -- 댓글 좋아요 (댓글이 아니면 NULL)
+                          created_at DATETIME NOT NULL COMMENT '좋아요처음클릭한날짜',
+                          FOREIGN KEY (member_code) REFERENCES tbl_member(member_code),
+                          FOREIGN KEY (companion_id) REFERENCES tbl_companion(companion_id) ON DELETE CASCADE, -- 게시글 삭제 시 좋아요 정보도 삭제
+                          FOREIGN KEY (companion_comment_id) REFERENCES tbl_companion_comment(companion_comment_id) ON DELETE CASCADE, -- 댓글 삭제 시 좋아요 정보도 삭제
+                          UNIQUE KEY uk_member_companion (member_code, companion_id), -- 게시물 좋아요 중복 방지
+                          UNIQUE KEY uk_member_comment (member_code, companion_comment_id) -- 댓글 좋아요 중복 방지
+);
+
+
 
 CREATE TABLE `tbl_chat_room` (
                                  `chat_room_id` INT AUTO_INCREMENT NOT NULL COMMENT '채팅방 고유 ID',
