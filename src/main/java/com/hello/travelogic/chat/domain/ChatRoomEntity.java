@@ -24,7 +24,7 @@ public class ChatRoomEntity {
     private Long chatRoomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_code", nullable = false)
+    @JoinColumn(name = "member_code")
     private MemberEntity memberCode;        // 회원 1 : 채팅방 N 관계
 
     @Column(name = "chat_room_uid", unique = true, nullable = false, length = 20)

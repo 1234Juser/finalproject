@@ -40,7 +40,14 @@ public class InquiryChatWebSocketService {
     public InquiryChatMessageDTO sendInquiryMessage(Long icId, InquiryChatMessageDTO messageDTO) {
         
         log.debug ("sendInquiryMessage 호출 - icId: {}, message DTO: {}", icId, messageDTO);
-        
+
+        if (icId == null || icId == 0L) {
+            log.warn("채팅방 ID가 0 또는 null입니다. icId: {}", icId);
+            // 0일 때는 비회원 메시지 처리로 안내 메시지 전송 또는 특수처리
+            return processGuestMessage(icId, messageDTO);
+        }
+
+
         boolean isGuestMessage = (messageDTO.getMemberCode () == null || "GUEST".equals (messageDTO.getSenderType ()));
         log.info ("메시지 발신자 비회원 여부: {}", isGuestMessage);
         
@@ -64,7 +71,7 @@ public class InquiryChatWebSocketService {
                                               .build();
         
         // 해당 비회원 채팅방 토픽으로 시스템 메시지 발행
-        String destination = "/topic/inquiry/chat/" + guestIcId; // 프론트 구독 경로와 일치
+        String destination = "/inquiry/" + guestIcId + "/send";
         messagingTemplate.convertAndSend(destination, systemMessage);
         log.info("비회원에게 시스템 안내 메시지 발송 완료 - destination: {}, 메시지: {}", destination, systemMessage.getMessage());
         
@@ -95,7 +102,7 @@ public class InquiryChatWebSocketService {
         
         // 5. 저장된 엔티티를 DTO로 변환하여 반환 및 브로드캐스트
         InquiryChatMessageDTO processedMessageDto = new InquiryChatMessageDTO(messageEntity);
-        String destination = "/topic/inquiry/chat/" + numericIcId; // 프론트 구독 경로와 일치
+        String destination = "/inquiry/" + numericIcId + "/send";
         messagingTemplate.convertAndSend(destination, processedMessageDto);
         log.info("회원 메시지 처리 및 발송 완료 - destination: {}, 메시지 ID: {}", destination, processedMessageDto.getIcmId());
         
@@ -151,11 +158,15 @@ public class InquiryChatWebSocketService {
         }
     }
 
-    
-    
+    public InquiryChatMessageDTO addInquiryMessage(Long icId, InquiryChatMessageDTO message, SimpMessageHeaderAccessor headerAccessor) {
+
+        return null;
+    }
+
+
     // 이 메소드는 프론트에서 처리
     // 채팅 시작 시 안내 메시지 전송
-    @Transactional
+/*    @Transactional
     public InquiryChatMessageDTO handleUserJoin(Long icId, InquiryChatMessageDTO userJoinMessageInfo, SimpMessageHeaderAccessor headerAccessor) {
 
         log.debug("handleUserJoin called - icId: {}, userJoinMessageInfo: {}", icId, userJoinMessageInfo);
@@ -182,7 +193,7 @@ public class InquiryChatWebSocketService {
         // 7. 해당 구독 경로로 환영 메시지 전송
        
         return null;
-    }
+    }*/
 
 
 }

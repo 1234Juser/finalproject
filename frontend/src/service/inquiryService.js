@@ -1,4 +1,4 @@
-const path = "https://localhost:8080";
+const path = "http://localhost:8080";
 
  // REST API로 채팅방 시작/조회 요청
 export const getStartInquiry = async ({inquiryMessage, token}) => {
@@ -15,8 +15,8 @@ export const getStartInquiry = async ({inquiryMessage, token}) => {
         const data = await response.json();
         
         if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.message || `채팅방을 시작하지 못했습니다: ${response.status}`);
+            console.error("서버 응답 오류:", data);
+            throw new Error(data.message || `채팅방을 시작하지 못했습니다: ${data.status}`);
         }
         console.log("채팅방 시작, 회원이 보낸 메시지 : ", data);
         return data;

@@ -2,6 +2,7 @@ package com.hello.travelogic.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class JwtUtil {
 
     // application.properties에 등록한 값 주입
@@ -68,10 +70,23 @@ public class JwtUtil {
     public boolean validateToken(String token) {
         try {
             Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
+            log.trace("Token validation successful for token: {}", token); // 성공 시 TRACE 로그
             return true;
+        } catch (io.jsonwebtoken.security.SecurityException | io.jsonwebtoken.MalformedJwtException e) {
+            log.warn("Invalid JWT signature or structure for token [{}]: {}", token, e.getMessage());
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            log.warn("Expired JWT token [{}]: {}", token, e.getMessage());
+        } catch (io.jsonwebtoken.UnsupportedJwtException e) {
+            log.warn("Unsupported JWT token [{}]: {}", token, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            // 이 예외는 Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token) 에서 token이 null이거나 비었을 때 주로 발생
+            log.warn("JWT claims string is empty or null for token [{}]: {}", token, e.getMessage());
         } catch (Exception e) {
-            return false;
+            log.error("Token validation failed for an unexpected reason for token [{}]: {}", token, e.getMessage(), e);
         }
+        // 실패 시 WARN 로그는 JwtChannelInterceptor에서 이미 찍고 있으므로 여기서는 생략하거나 TRACE로 변경 가능
+        // log.warn("Token validation failed for token: {}", token);
+        return false;
     }
 
 
