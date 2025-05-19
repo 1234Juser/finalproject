@@ -23,7 +23,7 @@ function MyBookingCon({accessToken}){
         if (accessToken) {
             // let memberCode = null;
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const payload = JSON.parse(atob(accessToken.split('.')[1]));
                 const parsedMemberCode = payload.memberCode;
                 // const memberCode = payload.memberCode;
                 // if (memberCode) {

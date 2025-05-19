@@ -79,4 +79,8 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
 
     // 관리자페이지에서 페이징처리
     Page<ReviewEntity> findPageByProduct_ProductCode(Long productCode, Pageable pageable);
+
+    // 찜 리스트에서 productCode로 리뷰 개수
+    @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.product.productCode = :productCode")
+    Long countByProductProductCode(@Param("productCode") Long productCode);
 }

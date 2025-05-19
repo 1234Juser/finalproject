@@ -53,8 +53,16 @@ public class WishService {
             WishDTO dto = new WishDTO(entity);
             Long productCode = entity.getProduct().getProductCode();
             System.out.println("조회된 찜 수: " + entities.size());
+
             Double avg = reviewRepo.findAvgRatingByProductCode(productCode);
             dto.setReviewAvg(avg != null ? avg : 0.0);
+            int count = reviewRepo.countByProductProductCode(productCode).intValue();
+            dto.setReviewCount(count);
+
+            System.out.println("조회된 찜 수: " + entities.size());
+            System.out.println("리뷰 평균: " + dto.getReviewAvg());
+            System.out.println("리뷰 개수: " + dto.getReviewCount());
+
             return dto;
         }).collect(Collectors.toList());
     }
