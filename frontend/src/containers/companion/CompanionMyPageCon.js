@@ -7,6 +7,9 @@ function CompanionMyPageCon() {
     const [activeTab, setActiveTab] = useState('posts'); // 'posts' or 'comments'
     const [posts, setPosts] = useState([]);
     const [comments, setComments] = useState([]);
+    const [likedPosts, setLikedPosts] = useState([]); // 좋아요한 게시글 상태 추가
+    const [likedComments, setLikedComments] = useState([]); // 좋아요한 댓글 상태 추가
+
     const [postsPageInfo, setPostsPageInfo] = useState({
         currentPage: 0,
         totalPages: 0,
@@ -17,6 +20,19 @@ function CompanionMyPageCon() {
         totalPages: 0,
         totalElements: 0,
     });
+
+    const [likedPostsPageInfo, setLikedPostsPageInfo] = useState({ // 좋아요한 게시글 페이지 정보 추가
+        currentPage: 0,
+        totalPages: 0,
+        totalElements: 0,
+    });
+
+    const [likedCommentsPageInfo, setLikedCommentsPageInfo] = useState({ // 좋아요한 댓글 페이지 정보 추가
+        currentPage: 0,
+        totalPages: 0,
+        totalElements: 0,
+    });
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -76,25 +92,92 @@ function CompanionMyPageCon() {
         }
     }, []);
 
+    // 좋아요한 게시글 데이터를 가져오는 함수 추가
+    const fetchLikedPosts = useCallback(async (page = 0) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const token = getToken();
+            if (!token) {
+                setError('로그인이 필요합니다.');
+                setLoading(false);
+                return;
+            }
+            const response = await axios.get(`/mypage/community/liked-posts?page=${page}&size=10`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setLikedPosts(response.data.content);
+            setLikedPostsPageInfo({
+                currentPage: response.data.number,
+                totalPages: response.data.totalPages,
+                totalElements: response.data.totalElements,
+            });
+        } catch (err) {
+            setError(err.response?.data?.message || '좋아요한 게시글을 불러오는 중 오류가 발생했습니다.');
+            console.error("Error fetching liked posts:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // 좋아요한 댓글 데이터를 가져오는 함수 추가
+    const fetchLikedComments = useCallback(async (page = 0) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const token = getToken();
+            if (!token) {
+                setError('로그인이 필요합니다.');
+                setLoading(false);
+                return;
+            }
+            const response = await axios.get(`/mypage/community/liked-comments?page=${page}&size=10`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setLikedComments(response.data.content);
+            setLikedCommentsPageInfo({
+                currentPage: response.data.number,
+                totalPages: response.data.totalPages,
+                totalElements: response.data.totalElements,
+            });
+        } catch (err) {
+            setError(err.response?.data?.message || '좋아요한 댓글을 불러오는 중 오류가 발생했습니다.');
+            console.error("Error fetching liked comments:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+
     useEffect(() => {
         if (activeTab === 'posts') {
             fetchMyPosts();
-        } else {
+        } else if (activeTab === 'comments') {
             fetchMyComments();
+        } else if (activeTab === 'likedPosts') { // 좋아요한 게시글 탭 선택 시 데이터 fetch
+            fetchLikedPosts();
+        } else if (activeTab === 'likedComments') { // 좋아요한 댓글 탭 선택 시 데이터 fetch
+            fetchLikedComments();
         }
-    }, [activeTab, fetchMyPosts, fetchMyComments]);
+    }, [activeTab, fetchMyPosts, fetchMyComments, fetchLikedPosts, fetchLikedComments]); // 종속성 배열에 추가
+
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
 
-    const handlePageChange = (page, tabType) => { // tabType을 인자로 받아 구분
+    const handlePageChange = (page, tabType) => {
         if (tabType === 'posts') {
             fetchMyPosts(page);
         } else if (tabType === 'comments') {
             fetchMyComments(page);
+        } else if (tabType === 'likedPosts') { // 좋아요한 게시글 페이징 처리
+            fetchLikedPosts(page);
+        } else if (tabType === 'likedComments') { // 좋아요한 댓글 페이징 처리
+            fetchLikedComments(page);
         }
     };
+
 
     const renderPagination = (pageInfo, tabType) => { // tabType을 인자로 받음
         // 항상 페이징 컨트롤이 보이도록 수정
@@ -156,6 +239,10 @@ function CompanionMyPageCon() {
             handleTabChange={handleTabChange}
             handlePageChange={handlePageChange}
             renderPagination={renderPagination}
+            likedPosts={likedPosts} // 좋아요한 게시글 상태 전달
+            likedComments={likedComments} // 좋아요한 댓글 상태 전달
+            likedPostsPageInfo={likedPostsPageInfo} // 좋아요한 게시글 페이지 정보 전달
+            likedCommentsPageInfo={likedCommentsPageInfo} // 좋아요한 댓글 페이지 정보 전달
         />
     );
 }

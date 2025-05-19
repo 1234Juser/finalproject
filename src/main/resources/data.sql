@@ -122,6 +122,24 @@ VALUES
     ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NULL, 7, NOW() - INTERVAL 9 DAY),
     ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NULL, 8, NOW() - INTERVAL 10 DAY);
 
+DELETE FROM tbl_follow;
+INSERT INTO tbl_follow (follower_member_code, following_member_code, followed_at) VALUES
+                                                                                      -- user04의 팔로잉 (user04가 다른 사람을 팔로우) - 3개
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NOW() - INTERVAL 20 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NOW() - INTERVAL 18 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), NOW() - INTERVAL 15 DAY),
+
+                                                                                      -- user04의 팔로워 (다른 사람이 user04를 팔로우) - 3개
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 19 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 17 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 14 DAY),
+
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NOW() - INTERVAL 25 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NOW() - INTERVAL 24 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NOW() - INTERVAL 22 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), NOW() - INTERVAL 21 DAY);
+
+
 
 INSERT IGNORE INTO tbl_region (region_code, region_uid, region_name, region_type)
 VALUES

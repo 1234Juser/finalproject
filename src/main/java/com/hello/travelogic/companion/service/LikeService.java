@@ -3,6 +3,8 @@ package com.hello.travelogic.companion.service;
 import com.hello.travelogic.companion.domain.CompanionCommentEntity;
 import com.hello.travelogic.companion.domain.CompanionEntity;
 import com.hello.travelogic.companion.domain.LikeEntity;
+import com.hello.travelogic.companion.dto.CompanionCommentDTO;
+import com.hello.travelogic.companion.dto.CompanionListDTO;
 import com.hello.travelogic.companion.repository.CompanionCommentRepository;
 import com.hello.travelogic.companion.repository.CompanionRepository;
 import com.hello.travelogic.companion.repository.LikeRepository;
@@ -12,6 +14,9 @@ import com.hello.travelogic.member.service.MemberService;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,5 +104,35 @@ public class LikeService {
         Long memberCode = jwtUtil.getMemberCodeFromToken(token);
         return likeRepository.findByMember_MemberCodeAndCompanionComment_CompanionCommentId(memberCode, commentId).isPresent();
     }
+
+    @Transactional(readOnly = true)
+    public Page<CompanionListDTO> getLikedCompanions(String token, Pageable pageable) {
+        Long memberCode = jwtUtil.getMemberCodeFromToken(token);
+        // 좋아요 엔티티의 createdAt 필드를 기준으로 내림차순 정렬을 Pageable에 추가
+        Pageable sortedPageable = org.springframework.data.domain.PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+        Page<LikeEntity> likedCompanionsPage = likeRepository.findByMember_MemberCodeAndCompanionIsNotNull(memberCode, sortedPageable);
+        // LikeEntity에서 CompanionEntity를 추출하고 CompanionListDTO로 변환합니다.
+        return likedCompanionsPage.map(like -> CompanionListDTO.fromEntity(like.getCompanion()));
+    }
+
+    // 사용자가 좋아요한 댓글 목록을 페이징하여 가져오기 (최신순 정렬 추가)
+    @Transactional(readOnly = true)
+    public Page<CompanionCommentDTO> getLikedComments(String token, Pageable pageable) {
+        Long memberCode = jwtUtil.getMemberCodeFromToken(token);
+        // 좋아요 엔티티의 createdAt 필드를 기준으로 내림차순 정렬을 Pageable에 추가
+        Pageable sortedPageable = org.springframework.data.domain.PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+        Page<LikeEntity> likedCommentsPage = likeRepository.findByMember_MemberCodeAndCompanionCommentIsNotNull(memberCode, sortedPageable);
+        // LikeEntity에서 CompanionCommentEntity를 추출하고 CompanionCommentDTO로 변환합니다.
+        return likedCommentsPage.map(like -> CompanionCommentDTO.fromEntity(like.getCompanionComment()));
+    }
+
 
 }
