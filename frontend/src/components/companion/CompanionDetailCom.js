@@ -313,7 +313,7 @@ function CompanionDetailCom({
                 const url = companion.companionImageUrls[imageIndex];
                 // PostImage 컴포넌트의 스타일과 유사하게 인라인 스타일을 적용합니다.
                 // 필요시 PostImage 컴포넌트의 실제 스타일을 확인하고 조정해주세요.
-                return `<img src="/${url}" alt="게시물 이미지 ${imageNumber}" style="max-width: 100%; height: auto; display: block; margin-bottom: 10px; margin-left: auto; margin-right: auto;" />`;
+                return `<img src="/${url}" alt="게시물 이미지 ${imageNumber}" style="width: 500px; height: 300px; object-fit: cover; display: block; margin-bottom: 20px; margin-left: auto; margin-right: auto;" />`;
             }
             return match; // 해당 번호의 이미지가 없으면 플레이스홀더 텍스트를 그대로 반환
         });

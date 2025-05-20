@@ -664,8 +664,10 @@ export const ToggleButton = styled.button`
 `;
 
 export const PostImage = styled.img`
-    max-width: 100%; /* 이미지 최대 너비 설정 */
-    height: auto; /* 비율 유지를 위해 높이 자동 설정 */
-    margin-bottom: 15px; /* 이미지 아래 여백 */
-    border-radius: 8px; /* 이미지 모서리 둥글게 */
+    width: 500px; /* 원하는 너비 */
+    height: 200px; /* 원하는 높이 */
+    object-fit: fill; /* 이미지 비율을 유지하면서 지정된 크기에 맞게 자름 */
+    display: block;
+    margin: 0 auto 20px auto; /* 가운데 정렬 및 하단 여백 */
+
 `;

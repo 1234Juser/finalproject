@@ -23,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -142,7 +144,7 @@ public class CompanionService {
 
     // 게시글 수정 (작성자 본인만 가능, 공지사항 변경은 관리자만)
     @Transactional
-    public CompanionEntity updateCompanion(Integer companionId, String companionTitle, String companionContent, String token, Boolean isNoticeRequest, List<MultipartFile> images) {
+    public CompanionEntity updateCompanion(Integer companionId, String companionTitle, String companionContent, String token, Boolean isNoticeRequest, List<MultipartFile> images, List<Long> deletedImageIds) {
         Long memberCode = jwtUtil.getMemberCodeFromToken(token);
         List<String> roles = jwtUtil.getRolesFromToken(token); // 역할 정보 가져오기
 
@@ -181,33 +183,57 @@ public class CompanionService {
             }
         }
 
-        // 이미지 파일 업데이트 로직
-        if (images != null && !images.isEmpty()) {
-            // 기존 이미지 삭제 (선택 사항, 정책에 따라 유지 또는 삭제 결정)
+        // 이미지 파일 삭제 로직 (deletedImageIds 처리 - 이미지 URL의 인덱스로 간주)
+        if (deletedImageIds != null && !deletedImageIds.isEmpty()) {
+            List<String> currentImageUrls = new ArrayList<>();
             if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
-                String[] oldImageUrls = companion.getCompanionImageUrls().split(",");
-                for (String oldImageUrl : oldImageUrls) {
-                    fileUtil.deleteFile(oldImageUrl.trim());
+                currentImageUrls.addAll(Arrays.asList(companion.getCompanionImageUrls().split(",")));
+            }
+
+            // 삭제할 이미지 URL 목록을 저장
+            List<String> urlsToDelete = new ArrayList<>();
+            List<String> updatedImageUrls = new ArrayList<>();
+
+            for (int i = 0; i < currentImageUrls.size(); i++) {
+                // deletedImageIds는 0부터 시작하는 인덱스라고 가정합니다.
+                if (deletedImageIds.contains((long) i)) {
+                    urlsToDelete.add(currentImageUrls.get(i).trim());
+                } else {
+                    updatedImageUrls.add(currentImageUrls.get(i).trim());
                 }
             }
+
+            // 실제 파일 시스템에서 이미지 삭제
+            for (String url : urlsToDelete) {
+                log.info("이미지 파일 삭제: {}", url);
+                fileUtil.deleteFile(url);
+            }
+
+            // CompanionEntity의 companionImageUrls 필드 업데이트
+            companion.setCompanionImageUrls(updatedImageUrls.isEmpty() ? null : String.join(",", updatedImageUrls));
+        }
+
+        // 새로운 이미지 파일 추가 로직
+        if (images != null && !images.isEmpty()) {
             try {
-                List<String> imageUrls = fileUtil.saveFiles(images);
-                companion.setCompanionImageUrls(String.join(",", imageUrls)); // 새로운 이미지 URL 목록 저장
+                List<String> newImageUrls = fileUtil.saveFiles(images);
+                // 기존 이미지 URL에 새로운 이미지 URL 추가
+                List<String> currentImageUrls = new ArrayList<>();
+                if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
+                    currentImageUrls.addAll(List.of(companion.getCompanionImageUrls().split(",")));
+                }
+                currentImageUrls.addAll(newImageUrls);
+                companion.setCompanionImageUrls(String.join(",", currentImageUrls)); // 업데이트된 이미지 URL 목록 저장
             } catch (IOException e) {
                 log.error("이미지 파일 저장 중 오류 발생", e);
                 throw new RuntimeException("이미지 파일 저장에 실패했습니다.", e);
             }
+        } else if (images != null && images.isEmpty() && (deletedImageIds == null || deletedImageIds.isEmpty())) {
+            // 새로 추가된 이미지 없이, 삭제된 이미지도 없을 경우 기존 이미지 유지 (필요에 따라)
+            // 현재 로직에서는 images가 null이거나 비어있으면 이미지를 추가하지 않습니다.
+            // deletedImageIds가 처리되므로 이 else-if 블록은 필요 없을 수 있습니다.
         }
-        else if (images != null && images.isEmpty()) {
-            // 이미지를 첨부하지 않고 수정 요청 시 기존 이미지 삭제 (필요에 따라)
-            if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
-                String[] oldImageUrls = companion.getCompanionImageUrls().split(",");
-                for (String oldImageUrl : oldImageUrls) {
-                    fileUtil.deleteFile(oldImageUrl.trim());
-                }
-                companion.setCompanionImageUrls(null); // 이미지 URL 필드 비움
-            }
-        }
+
         return companionRepository.save(companion);
     }
 
