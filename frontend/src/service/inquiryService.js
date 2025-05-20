@@ -19,7 +19,7 @@ export const getStartInquiry = async ({inquiryMessage, token}) => {
             console.error("서버 응답 오류:", data);
             throw new Error(data.message || `채팅방을 시작하지 못했습니다: ${data.status}`);
         }
-        console.log("채팅방 시작, 회원이 보낸 메시지 : ", data);
+        console.log("1:1 채팅방 시작, 채팅방 생성 ", data);
         return data;
         
     } catch (error) {

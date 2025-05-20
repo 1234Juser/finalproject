@@ -2,10 +2,10 @@ import styled from 'styled-components';
 
 export const ChatWrapper = styled.div`
   width: 400px;
+    height: 500px;
   border: 1px solid #ddd;
   border-radius: 16px;
   overflow: hidden;
-  font-family: 'Apple SD Gothic Neo', sans-serif;
   display: flex;
   flex-direction: column;
   font-family: 'Noto Sans KR', Arial, sans-serif; // 한글 폰트 추가
@@ -38,7 +38,10 @@ export const MessageBox = styled.div`
     flex-direction: column;
     gap: 12px; // 메시지 간 간격
 
-    // 스크롤바 스타일링 (선택 사항)
+    /* 항상 하단에 메시지가 오도록 설정 */
+    justify-content: flex-end;
+
+    /* 스크롤바 스타일링 (선택 사항) */
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -49,16 +52,32 @@ export const MessageBox = styled.div`
     &::-webkit-scrollbar-track {
         background-color: #f0f0f0;
     }
+
 `;
 
+// 개별 메시지 스타일
 export const Message = styled.div`
-  background-color: ${({ isSystem }) => (isSystem ? '#f2f2f2' : '#daf1ff')};
-  border-radius: 12px;
-  padding: 12px;
-  font-size: 14px;
-  white-space: pre-wrap;
-  margin-bottom: 12px;
+    background-color: ${({ $isSystem, $isUser }) => {
+        if ($isSystem) return '#f2f2f2';
+        if ($isUser) return '#daf1ff';
+        return '#fff';
+    }};
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    align-self: ${({ $isUser }) => ($isUser ? 'flex-end' : 'flex-start')};
+    max-width: 80%;
 `;
+
+// // 타임스탬프 스타일
+// export const MessageTimestamp = styled.div`
+//   font-size: 0.75em;
+//   color: #888;
+//   margin-top: 4px;
+//   text-align: ${({ $isUser }) => ($isUser ? 'right' : 'left')};
+// `;
+
 
 export const IconList = styled.div`
   display: flex;
@@ -80,20 +99,34 @@ export const IconButton = styled.button`
   }
 `;
 
+
+// 하단 입력 필드 및 전송 버튼 컨테이너
 export const BottomInput = styled.div`
-  display: flex;
-  border-top: 1px solid #eee;
-  padding: 8px;
+    display: flex;
+    border-top: 1px solid #eee;
+    padding: 8px;
+    background-color: #fff;
 `;
 
-export const InputField = styled.input`
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  outline: none;
-  font-size: 14px;
+
+// 입력 필드 스타일
+export const InputField = styled.textarea`
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+    resize: none;
+    max-height: 100px;
+    overflow-y: auto;
+
+    &:focus {
+        border-color: #66afe9;
+        box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+    }
 `;
+
 
 export const SendButton = styled.button`
   margin-left: 8px;

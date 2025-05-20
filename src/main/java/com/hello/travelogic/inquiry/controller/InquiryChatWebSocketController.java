@@ -28,7 +28,19 @@ public class InquiryChatWebSocketController {
         return inquiryChatWebSocketService.sendInquiryMessage(icId, message);
     }
 
-    
+
+    // 회원의 1:1 문의 채팅 구독/메시지 전송 경로
+    @MessageMapping("/inquiry/{icId}")
+    public InquiryChatMessageDTO addInquiryMessage(@DestinationVariable Long icId,
+                                                   @Payload InquiryChatMessageDTO message,
+                                                   SimpMessageHeaderAccessor headerAccessor) {
+        String topic = "/topic/inquiry/" + message.getIcId();
+        log.debug("Received message for icId {}: {}", icId, message.getMessage());
+
+        return inquiryChatWebSocketService.addInquiryMessage(icId, message, headerAccessor);
+    }
+
+
 // 이 메소드는 프론트에서 처리
     // 사용자가 1:1 문의 채팅방에 입장했음을 알리고, 시스템 환영 메시지를 처리합니다.
     // handleUserJoin 메소드는 InquiryChatWebSocketService에서 해당 로직이 제거/변경됨에 따라 호출 의미가 없을 수 있음
@@ -45,15 +57,5 @@ public class InquiryChatWebSocketController {
     }*/
 
 
-//    // 회원의 1:1 문의 채팅 구독/메시지 전송 경로
-//    @MessageMapping("/inquiry/{icId}")
-//    public InquiryChatMessageDTO addInquiryMessage(@DestinationVariable Long icId,
-//                                                   @Payload InquiryChatMessageDTO message,
-//                                                   SimpMessageHeaderAccessor headerAccessor) {
-//        String topic = "/topic/inquiry/" + message.getIcId();
-//        log.debug("Received message for icId {}: {}", icId, message.getMessage());
-//
-//        return inquiryChatWebSocketService.addInquiryMessage(icId, message, headerAccessor);
-//    }
-    
+
 }

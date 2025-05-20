@@ -1,7 +1,7 @@
 export const initialState = {
     messages: [], // 채팅 메시지 목록 { icmId, icId, memberCode, senderType, senderName (UI용), message, sentAt, type (CHAT, JOIN, LEAVE, INFO, SYSTEM 등) }
     newMessage: '', // 현재 입력 중인 메시지
-    currentInquiryChatId: null, // 채팅방 ID (icId) 또는 비회원용 식별자 (예: 0)
+    icId: null, // 채팅방 ID (icId) 또는 비회원용 식별자 (예: 0)
     currentUser: { // 현재 로그인한 사용자 정보
         username: null, // memberName
         memberCode: null, // memberCode (Long)
@@ -28,7 +28,7 @@ export function chatReducer(state, action) {
                 // return { ...state, currentInquiryChatId: action.payload, messages: [] }; // 채팅방 변경 시 메시지 초기화
                 return {
                     ...state,
-                    currentInquiryChatId: action.payload
+                    icId: action.payload
                 };
             case 'SET_MESSAGES': // 이전 대화내역 로드
                 return {
@@ -99,6 +99,6 @@ export function chatReducer(state, action) {
                 return state;
         }
     })();
-    console.log("-----Reducer newState: ", newState);
+    // console.log("-----Reducer newState: ", newState);
     return newState;
 }

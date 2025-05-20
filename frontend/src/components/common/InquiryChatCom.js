@@ -6,27 +6,63 @@ import {
     MessageBox, Message, SendButton,
     Title, /* LoadingOverlay, */ ErrorMessageUI, MessageTimestamp // LoadingOverlay 제거
 } from "../../style/common/InquiryChatStyle";
+import {useEffect, useRef} from "react";
 
 const InquiryChatCom = ({
-                            selectedTopic, isConnected, currentInquiryChatId, error, // isLoading, isLoadingHistory 제거
+                            selectedTopic, isConnected, icId, error,
                             messages = [], currentUser, messagesEndRef, inputRef, newMessage, handleInputChange, handleKeyPress,
-                            handleSendMessage,
+                            handleSendMessage, isVisible, connectWebSocket, disconnectWebSocket,
                         }) => {
+
+    const firstRenderRef = useRef(true);
+
+
+    // WebSocket 연결 상태 관리
+    useEffect(() => {
+        // 컴포넌트가 처음 렌더링될 때 WebSocket 연결
+        if (!firstRenderRef.current) {
+            if (isVisible && !isConnected) {
+                console.log("Connecting WebSocket...");
+                connectWebSocket(); // WebSocket 연결
+            } else if (!isVisible && isConnected) {
+                console.log("Disconnecting WebSocket...");
+                disconnectWebSocket(); // WebSocket 연결 종료
+            }
+        } else {
+            firstRenderRef.current = false; // 첫 렌더링 이후로만 WebSocket 관리
+        }
+
+        // 컴포넌트 언마운트 시 WebSocket 연결 해제
+        return () => {
+            console.log("Cleaning up WebSocket connection...");
+            disconnectWebSocket();
+        };
+    }, [isVisible, isConnected, connectWebSocket, disconnectWebSocket]);
+
+
+    // 메시지 목록 끝으로 스크롤
+    useEffect(() => {
+        if (messagesEndRef?.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [messages, messagesEndRef]);
+
+
+
+
     return (
         <ChatWrapper style={{ position: 'relative' }}>
-            {/* {(isLoading || isLoadingHistory) && <LoadingOverlay>메시지 로딩 중...</LoadingOverlay>} REMOVED */}
             <Header>
                 <Title>1:1 문의 {selectedTopic ? `- ${selectedTopic}` : ''}</Title>
                 <Description style={{ color: isConnected ? 'lightgreen' : 'orange' }}>
-                    {isConnected ? '연결됨' : '연결 시도 중...'} {/* ID 표시가 null일 수 있으므로 조건부 처리 */}
-                    {currentInquiryChatId !== null ? ` (ID: ${currentInquiryChatId})` : ''}
+                    {isConnected ? '연결됨' : '연결 시도 중...'}
+                    {icId !== null ? ` (ID: ${icId})` : ''}
                 </Description>
             </Header>
             <MessageBox>
-                {/* 에러 메시지를 간결하게 표시하거나, 필요에 따라 제거/수정 */}
+
                 {error && <ErrorMessageUI>{error}</ErrorMessageUI>}
 
-                {/* messages가 있고 길이가 0일 때 (isLoadingHistory 조건 제거) */}
                 {messages && messages.length === 0 && !error && (
                     <Message $isSystem>
                         <strong>Whats's up?, Hello, Travelogic!</strong><br />
@@ -35,8 +71,8 @@ const InquiryChatCom = ({
                         <span>📞 유선상담 평일 09:00~18:00</span><br /><br />
                     </Message>
                 )}
-                {messages && messages.map((msg, index) => {
-                    const isCurrentUserMsg = msg.memberCode !== null && currentUser && msg.memberCode === currentUser.memberCode && msg.senderType === 'USER';
+{/*                {messages && messages.map((msg, index) => {
+                    const  = msg.memberCode !== null && currentUser && msg.memberCode === currentUser.memberCode && msg.senderType === 'USER';
                     const senderDisplayName = msg.senderType === 'ADMIN' ? '상담원' :
                         (msg.senderType === 'USER' ? (isCurrentUserMsg ? '' : msg.senderName || '고객') :
                             (msg.senderType === 'SYSTEM' ? (msg.senderName || '시스템') : '')); // SYSTEM 메시지 발신자명 추가
@@ -66,7 +102,24 @@ const InquiryChatCom = ({
                             </MessageTimestamp>
                         </Message>
                     );
+                })}*/}
+                {messages.map((msg, index) => {
+                    const isCurrentUser = msg.memberCode === currentUser?.memberCode;
+                    return (
+                        <Message
+                            key={msg.icmId || msg.tempId || `msg-${index}`}
+                            $isUser={isCurrentUser}
+                            style={msg.tempId ? { opacity: 0.5 } : {}}
+                        >
+                            {!isCurrentUser && <strong>{msg.senderName || '상담원'}</strong>}
+                            <div dangerouslySetInnerHTML={{ __html: msg.message }} />
+                            <MessageTimestamp $isUser={isCurrentUser}>
+                                {new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                            </MessageTimestamp>
+                        </Message>
+                    );
                 })}
+
                 <div ref={messagesEndRef} />
             </MessageBox>
             <BottomInput>
