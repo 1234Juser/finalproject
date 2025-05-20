@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -19,10 +20,13 @@ public class OrderController {
 
     // 주문하기(옵션 선택 후 주문하기 클릭. 결제 전 상태)
     @PostMapping("/order/create")
-    public ResponseEntity<Long> createOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderDTO orderDTO) {
+        log.info("📥 주문 생성 요청 도착: {}", orderDTO);
         try {
-            Long orderCode = orderService.createOrder(orderDTO);
-            return ResponseEntity.ok(orderCode);
+//            Long orderCode = orderService.createOrder(orderDTO);
+            Map<String, Object> result = orderService.createOrder(orderDTO);
+            log.info("🟢 주문 생성 성공: orderCode={}, bookingUid={}", result.get("orderCode"), result.get("bookingUid"));
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("🔴 주문 생성 실패:", e);
             return ResponseEntity.status(500).body(null);
