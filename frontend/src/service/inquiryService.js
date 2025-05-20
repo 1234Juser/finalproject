@@ -1,0 +1,30 @@
+const path = "http://localhost:8080";
+
+ // REST API로 채팅방 시작/조회 요청
+export const getStartInquiry = async ({inquiryMessage, token}) => {
+    try {
+        const response = await fetch(`${path}/api/inquiry/start`, { // 실제 API 엔드포인트
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(inquiryMessage),
+        });
+
+        const data = await response.json();
+        console.log("API 응답 데이터 ::::: ", data);
+        
+        if (!response.ok) {
+            console.error("서버 응답 오류:", data);
+            throw new Error(data.message || `채팅방을 시작하지 못했습니다: ${data.status}`);
+        }
+        console.log("1:1 채팅방 시작, 채팅방 생성 ", data);
+        return data;
+        
+    } catch (error) {
+        console.error("문의 전송 오류 : ", error);
+        throw error; // 에러를 다시 던져 상위에서 처리할 수 있도록 함
+
+    }
+}

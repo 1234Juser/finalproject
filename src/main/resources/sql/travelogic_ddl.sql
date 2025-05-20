@@ -370,17 +370,37 @@ CREATE TABLE `tbl_chat_room_member` (
                                         CONSTRAINT `FK_member_to_crm` FOREIGN KEY (`member_code`) REFERENCES `tbl_member` (`member_code`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='채팅방-회원 매핑 중간 테이블';
 
-CREATE TABLE `tbl_inquiry_chat` (
-                                    `ic_id` INT AUTO_INCREMENT NOT NULL COMMENT '1:1 문의 채팅 id',
-                                    `member_code` INT NOT NULL COMMENT '회원번호',
-                                    `authority_code` INT NOT NULL COMMENT '권한번호',
-                                    `ic_start_date` DATETIME NOT NULL COMMENT '채팅 시작 일자',
-                                    `ic_end_date` DATETIME NULL COMMENT '채팅 종료 일자',
-                                    `ic_chat_status` ENUM('WAITING','ACTIVE','CLOSED') NOT NULL COMMENT '채팅 상태',
-                                    CONSTRAINT `PK_TBL_INQUIRY_CHAT` PRIMARY KEY (`ic_id`, `member_code`, `authority_code`),
-                                    CONSTRAINT `FK_tbl_member_role_TO_tbl_inquiry_chat_1` FOREIGN KEY (`member_code`) REFERENCES `tbl_member_role` (`member_code`),
-                                    CONSTRAINT `FK_tbl_member_role_TO_tbl_inquiry_chat_2` FOREIGN KEY (`authority_code`) REFERENCES `tbl_member_role` (`authority_code`)
-);
+-- 1:1 문의 채팅 테이블
+CREATE TABLE tbl_inquiry_chat (
+                                  ic_id INT NOT NULL AUTO_INCREMENT COMMENT '1:1 문의 채팅 id',
+                                  member_code INT NOT NULL COMMENT '회원번호',
+                                  authority_code INT NOT NULL COMMENT '권한번호',
+                                  ic_start_date DATETIME NOT NULL COMMENT '채팅 시작 일자',
+                                  ic_end_date DATETIME DEFAULT NULL COMMENT '채팅 종료 일자',
+                                  ic_chat_status ENUM('WAITING','ACTIVE','CLOSED') NOT NULL COMMENT '채팅 상태',
+                                  member_id VARCHAR(255) NOT NULL COMMENT '회원 아이디',
+                                  member_email VARCHAR(30) NOT NULL COMMENT '회원 이메일',
+                                  PRIMARY KEY (ic_id),
+                                  CONSTRAINT fk_inquiry_chat_member_role FOREIGN KEY (member_code, authority_code)
+                                      REFERENCES tbl_member_role (member_code, authority_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='1:1 문의 채팅 테이블';
+
+
+-- 1:1 문의 채팅 메시지 테이블
+CREATE TABLE tbl_inquiry_chat_message (
+                                          icm_id INT NOT NULL AUTO_INCREMENT COMMENT '1:1 문의 채팅 메시지 id',
+                                          ic_id INT NOT NULL COMMENT '1:1 문의 채팅 id',
+                                          member_code INT NOT NULL COMMENT '회원번호',
+                                          authority_code INT NOT NULL COMMENT '권한번호',
+                                          icm_sender_type ENUM('user', 'admin') NOT NULL COMMENT '보낸 사람',
+                                          icm_message TEXT NOT NULL COMMENT '메시지',
+                                          icm_sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '보낸 시간',
+                                          PRIMARY KEY (icm_id),
+                                          CONSTRAINT fk_icm_chat FOREIGN KEY (ic_id)
+                                              REFERENCES tbl_inquiry_chat (ic_id),
+                                          CONSTRAINT fk_icm_member_role FOREIGN KEY (member_code, authority_code)
+                                              REFERENCES tbl_member_role (member_code, authority_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='1:1 문의 채팅 메시지 테이블';
 
 CREATE TABLE `tbl_notification` (
                                     `noti_id` INT AUTO_INCREMENT NOT NULL COMMENT '알림id',

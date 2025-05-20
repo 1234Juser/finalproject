@@ -1,10 +1,12 @@
-import {StyledNav, NavCenter, NavRight} from "../../style/common/NavStyle";
+import {StyledNav, NavCenter, NavRight, MyPageWrapper, ChatFloatingWrapper} from "../../style/common/NavStyle";
 import {
     FaFlag, FaPlaneDeparture, FaGift, FaStar, FaComments, FaEllipsisH,
     FaHeart, FaUserCircle
 } from "react-icons/fa";
 import React from "react";
 import styled from "styled-components";
+import {MdChat} from "react-icons/md";
+import InquiryChatCom from "./InquiryChatCom";
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 const NavContentWrapper = styled.div`
@@ -16,7 +18,7 @@ const NavContentWrapper = styled.div`
     align-items: center;
 `;
 
-function NavCom({roles = []}) {
+function NavCom({roles = [], toggleChat, chatAnchorRef}) {
     const isAdmin = Array.isArray(roles) && roles.includes("ROLE_ADMIN");
 
     return (
@@ -65,10 +67,19 @@ function NavCom({roles = []}) {
                                 </a>
                             )
                             : (
+                                <MyPageWrapper>
                                 <a href="/mypage">
                                     <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                     마이페이지
                                 </a>
+                                    {/* 채팅 아이콘에 ref와 토글 함수 연결 */}
+                                    <MdChat
+                                        ref={chatAnchorRef}
+                                        style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer' }}
+                                        title="1:1 문의 채팅"
+                                        onClick={toggleChat}
+                                    />
+                                </MyPageWrapper>
                             )
                         }
                     </li>
