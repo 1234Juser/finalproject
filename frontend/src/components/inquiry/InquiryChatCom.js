@@ -5,7 +5,7 @@ import {
     Header, InputField,
     MessageBox, Message, SendButton,
     Title, /* LoadingOverlay, */ ErrorMessageUI, MessageTimestamp // LoadingOverlay 제거
-} from "../../style/common/InquiryChatStyle";
+} from "../../style/inquiry/StyleInquiryChat";
 import {useEffect, useRef} from "react";
 
 const InquiryChatCom = ({

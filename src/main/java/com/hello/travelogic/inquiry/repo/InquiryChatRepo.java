@@ -19,4 +19,5 @@ public interface InquiryChatRepo extends JpaRepository<InquiryChatEntity, Long> 
     @Query("SELECT ic FROM InquiryChatEntity ic WHERE ic.memberRole.id.memberCode = :memberCode AND ic.memberRole.id.authorityCode = :authorityCode")
     List<InquiryChatEntity> findChatsByMember(@Param("memberCode") Long memberCode, @Param("authorityCode") Integer authorityCode);
 
+
 }
