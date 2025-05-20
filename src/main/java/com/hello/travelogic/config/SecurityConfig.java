@@ -71,7 +71,6 @@ public class SecurityConfig {
                 // JWT 인증 필터 적용
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-
         return http.build();
     }
 

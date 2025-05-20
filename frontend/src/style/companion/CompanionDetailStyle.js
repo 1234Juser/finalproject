@@ -662,3 +662,10 @@ export const ToggleButton = styled.button`
         color: ${Palette.blue};
     }
 `;
+
+export const PostImage = styled.img`
+    max-width: 100%; /* 이미지 최대 너비 설정 */
+    height: auto; /* 비율 유지를 위해 높이 자동 설정 */
+    margin-bottom: 15px; /* 이미지 아래 여백 */
+    border-radius: 8px; /* 이미지 모서리 둥글게 */
+`;

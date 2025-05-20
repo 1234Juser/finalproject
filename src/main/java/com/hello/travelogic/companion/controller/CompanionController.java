@@ -15,6 +15,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,6 +53,7 @@ public class CompanionController {
             @RequestParam String companionTitle,
             @RequestParam String companionContent,
             @RequestParam(required = false) Boolean isNotice, // 공지사항 여부 파라미터 추가
+            @RequestPart(value = "images", required = false) List<MultipartFile> images, // 이미지 파일 목록 추가
             Authentication authentication
     ) {
         String token = (String) authentication.getCredentials();
@@ -58,7 +62,7 @@ public class CompanionController {
             log.warn("Token is null or empty!");
         }
 
-        companionService.createCompanion(companionTitle, companionContent, token, isNotice);
+        companionService.createCompanion(companionTitle, companionContent, token, isNotice, images); // 이미지 파일 목록 전달
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -72,10 +76,11 @@ public class CompanionController {
             @RequestParam String companionTitle,
             @RequestParam String companionContent,
             @RequestParam(required = false) Boolean isNotice, // 공지사항 여부 파라미터 추가
+            @RequestPart(value = "images", required = false) List<MultipartFile> images, // 이미지 파일 목록 추가
             Authentication authentication
     ) {
         String token = (String) authentication.getCredentials();
-        companionService.updateCompanion(companionId, companionTitle, companionContent, token, isNotice);
+        companionService.updateCompanion(companionId, companionTitle, companionContent, token, isNotice, images); // 이미지 파일 목록 전달
         return ResponseEntity.ok().build();
     }
 

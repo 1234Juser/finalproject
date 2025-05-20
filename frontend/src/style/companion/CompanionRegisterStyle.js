@@ -156,3 +156,62 @@ export const CheckboxLabel = styled.label`
     color: #333;
     cursor: pointer;
 `;
+
+// 이미지 미리보기 컨테이너 스타일
+export const ImagePreviewContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+`;
+
+// 이미지 미리보기 wrapper (삭제 버튼 포함)
+export const ImagePreviewWrapper = styled.div`
+    position: relative;
+    width: 100px;
+    height: 100px;
+`;
+
+// 이미지 미리보기 스타일
+export const ImagePreview = styled.img`
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+`;
+
+// 이미지 삭제 버튼 스타일
+export const RemoveImageButton = styled.button`
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+`;
+
+// 파일 입력 필드 레이블 스타일 (버튼처럼 보이도록)
+export const FileInputLabel = styled.label`
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
