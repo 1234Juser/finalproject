@@ -1,4 +1,4 @@
-import InquiryChatCom from "../../components/common/InquiryChatCom";
+import InquiryChatCom from "../../components/inquiry/InquiryChatCom";
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { chatReducer, initialState as originalInitialState } from "../../modules/inquiryReducer";
 import SockJS from "sockjs-client";
