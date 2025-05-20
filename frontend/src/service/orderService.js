@@ -116,7 +116,7 @@ export const fetchOptionsByDateRange = async (productUid, startDate, endDate) =>
 };
 
 // 주문 생성
-export const createOrder = async (productUid, optionData, accessToken) => {
+export const createOrder = async (productUid, optionData, memberInfo, accessToken) => {
     if (!accessToken) {
         console.error("accessToken 없음");
         alert("로그인이 필요한 서비스 입니다.");
@@ -125,14 +125,22 @@ export const createOrder = async (productUid, optionData, accessToken) => {
     try {
         // optionData를 주문 생성에 필요한 데이터로 변환
         const orderData = {
+            productCode: optionData.productCode,
+            productTitle: optionData.productTitle,
             optionCode: optionData.optionCode,
+            memberCode: optionData.memberCode,
+            memberName: memberInfo.memberName,
+            memberEmail: memberInfo.memberEmail,
+            memberPhone: memberInfo.memberPhone,
             reservationDate: optionData.reservationDate,
             adultCount: optionData.adultCount || 0,
             childCount: optionData.childCount || 0,
             totalPrice: optionData.totalPrice,
-            productTitle: optionData.productTitle,
+            orderAdultPrice: optionData.productAdult,
+            orderChildPrice: optionData.productChild,
         };
-        const response = await axios.post(`${path}/products/${productUid}/order/create`, orderData,
+        console.log("요청 보낸 orderData:", orderData);
+        const response = await axios.post(`${path}/order/create`, orderData,
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -140,9 +148,13 @@ export const createOrder = async (productUid, optionData, accessToken) => {
             }
         );
         console.log("🟢 주문 생성 성공:", response.data);
-        return response.data;
+        return {
+            orderCode: response.data.orderCode,
+            bookingUid: response.data.bookingUid,
+        };
     } catch (error) {
         console.error("🔴 주문 생성 실패:", error);
+        alert("주문 생성 중 오류가 발생했습니다.");
         return null;
     }
 };

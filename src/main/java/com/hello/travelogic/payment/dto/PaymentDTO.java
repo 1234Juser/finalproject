@@ -1,6 +1,7 @@
 package com.hello.travelogic.payment.dto;
 
 import com.hello.travelogic.payment.domain.PaymentEntity;
+import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -14,17 +15,27 @@ import java.time.LocalDateTime;
 @ToString
 public class PaymentDTO {
 
+    @NotNull
     private long paymentCode;
+    @NotNull
     private long memberCode;
+    @NotNull
     private long orderCode;
-    private String paymentMethod;
+    @NotNull
+    private PaymentMethod paymentMethod;
+    @NotNull
     private String paymentBrand;
+    @NotNull
     private LocalDateTime paymentTime;
+    @NotNull
     private int paymentAmount;
     @NotNull
     private PaymentStatus paymentStatus;
+    @NotNull
     private String impUid;
+    @NotNull
     private String merchantUid;
+    @NotNull
     private String receiptUrl;
 
     public PaymentDTO(PaymentEntity entity) {

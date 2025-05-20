@@ -2,9 +2,12 @@ import OrderCheckoutCom from "../../components/order/OrderCheckoutCom";
 import {createOrder, fetchMemberInfo, fetchOptionDetails} from "../../service/orderService";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
+import {requestIamportPayment} from "../../components/payment/IamportPayment";
 
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
+    // const { orderCode } = useParams();
+    const [orderCode, setOrderCode] = useState(null);
     const [optionData, setOptionData] = useState(null);
     // const [loadedOptionData, setLoadedOptionData] = useState(optionData || null);
     const [memberInfo, setMemberInfo] = useState(null);
@@ -40,12 +43,23 @@ function OrderCheckoutCon({ accessToken }) {
         const loadOptionData = async () => {
             if (!productUid || !optionCode || !accessToken) return;
             try {
-                const data = await fetchOptionDetails(productUid, optionCode, accessToken);
-                setOptionData(data);
-                console.log("🟢 옵션 데이터 로드 성공:", data);
+                const option = await fetchOptionDetails(productUid, optionCode, accessToken);
+                setOptionData(option);
+                console.log("🟢 옵션 데이터 로드 성공:", option);
 
-                const memberData = await fetchMemberInfo(accessToken);
-                setMemberInfo(memberData);
+                const member = await fetchMemberInfo(accessToken);
+                setMemberInfo(member);
+
+                const { orderCode, bookingUid } = await createOrder(productUid, {
+                    ...option,
+                    memberCode: member.memberCode,
+                    productCode: option.productCode
+                }, member, accessToken);
+
+                if (!orderCode) throw new Error("주문 생성 실패");
+                setOrderCode(orderCode);
+                console.log("🟢 [useEffect] 생성된 orderCode:", orderCode);
+                console.log("🟢 bookingUid:", bookingUid);
             } catch (error) {
                 console.error("🔴 옵션 데이터 로드 실패:", error);
                 setError("옵션 데이터를 불러오는 데 실패했습니다.");
@@ -68,10 +82,52 @@ function OrderCheckoutCon({ accessToken }) {
         }
 
         try {
-            const bookingUid = await createOrder(productUid, optionData, accessToken);
-            console.log("🟢 주문 생성 성공:", bookingUid);
-            alert("결제가 완료되었습니다. 예약 번호: " + bookingUid);
-            navigate(`/order/complete/${bookingUid}`);
+            // const orderData = {
+            //     productCode: optionData.productCode,
+            //     optionCode: optionData.optionCode,
+            //     memberCode: memberInfo.memberCode,
+            //     reservationDate: optionData.reservationDate,
+            //     adultCount: optionData.adultCount,
+            //     childCount: optionData.childCount,
+            //     totalPrice: optionData.totalPrice,
+            //     orderAdultPrice: optionData.productAdult,
+            //     orderChildPrice: optionData.productChild,
+            // };
+
+            // const {orderCode, bookingUid} = await createOrder(productUid, {
+            //         ...optionData,
+            //         memberCode: memberInfo.memberCode,
+            //         productCode: optionData.productCode,
+            //     },
+            //     accessToken);
+            // if (!orderCode) throw new Error("주문 생성 실패");
+
+            // const bookingUid = await createOrder(productUid, optionData, accessToken);
+            // console.log("🟢 주문 생성 성공:", bookingUid);
+            // alert("결제가 완료되었습니다. 예약 번호: " + bookingUid);
+            // navigate(`/order/complete/${bookingUid}`);
+
+            // console.log("🟢 주문 생성 성공:", orderCode);
+            // console.log("bookingUid:", bookingUid);
+            // alert("결제가 완료되었습니다. 예약 번호: " + orderCode);
+            // navigate(`/payments/create/${orderCode}`);
+            const orderData = {
+                orderCode: orderCode,
+                productCode: optionData.productCode,
+                productTitle: optionData.productTitle,
+                optionCode: optionData.optionCode,
+                memberCode: optionData.memberCode,
+                memberName: memberInfo.memberName,
+                memberEmail: memberInfo.memberEmail,
+                memberPhone: memberInfo.memberPhone,
+                reservationDate: optionData.reservationDate,
+                adultCount: optionData.adultCount || 0,
+                childCount: optionData.childCount || 0,
+                totalPrice: optionData.totalPrice,
+                orderAdultPrice: optionData.productAdult,
+                orderChildPrice: optionData.productChild,
+            };
+            requestIamportPayment(orderData);
         } catch (error) {
             console.error("🔴 주문 생성 실패:", error);
             alert("주문 생성에 실패했습니다.");
@@ -87,6 +143,7 @@ function OrderCheckoutCon({ accessToken }) {
                 optionData={optionData}
                 // optionData={loadedOptionData}
                 memberInfo={memberInfo}
+                orderCode={orderCode}
                 loading={loading}
                 error={error}
                 onCheckout={handleCheckout}

@@ -257,8 +257,8 @@ INSERT IGNORE INTO tbl_product (
     product_start_date, product_end_date, product_min_participants,
     product_max_participants, product_status, product_thumbnail, product_type, review_count, region_code, region_type,
     city_name, country_name, full_location, product_description) VALUES
-('SEOUL001', 01, 1, 1, '결제용테스트', '결제용테스트', 10, 1, '2025-05-01 09:00:00', '2025-05-31 18:00:00', 1, 30, 'ON_SALE', '/static/img/earth.jpg', 'TOUR', 0, 1, 'DOMESTIC', 'SEOUL', 'South Korea', 'SEOUL, South Korea', ''),
-('SEOUL002', 01, 1, 7, '서울 트레킹 명소 투어', '서울의 아름다운 산과 숲길을 따라 걷는 힐링 트레킹 투어', 84910, 39880, '2025-05-01 09:00:00', '2025-05-31 18:00:00', 1, 30, 'ON_SALE', '/static/img/product/region1/seoul.jpg', 'TOUR', 0, 1, 'DOMESTIC', 'SEOUL', 'South Korea', 'SEOUL, South Korea', ''),
+('SEOUL001', 01, 1, 1, '결제용테스트', '결제용테스트', 500, 100, '2025-05-01 09:00:00', '2025-05-31 18:00:00', 1, 30, 'ON_SALE', '/static/img/earth.jpg', 'TOUR', 0, 1, 'DOMESTIC', 'SEOUL', 'South Korea', 'SEOUL, South Korea', ''),
+('SEOUL002', 01, 1, 7, '서울 트레킹 명소 투어', '서울의 아름다운 산과 숲길을 따라 걷는 힐링 트레킹 투어', 500, 100, '2025-05-01 09:00:00', '2025-05-31 18:00:00', 1, 30, 'ON_SALE', '/static/img/product/region1/seoul.jpg', 'TOUR', 0, 1, 'DOMESTIC', 'SEOUL', 'South Korea', 'SEOUL, South Korea', ''),
 ('SEOUL003', 01, 1, 1, '서울 시티 투어', '서울 시내 관광 투어', 101880, 51020, '2025-05-01 09:00:00', '2025-05-31 18:00:00', 1, 30, 'ON_SALE', '/static/img/product/region1/seoul.jpg', 'TOUR', 0, 1, 'DOMESTIC', 'SEOUL', 'South Korea', 'SEOUL, South Korea', ''),
 ('SEOUL004', 01, 1, 11, '서울 힐링 & 전통 문화 체험', '북촌 한옥마을과 남산골 한옥마을에서 즐기는 전통 체험', 71950, 36040, '2025-09-05 10:00:00', '2025-09-07 17:00:00', 2, 10, 'CLOSED', '/static/img/product/region1/seoul.jpg', 'TOUR', 0, 1, 'DOMESTIC', 'SEOUL', 'South Korea', 'SEOUL, South Korea', ''),
 ('SEOUL005', 01, 1, 15, '서울 야경 명소 버스 투어', '서울의 아름다운 야경을 편안하게 감상하는 투어', 67900, 33870, '2025-05-20 19:00:00', '2025-05-20 23:00:00', 5, 30, 'CLOSED', '/static/img/product/region1/seoul.jpg', 'TOUR', 0, 1, 'DOMESTIC', 'SEOUL', 'South Korea', 'SEOUL, South Korea', ''),
