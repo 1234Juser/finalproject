@@ -47,6 +47,11 @@ export function inquiryReducer(state, action) {
                 ...state,
                 newMessage: action.payload
             };
+        case "REMOVE_MESSAGE":
+            return {
+                ...state,
+                messages: state.messages.filter(msg => msg.tempId !== action.payload),
+            };
         case 'SET_CONNECTED':
             return {
                 ...state,
@@ -56,8 +61,6 @@ export function inquiryReducer(state, action) {
             return {
                 ...state,
                 error: action.payload,
-                isLoading: false,
-                isLoadingHistory: false
             };
         case 'CLEAR_ERROR':
             return {
@@ -68,7 +71,6 @@ export function inquiryReducer(state, action) {
             return {
                 ...initialState,
                 currentUser: state.currentUser,
-                isLoading: false,
             };
         case 'SET_USER_LOGGED_IN':
             return {

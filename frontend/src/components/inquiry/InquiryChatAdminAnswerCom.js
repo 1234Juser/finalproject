@@ -2,12 +2,17 @@ import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {
     ContentWrapper,
     Header,
-    Message, MessageInputContainer,
-    MessagesContainer, SendButton, Sender,
-    TextArea, Timestamp
+    Message,
+    MessageInputContainer,
+    MessagesContainer,
+    SendButton,
+    Sender,
+    TextArea,
+    Timestamp,
+    MessageContent
 } from "../../style/inquiry/StyleInquiryChatAdminAnswer";
 import { containerStyle, mainStyle, sidebarStyle } from "../../style/member/AdminMyPageStyle";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 function InquiryChatAdminAnswerCom({
     messages,
@@ -15,10 +20,27 @@ function InquiryChatAdminAnswerCom({
     loading,
     error,
     handleSendMessage,
-    sending,
-    newMessage, handleInputChange, handleKeyPress,
-    isConnected,
+    newMessage,
+    handleInputChange,
+    handleKeyPress,
 }) {
+
+    const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
+
+
+// 새 메시지가 추가될 때 자동 스크롤
+    useEffect(() => {
+        const container = messagesContainerRef.current;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+
+    }, [messages]);
+
+
+
+
     return (
         <div style={containerStyle}>
             <aside style={sidebarStyle}>
@@ -34,18 +56,19 @@ function InquiryChatAdminAnswerCom({
                     ) : error ? (
                         <p style={{ color: "red" }}>{error}</p>
                     ) : (
-                        <MessagesContainer>
-                            {messages.map(message => (
-                                    <Message key={message.icmId || message.inquiryChatMessageId} senderType={message.inquiryChatMessageSenderType}>
-                                        <Sender>
-                                            {message.inquiryChatMessageSenderType === "ADMIN" ? "관리자" : "사용자"}
-                                        </Sender>
-                                        <p>{message.inquiryChatMessage}</p>
-                                        <Timestamp>
-                                            {new Date(message.inquiryChatMessageSentAt).toLocaleString()}
-                                        </Timestamp>
-                                    </Message>
-                                ))}
+                        <MessagesContainer ref={messagesContainerRef}>
+                        {messages.map(message => (
+                                <Message key={message.icmId} senderType={message.senderType}>
+                                    <Sender>
+                                        {message.senderType === "ADMIN" ? "관리자" : "사용자"}
+                                    </Sender>
+                                    <MessageContent>{message.message}</MessageContent>
+                                    <Timestamp>
+                                        {new Date(message.sendAt).toLocaleString()}
+                                    </Timestamp>
+                                </Message>
+                            ))}
+                            <div ref={messagesEndRef} />
                         </MessagesContainer>
                     )}
 
@@ -58,7 +81,7 @@ function InquiryChatAdminAnswerCom({
                             onKeyPress={handleKeyPress}
                             rows="3"
                         />
-                        <SendButton onClick={handleSendMessage}>
+                        <SendButton onClick={handleSendMessage} disabled={false}>
                             전송
                         </SendButton>
                     </MessageInputContainer>

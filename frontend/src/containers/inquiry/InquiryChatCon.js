@@ -31,7 +31,7 @@ function InquiryChatCon({ isVisible }) {
         currentUser,
         icId,
         isConnected,
-        isUserLoggedIn,
+        isUserLoggedIn, error
     } = state;
 
     const stompClientRef = useRef(null);
@@ -100,6 +100,7 @@ function InquiryChatCon({ isVisible }) {
         initializeChat();
     }, [currentUser, isVisible, icId, createInquiryChat]);
 
+
     // Step 3: WebSocket 연결
     const connectWebSocket = useCallback(() => {
         if (isConnected || !icId || stompClientRef.current) return;
@@ -152,6 +153,7 @@ function InquiryChatCon({ isVisible }) {
         dispatch({ type: "SET_CONNECTED", payload: false });
     }, []);
 
+
     // Step 4: WebSocket 연결 실행
     useEffect(() => {
         if (icId && isVisible) {
@@ -165,10 +167,28 @@ function InquiryChatCon({ isVisible }) {
         };
     }, [icId, isVisible, connectWebSocket, disconnectWebSocket]);
 
+
     // 메시지 전송 로직
     const handleSendMessage = useCallback(() => {
         console.log("메시지 전송 버튼 클릭됨");
 
+        // 비회원인 경우 시스템 메시지 표시
+        if (!isUserLoggedIn) {
+            const tempId = `system-${Date.now()}`;
+            dispatch({ type: "ADD_MESSAGE", payload: {
+                    tempId,
+                    message: "본 서비스는 로그인이 필요합니다.",
+                    senderType: "SYSTEM",
+                } });
+
+            // 2초 후에 시스템 메시지 제거
+            setTimeout(() => {
+                dispatch({ type: "REMOVE_MESSAGE", payload: tempId });
+            }, 2000);
+            return;
+        }
+
+        // 로그인된 사용자 메시지 전송
         if (!newMessage.trim()) return;
         if (!stompClientRef.current || !stompClientRef.current.connected) {
             dispatch({ type: "SET_ERROR", payload: "WebSocket 연결이 끊어졌습니다." });
@@ -187,7 +207,7 @@ function InquiryChatCon({ isVisible }) {
             senderType: isAdmin ? "ADMIN" : "USER",
             message: newMessage.trim(),
             messageType: "CHAT",
-            sentAt: new Date().toISOString(), // 서버에서 설정하는 것이 일반적
+            sendAt: new Date().toISOString(),
         };
 
         console.log("Message Payload:", messagePayload);
@@ -212,10 +232,6 @@ function InquiryChatCon({ isVisible }) {
     // 입력 input 상태 관리
     const handleInputChange = (e) => {
         dispatch({ type: 'SET_NEW_MESSAGE', payload: e.target.value });
-        e.target.style.height = 'inherit';
-        const scrollHeight = e.target.scrollHeight;
-        const maxHeight = parseInt(getComputedStyle(e.target).maxHeight || '100px', 10);
-        e.target.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
     };
 
     // Enter 키 전송 (Shift+Enter는 줄바꿈)
@@ -228,7 +244,6 @@ function InquiryChatCon({ isVisible }) {
 
     return (
         <InquiryChatCom
-            selectedTopic="1:1 문의"
             isVisible={isVisible}
             isConnected={isConnected}
             icId={icId}
@@ -242,6 +257,8 @@ function InquiryChatCon({ isVisible }) {
             disconnectWebSocket={disconnectWebSocket}
             handleInputChange={handleInputChange}
             handleKeyPress={handleKeyPress}
+            error={state.error}
+            isUserLoggedIn={isUserLoggedIn}
         />
     );
 }

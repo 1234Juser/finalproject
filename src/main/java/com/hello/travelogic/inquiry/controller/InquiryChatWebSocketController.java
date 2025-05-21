@@ -33,6 +33,7 @@ public class InquiryChatWebSocketController {
             @DestinationVariable Long icId,
             @Payload InquiryChatMessageDTO message,
             SimpMessageHeaderAccessor headerAccessor) {
+        log.debug("프론트에서 받은 메시지 확인 : {}", message);
         log.debug("관리자 메시지 수신 - icId: {}, 메시지: {}", icId, message.getMessage());
         return inquiryChatWebSocketService.handleAdminMessage(icId, message, headerAccessor);
     }

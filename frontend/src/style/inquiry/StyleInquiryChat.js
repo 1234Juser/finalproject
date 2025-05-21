@@ -1,8 +1,16 @@
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components'; // css 임포트 추가
+
+// Fade in and fade out 애니메이션 정의
+const fadeInOut = keyframes`
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+`;
 
 export const ChatWrapper = styled.div`
   width: 400px;
-    height: 500px;
+  height: 500px;
   border: 1px solid #ddd;
   border-radius: 16px;
   overflow: hidden;
@@ -57,46 +65,22 @@ export const MessageBox = styled.div`
 
 // 개별 메시지 스타일
 export const Message = styled.div`
-    background-color: ${({ $isSystem, $isUser }) => {
-        if ($isSystem) return '#f2f2f2';
-        if ($isUser) return '#daf1ff';
-        return '#fff';
-    }};
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 14px;
-    white-space: pre-wrap;
-    align-self: ${({ $isUser }) => ($isUser ? 'flex-end' : 'flex-start')};
-    max-width: 80%;
-`;
-
-// // 타임스탬프 스타일
-// export const MessageTimestamp = styled.div`
-//   font-size: 0.75em;
-//   color: #888;
-//   margin-top: 4px;
-//   text-align: ${({ $isUser }) => ($isUser ? 'right' : 'left')};
-// `;
-
-
-export const IconList = styled.div`
-  display: flex;
-  justify-content: space-around;
-  padding: 12px 16px;
-  background-color: #f9f9f9;
-  border-top: 1px solid #eee;
-`;
-
-export const IconButton = styled.button`
+  background-color: ${({ $isSystemInfo, $isUser }) => {
+    if ($isSystemInfo) return '#f2f2f2';
+    if ($isUser) return '#daf1ff';
+    return '#fff';
+  }};
+  border-radius: 12px;
+  padding: 12px;
   font-size: 14px;
-  background: #fff;
-  border: 1px solid #ddd;
-  padding: 6px 12px;
-  border-radius: 16px;
-  cursor: pointer;
-  &:hover {
-    background-color: #efefef;
-  }
+  white-space: pre-wrap;
+  align-self: ${({ $isUser }) => ($isUser ? 'flex-end' : 'flex-start')};
+  max-width: 80%;
+  
+  /* $isSystem이 true일 때 애니메이션 적용 */
+  ${({ $isSystem }) => $isSystem && css`
+    animation: ${fadeInOut} 2s ease-in-out forwards;
+  `}
 `;
 
 
@@ -118,7 +102,7 @@ export const InputField = styled.textarea`
     outline: none;
     font-size: 14px;
     resize: none;
-    max-height: 100px;
+    height: 50px;
     overflow-y: auto;
 
     &:focus {
@@ -142,53 +126,17 @@ export const SendButton = styled.button`
   }
 `;
 
-// export const LoadingOverlay = styled.div`
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   bottom: 0;
-//   background-color: rgba(255, 255, 255, 0.7);
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   font-size: 1em;
-//   color: #333;
-//   z-index: 10;
-// `;
 
-// 마이리얼트립 버전
-export const LoadingOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-// export const ErrorMessageUI = styled.p` // ErrorMessage와 이름 충돌 방지
-//   padding: 10px;
-//   background-color: #f8d7da;
-//   color: #721c24;
-//   border: 1px solid #f5c6cb;
-//   border-radius: 4px;
-//   margin: 10px 15px;
-//   text-align: center;
-//   font-size: 0.9em;
-// `;
-
-// 마이리얼트립 버전
-export const ErrorMessageUI = styled.div`
-  color: red;
-  font-size: 14px;
-  margin-bottom: 12px;
+export const ErrorMessageUI = styled.p` // ErrorMessage와 이름 충돌 방지
+    padding: 10px;
+    background-color: #f8d7da;
+    color: #0025a9;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    margin: 10px 15px;
+    text-align: center;
+    font-size: 0.9em;
+    //margin-bottom: 12px;
 `;
 
 export const MessageTimestamp = styled.div`
