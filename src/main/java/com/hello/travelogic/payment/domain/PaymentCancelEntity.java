@@ -27,15 +27,15 @@ public class PaymentCancelEntity {
     private PaymentEntity payment;      // 결제1 - 환불1
 
     @NotNull
-    @Column(name = "cancel_time", nullable = false)
-    private LocalDateTime cancelTime;
+    @Column(name = "cancel_time", nullable = false, updatable = false)
+    private LocalDateTime cancelTime = LocalDateTime.now();
 
     @NotNull
     @Column(name = "cancel_amount", nullable = false)
     private int cancelAmount;
 
     @NotNull
-    @Column(name = "pg_tid", nullable = false)
+    @Column(name = "pg_tid", nullable = false, unique = true)
     private String pgTid;
 
     @Null
@@ -44,7 +44,7 @@ public class PaymentCancelEntity {
 
     public PaymentCancelEntity(PaymentCancelDTO dto, PaymentEntity payment) {
         this.payment = payment;
-        this.cancelTime = dto.getCancelTime();
+        this.cancelTime = dto.getCancelTime() != null ? dto.getCancelTime() : LocalDateTime.now();
         this.cancelAmount = dto.getCancelAmount();
         this.pgTid = dto.getPgTid();
         this.cancelReceiptUrl = dto.getCancelReceiptUrl();

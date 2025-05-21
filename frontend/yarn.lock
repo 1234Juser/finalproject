@@ -5407,6 +5407,18 @@ human-signals@^2.1.0:
   resolved "https://registry.npmjs.org/human-signals/-/human-signals-2.1.0.tgz"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
+iamport-react-native@^2.0.14:
+  version "2.0.14"
+  resolved "https://registry.yarnpkg.com/iamport-react-native/-/iamport-react-native-2.0.14.tgz#90f1c366d9c081e34b7bb83f95f61afe640c2bfb"
+  integrity sha512-Y0y5d07GzVMXxL7gh5PH7SKAAu2FEVsvJt/EyQBAff9qcr0CWTBAobedlhdP9tkwnlXY3dECWVt/+cIqUwrQpw==
+
+iconv-lite@0.4.24:
+  version "0.4.24"
+  resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz"
+  integrity sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==
+  dependencies:
+    safer-buffer ">= 2.1.2 < 3"
+
 iconv-lite@^0.6.3:
   version "0.6.3"
   resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz"

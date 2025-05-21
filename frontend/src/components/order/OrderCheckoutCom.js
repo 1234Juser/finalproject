@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
 
-function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, loading, error, onCheckout }) {
+function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, orderCode, loading, error, onCheckout }) {
     const navigate = useNavigate();
+    // const navigation = useNavigation();
 
     if (!optionData) return <p>옵션 정보가 없습니다.</p>;
     // if (!loadedOptionData) return <p>옵션 정보가 없습니다.</p>;
@@ -31,6 +32,11 @@ function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, loading, e
     const handleGoBack = () => {
         navigate(-1);
     };
+
+    // const handlePayment = () => {
+    //     // navigation.push('/payments/create');
+    //     navigate(`/payments/create/${orderCode}`);
+    // }
 
     return(
         <>
@@ -105,7 +111,8 @@ function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, loading, e
                     </CancelPolicy>
 
                     <EditButton onClick={handleGoBack}>옵션 수정하기</EditButton>
-                    <PaymentButton>결제하기</PaymentButton>
+                    {/*<PaymentButton onClick={handlePayment}>결제하기</PaymentButton>*/}
+                    <PaymentButton onClick={onCheckout}>결제하기</PaymentButton>
                 </Sidebar>
             </Wrapper>
         </>)

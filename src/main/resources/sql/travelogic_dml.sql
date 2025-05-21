@@ -125,66 +125,66 @@ INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, orde
 (20, 27, 3, 'RSV20250720-27', 80000, 0, 320000, '2025-07-20 13:30:00', 'COMPLETED', 1);
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
-    (1, 1, '카드', '삼성카드', '2025-04-01 10:23:45', 240000, 'COMPLETED', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
-    (1, 2, '무통장', '신한카드', '2025-04-02 14:10:12', 310000, 'COMPLETED', 'imp_1234567891', 'RSV20250401-02', 'https://receipt.url/2'),
-    (1, 3, '카드', '국민카드', '2025-04-03 09:05:33', 130000, 'CANCELED', 'imp_1234567892', 'RSV20250401-03', 'https://receipt.url/3'),
-    (2, 4, '카드', '롯데카드', '2025-04-03 10:05:33', 130000, 'COMPLETED', 'imp_1234567893', 'RSV20250401-04', 'https://receipt.url/4'),
-    (3, 5, '카드', '우리카드', '2025-04-04 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-05', 'https://receipt.url/5'),
-    (3, 6, '카드', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567895', 'RSV20250401-06', 'https://receipt.url/6');
+    (1, 1, 'CARD', '삼성카드', '2025-04-01 10:23:45', 240000, 'COMPLETED', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
+    (1, 2, 'CARD', '신한카드', '2025-04-02 14:10:12', 310000, 'COMPLETED', 'imp_1234567891', 'RSV20250401-02', 'https://receipt.url/2'),
+    (1, 3, 'CARD', '국민카드', '2025-04-03 09:05:33', 130000, 'CANCELED', 'imp_1234567892', 'RSV20250401-03', 'https://receipt.url/3'),
+    (2, 4, 'CARD', '롯데카드', '2025-04-03 10:05:33', 130000, 'COMPLETED', 'imp_1234567893', 'RSV20250401-04', 'https://receipt.url/4'),
+    (3, 5, 'CARD', '우리카드', '2025-04-04 12:05:33', 130000, 'COMPLETED', 'imp_1234567894', 'RSV20250401-05', 'https://receipt.url/5'),
+    (3, 6, 'CARD', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567895', 'RSV20250401-06', 'https://receipt.url/6');
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
-    (1, 7, '카드', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567896', 'RSV20250401-07', 'https://receipt.url/7'),
-    (4, 8, '카드', '비씨카드', '2025-04-07 17:05:33', 130000, 'COMPLETED', 'imp_1234567897', 'RSV20250401-08', 'https://receipt.url/8'),
-    (3, 9, '카드', '비씨카드', '2025-04-08 12:05:33', 130000, 'COMPLETED', 'imp_1234567898', 'RSV20250401-09', 'https://receipt.url/9'),
+    (1, 7, 'CARD', '비씨카드', '2025-04-06 12:05:33', 130000, 'COMPLETED', 'imp_1234567896', 'RSV20250401-07', 'https://receipt.url/7'),
+    (4, 8, 'CARD', '비씨카드', '2025-04-07 17:05:33', 130000, 'COMPLETED', 'imp_1234567897', 'RSV20250401-08', 'https://receipt.url/8'),
+    (3, 9, 'CARD', '비씨카드', '2025-04-08 12:05:33', 130000, 'COMPLETED', 'imp_1234567898', 'RSV20250401-09', 'https://receipt.url/9'),
     # 10
-    (2, 10, '카드', '비씨카드', '2025-04-09 12:05:33', 130000, 'CANCELED', 'imp_1234567899', 'RSV20250401-10', 'https://receipt.url/10'),
-    (1, 11, '카드', '비씨카드', '2025-04-10 12:05:33', 130000, 'COMPLETED', 'imp_1234567900', 'RSV20250401-11', 'https://receipt.url/11'),
-    (3, 12, '카드', '비씨카드', '2025-04-11 12:05:33', 130000, 'COMPLETED', 'imp_1234567901', 'RSV20250401-12', 'https://receipt.url/12'),
-    (3, 13, '카드', '비씨카드', '2025-04-12 12:05:33', 130000, 'CANCELED', 'imp_1234567902', 'RSV20250401-13', 'https://receipt.url/13'),
-    (2, 14, '카드', '비씨카드', '2025-04-13 12:05:33', 130000, 'COMPLETED', 'imp_1234567903', 'RSV20250401-14', 'https://receipt.url/14'),
-    (3, 15, '카드', '비씨카드', '2025-04-14 12:05:33', 130000, 'COMPLETED', 'imp_1234567904', 'RSV20250401-15', 'https://receipt.url/15'),
+    (2, 10, 'CARD', '비씨카드', '2025-04-09 12:05:33', 130000, 'CANCELED', 'imp_1234567899', 'RSV20250401-10', 'https://receipt.url/10'),
+    (1, 11, 'CARD', '비씨카드', '2025-04-10 12:05:33', 130000, 'COMPLETED', 'imp_1234567900', 'RSV20250401-11', 'https://receipt.url/11'),
+    (3, 12, 'CARD', '비씨카드', '2025-04-11 12:05:33', 130000, 'COMPLETED', 'imp_1234567901', 'RSV20250401-12', 'https://receipt.url/12'),
+    (3, 13, 'CARD', '비씨카드', '2025-04-12 12:05:33', 130000, 'CANCELED', 'imp_1234567902', 'RSV20250401-13', 'https://receipt.url/13'),
+    (2, 14, 'CARD', '비씨카드', '2025-04-13 12:05:33', 130000, 'COMPLETED', 'imp_1234567903', 'RSV20250401-14', 'https://receipt.url/14'),
+    (3, 15, 'CARD', '비씨카드', '2025-04-14 12:05:33', 130000, 'COMPLETED', 'imp_1234567904', 'RSV20250401-15', 'https://receipt.url/15'),
     # 16
-    (3, 16, '카드', '비씨카드', '2025-05-03 12:05:33', 130000, 'COMPLETED', 'imp_1234567905', 'RSV20250401-16', 'https://receipt.url/16');
+    (3, 16, 'CARD', '비씨카드', '2025-05-03 12:05:33', 130000, 'COMPLETED', 'imp_1234567905', 'RSV20250401-16', 'https://receipt.url/16');
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
-    (1, 17, '카드', '삼성카드', '2025-05-10 11:30:00', 250000, 'COMPLETED', 'imp_1234567910', 'RSV20250510-17', 'https://receipt.url/17'),
-    (2, 18, '무통장', '신한카드', '2025-06-11 12:30:00', 185000, 'COMPLETED', 'imp_1234567911', 'RSV20250611-18', 'https://receipt.url/18'),
-    (3, 19, '카드', '국민카드', '2025-07-12 13:30:00', 240000, 'CANCELED', 'imp_1234567912', 'RSV20250712-19', 'https://receipt.url/19'),
-    (4, 20, '카드', '롯데카드', '2025-08-13 14:30:00', 320000, 'COMPLETED', 'imp_1234567913', 'RSV20250813-20', 'https://receipt.url/20'),
+    (1, 17, 'CARD', '삼성카드', '2025-05-10 11:30:00', 250000, 'COMPLETED', 'imp_1234567910', 'RSV20250510-17', 'https://receipt.url/17'),
+    (2, 18, 'CARD', '신한카드', '2025-06-11 12:30:00', 185000, 'COMPLETED', 'imp_1234567911', 'RSV20250611-18', 'https://receipt.url/18'),
+    (3, 19, 'CARD', '국민카드', '2025-07-12 13:30:00', 240000, 'CANCELED', 'imp_1234567912', 'RSV20250712-19', 'https://receipt.url/19'),
+    (4, 20, 'CARD', '롯데카드', '2025-08-13 14:30:00', 320000, 'COMPLETED', 'imp_1234567913', 'RSV20250813-20', 'https://receipt.url/20'),
     #21
-    (1, 21, '카드', '우리카드', '2025-09-14 15:30:00', 230000, 'COMPLETED', 'imp_1234567914', 'RSV20250914-21', 'https://receipt.url/21'),
-    (2, 22, '카드', '비씨카드', '2025-10-15 16:30:00', 240000, 'COMPLETED', 'imp_1234567915', 'RSV20251015-22', 'https://receipt.url/22'),
-    (3, 23, '카드', '현대카드', '2025-11-16 17:30:00', 340000, 'COMPLETED', 'imp_1234567916', 'RSV20251116-23', 'https://receipt.url/23'),
-    (4, 24, '카드', '하나카드', '2025-12-17 18:30:00', 280000, 'CANCELED', 'imp_1234567917', 'RSV20251217-24', 'https://receipt.url/24'),
-    (1, 25, '카드', '롯데카드', '2025-05-18 11:45:00', 200000, 'COMPLETED', 'imp_1234567918', 'RSV20250518-25', 'https://receipt.url/25'),
+    (1, 21, 'CARD', '우리카드', '2025-09-14 15:30:00', 230000, 'COMPLETED', 'imp_1234567914', 'RSV20250914-21', 'https://receipt.url/21'),
+    (2, 22, 'CARD', '비씨카드', '2025-10-15 16:30:00', 240000, 'COMPLETED', 'imp_1234567915', 'RSV20251015-22', 'https://receipt.url/22'),
+    (3, 23, 'CARD', '현대카드', '2025-11-16 17:30:00', 340000, 'COMPLETED', 'imp_1234567916', 'RSV20251116-23', 'https://receipt.url/23'),
+    (4, 24, 'CARD', '하나카드', '2025-12-17 18:30:00', 280000, 'CANCELED', 'imp_1234567917', 'RSV20251217-24', 'https://receipt.url/24'),
+    (1, 25, 'CARD', '롯데카드', '2025-05-18 11:45:00', 200000, 'COMPLETED', 'imp_1234567918', 'RSV20250518-25', 'https://receipt.url/25'),
     #26
-    (2, 26, '카드', '우리카드', '2025-06-19 12:45:00', 270000, 'COMPLETED', 'imp_1234567919', 'RSV20250619-26', 'https://receipt.url/26'),
-    (3, 27, '카드', '신한카드', '2025-07-20 13:45:00', 320000, 'COMPLETED', 'imp_1234567920', 'RSV20250720-27', 'https://receipt.url/27');
+    (2, 26, 'CARD', '우리카드', '2025-06-19 12:45:00', 270000, 'COMPLETED', 'imp_1234567919', 'RSV20250619-26', 'https://receipt.url/26'),
+    (3, 27, 'CARD', '신한카드', '2025-07-20 13:45:00', 320000, 'COMPLETED', 'imp_1234567920', 'RSV20250720-27', 'https://receipt.url/27');
 
 
 
 INSERT INTO tbl_payment_cancel (payment_code, cancel_time, cancel_amount, pg_tid, cancel_receipt_url) VALUES
-(3, '2025-04-04 11:35:20', 130000, 'pg_cancel_9876543210', 'https://receipt.url/cancel/3'),
-(10, '2025-05-09 11:00:00', 130000, 'pg_cancel_1234567910', 'https://receipt.url/cancel/10'),
-(13, '2025-05-09 11:30:00', 130000, 'pg_cancel_1234567913', 'https://receipt.url/cancel/13'),
-(19, '2025-05-09 11:45:00', 240000, 'pg_cancel_1234567912', 'https://receipt.url/cancel/19'),
-(24, '2025-05-09 11:55:00', 280000, 'pg_cancel_1234567917', 'https://receipt.url/cancel/24');
+    (3, '2025-04-04 11:35:20', 130000, 'pg_cancel_9876543210', 'https://receipt.url/cancel/3'),
+    (10, '2025-05-09 11:00:00', 130000, 'pg_cancel_1234567910', 'https://receipt.url/cancel/10'),
+    (13, '2025-05-09 11:30:00', 130000, 'pg_cancel_1234567913', 'https://receipt.url/cancel/13'),
+    (19, '2025-05-09 11:45:00', 240000, 'pg_cancel_1234567912', 'https://receipt.url/cancel/19'),
+    (24, '2025-05-09 11:55:00', 280000, 'pg_cancel_1234567917', 'https://receipt.url/cancel/24');
 
 INSERT INTO tbl_review (member_code, product_code, option_code, order_code, review_rating, review_content, review_date, review_pic, review_status) VALUES
-                                                                                                                                                       (1, 2, 2, 2, 5, '정말 최고의 디즈니 여행이었어요! 애들도 좋아했어요~', '2025-04-09 14:30:00', 'disney_review.jpg', 'ACTIVE'),
-                                                                                                                                                       (2, 4, 4, 4, 1, NULL, '2025-04-24 09:15:00', NULL, 'DELETE_BY_ADMIN'),
-                                                                                                                                                       (3, 5, 5, 5, 4, '재밌었음. 나중에 또오겠음.', '2025-04-24 09:15:00', NULL, 'ACTIVE');
+    (1, 2, 2, 2, 5, '정말 최고의 디즈니 여행이었어요! 애들도 좋아했어요~', '2025-04-09 14:30:00', 'disney_review.jpg', 'ACTIVE'),
+    (2, 4, 4, 4, 1, NULL, '2025-04-24 09:15:00', NULL, 'DELETE_BY_ADMIN'),
+    (3, 5, 5, 5, 4, '재밌었음. 나중에 또오겠음.', '2025-04-24 09:15:00', NULL, 'ACTIVE');
 
 INSERT INTO tbl_review (member_code, product_code, option_code, order_code, review_rating, review_content, review_date, review_pic, review_status) VALUES
-                                                                                                                                                       (2, 11, 18, 18, 5, '정말 멋진 경험이었어요!', '2025-06-12 15:00:00', 'product11_review.jpg', 'ACTIVE'),
-                                                                                                                                                       (4, 13, 20, 20, 5, '잊지 못할 추억을 만들었어요.', '2025-08-14 17:00:00', 'product13_review.jpg', 'ACTIVE'),
-                                                                                                                                                       (2, 15, 22, 22, 4, '기대보다 더 좋았어요.', '2025-10-16 15:00:00', 'product15_review.jpg', 'ACTIVE'),
-                                                                                                                                                       (3, 16, 23, 23, 5, '완벽한 여행이었어요.', '2025-11-17 16:00:00', 'product16_review.jpg', 'ACTIVE'),
-                                                                                                                                                       (1, 18, 25, 25, 3, '그럭저럭 괜찮았어요.', '2025-05-19 14:00:00', 'product18_review.jpg', 'ACTIVE'),
-                                                                                                                                                       (3, 20, 27, 27, 5, '정말 잊을 수 없는 추억이었어요.', '2025-05-07 17:00:00', 'product20_review.jpg', 'ACTIVE'),
-                                                                                                                                                       (4, 27, 8, 8, 5, '정말 멋진 경험이었어요. 꼭 다시 가고 싶어요!', '2025-05-05 10:00:00', 'review_8.jpg', 'ACTIVE'),
-                                                                                                                                                       (3, 27, 9, 9, 4, '가격 대비 만족스러웠어요. 재방문 의사 있습니다.', '2025-05-06 11:00:00', 'review_10.jpg', 'ACTIVE'),
-                                                                                                                                                       (1, 27, 11, 11, 3, '기대보다는 조금 아쉬웠어요. 그래도 괜찮았습니다.', '2025-05-07 12:00:00', 'review_11.jpg', 'ACTIVE'),
-                                                                                                                                                       (3, 27, 12, 12, 5, '최고의 여행이었습니다. 다시 가고 싶어요!', '2025-05-08 13:00:00', 'review_12.jpg', 'ACTIVE'),
-                                                                                                                                                       (2, 27, 14, 14, 4, '가이드분이 정말 친절하셨습니다. 추천합니다.', '2025-05-09 11:00:00', 'review_14.jpg', 'ACTIVE');
+    (2, 11, 18, 18, 5, '정말 멋진 경험이었어요!', '2025-06-12 15:00:00', 'product11_review.jpg', 'ACTIVE'),
+    (4, 13, 20, 20, 5, '잊지 못할 추억을 만들었어요.', '2025-08-14 17:00:00', 'product13_review.jpg', 'ACTIVE'),
+    (2, 15, 22, 22, 4, '기대보다 더 좋았어요.', '2025-10-16 15:00:00', 'product15_review.jpg', 'ACTIVE'),
+    (3, 16, 23, 23, 5, '완벽한 여행이었어요.', '2025-11-17 16:00:00', 'product16_review.jpg', 'ACTIVE'),
+    (1, 18, 25, 25, 3, '그럭저럭 괜찮았어요.', '2025-05-19 14:00:00', 'product18_review.jpg', 'ACTIVE'),
+    (3, 20, 27, 27, 5, '정말 잊을 수 없는 추억이었어요.', '2025-05-07 17:00:00', 'product20_review.jpg', 'ACTIVE'),
+    (4, 27, 8, 8, 5, '정말 멋진 경험이었어요. 꼭 다시 가고 싶어요!', '2025-05-05 10:00:00', 'review_8.jpg', 'ACTIVE'),
+    (3, 27, 9, 9, 4, '가격 대비 만족스러웠어요. 재방문 의사 있습니다.', '2025-05-06 11:00:00', 'review_10.jpg', 'ACTIVE'),
+    (1, 27, 11, 11, 3, '기대보다는 조금 아쉬웠어요. 그래도 괜찮았습니다.', '2025-05-07 12:00:00', 'review_11.jpg', 'ACTIVE'),
+    (3, 27, 12, 12, 5, '최고의 여행이었습니다. 다시 가고 싶어요!', '2025-05-08 13:00:00', 'review_12.jpg', 'ACTIVE'),
+    (2, 27, 14, 14, 4, '가이드분이 정말 친절하셨습니다. 추천합니다.', '2025-05-09 11:00:00', 'review_14.jpg', 'ACTIVE');
 COMMIT;

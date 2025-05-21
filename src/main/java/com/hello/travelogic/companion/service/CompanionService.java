@@ -8,6 +8,7 @@ import com.hello.travelogic.companion.repository.CompanionCommentRepository;
 import com.hello.travelogic.companion.repository.CompanionRepository;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
+import com.hello.travelogic.utils.FileUtil;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +38,7 @@ public class CompanionService {
     private final CompanionCommentRepository companionCommentRepository;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
+    private final FileUtil fileUtil; // FileUtil 주입
 
     // 게시글 목록 조회 (누구나 가능, 공지사항 상단, 최신순)
     public Page<CompanionListDTO> getAllCompanions(String searchKeyword, String searchType, Pageable pageable) {
@@ -81,7 +87,7 @@ public class CompanionService {
 
     // 게시글 등록 (ROLE_ADMIN 또는 ROLE_USER 권한 필요)
     @Transactional
-    public CompanionEntity createCompanion(String companionTitle, String companionContent, String token, Boolean isNoticeRequest) {
+    public CompanionEntity createCompanion(String companionTitle, String companionContent, String token, Boolean isNoticeRequest, List<MultipartFile> images) {
         if (token == null || token.isEmpty()) {
             log.warn(" - 토큰이 null이거나 비어있다!");
             throw new IllegalArgumentException("토큰이 null이거나 비어있다.");
@@ -111,7 +117,17 @@ public class CompanionService {
                 // 여기서는 경고 로그만 남기고 false로 유지합니다.
             }
         }
-
+        //이미지로직
+        List<String> imageUrls = null;
+        if (images != null && !images.isEmpty()) {
+            try {
+                imageUrls = fileUtil.saveFiles(images);
+            } catch (IOException e) {
+                log.error("이미지 파일 저장 중 오류 발생", e);
+                // 에러 처리 로직 추가 (예: 예외 발생시키거나, 파일 저장 실패를 알림)
+                throw new RuntimeException("이미지 파일 저장에 실패했습니다.", e);
+            }
+        }
 
         CompanionEntity newCompanion = CompanionEntity.builder()
                 .member(author)
@@ -120,6 +136,7 @@ public class CompanionService {
                 .companionCreatedAt(LocalDateTime.now())
                 .companionViewCount(0)
                 .companionNotice(noticeFlag) // 공지사항 여부 설정
+                .companionImageUrls((imageUrls != null && !imageUrls.isEmpty()) ? String.join(",", imageUrls) : null) // 이미지 URL 목록 저장, null 체크 추가
                 .build();
 
         return companionRepository.save(newCompanion);
@@ -127,7 +144,7 @@ public class CompanionService {
 
     // 게시글 수정 (작성자 본인만 가능, 공지사항 변경은 관리자만)
     @Transactional
-    public CompanionEntity updateCompanion(Integer companionId, String companionTitle, String companionContent, String token, Boolean isNoticeRequest) {
+    public CompanionEntity updateCompanion(Integer companionId, String companionTitle, String companionContent, String token, Boolean isNoticeRequest, List<MultipartFile> images, List<Long> deletedImageIds) {
         Long memberCode = jwtUtil.getMemberCodeFromToken(token);
         List<String> roles = jwtUtil.getRolesFromToken(token); // 역할 정보 가져오기
 
@@ -166,6 +183,56 @@ public class CompanionService {
             }
         }
 
+        // 이미지 파일 삭제 로직 (deletedImageIds 처리 - 이미지 URL의 인덱스로 간주)
+        if (deletedImageIds != null && !deletedImageIds.isEmpty()) {
+            List<String> currentImageUrls = new ArrayList<>();
+            if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
+                currentImageUrls.addAll(Arrays.asList(companion.getCompanionImageUrls().split(",")));
+            }
+
+            // 삭제할 이미지 URL 목록을 저장
+            List<String> urlsToDelete = new ArrayList<>();
+            List<String> updatedImageUrls = new ArrayList<>();
+
+            for (int i = 0; i < currentImageUrls.size(); i++) {
+                // deletedImageIds는 0부터 시작하는 인덱스라고 가정합니다.
+                if (deletedImageIds.contains((long) i)) {
+                    urlsToDelete.add(currentImageUrls.get(i).trim());
+                } else {
+                    updatedImageUrls.add(currentImageUrls.get(i).trim());
+                }
+            }
+
+            // 실제 파일 시스템에서 이미지 삭제
+            for (String url : urlsToDelete) {
+                log.info("이미지 파일 삭제: {}", url);
+                fileUtil.deleteFile(url);
+            }
+
+            // CompanionEntity의 companionImageUrls 필드 업데이트
+            companion.setCompanionImageUrls(updatedImageUrls.isEmpty() ? null : String.join(",", updatedImageUrls));
+        }
+
+        // 새로운 이미지 파일 추가 로직
+        if (images != null && !images.isEmpty()) {
+            try {
+                List<String> newImageUrls = fileUtil.saveFiles(images);
+                // 기존 이미지 URL에 새로운 이미지 URL 추가
+                List<String> currentImageUrls = new ArrayList<>();
+                if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
+                    currentImageUrls.addAll(List.of(companion.getCompanionImageUrls().split(",")));
+                }
+                currentImageUrls.addAll(newImageUrls);
+                companion.setCompanionImageUrls(String.join(",", currentImageUrls)); // 업데이트된 이미지 URL 목록 저장
+            } catch (IOException e) {
+                log.error("이미지 파일 저장 중 오류 발생", e);
+                throw new RuntimeException("이미지 파일 저장에 실패했습니다.", e);
+            }
+        } else if (images != null && images.isEmpty() && (deletedImageIds == null || deletedImageIds.isEmpty())) {
+            // 새로 추가된 이미지 없이, 삭제된 이미지도 없을 경우 기존 이미지 유지 (필요에 따라)
+            // 현재 로직에서는 images가 null이거나 비어있으면 이미지를 추가하지 않습니다.
+            // deletedImageIds가 처리되므로 이 else-if 블록은 필요 없을 수 있습니다.
+        }
 
         return companionRepository.save(companion);
     }
@@ -185,6 +252,15 @@ public class CompanionService {
         if (!isAdmin && !isAuthor) {
             throw new SecurityException("게시글 삭제 권한이 없습니다. 게시글 ID: " + companionId);
         }
+
+        // 게시글 삭제 시 연결된 이미지 파일도 삭제
+        if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
+            String[] imageUrls = companion.getCompanionImageUrls().split(",");
+            for (String imageUrl : imageUrls) {
+                fileUtil.deleteFile(imageUrl.trim());
+            }
+        }
+
 
         companionRepository.delete(companion);
     }

@@ -15,54 +15,45 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"member", "order"})
 public class PaymentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentCode;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_code", nullable = false)
     private MemberEntity member;    // 회원1 - 결제N
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_code", nullable = false)
     private OrderEntity order;      // 주문1 - 결제1
 
-    @NotNull
-    @Column(name = "payment_method", nullable = false)
-    private String paymentMethod;
+    @Column(name = "payment_method", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
-    @NotNull
-    @Column(name = "payment_brand", nullable = false)
+    @Column(name = "payment_brand", nullable = false, length = 50)
     private String paymentBrand;
 
-    @NotNull
-    @Column(name = "payment_time", nullable = false)
-    private LocalDateTime paymentTime;
+    @Column(name = "payment_time", nullable = false, updatable = false)
+    private LocalDateTime paymentTime = LocalDateTime.now();
 
-    @NotNull
     @Column(name = "payment_amount", nullable = false)
     private int paymentAmount;
 
-    @NotNull
-    @Column(name = "payment_status", nullable = false)
+    @Column(name = "payment_status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    @NotNull
-    @Column(name = "imp_uid", nullable = false)
+    @Column(name = "imp_uid", nullable = false, unique = true, length = 50)
     private String impUid;
 
-    @NotNull
-    @Column(name = "merchant_uid", nullable = false)
+    @Column(name = "merchant_uid", nullable = false, unique = true, length = 50)
     private String merchantUid;
 
-    @NotNull
-    @Column(name = "receipt_url", nullable = false)
+    @Column(name = "receipt_url", nullable = false, length = 200)
     private String receiptUrl;
 
     public PaymentEntity(PaymentDTO dto, MemberEntity member, OrderEntity order) {

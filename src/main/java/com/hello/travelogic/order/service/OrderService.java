@@ -262,7 +262,7 @@ public class OrderService {
 //    }
 
     @Transactional
-    public Long createOrder(OrderDTO orderDTO) {
+    public Map<String, Object> createOrder(OrderDTO orderDTO) {
         if (orderDTO.getProductCode() == 0 || orderDTO.getOptionCode() == 0 || orderDTO.getMemberCode() == 0) {
             throw new IllegalArgumentException("상품 코드, 옵션 코드, 회원 코드는 필수입니다.");
         }
@@ -290,9 +290,17 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.PENDING); // 기본 상태는 결제 대기
 
         orderRepo.save(order);
-        log.info("🟢 주문 생성 완료: orderCode = {}, bookingUid = {}", order.getOrderCode(), bookingUid);
+        log.info("✅ 주문 생성됨: orderCode = {}, bookingUid = {}, member = {}, product = {}",
+                order.getOrderCode(),
+                bookingUid,
+                member.getMemberCode(),
+                product.getProductTitle());
 
-        return order.getOrderCode();
+        Map<String, Object> result = new HashMap<>();
+        result.put("orderCode", order.getOrderCode());
+        result.put("bookingUid", order.getBookingUid());
+
+        return result;
     }
 
     // 주문 생성
