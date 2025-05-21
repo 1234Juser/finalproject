@@ -210,3 +210,47 @@ export const fetchMemberInfo = async (accessToken) => {
         throw error;
     }
 };
+
+// 결제 완료 시 orderStatus를 SCHEDULED로 변경
+export const completeOrder = async (orderCode, paymentMethod, totalPrice, accessToken) => {
+    if (!accessToken) {
+        console.error("🔴 accessToken 없음");
+        return;
+    }
+    try {
+        const response = await axios.patch(
+            `${path}/order/${orderCode}/complete`,
+            {
+                paymentMethod,
+                totalPrice,
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        console.log("🟢 주문 상태 업데이트 성공:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("🔴 주문 상태 업데이트 실패:", error);
+        throw error;
+    }
+};
+
+// orderStatus가 PENDING상태 유지되면 orderCode삭제
+export const deletePendingOrder = async (orderCode, accessToken) => {
+    try {
+        const response = await axios.delete(`${path}/order/${orderCode}/delete`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        console.log("🟢 주문 삭제 성공:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("🔴 주문 삭제 실패:", error);
+        throw error;
+    }
+};

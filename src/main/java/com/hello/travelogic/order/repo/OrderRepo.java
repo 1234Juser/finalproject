@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,4 +60,7 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
 
     // 한 사람이 한 날에 같은 상품의 옵션 여러개 생성하는거 방지
     boolean existsByMemberAndProductAndOption_ReservationDate(MemberEntity member, ProductEntity product, LocalDate reservationDate);
+
+    // PENDING으로 오랜시간 존재 시 삭제
+    List<OrderEntity> findAllByOrderStatusAndOrderDateBefore(OrderStatus orderStatus, LocalDateTime localDateTime);
 }
