@@ -91,4 +91,7 @@ public class OrderController {
 //    public static void main(String[] args) {
 //        System.out.println(generateOptionUid());
 //    }
+
+    // 주문취소(결제취소=환불)
+//    @PatchMapping("/order/{orderCode}/cancel")
 }

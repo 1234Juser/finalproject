@@ -1,8 +1,16 @@
 import OrderCheckoutCom from "../../components/order/OrderCheckoutCom";
-import {createOrder, fetchMemberInfo, fetchOptionDetails} from "../../service/orderService";
+import {
+    completeOrder,
+    createOrder,
+    deletePendingOrder,
+    fetchMemberInfo,
+    fetchOptionDetails
+} from "../../service/orderService";
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
+import {orderInitialState as result} from "../../modules/orderModule";
+import {fetchPaymentMethods} from "../../service/paymentService";
 
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
@@ -11,33 +19,11 @@ function OrderCheckoutCon({ accessToken }) {
     const [optionData, setOptionData] = useState(null);
     // const [loadedOptionData, setLoadedOptionData] = useState(optionData || null);
     const [memberInfo, setMemberInfo] = useState(null);
+    const [paymentMethods, setPaymentMethods] = useState([]);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
     const [loading, setLoading] = useState(!optionData);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
-    // 옵션 데이터 불러오기 (props로 optionData가 없을 때만 로드)
-    // useEffect(() => {
-    //     const loadOptionData = async () => {
-    //         if (!optionCode || !accessToken) return;
-    //         try {
-    //             // 이미 props로 전달된 데이터가 있으면 로드하지 않음
-    //             if (optionData && Object.keys(optionData).length > 0) return;
-    //
-    //             const data = await fetchOptionDetails(productUid, optionCode, accessToken);
-    //             setLoadedOptionData(data);
-    //             console.log("🟢 옵션 데이터 로드 성공:", data);
-    //         } catch (error) {
-    //             console.error("🔴 옵션 데이터 로드 실패:", error);
-    //             setError("옵션 데이터를 불러오는 데 실패했습니다.");
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-    //
-    //     if (!loadedOptionData && optionCode && accessToken) {
-    //         loadOptionData();
-    //     }
-    // }, [optionCode, accessToken, productUid, optionData]);
 
     useEffect(() => {
         const loadOptionData = async () => {
@@ -53,7 +39,7 @@ function OrderCheckoutCon({ accessToken }) {
                 const { orderCode, bookingUid } = await createOrder(productUid, {
                     ...option,
                     memberCode: member.memberCode,
-                    productCode: option.productCode
+                    productCode: option.productCode,
                 }, member, accessToken);
 
                 if (!orderCode) throw new Error("주문 생성 실패");
@@ -73,11 +59,37 @@ function OrderCheckoutCon({ accessToken }) {
         }
     }, [productUid, optionCode, accessToken]);
 
+    useEffect(() => {
+        fetchPaymentMethods()
+            .then((methods) => setPaymentMethods(methods))
+            .catch((err) => console.error(err));
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            deletePendingOrder(orderCode, accessToken)
+                .then(() => console.log("⏱ 주문 자동 삭제 완료"))
+                .catch((err) => console.warn("자동 삭제 실패:", err));
+        }, 10 * 60 * 1000); // 10분
+
+        return () => clearTimeout(timer);
+    }, [orderCode, accessToken]);
+
     // 결제하기 버튼 클릭 시
     const handleCheckout = async () => {
         if (!accessToken) {
             alert("로그인이 필요한 서비스입니다.");
             navigate("/login");
+            return;
+        }
+
+        if (!selectedPaymentMethod) {
+            alert("결제수단을 선택해주세요.");
+            return;
+        }
+        const supportedMethods = ["CARD", "KAKAO_PAY"];
+        if (!supportedMethods.includes(selectedPaymentMethod)) {
+            alert("카드와 카카오페이 외 결제는 서비스 준비 중 입니다.");
             return;
         }
 
@@ -127,7 +139,39 @@ function OrderCheckoutCon({ accessToken }) {
                 orderAdultPrice: optionData.productAdult,
                 orderChildPrice: optionData.productChild,
             };
-            requestIamportPayment(orderData);
+
+            const result = await requestIamportPayment(orderData, selectedPaymentMethod);
+            if (!result) {
+                // 결제 실패 → 주문 삭제
+                await deletePendingOrder(orderCode, accessToken);
+                alert("결제에 실패했습니다. 주문이 삭제되었습니다.");
+                return;
+            }
+
+            // 주문 상태 변경
+            // await completeOrder(
+            //     orderData.orderCode,
+            //     "CARD", // 또는 "KAKAO_PAY" 등
+            //     orderData.totalPrice,
+            //     accessToken
+            // );
+            await completeOrder(orderCode, "CARD", orderData.totalPrice, accessToken);
+
+            const resolvedThumbnail =
+                orderData.productThumbnail?.includes("upload/")
+                    ? `/upload/product/${encodeURIComponent(orderData.productThumbnail)}`
+                    : `/static/img/product/${encodeURIComponent(orderData.productThumbnail)}`;
+
+            navigate("/payments/complete", {
+                state: {
+                    bookingUid: result.bookingUid,
+                    orderDate: new Date().toISOString().split("T")[0],
+                    productTitle: orderData.productTitle,
+                    // productThumbnail: orderData.productThumbnail,
+                    productThumbnail: resolvedThumbnail,
+                    totalPrice: orderData.totalPrice,
+                },
+            });
         } catch (error) {
             console.error("🔴 주문 생성 실패:", error);
             alert("주문 생성에 실패했습니다.");
@@ -147,6 +191,9 @@ function OrderCheckoutCon({ accessToken }) {
                 loading={loading}
                 error={error}
                 onCheckout={handleCheckout}
+                paymentMethods={paymentMethods}
+                selectedPaymentMethod={selectedPaymentMethod}
+                setSelectedPaymentMethod={setSelectedPaymentMethod}
             />
         </>)
 }

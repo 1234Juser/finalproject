@@ -31,7 +31,7 @@ public class OrderEntity {
     private ProductEntity product;      // 상품1 - 주문N
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "option_code", nullable = false)
     @JsonIgnore
     private OptionEntity option;    // 옵션1 - 주문1

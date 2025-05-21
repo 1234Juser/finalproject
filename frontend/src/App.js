@@ -50,6 +50,7 @@ import OptionFormPage from "./pages/order/OptionFormPage";
 import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
 import CompanionMyPagePage from "./pages/companion/CompanionMyPagePage";
 import PaymentPage from "./pages/payment/PaymentPage";
+import PaymentCompletePage from "./pages/payment/PaymentCompletePage";
 
 function App() {
     return (
@@ -118,6 +119,7 @@ function App() {
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
                 <Route path="/products/:productUid/order/create/:optionCode" element={<OrderCheckoutPage/>} />>
                 <Route path="/payments/create/:orderCode" element={<PaymentPage />} />
+                <Route path="/payments/complete" element={<PaymentCompletePage />} />
 
               {/*커뮤니티*/}
               <Route path="/community" element={<CommunityLayout />} >

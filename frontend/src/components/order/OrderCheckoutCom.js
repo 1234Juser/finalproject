@@ -1,13 +1,24 @@
 import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
 
-function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, orderCode, loading, error, onCheckout }) {
+function OrderCheckoutCom({
+                            optionData,
+                            loadedOptionData,
+                            memberInfo,
+                            orderCode,
+                            loading,
+                            error,
+                            onCheckout,
+                            paymentMethods,
+                            selectedPaymentMethod,
+                            setSelectedPaymentMethod}) {
     const navigate = useNavigate();
     // const navigation = useNavigation();
 
     if (!optionData) return <p>옵션 정보가 없습니다.</p>;
     // if (!loadedOptionData) return <p>옵션 정보가 없습니다.</p>;
     // if (!memberInfo) return <p>회원 정보가 없습니다.</p>;
+
     const {
         productTitle = "상품명 없음",
         reservationDate = "예약일 없음",
@@ -25,6 +36,13 @@ function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, orderCode,
         memberPhone = "전화번호 없음",
     } = memberInfo;
 
+    const PAYMENT_LABELS = {
+        CARD: "카드",
+        BANK_TRANSFER: "무통장 입금",
+        KAKAO_PAY: "카카오페이",
+        NAVER_PAY: "네이버페이",
+        TOSS_PAY: "토스페이"
+    };
     const imagePath = productThumbnail
         ? `/upload/product/${encodeURIComponent(productThumbnail)}`
         : "/img/default-product.jpg";
@@ -69,12 +87,14 @@ function OrderCheckoutCom({ optionData, loadedOptionData, memberInfo, orderCode,
                     {/* 결제수단 선택 */}
                     <PaymentContainer>
                         <PaymentTitle>결제수단 선택</PaymentTitle>
-                        <PaymentSelect>
+                        <PaymentSelect value={selectedPaymentMethod} onChange={(e) => setSelectedPaymentMethod(e.target.value)}>
                             <PaymentOption value="">결제수단 선택</PaymentOption>
-                            <PaymentOption value="CARD">카드</PaymentOption>
-                            <PaymentOption value="BANK_TRANSFER">무통장 입금</PaymentOption>
-                            <PaymentOption value="PAYPAL">페이팔</PaymentOption>
-                            <PaymentOption value="KAKAO_PAY">카카오페이</PaymentOption>
+                            {paymentMethods.map((method) => (
+                                <PaymentOption key={method} value={method}>
+                                    {/*{method}*/}
+                                    {PAYMENT_LABELS[method] || method}
+                                </PaymentOption>
+                            ))}
                         </PaymentSelect>
                     </PaymentContainer>
                 </Section>

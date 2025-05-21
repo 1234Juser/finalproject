@@ -1,5 +1,6 @@
 package com.hello.travelogic.payment.controller;
 
+import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import com.hello.travelogic.payment.dto.PaymentDTO;
 import com.hello.travelogic.payment.service.PaymentService;
@@ -13,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -120,5 +123,17 @@ public class PaymentController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("영수증 발급 실패");
         }
+    }
+
+    // 결제 수단 선택지 가져오기
+    // enum클래스의 정적 메서드라
+    // 복잡한 비즈니스 로직이나 DB접근 없이
+    // enum값을 나열해서 반환하는 단순작업이므로 서비스 코드는 따로 없다.
+    @GetMapping("/payments/methods")
+    public ResponseEntity<List<String>> getAllPaymentMethods() {
+        List<String> methods = Arrays.stream(PaymentMethod.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(methods);
     }
 }

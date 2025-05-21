@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -346,5 +347,19 @@ public class OrderService {
         // 삭제 처리
         orderRepo.delete(order);
         log.info("🟢 PENDING 주문 삭제 완료: orderCode = {}", orderCode);
+    }
+
+    // orderStatus가 PENDING인경우 어느정도 대기시간을 주다가 orderCode삭제
+    @Scheduled(cron = "0 0 * * * *") // 매 시간마다
+    public void cleanUpPendingOrders() {
+        List<OrderEntity> pendingOrders = orderRepo.findAllByOrderStatusAndOrderDateBefore(
+                OrderStatus.PENDING,
+                LocalDateTime.now().minusMinutes(5) // 5분 이상 된 PENDING
+        );
+
+        for (OrderEntity order : pendingOrders) {
+            orderRepo.delete(order);
+            log.info("🧹 오래된 PENDING 주문 삭제: {}", order.getOrderCode());
+        }
     }
 }
