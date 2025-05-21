@@ -1,9 +1,5 @@
 package com.hello.travelogic.utils;
 
-import com.hello.travelogic.member.domain.MemberEntity;
-import com.hello.travelogic.product.domain.ProductEntity;
-import com.hello.travelogic.product.dto.ProductDTO;
-import com.hello.travelogic.product.repo.ProductRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

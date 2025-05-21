@@ -46,4 +46,9 @@ public class CompanionEntity {
     @Column(name="companion_notice", nullable = false)
     @ColumnDefault("false") //데이터에비스 레벨 기본값
     private boolean companionNotice = false;
+
+    // 이미지 파일 경로를 저장할 필드 추가 (여러 개일 경우 쉼표 등으로 구분하여 저장)
+    @Column(name = "companion_image_urls", columnDefinition = "TEXT")
+    private String companionImageUrls; // 이미지 URL 목록 저장
+
 }

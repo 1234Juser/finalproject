@@ -42,7 +42,8 @@ import {
     LikeButton,
     LikeCount,
     OtherLikeButton,
-    OtherLikeCount
+    OtherLikeCount,
+    PostImage
 } from "../../style/companion/CompanionDetailStyle";
 import { useNavigate } from "react-router-dom";
 import FollowModal from "../companion/FollowModalCom";
@@ -85,7 +86,6 @@ function CompanionDetailCom({
     const [modalTitle, setModalTitle] = useState('');
     const [modalMembers, setModalMembers] = useState([]);
     const [showFollowingList, setShowFollowingList] = useState(true); // 팔로잉/팔로워 목록 전환 상태 추가
-
 
     useEffect(() => {
         const checkFollowStatus = async () => {
@@ -206,6 +206,7 @@ function CompanionDetailCom({
                 </CommentPagingButton>
             );
         }
+
         return (
             <CommentPagingWrapper>
                 <CommentPagingButton onClick={() => handleCommentPageChange(Math.max(0, currentCommentPage - 1))} disabled={currentCommentPage === 0 || totalCommentPages === 0}>
@@ -301,6 +302,22 @@ function CompanionDetailCom({
         setModalMembers([]); // 모달 닫을 때 데이터 초기화
     };
 
+    // 게시글 내용에 이미지 태그 삽입 로직 추가
+    let processedContent = companion.companionContent;
+    if (companion.companionImageUrls && companion.companionImageUrls.length > 0) {
+        processedContent = companion.companionContent.replace(/<이미지(\d+)>/g, (match, imageNumberStr) => {
+            const imageNumber = parseInt(imageNumberStr, 10);
+            const imageIndex = imageNumber - 1; // <이미지1>은 배열의 0번 인덱스에 해당
+
+            if (companion.companionImageUrls[imageIndex]) {
+                const url = companion.companionImageUrls[imageIndex];
+                // PostImage 컴포넌트의 스타일과 유사하게 인라인 스타일을 적용합니다.
+                // 필요시 PostImage 컴포넌트의 실제 스타일을 확인하고 조정해주세요.
+                return `<img src="/${url}" alt="게시물 이미지 ${imageNumber}" style="width: 500px; height: 300px; object-fit: cover; display: block; margin-bottom: 20px; margin-left: auto; margin-right: auto;" />`;
+            }
+            return match; // 해당 번호의 이미지가 없으면 플레이스홀더 텍스트를 그대로 반환
+        });
+    }
 
     return (
         <CompanionDetailWrapper>
@@ -359,13 +376,31 @@ function CompanionDetailCom({
                             <LikeCount>{companionLikeCount}</LikeCount>
                         </>
                     )}
-
                 </PostStatsLine>
             </MetaInfo>
 
-            <DescArea>
-                {companion.companionContent}
-            </DescArea>
+
+            {/*/!* ================= 중요: 이미지 표시 부분 ================= *!/*/}
+            {/*{companion.companionImageUrls && companion.companionImageUrls.length > 0 && (*/}
+            {/*    <div style={{ margin: '20px 0', textAlign: 'center' }}> /!* 이미지 컨테이너 스타일 *!/*/}
+            {/*        {companion.companionImageUrls.map((url, index) => (*/}
+            {/*            <PostImage*/}
+            {/*                key={index}*/}
+            {/*                src={`/${url}`} // FileUtil에서 반환하는 경로가 'upload/community/...' 이므로 앞에 '/'를 붙여 루트 상대 경로로 만듭니다.*/}
+            {/*                alt={`게시물 이미지 ${index + 1}`}*/}
+            {/*                // PostImage 스타일 컴포넌트에 이미 스타일이 있다면 아래 style prop은 필요 없을 수 있습니다.*/}
+            {/*                // 필요에 따라 스타일을 조정하세요.*/}
+            {/*                style={{ maxWidth: '100%', height: 'auto', display: 'block', marginBottom: '10px', marginLeft: 'auto', marginRight: 'auto' }}*/}
+            {/*            />*/}
+            {/*        ))}*/}
+            {/*    </div>*/}
+            {/*)}*/}
+            {/*/!* ====================================================== *!/*/}
+
+            {/*<DescArea dangerouslySetInnerHTML={{ __html: companion.companionContent }} />*/}
+            <DescArea dangerouslySetInnerHTML={{ __html: processedContent }} />
+
+
 
             {/* 댓글 섹션 */}
             <CommentSection>
