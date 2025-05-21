@@ -65,8 +65,8 @@ export const MessageBox = styled.div`
 
 // 개별 메시지 스타일
 export const Message = styled.div`
-  background-color: ${({ $isSystemInfo, $isUser }) => {
-    if ($isSystemInfo) return '#f2f2f2';
+  background-color: ${({ $isSystem, $isUser }) => {
+    if ($isSystem) return '#ffeeba';
     if ($isUser) return '#daf1ff';
     return '#fff';
   }};
@@ -74,13 +74,10 @@ export const Message = styled.div`
   padding: 12px;
   font-size: 14px;
   white-space: pre-wrap;
-  align-self: ${({ $isUser }) => ($isUser ? 'flex-end' : 'flex-start')};
-  max-width: 80%;
-  
-  /* $isSystem이 true일 때 애니메이션 적용 */
-  ${({ $isSystem }) => $isSystem && css`
-    animation: ${fadeInOut} 2s ease-in-out forwards;
-  `}
+    align-self: ${(props) => (props.$isUser ? 'flex-end' : (props.$isSystem ? 'center' : 'flex-start'))};
+    max-width: 80%;
+    text-align: ${(props) => (props.$isSystem ? 'center' : 'left')};
+    font-style: ${(props) => (props.$isSystem ? 'italic' : 'normal')};
 `;
 
 
@@ -145,4 +142,19 @@ export const MessageTimestamp = styled.div`
   margin-top: 4px;
   align-self: ${props => props.$isUser ? 'flex-end' : 'flex-start'}; // 사용자에 따라 정렬
   text-align: ${props => props.$isUser ? 'right' : 'left'};
+`;
+
+export const CloseButton = styled.button`
+    background-color: #2d57af;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+
+    &:focus {
+        outline: none;
+    }
 `;

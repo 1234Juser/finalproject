@@ -176,5 +176,12 @@ public class InquiryChatWebSocketService {
         return messageDTO.getMemberCode() == null || "GUEST".equals(messageDTO.getSenderType().name());
     }
 
-    // 기존 빈 메서드 제거: 불필요하거나 명확히 역할을 정의하여 필요 시 구현
+
+    // 채팅 종료시 시스템 메시지 전송
+    public void broadcastSystemMessage(Long icId, InquiryChatMessageDTO systemMessage) {
+        String destination = "/topic/inquiry/" + icId + "/send";
+        messagingTemplate.convertAndSend(destination, systemMessage);
+        log.debug("시스템 메시지 브로드캐스트 완료 - destination: {}, 메시지: {}", destination, systemMessage.getMessage());
+    }
+
 }
