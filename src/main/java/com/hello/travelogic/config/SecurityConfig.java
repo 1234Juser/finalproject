@@ -55,7 +55,7 @@ public class SecurityConfig {
 //                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // 회원 관련 엔드포인트는 인증 없이 허용
-                        .requestMatchers("/member/**").permitAll()
+                        .requestMatchers("/member/**", "/api/inquiry/**").permitAll()
                         // 게시물 작성, 마이페이지(MyPage) 등 개인정보/행동이 필요한 API는 인증 필요(원하는 보호 URL 패턴으로 수정)
                         // 마이페이지는 인증 필요
                         .requestMatchers("/member/mypage").authenticated()
@@ -63,6 +63,8 @@ public class SecurityConfig {
                         .requestMatchers("/wish/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
+                        // 웹소켓 핸드셰이크 경로 허용
+                        .requestMatchers("/ws/**").permitAll()
 
                         // 그 외 모두 허용
                         .anyRequest().permitAll()

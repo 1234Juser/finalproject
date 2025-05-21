@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 
 // 플렉스 구조 : 왼쪽(로고) - 가운데(중앙 메뉴) - 오른쪽(유저 기능)
 export const StyledNav = styled.nav`
@@ -58,7 +58,8 @@ export const NavRight = styled.ul`
         padding: 0;
         li {
             a {
-                display: block;
+                display: flex;
+                align-items: center;    
                 padding: 7px 14px;
                 border-radius: 8px;
                 font-weight: 500;
@@ -113,3 +114,39 @@ export const DropdownContainer = styled.li`
         display: block;
     }
 `;
+// 마이페이지 오른쪽 아이콘 및 텍스트 묶음용 스타일 컴포넌트
+export const MyPageWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const slideDownFadeIn = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+
+// 채팅창을 네비게이션 영역 밖, 화면 최상단에 공중에 띄우기 위한 스타일드 컴포넌트
+export const ChatFloatingWrapper = styled.div`
+  position: fixed;
+  top: ${({ top }) => top}px;
+  left: ${({ $left }) => $left}px;
+  width: 400px;
+  max-width: calc(100vw - 16px);  /* 화면 가로 여백 최소 16px 확보 */
+  z-index: 9999;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 8px;
+
+  animation: ${slideDownFadeIn} 0.3s ease forwards;
+  /* animation: 이름 시간 타이밍함수 지속모드 */
+
+`;
+

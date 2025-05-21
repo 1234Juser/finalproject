@@ -54,6 +54,9 @@ dependencies {
     implementation 'org.json:json:20231013'
     // 채팅 WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // WebSocket 메시징 보안을 위한 의존성 추가
+    implementation 'org.springframework.security:spring-security-messaging' // <<< 이 줄을 추가해주세요
+
 }
 
 tasks.named('test') {

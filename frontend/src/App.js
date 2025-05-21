@@ -49,6 +49,7 @@ import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 import OptionFormPage from "./pages/order/OptionFormPage";
 import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
 import CompanionMyPagePage from "./pages/companion/CompanionMyPagePage";
+import PaymentPage from "./pages/payment/PaymentPage";
 
 function App() {
     return (
@@ -116,6 +117,7 @@ function App() {
                 </Route>
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
                 <Route path="/products/:productUid/order/create/:optionCode" element={<OrderCheckoutPage/>} />>
+                <Route path="/payments/create/:orderCode" element={<PaymentPage />} />
 
               {/*커뮤니티*/}
               <Route path="/community" element={<CommunityLayout />} >

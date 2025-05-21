@@ -1,0 +1,22 @@
+package com.hello.travelogic.inquiry.dto;
+
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class InquiryChatDTO {
+    private Long icId;
+    private Long memberCode;
+    private Integer authorityCode;
+    private String memberId;
+    private LocalDateTime icStartDate;
+    private LocalDateTime icEndDate;
+    private String icChatStatus;
+}
+

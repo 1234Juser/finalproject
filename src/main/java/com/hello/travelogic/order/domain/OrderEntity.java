@@ -64,7 +64,7 @@ public class OrderEntity {
     @NotNull
     @Column( name = "order_status", nullable = false )
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private OrderStatus orderStatus = OrderStatus.PENDING;
 
     @Column(name = "is_reviewed", nullable = false)
     private boolean isReviewed = false;

@@ -93,3 +93,31 @@ export const leaveChatRoom = async (chatRoomUid, token) => {
         console.error('채팅방 퇴장 실패 : ', error);
     }
 };
+
+
+// 1:1 문의 채팅 호출 (처음 시작할 때 POST 요청)
+export const startInquiryChat = async (token, memberId) => {
+    try {
+
+        const response = await fetch(`${path}/api/inquiry/start`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // 로그인 했으면 토큰도 같이 보내
+            },
+            body: JSON.stringify({
+                memberCode: token.memberCode,
+                authorityCode: token.authorityCode,
+                icChatStatus: "WAITING",
+                memberId: memberId,
+                icStartDate: new Date().toISOString(),
+            }),
+        });
+        
+        const chat = await response.json();
+        console.log("채팅방 생성 완료:", chat);
+        return chat.icId; // 생성된 채팅방 ID
+    } catch (error) {
+        console.error('채팅방 퇴장 실패 : ', error);
+    }
+};

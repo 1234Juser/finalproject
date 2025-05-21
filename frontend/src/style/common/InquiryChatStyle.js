@@ -1,0 +1,200 @@
+import styled from 'styled-components';
+
+export const ChatWrapper = styled.div`
+  width: 400px;
+    height: 500px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Noto Sans KR', Arial, sans-serif; // 한글 폰트 추가
+  background-color: #fff;
+`;
+
+export const Header = styled.div`
+  background: #f7f7f7;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+`;
+
+export const Title = styled.div`
+  font-weight: bold;
+  font-size: 1.25em; // 약간 크게
+`;
+
+export const Description = styled.div`
+  color: #888;
+  font-size: 12px;
+  margin-top: 4px;
+`;
+
+export const MessageBox = styled.div`
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; // 메시지 간 간격
+
+    /* 항상 하단에 메시지가 오도록 설정 */
+    justify-content: flex-end;
+
+    /* 스크롤바 스타일링 (선택 사항) */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 3px;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: #f0f0f0;
+    }
+
+`;
+
+// 개별 메시지 스타일
+export const Message = styled.div`
+    background-color: ${({ $isSystem, $isUser }) => {
+        if ($isSystem) return '#f2f2f2';
+        if ($isUser) return '#daf1ff';
+        return '#fff';
+    }};
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    align-self: ${({ $isUser }) => ($isUser ? 'flex-end' : 'flex-start')};
+    max-width: 80%;
+`;
+
+// // 타임스탬프 스타일
+// export const MessageTimestamp = styled.div`
+//   font-size: 0.75em;
+//   color: #888;
+//   margin-top: 4px;
+//   text-align: ${({ $isUser }) => ($isUser ? 'right' : 'left')};
+// `;
+
+
+export const IconList = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+`;
+
+export const IconButton = styled.button`
+  font-size: 14px;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  &:hover {
+    background-color: #efefef;
+  }
+`;
+
+
+// 하단 입력 필드 및 전송 버튼 컨테이너
+export const BottomInput = styled.div`
+    display: flex;
+    border-top: 1px solid #eee;
+    padding: 8px;
+    background-color: #fff;
+`;
+
+
+// 입력 필드 스타일
+export const InputField = styled.textarea`
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+    resize: none;
+    max-height: 100px;
+    overflow-y: auto;
+
+    &:focus {
+        border-color: #66afe9;
+        box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+    }
+`;
+
+
+export const SendButton = styled.button`
+  margin-left: 8px;
+  padding: 8px 16px;
+  background-color: #00aaff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  &:hover {
+    background-color: #008ecc;
+  }
+`;
+
+// export const LoadingOverlay = styled.div`
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background-color: rgba(255, 255, 255, 0.7);
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   font-size: 1em;
+//   color: #333;
+//   z-index: 10;
+// `;
+
+// 마이리얼트립 버전
+export const LoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+// export const ErrorMessageUI = styled.p` // ErrorMessage와 이름 충돌 방지
+//   padding: 10px;
+//   background-color: #f8d7da;
+//   color: #721c24;
+//   border: 1px solid #f5c6cb;
+//   border-radius: 4px;
+//   margin: 10px 15px;
+//   text-align: center;
+//   font-size: 0.9em;
+// `;
+
+// 마이리얼트립 버전
+export const ErrorMessageUI = styled.div`
+  color: red;
+  font-size: 14px;
+  margin-bottom: 12px;
+`;
+
+export const MessageTimestamp = styled.div`
+  font-size: 0.75em;
+  color: #888;
+  margin-top: 4px;
+  align-self: ${props => props.$isUser ? 'flex-end' : 'flex-start'}; // 사용자에 따라 정렬
+  text-align: ${props => props.$isUser ? 'right' : 'left'};
+`;

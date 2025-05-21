@@ -24,7 +24,7 @@ public class ChatRoomEntity {
     private Long chatRoomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_code", nullable = false)
+    @JoinColumn(name = "member_code")
     private MemberEntity memberCode;        // 회원 1 : 채팅방 N 관계
 
     @Column(name = "chat_room_uid", unique = true, nullable = false, length = 20)
@@ -42,7 +42,7 @@ public class ChatRoomEntity {
     @Column(name = "chat_room_max_participants", nullable = false)
     private Integer chatRoomMaxParticipants;
 
-    // 양방향 매핑 ("chat"는 ChatRoomMemberEntity에서 @ManyToOne ChatEntity의 필드명)
+    // 양방향 매핑 ("chatroomId"는 ChatRoomMemberEntity에서 @ManyToOne ChatRoomEntity의 필드명)
     @OneToMany(mappedBy = "chatRoomId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomMemberEntity> chatRoomMembers = new ArrayList<>();     // 채팅방 1 : 채팅방참여자 N 관계
 
