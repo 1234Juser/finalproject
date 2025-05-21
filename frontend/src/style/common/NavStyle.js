@@ -73,3 +73,43 @@ export const NavRight = styled.ul`
             }
         }
         `;
+
+// 드롭다운 메뉴 스타일
+export const DropdownMenu = styled.ul`
+    position: absolute;
+    top: 100%; // "더보기" 메뉴 아래에 위치
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+    min-width: 150px; // 드롭다운 최소 너비
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    display: none; // 기본적으로 숨김
+
+    li {
+        padding: 0;
+        margin: 0;
+        a {
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            display: block;
+            &:hover {
+                background-color: #f1f1f1;
+                color: #409cff;
+            }
+        }
+    }
+`;
+
+// "더보기" 메뉴 hover 시 드롭다운 표시
+export const DropdownContainer = styled.li`
+    position: relative;
+    &:hover ${DropdownMenu} {
+        display: block;
+    }
+`;
