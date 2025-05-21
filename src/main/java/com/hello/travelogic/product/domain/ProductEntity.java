@@ -49,10 +49,10 @@ public class ProductEntity {
     @Column(name = "product_content", nullable = false, columnDefinition = "TEXT")
     private String productContent;
 
-    @Column(name = "product_adult", nullable = false)
+    @Column(name = "product_adult_price", nullable = false)
     private Integer productAdult = 0;
 
-    @Column(name = "product_child", nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Column(name = "product_child_price", nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer productChild = 0;
 
     @Column(name = "product_start_date", nullable = false)
@@ -73,10 +73,6 @@ public class ProductEntity {
 
     @Column(name = "product_thumbnail", nullable = false, length = 255)
     private String productThumbnail;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "product_type", nullable = false)
-    private ProductType productType;
 
     @Column(name = "review_count", nullable = false, columnDefinition = "INT DEFAULT 0")
     private int reviewCount = 0;
@@ -133,7 +129,6 @@ public class ProductEntity {
         this.productMaxParticipants = productDTO.getProductMaxParticipants();
         this.productStatus = productDTO.getProductStatus(); // Enum 매핑 필요
         this.productThumbnail = productDTO.getProductThumbnail();
-        this.productType = productDTO.getProductType();     // Enum 매핑 필요
 //        this.productThemes = productDTO.getProductThemes(); // 연관 엔티티 리스트 매핑 필요
         this.reviewCount = productDTO.getReviewCount();
         this.regionType = productDTO.getRegionType();       // Enum 매핑 불필요
@@ -149,14 +144,7 @@ public class ProductEntity {
         CLOSED
     }
 
-    public enum ProductType {
-        TOUR,
-        GOLF,
-        CRUISE,
-        KIDS,
-        HONEYMOON,
-        SILVER
-    }
+
 
 //    public void updateReviewCount(int newCount) {
 //        this.reviewCount = newCount;

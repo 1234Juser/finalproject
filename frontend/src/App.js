@@ -50,6 +50,8 @@ import OptionFormPage from "./pages/order/OptionFormPage";
 import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
 import CompanionMyPagePage from "./pages/companion/CompanionMyPagePage";
 import PaymentPage from "./pages/payment/PaymentPage";
+import CustomizePage from "./pages/customize/CustomizePage";
+import CustomizeSearchPage from "./pages/customize/CustomizeSearchPage";
 
 function App() {
     return (
@@ -71,6 +73,9 @@ function App() {
               <Route path="/search" element={<SearchProductPage />} />
               {/*실시간조회수*/}
               <Route path="/realtime" element={<AdminRealTimePage />} />
+              {/*맞춤여행*/}
+              <Route path="/customizedtravel" element={<CustomizePage/>}/>
+              <Route path="/search-results" element={<CustomizeSearchPage/>}/> {/* 새로운 라우트 추가 */}
 
 
 

@@ -31,7 +31,6 @@ public class ProductDTO {
     private Integer productMaxParticipants;
     private ProductEntity.ProductStatus productStatus;
     private String productThumbnail;
-    private ProductEntity.ProductType productType;
     private int reviewCount;
     private double reviewAvg;
     private RegionEntity.RegionType regionType;
@@ -62,7 +61,6 @@ public class ProductDTO {
         this.productMaxParticipants = productDTO.getProductMaxParticipants();
         this.productStatus = productDTO.getProductStatus();
         this.productThumbnail = productDTO.getProductThumbnail();
-        this.productType = productDTO.getProductType();
         this.reviewCount = productDTO.getReviewCount();
         this.regionType = productDTO.getRegionType();
         this.cityName = productDTO.getCityName();
