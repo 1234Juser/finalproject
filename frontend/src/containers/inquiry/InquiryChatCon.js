@@ -3,7 +3,7 @@ import { useCallback, useEffect, useReducer, useRef } from "react";
 import { inquiryReducer, initialState as originalInitialState } from "../../modules/inquiryReducer";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
-import { getStartInquiry } from "../../service/inquiryService";
+import { getStartInquiry, closeInquiryChat } from "../../service/inquiryService";
 
 // initialState 재정의
 const initialState = {
@@ -37,6 +37,9 @@ function InquiryChatCon({ isVisible }) {
     const stompClientRef = useRef(null);
     const messagesEndRef = useRef(null); // 메시지 끝 참조
     const inputRef = useRef(null); // 입력 필드 참조
+    const manualDisconnectRef = useRef(false);
+
+
 
     // Step 1: 사용자 인증 정보 로드
     useEffect(() => {
@@ -103,7 +106,7 @@ function InquiryChatCon({ isVisible }) {
 
     // Step 3: WebSocket 연결
     const connectWebSocket = useCallback(() => {
-        if (isConnected || !icId || stompClientRef.current) return;
+        if (isConnected || !icId || stompClientRef.current || manualDisconnectRef.current) return;
 
         const connectHeaders = {};
         if (isUserLoggedIn && currentUser.token) { // 회원이고 토큰이 있을 때만 헤더 추가
@@ -156,16 +159,18 @@ function InquiryChatCon({ isVisible }) {
 
     // Step 4: WebSocket 연결 실행
     useEffect(() => {
-        if (icId && isVisible) {
+
+        console.log("=============웹소켓 연결 실행============= 마운트 됨==================");
+        if (icId && isVisible && !manualDisconnectRef.current) {
             connectWebSocket();
         }
 
+        // cleanup 함수에서 연결 종료 시도
         return () => {
-            if (!isVisible) {
-                disconnectWebSocket();
-            }
+            disconnectWebSocket();
         };
-    }, [icId, isVisible, connectWebSocket, disconnectWebSocket]);
+
+    }, [icId, isVisible, disconnectWebSocket]);
 
 
     // 메시지 전송 로직
@@ -180,11 +185,6 @@ function InquiryChatCon({ isVisible }) {
                     message: "본 서비스는 로그인이 필요합니다.",
                     senderType: "SYSTEM",
                 } });
-
-            // 2초 후에 시스템 메시지 제거
-            setTimeout(() => {
-                dispatch({ type: "REMOVE_MESSAGE", payload: tempId });
-            }, 2000);
             return;
         }
 
@@ -229,10 +229,12 @@ function InquiryChatCon({ isVisible }) {
         dispatch({ type: "SET_NEW_MESSAGE", payload: "" });
     }, [newMessage, icId, currentUser]);
 
+
     // 입력 input 상태 관리
     const handleInputChange = (e) => {
         dispatch({ type: 'SET_NEW_MESSAGE', payload: e.target.value });
     };
+
 
     // Enter 키 전송 (Shift+Enter는 줄바꿈)
     const handleKeyPress = (e) => {
@@ -241,6 +243,26 @@ function InquiryChatCon({ isVisible }) {
             handleSendMessage();
         }
     };
+
+    // 채팅 종료 핸들러
+    const handleCloseChat = useCallback(async () => {
+        if (!icId) {
+            dispatch({ type: "SET_ERROR", payload: "유효한 채팅 ID가 없습니다." });
+            return;
+        }
+
+        try {
+            await closeInquiryChat(icId, currentUser.token);
+            // 수동 종료 플래그 설정
+            manualDisconnectRef.current = true;
+            dispatch({ type: "SET_CONNECTED", payload: false });
+            disconnectWebSocket();
+        } catch (err) {
+            console.error("채팅 종료 오류:", err);
+            dispatch({ type: "SET_ERROR", payload: "채팅 종료에 실패했습니다." });
+        }
+    }, [icId, currentUser, disconnectWebSocket]);
+
 
     return (
         <InquiryChatCom
@@ -259,6 +281,7 @@ function InquiryChatCon({ isVisible }) {
             handleKeyPress={handleKeyPress}
             error={state.error}
             isUserLoggedIn={isUserLoggedIn}
+            handleCloseChat={handleCloseChat}
         />
     );
 }

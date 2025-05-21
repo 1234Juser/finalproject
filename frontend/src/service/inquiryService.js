@@ -61,7 +61,7 @@ export const getAdminChatList = async (token) => {
 
 // 특정 채팅방의 메시지 가져오기
 export const getMessages = async (inquiryChatId) => {
-    const token = localStorage.getItem("accessToken"); // 필요시 토큰 가져오기
+    const token = localStorage.getItem("accessToken");
     try {
         const response = await fetch(`${path}/api/inquiry/messages/${inquiryChatId}`, {
             method: 'GET',
@@ -87,47 +87,30 @@ export const getMessages = async (inquiryChatId) => {
 };
 
 
-// 메시지 전송
-/*export const sendMessage = async (token, messagePayload) => {
+// 채팅 종료
+export const closeInquiryChat = async (icId, token) => {
     try {
-        const response = await fetch(`${path}/api/inquiry/message`, {
+        const response = await fetch(`${path}/api/inquiry/close/${icId}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(messagePayload),
-        });
-
-/!*        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("서버 응답 오류:", errorData);
-            throw new Error(errorData.message || "메시지 전송에 실패했습니다.");
-        }
-
+        })
         const data = await response.json();
-        console.log("메시지 전송 성공 : ", data);
-        return data;*!/
-
-        const text = await response.text();
-        console.log("서버 응답 텍스트:", text);
+        console.log("채팅 종료 응답 데이터:", data);
 
         if (!response.ok) {
-            const errorData = text ? JSON.parse(text) : { message: "Unknown error" };
-            console.error("서버 응답 오류:", errorData);
-            throw new Error(errorData.message || "메시지 전송에 실패했습니다.");
+            console.error("채팅 종료 서버 응답 오류:", data);
+            throw new Error(data.message || `채팅 종료에 실패했습니다: ${data.status}`);
         }
 
-        const data = text ? JSON.parse(text) : null;
-        console.log("메시지 전송 성공 : ", data);
         return data;
-
-
-
     } catch (error) {
-        console.error("메시지 전송 오류:", error);
-        throw error;
+        console.error("채팅 종료 실패!!");
+        throw error; // 에러를 상위에서 처리할 수 있도록 던짐
     }
-}*/;
+};
+
 
 

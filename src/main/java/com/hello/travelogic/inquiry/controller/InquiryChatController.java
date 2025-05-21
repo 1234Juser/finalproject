@@ -49,5 +49,18 @@ public class InquiryChatController {
         List<InquiryChatAdminDTO> chatList = inquiryChatService.getChatListForAdmin();
         return ResponseEntity.status(HttpStatus.OK).body(chatList);
     }
+
+
+    // 1:1 문의 채팅 종료
+    @PostMapping("/close/{icId}")
+    public ResponseEntity<?> closeInquiryChat(@PathVariable Long icId) {
+        try {
+            InquiryChatEntity closedChat = inquiryChatService.closeInquiryChat(icId);
+            return ResponseEntity.ok(closedChat);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("채팅 종료에 실패했습니다.");
+        }
+    }
+
 }
 

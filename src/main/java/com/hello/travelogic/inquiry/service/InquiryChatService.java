@@ -7,7 +7,9 @@ import com.hello.travelogic.inquiry.dto.InquiryChatDTO;
 import com.hello.travelogic.inquiry.dto.InquiryChatMessageDTO;
 import com.hello.travelogic.inquiry.repo.InquiryChatMessageRepo;
 import com.hello.travelogic.inquiry.repo.InquiryChatRepo;
+import com.hello.travelogic.member.domain.AuthorityEntity;
 import com.hello.travelogic.member.domain.MemberRoleEntity;
+import com.hello.travelogic.member.repository.AuthorityRepository;
 import com.hello.travelogic.member.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ public class InquiryChatService {
     private final InquiryChatRepo inquiryChatRepo;
     private final InquiryChatMessageRepo inquiryChatMessageRepo;
     private final MemberRoleRepository memberRoleRepository;
+    private final InquiryChatWebSocketService inquiryChatWebSocketService;
 
 
     // (회원이 1:1문의창을 열고 첫 메시지를 보내면, 새로운 채팅방이 생성되는 것을 처리함)
@@ -142,6 +146,73 @@ public class InquiryChatService {
                         .inquiryChatEndDate(chat.getInquiryChatEndDate())
                         .build())
                 .collect(Collectors.toList());
+
+    }
+
+    public InquiryChatEntity closeInquiryChat(Long icId) throws Exception {
+        InquiryChatEntity chat = inquiryChatRepo.findById(icId)
+                .orElseThrow(() -> new Exception("채팅을 찾을 수 없습니다."));
+        log.debug("채팅 종료 서비스 호출>>>>> chat: {}", chat);
+
+        if (chat.getInquiryChatStatus() == InquiryChatEntity.ChatStatus.CLOSED) {
+            throw new Exception("이미 종료된 채팅입니다.");
+        }
+
+        chat.setInquiryChatStatus(InquiryChatEntity.ChatStatus.CLOSED);
+        chat.setInquiryChatEndDate(LocalDateTime.now());
+
+            // 시스템 메시지 추가
+            InquiryChatMessageEntity systemMessage = new InquiryChatMessageEntity();
+            systemMessage.setInquiryChat(chat);
+            systemMessage.setInquiryChatMessage("채팅이 종료되었습니다.");
+            systemMessage.setInquiryChatMessageSenderType(InquiryChatMessageEntity.SenderType.SYSTEM);
+            systemMessage.setInquiryChatMessageType(InquiryChatMessageEntity.MessageType.SYSTEM);
+            systemMessage.setInquiryChatMessageSentAt(LocalDateTime.now());
+
+
+            // ROLE_ADMIN 권한을 가진 모든 관리자 조회
+            List<MemberRoleEntity> adminMemberRoles = memberRoleRepository.findByAuthority_AuthorityName("ROLE_ADMIN");
+
+            if (adminMemberRoles.isEmpty()) {
+                log.error("ROLE_ADMIN 권한을 가진 관리자가 존재하지 않습니다.");
+                throw new Exception("ROLE_ADMIN 권한을 가진 관리자가 없습니다.");
+            }
+
+            log.debug("adminMemberRoles: {}", adminMemberRoles);
+
+            // 랜덤으로 한 명의 관리자 선택
+            Random random = new Random();
+            MemberRoleEntity selectedAdminRole = adminMemberRoles.get(random.nextInt(adminMemberRoles.size()));
+            log.debug("선택된 관리자 MemberRole: memberCode={}, authorityCode={}",
+                    selectedAdminRole.getMember().getMemberCode(),
+                    selectedAdminRole.getAuthority().getAuthorityCode());
+
+            log.debug("selectedAdminRole.getMember().getMemberCode(): {}", selectedAdminRole.getMember().getMemberCode());
+            log.debug("selectedAdminRole.getAuthority().getAuthorityCode(): {}", selectedAdminRole.getAuthority().getAuthorityCode());
+
+            systemMessage.setMemberRole(selectedAdminRole); // 선택된 관리자 할당
+
+/*        chat.getMessages().add(systemMessage);
+        log.debug("시스템 메시지 추가됨: {}", systemMessage);
+        InquiryChatEntity savedChat = inquiryChatRepo.save(chat);
+        log.debug("채팅 종료 완료: {}", savedChat);*/
+
+        // 시스템 메시지 저장 및 icmId 확인
+        InquiryChatMessageEntity savedSystemMessage = inquiryChatMessageRepo.save(systemMessage);
+        log.debug("시스템 메시지 저장 완료: {}", savedSystemMessage);
+
+        // 저장된 메시지를 채팅방에 추가
+        chat.getMessages().add(savedSystemMessage);
+        InquiryChatEntity savedChat = inquiryChatRepo.save(chat);
+        log.debug("채팅 종료 완료: {}", savedChat);
+
+
+
+        // 저장된 메시지를 DTO로 변환하여 브로드캐스트
+        InquiryChatMessageDTO systemMessageDTO = new InquiryChatMessageDTO(systemMessage);
+        inquiryChatWebSocketService.broadcastSystemMessage(icId, systemMessageDTO);
+
+        return savedChat;
 
     }
 

@@ -4,14 +4,14 @@ import {
     Description,
     Header, InputField,
     MessageBox, Message, SendButton,
-    Title, /* LoadingOverlay, */ ErrorMessageUI, MessageTimestamp // LoadingOverlay 제거
+    Title, /* LoadingOverlay, */ ErrorMessageUI, MessageTimestamp, CloseButton // LoadingOverlay 제거
 } from "../../style/inquiry/StyleInquiryChat";
 import {useEffect, useRef} from "react";
 
 const InquiryChatCom = ({
                             isConnected, icId, error,
                             messages = [], currentUser, inputRef, newMessage, handleInputChange, handleKeyPress,
-                            handleSendMessage, isUserLoggedIn
+                            handleSendMessage, isUserLoggedIn, handleCloseChat
                         }) => {
 
     const messagesEndRef = useRef(null);
@@ -22,10 +22,12 @@ const InquiryChatCom = ({
         const container = messagesEndRef.current;
         if (container) {
             container.scrollTop = container.scrollHeight;
+            // messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages, messagesEndRef]);
 
 
+    console.log('메시지 확인:::::::::', messages);
 
 
     return (
@@ -33,9 +35,10 @@ const InquiryChatCom = ({
             <Header>
                 <Title>1:1 문의</Title>
                 <Description style={{ color: isConnected ? 'lightgreen' : 'orange' }}>
-                    {isUserLoggedIn ? ( isConnected ? '연결됨' : '연결 시도 중...') : ''}
+                    {isUserLoggedIn ? ( isConnected ? '연결됨' : '연결 끊김') : ''}
                     {isUserLoggedIn ? ( icId !== null ? ` (ID: ${icId})` : '') : ''}
                 </Description>
+                <CloseButton onClick={handleCloseChat}>종료</CloseButton>
             </Header>
             <MessageBox ref={messagesContainerRef}>
                 {error && <ErrorMessageUI>{error}</ErrorMessageUI>}
@@ -58,11 +61,11 @@ const InquiryChatCom = ({
                         >
                             {msg.senderType !== "SYSTEM" && !isCurrentUser && <strong>{msg.senderName || '상담원'}</strong>}
                             <div dangerouslySetInnerHTML={{ __html: msg.message }} />
-                            {msg.senderType !== "SYSTEM" ?
-                            <MessageTimestamp $isUser={isCurrentUser}>
-                                {new Date(msg.sendAt).toLocaleString()}
-                            </MessageTimestamp>
-                            : ''}
+                            {msg.senderType !== "SYSTEM" && (
+                                <MessageTimestamp $isUser={isCurrentUser}>
+                                    {new Date(msg.sendAt).toLocaleString()}
+                                </MessageTimestamp>
+                            )}
                         </Message>
                     );
                 })}
