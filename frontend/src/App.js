@@ -49,6 +49,8 @@ import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 import OptionFormPage from "./pages/order/OptionFormPage";
 import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
 import CompanionMyPagePage from "./pages/companion/CompanionMyPagePage";
+import InquiryChatAdminPage from "./pages/inquiry/InquiryChatAdminPage";
+import InquiryChatAdminAnswerPage from "./pages/inquiry/InquiryChatAdminAnswerPage";
 import PaymentPage from "./pages/payment/PaymentPage";
 
 function App() {
@@ -106,6 +108,8 @@ function App() {
                 <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
                 <Route path="/admin/review/by-product" element={<AdminReviewByProductPage />} />
+                <Route path="/admin/inquirychat" element={<InquiryChatAdminPage/>} />
+                <Route path="/admin/inquirychat/:inquiryChatId" element={<InquiryChatAdminAnswerPage/>} />
 
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>

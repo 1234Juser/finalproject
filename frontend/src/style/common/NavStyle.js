@@ -73,7 +73,9 @@ export const NavRight = styled.ul`
                 }
             }
         }
-        `;
+        position: relative; /* ChatFloatingWrapper의 절대 위치 기준 */
+
+`;
 
 // 드롭다운 메뉴 스타일
 export const DropdownMenu = styled.ul`
@@ -119,6 +121,8 @@ export const MyPageWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+  position: relative; /* ChatFloatingWrapper의 절대 위치 기준 */
+
 `;
 
 const slideDownFadeIn = keyframes`
@@ -133,20 +137,23 @@ const slideDownFadeIn = keyframes`
 `;
 
 
-// 채팅창을 네비게이션 영역 밖, 화면 최상단에 공중에 띄우기 위한 스타일드 컴포넌트
+export const NavContentWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+`;
+
+
+// 채팅 창을 담는 컨테이너 스타일 (절대 위치를 사용하여 MdChat 바로 아래에 위치)
 export const ChatFloatingWrapper = styled.div`
-  position: fixed;
-  top: ${({ top }) => top}px;
-  left: ${({ $left }) => $left}px;
-  width: 400px;
-  max-width: calc(100vw - 16px);  /* 화면 가로 여백 최소 16px 확보 */
-  z-index: 9999;
-  background-color: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-radius: 8px;
-
-  animation: ${slideDownFadeIn} 0.3s ease forwards;
-  /* animation: 이름 시간 타이밍함수 지속모드 */
-
+        position: absolute;
+        top: 80%;
+        right: 100px;
+        width: 400px;
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        z-index: 1000;
 `;
 

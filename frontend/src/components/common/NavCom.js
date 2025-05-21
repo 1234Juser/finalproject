@@ -6,7 +6,7 @@ import {
 import React from "react";
 import styled from "styled-components";
 import {MdChat} from "react-icons/md";
-import InquiryChatCom from "./InquiryChatCom";
+import InquiryChatCom from "../inquiry/InquiryChatCom";
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 const NavContentWrapper = styled.div`
