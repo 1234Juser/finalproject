@@ -1,6 +1,6 @@
 import InquiryChatCom from "../../components/inquiry/InquiryChatCom";
 import { useCallback, useEffect, useReducer, useRef } from "react";
-import {inquiryReducer, initialState as originalInitialState} from "../../modules/inquiryReducer";
+import { inquiryReducer, initialState as originalInitialState } from "../../modules/inquiryReducer";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 import { getStartInquiry } from "../../service/inquiryService";
@@ -38,8 +38,6 @@ function InquiryChatCon({ isVisible }) {
     const messagesEndRef = useRef(null); // 메시지 끝 참조
     const inputRef = useRef(null); // 입력 필드 참조
 
-
-
     // Step 1: 사용자 인증 정보 로드
     useEffect(() => {
         const authInfo = getAuthInfoFromStorage();
@@ -49,34 +47,17 @@ function InquiryChatCon({ isVisible }) {
             dispatch({ type: "SET_CURRENT_USER", payload: authInfo });
             dispatch({ type: "SET_USER_LOGGED_IN", payload: true });
         } else {
-            dispatch({ type: "SET_CURRENT_USER", payload: { token: null, memberCode: null, username: "비회원", roles: [] } });
+            dispatch({
+                type: "SET_CURRENT_USER",
+                payload: { token: null, memberCode: null, username: "비회원", roles: [] },
+            });
             dispatch({ type: "SET_USER_LOGGED_IN", payload: false });
         }
         dispatch({ type: "CLEAR_ERROR" });
     }, []);
 
-
-
-    // Step 2: 채팅방 초기화
-    const initializeInquiryChat = useCallback(async () => {
-        if (currentUser && currentUser.username !== null && isVisible && icId === null) {
-            console.log("Initializing chat room...");
-            try {
-                const data = await createInquiryChat();
-                console.log("Chat room initialized with ID:", data.icId);
-            } catch (error) {
-                console.error("Error initializing chat room:", error);
-            }
-        }
-    }, [currentUser, isVisible, icId]);
-
-    useEffect(() => {
-        initializeInquiryChat();
-    }, [initializeInquiryChat]);
-
-
+    // Step 2: 채팅방 초기화 및 웹소켓 연결
     const createInquiryChat = useCallback(async () => {
-
         if (!isUserLoggedIn) {
             dispatch({ type: 'SET_INQUIRY_CHAT_ID', payload: 0 });
             return;
@@ -98,14 +79,30 @@ function InquiryChatCon({ isVisible }) {
         } catch (err) {
             console.error("Error creating chat room:", err);
             dispatch({ type: "SET_ERROR", payload: '채팅 방을 시작하지 못했습니다.' });
+            throw err; // 에러를 다시 던져 useEffect에서 잡을 수 있도록 함
         }
     }, [isUserLoggedIn, currentUser]);
 
+    useEffect(() => {
+        const initializeChat = async () => {
+            if (currentUser && currentUser.username && isVisible && icId === null) {
+                console.log("Initializing chat room...");
+
+                try {
+                    const data = await createInquiryChat();
+                    console.log("Chat room initialized with ID:", data.icId);
+                } catch (error) {
+                    console.error("Error initializing chat room:", error);
+                }
+            }
+        };
+
+        initializeChat();
+    }, [currentUser, isVisible, icId, createInquiryChat]);
 
     // Step 3: WebSocket 연결
     const connectWebSocket = useCallback(() => {
         if (isConnected || !icId || stompClientRef.current) return;
-
 
         const connectHeaders = {};
         if (isUserLoggedIn && currentUser.token) { // 회원이고 토큰이 있을 때만 헤더 추가
@@ -114,7 +111,6 @@ function InquiryChatCon({ isVisible }) {
         } else {
             console.log("WebSocket 연결 헤더 (비회원): No Authorization header");
         }
-
 
         const socket = new SockJS("http://localhost:8080/ws");
         const stompClient = Stomp.over(socket);
@@ -140,13 +136,13 @@ function InquiryChatCon({ isVisible }) {
                     dispatch({ type: "ADD_MESSAGE", payload: newMessage });
                 });
                 console.log(`Subscribed to ${subscribePath}`);
-
-            }, (error) => {
+            },
+            (error) => {
                 console.error("WebSocket connection error:", error);
                 dispatch({ type: "SET_CONNECTED", payload: false });
-            });
-    }, [icId, isConnected]);
-    // }, [icId, isConnected, isUserLoggedIn, currentUser]);
+            }
+        );
+    }, [icId, isConnected, isUserLoggedIn, currentUser]);
 
     const disconnectWebSocket = useCallback(() => {
         if (stompClientRef.current) {
@@ -155,7 +151,6 @@ function InquiryChatCon({ isVisible }) {
         }
         dispatch({ type: "SET_CONNECTED", payload: false });
     }, []);
-
 
     // Step 4: WebSocket 연결 실행
     useEffect(() => {
@@ -169,8 +164,6 @@ function InquiryChatCon({ isVisible }) {
             }
         };
     }, [icId, isVisible, connectWebSocket, disconnectWebSocket]);
-
-
 
     // 메시지 전송 로직
     const handleSendMessage = useCallback(() => {
@@ -216,7 +209,6 @@ function InquiryChatCon({ isVisible }) {
         dispatch({ type: "SET_NEW_MESSAGE", payload: "" });
     }, [newMessage, icId, currentUser]);
 
-
     // 입력 input 상태 관리
     const handleInputChange = (e) => {
         dispatch({ type: 'SET_NEW_MESSAGE', payload: e.target.value });
@@ -226,7 +218,6 @@ function InquiryChatCon({ isVisible }) {
         e.target.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
     };
 
-
     // Enter 키 전송 (Shift+Enter는 줄바꿈)
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -234,7 +225,6 @@ function InquiryChatCon({ isVisible }) {
             handleSendMessage();
         }
     };
-
 
     return (
         <InquiryChatCom

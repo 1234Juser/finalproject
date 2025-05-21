@@ -17,7 +17,7 @@ const InquiryChatCom = ({
     const firstRenderRef = useRef(true);
 
 
-    // WebSocket 연결 상태 관리
+    /*// WebSocket 연결 상태 관리
     useEffect(() => {
         // 컴포넌트가 처음 렌더링될 때 WebSocket 연결
         if (!firstRenderRef.current) {
@@ -37,7 +37,7 @@ const InquiryChatCom = ({
             console.log("Cleaning up WebSocket connection...");
             disconnectWebSocket();
         };
-    }, [isVisible, isConnected, connectWebSocket, disconnectWebSocket]);
+    }, [isVisible, isConnected, connectWebSocket, disconnectWebSocket]);*/
 
 
     // 메시지 목록 끝으로 스크롤
