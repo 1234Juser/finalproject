@@ -17,17 +17,33 @@ public class CustomizeService {
     private final CustomizeRepository customizeRepository;
 
     public List<ProductEntity> searchProductsByConditions(CustomizeDTO customizeDTO) {
-        return customizeRepository.findProductsByCustomizeConditions(
+        log.info("CustomizeService에서 Repository로 전달할 검색 조건:"); // Repository로 전달할 값 로그
+        log.info("  startDate: {}", customizeDTO.getStartDate());
+        log.info("  endDate: {}", customizeDTO.getEndDate());
+        log.info("  countryId: {}", customizeDTO.getCountryId());
+        log.info("  cityId: {}", customizeDTO.getCityId());
+        log.info("  themeName: {}", customizeDTO.getThemeName());
+        log.info("  adultCount: {}", customizeDTO.getAdultCount());
+        log.info("  childCount: {}", customizeDTO.getChildCount());
+        log.info("  minPrice: {}", customizeDTO.getMinPrice());
+        log.info("  maxPrice: {}", customizeDTO.getMaxPrice());
+        log.info("  productType: {}", customizeDTO.getProductType());
+
+
+        List<ProductEntity> products = customizeRepository.findProductsByCustomizeConditions(
                 customizeDTO.getStartDate(),
                 customizeDTO.getEndDate(),
                 customizeDTO.getCountryId(),
                 customizeDTO.getCityId(),
-                customizeDTO.getThemeCode(),
+                customizeDTO.getThemeName(), // getThemeCode() 대신 getThemeName() 사용
                 customizeDTO.getAdultCount(),
                 customizeDTO.getChildCount(),
                 customizeDTO.getMinPrice(),
                 customizeDTO.getMaxPrice(),
                 customizeDTO.getProductType()
         );
+        log.info("CustomizeRepository에서 받은 검색 결과 (개수): {}", products.size()); // Repository 결과 개수 로그
+        return products;
     }
+
 }

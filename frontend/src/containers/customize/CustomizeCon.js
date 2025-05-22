@@ -9,7 +9,7 @@ function CustomizeCon(){
         endDate: '',
         countryId: '',
         cityId: '',
-        themeCode: '', // themeCodes를 배열로 변경
+        themeName: '', // themeCode를 themeName으로 변경
         adultCount: 0,
         childCount: 0,
         minPrice: 0,
@@ -117,13 +117,14 @@ function CustomizeCon(){
         const themeValue = e.target.value;
         setCustomizeConditions(prevState => ({
             ...prevState,
-            themeCode: themeValue // 단일 값으로 설정
+            themeName: themeValue // themeCode 대신 themeName 설정
         }));
         setValidationErrors(prevState => ({
             ...prevState,
-            themeCode: '' // themeCode 사용
+            themeName: '' // themeCode 대신 themeName 사용
         }));
     };
+
 
 
 
@@ -239,7 +240,7 @@ function CustomizeCon(){
         if (!customizeConditions.endDate) errors.endDate = '종료 날짜를 선택해주세요.';
         if (!customizeConditions.countryId) errors.countryId = '국가를 선택해주세요.';
         if (!customizeConditions.cityId) errors.cityId = '도시를 선택해주세요.'; // 도시 선택 필수 조건 추가
-        if (!customizeConditions.themeCode) errors.themeCode = '테마를 선택해주세요.'; // 테마 선택 필수 조건 추가
+        if (!customizeConditions.themeName) errors.themeName = '테마를 선택해주세요.'; // themeCode 대신 themeName 사용
         if ((customizeConditions.adultCount || 0) + (customizeConditions.childCount || 0) < 1) errors.personCount = '성인 또는 아동 인원은 1명 이상이어야 합니다.'; // 인원수 필수 조건 추가
         if (!customizeConditions.minPrice && customizeConditions.minPrice !== 0) errors.minPrice = '최소 가격을 입력해주세요.'; // 최소 가격 필수 조건 추가 (0도 유효)
         if (!customizeConditions.maxPrice && customizeConditions.maxPrice !== 0) errors.maxPrice = '최대 가격을 입력해주세요.'; // 최대 가격 필수 조건 추가 (0도 유효)
@@ -249,11 +250,13 @@ function CustomizeCon(){
 
         if (Object.keys(errors).length > 0) {
             setValidationErrors(errors);
+            console.error("유효성 검사 오류:", errors); // 유효성 검사 오류 로그
             return;
         }
 
 
         try {
+            console.log("서버로 전송될 검색 조건:", customizeConditions); // 서버로 보내는 데이터 로그
             const response = await axios.post('http://localhost:8080/customize/search', customizeConditions); // Axios 요청 URL 수정
             console.log('검색 결과:', response.data);
             navigate('/search-results', { state: { searchResults: response.data } }); // 검색 결과 페이지로 이동
@@ -261,13 +264,14 @@ function CustomizeCon(){
             console.error('검색 중 오류 발생:', error);
             // 오류 발생 시 사용자에게 메시지 표시
             if (error.response && error.response.data && error.response.data.message) {
+                console.error("응답 데이터:", error.response.data); // 서버에서 에러 응답이 온 경우
+                console.error("응답 상태:", error.response.status);
                 alert('검색 중 오류가 발생했습니다: ' + error.response.data.message);
             } else {
                 alert('검색 중 알 수 없는 오류가 발생했습니다.');
             }
         }
     };
-
 
 
     return(

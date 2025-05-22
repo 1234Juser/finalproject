@@ -17,27 +17,27 @@ function CustomizeCom({
                       }) {
 
     const themesList = [
-        { value: 1, label: '투어' },
-        { value: 2, label: '골프' },
-        { value: 3, label: '크루즈' },
-        { value: 4, label: '키즈' },
-        { value: 5, label: '허니문' },
-        { value: 6, label: '실버' },
-        { value: 7, label: '트레킹' },
-        { value: 8, label: '페스티벌' },
-        { value: 9, label: '쇼핑' },
-        { value: 10, label: '음식' },
-        { value: 11, label: '힐링' },
-        { value: 12, label: '모험' },
-        { value: 13, label: '역사' },
-        { value: 14, label: '예술' },
-        { value: 15, label: '공연' }
+        { value: '투어', label: '투어' }, // value를 themeName으로 변경
+        { value: '골프', label: '골프' },
+        { value: '크루즈', label: '크루즈' },
+        { value: '키즈', label: '키즈' },
+        { value: '허니문', label: '허니문' },
+        { value: '실버', label: '실버' },
+        { value: '트레킹', label: '트레킹' },
+        { value: '페스티벌', label: '페스티벌' },
+        { value: '쇼핑', label: '쇼핑' },
+        { value: '음식', label: '음식' },
+        { value: '힐링', label: '힐링' },
+        { value: '모험', label: '모험' },
+        { value: '역사', label: '역사' },
+        { value: '예술', label: '예술' },
+        { value: '공연', label: '공연' }
     ];
 
     const productType = [
-        { value: 'GUIDED_TOUR', label: '가이드 동반' },
-        { value: 'PRIVATE_TOUR', label: '단독 여행' },
-        { value: 'FREE_SCHEDULE', label: '자유 일정 포함' }
+        { value: '가이드동반', label: '가이드 동반' },
+        { value: '단독여행', label: '단독 여행' },
+        { value: '자유일정포함', label: '자유 일정 포함' }
     ];
 
     return (
@@ -110,13 +110,12 @@ function CustomizeCom({
                     {validationErrors.cityId && <ErrorMessage>{validationErrors.cityId}</ErrorMessage>}
                 </FormGroup>
 
-
                 <FormGroup>
                     <label htmlFor="themeCode">테마: <span style={{color: 'red'}}>(필수)</span></label>
                     <select
                         id="themeCode"
                         name="themeCode"
-                        value={customizeConditions.themeCode || ''} // 단일 값으로 변경
+                        value={customizeConditions.themeName || ''} // themeCode 대신 themeName 사용
                         onChange={handleThemeChange}
                         required // 필수 필드 표시
                     >
@@ -127,7 +126,7 @@ function CustomizeCom({
                             </option>
                         ))}
                     </select>
-                    {validationErrors.themeCode && <ErrorMessage>{validationErrors.themeCode}</ErrorMessage>}
+                    {validationErrors.themeName && <ErrorMessage>{validationErrors.themeName}</ErrorMessage>}
                 </FormGroup>
 
 
@@ -205,7 +204,7 @@ function CustomizeCom({
                             </option>
                         ))}
                     </select>
-                    {validationErrors.productTypes && <ErrorMessage>{validationErrors.productTypes}</ErrorMessage>}
+                    {validationErrors.productType && <ErrorMessage>{validationErrors.productType}</ErrorMessage>}
                 </FormGroup>
 
 
@@ -216,5 +215,4 @@ function CustomizeCom({
         </FormContainer>
     );
 }
-
 export default CustomizeCom;

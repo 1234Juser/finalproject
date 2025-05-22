@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.review.domain.ReviewEntity;
 import jakarta.persistence.*;
@@ -27,9 +28,11 @@ public class ProductEntity {
     @Column(name = "product_uid", unique = true, nullable = false, length = 20)
     private String productUid;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_code", nullable = false)
     private RegionEntity regionCode;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)

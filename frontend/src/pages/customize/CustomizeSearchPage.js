@@ -4,13 +4,14 @@ import ProductCom from '../../components/product/ProductCom';
 
 function CustomizeSearchPage() {
     const location = useLocation();
-    const searchResults = location.state?.searchResults || []; // 이전 페이지에서 전달된 검색 결과
+    const searchResults = useMemo(() => location.state?.searchResults || [], [location.state?.searchResults]); // 이전 페이지에서 전달된 검색 결과
 
     const [products, setProducts] = useState([]);
     const [sortBy, setSortBy] = useState("default");
     const [originalData, setOriginalData] = useState([]); // 원본 데이터 백업해서 정렬하기 위함
 
     useEffect(() => {
+        console.log("searchResults 상태 업데이트:", searchResults); // searchResults 상태 업데이트 로그
         setProducts(searchResults);
         setOriginalData(searchResults);
     }, [searchResults]);
@@ -37,6 +38,7 @@ function CustomizeSearchPage() {
     }, [products, sortBy]);
 
     // 검색 결과가 없을 경우 메시지 표시
+    console.log("현재 products 상태:", products); // products 상태 로그
     if (!searchResults || searchResults.length === 0) {
         return (
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', textAlign: 'center' }}>
@@ -52,11 +54,10 @@ function CustomizeSearchPage() {
 
     return (
         <ProductCom
-            products={products} // ProductCom 내부에서 사용되지 않지만 props 구조 유지를 위해 전달
+            products={filteredProducts} // ProductCom 내부에서 사용되지 않지만 props 구조 유지를 위해 전달
             cityName={cityName}
             handleSort={handleSort}
             handleFilterReset={handleFilterReset}
-            filteredProducts={filteredProducts} // 정렬 및 필터링된 데이터를 ProductCom에 전달
         />
     );
 }

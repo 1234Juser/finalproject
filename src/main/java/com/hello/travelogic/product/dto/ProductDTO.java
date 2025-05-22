@@ -21,6 +21,7 @@ public class ProductDTO {
     private Long countryId;
     private Long cityId;
     private Long themeCode;
+    private String themeName; // themeName으로 추가
     private String productTitle;
     private String productContent;
     private Integer productAdult;
@@ -47,10 +48,12 @@ public class ProductDTO {
     public ProductDTO(ProductEntity productDTO) {
         this.productCode = productDTO.getProductCode();
         this.productUid = productDTO.getProductUid();
-        this.regionCode = productDTO.getRegionCode().getRegionCode();
-        this.countryId = productDTO.getCountryId().getCountryId();
-        this.cityId = productDTO.getCityId().getCityId();
-        this.themeCode = productDTO.getThemeCode().getThemeCode();
+        this.regionCode = productDTO.getRegionCode() != null ? productDTO.getRegionCode().getRegionCode() : null;
+        this.countryId = productDTO.getCountryId() != null ? productDTO.getCountryId().getCountryId() : null;
+        this.cityId = productDTO.getCityId() != null ? productDTO.getCityId().getCityId() : null;
+        this.themeCode = productDTO.getThemeCode() != null ? productDTO.getThemeCode().getThemeCode() : null;
+        this.themeName = productDTO.getThemeCode() != null ? productDTO.getThemeCode().getThemeName() : null; // themeCode 대신 themeName 사용
+
         this.productTitle = productDTO.getProductTitle();
         this.productContent = productDTO.getProductContent();
         this.productAdult = productDTO.getProductAdult();

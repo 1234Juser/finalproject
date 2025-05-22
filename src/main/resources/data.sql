@@ -478,7 +478,7 @@ INSERT IGNORE INTO tbl_product (
 INSERT IGNORE INTO tbl_product_theme (product_code, theme_code) VALUES
                                                                 (1, 1),    -- 서울 시티 투어 -> TOUR (THEME_001)
                                                                 (2, 2),    -- 부산 골프 리조트 투어 -> GOLF (THEME_002)
-                                                                (3, 3),    -- 제주 크루즈 투어 -> CRUISE (THEME_003)
+                                                                (3, 1),    -- 제주 크루즈 투어 -> CRUISE (THEME_003)
                                                                 (4, 4),    -- 강릉 키즈 체험 투어 -> KIDS (THEME_004)
                                                                 (5, 5),    -- 대전 허니문 스페셜 -> HONEYMOON (THEME_005)
                                                                 (6, 6),    -- 도쿄 시니어 문화 투어 -> SILVER (THEME_006)

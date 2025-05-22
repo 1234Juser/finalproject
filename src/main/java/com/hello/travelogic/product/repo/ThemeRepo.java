@@ -9,4 +9,8 @@ import java.util.List;
 public interface ThemeRepo extends JpaRepository<ThemeEntity, Long> {
 
     List<ThemeEntity> findByThemeCode(Long themeCode);
+
+    //조건기반 여행추천
+    List<ThemeEntity> findByThemeName(String themeName);
+
 }
