@@ -157,3 +157,20 @@ export const ChatFloatingWrapper = styled.div`
         z-index: 1000;
 `;
 
+
+export const NotificationWrapper = styled.div`
+    position: absolute;
+    //top: 80%;
+    top: 150px; /* 알림 아이콘 바로 아래에 위치하도록 조정 */
+    right: 23%;
+    width: 300px;
+    height: 350px;
+    background: white;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border-radius: 8px; /* 모서리 라운딩 추가 */
+    padding: 10px; /* 내부 여백 추가 */
+
+`

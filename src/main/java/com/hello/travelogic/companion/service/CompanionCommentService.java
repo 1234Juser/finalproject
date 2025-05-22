@@ -7,6 +7,8 @@ import com.hello.travelogic.companion.repository.CompanionCommentRepository;
 import com.hello.travelogic.companion.repository.CompanionRepository;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
+import com.hello.travelogic.notification.dto.NotificationRequestDTO;
+import com.hello.travelogic.notification.service.NotificationService;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ public class CompanionCommentService {
     private final CompanionRepository companionRepository;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
+    private final NotificationService notificationService;
 
     // 특정 게시글의 댓글 목록 조회 (만약 CompanionController에서 댓글 목록을 함께 가져오지 않는다면 이 함수를 사용)
 //    @Transactional(readOnly = true)
@@ -70,6 +73,21 @@ public class CompanionCommentService {
                 .build();
 
         CompanionCommentEntity savedComment = companionCommentRepository.save(comment);
+
+
+        // 게시글 작성자에게 알림 생성
+        Long postAuthorCode = companion.getMember().getMemberCode();
+        NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
+                .memberCode(postAuthorCode)
+                .notiMessage("당신의 게시글에 새로운 댓글이 달렸습니다!")
+                .build();
+
+        log.debug("-------알림 생성 요청 DTO ------- notificationRequest: {}", notificationRequest);
+
+
+        notificationService.createNotification(notificationRequest);
+
+
         return CompanionCommentDTO.fromEntity(savedComment);
     }
 
