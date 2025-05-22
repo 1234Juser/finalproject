@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -394,5 +395,11 @@ public class ProductService {
         return 0;
     }
     
-    
+    // 명세서 페이지에 띄울 랜덤 상품 광고
+    public List<ProductDTO> getRandomAdProducts(int count) {
+        return productRepo.findRandomProducts(count)
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
+    }
 }

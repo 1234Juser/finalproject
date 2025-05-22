@@ -362,4 +362,11 @@ public class OrderService {
             log.info("🧹 오래된 PENDING 주문 삭제: {}", order.getOrderCode());
         }
     }
+
+    // bookingUid로 예약 명세서페이지 출력
+    public OrderDTO getOrderByBookingUid(String bookingUid) {
+        OrderEntity order = orderRepo.findByBookingUid(bookingUid)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        return new OrderDTO(order); // → orderCode, product, member, payment 다 포함 가능
+    }
 }

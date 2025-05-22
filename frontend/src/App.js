@@ -53,6 +53,7 @@ import InquiryChatAdminPage from "./pages/inquiry/InquiryChatAdminPage";
 import InquiryChatAdminAnswerPage from "./pages/inquiry/InquiryChatAdminAnswerPage";
 import PaymentPage from "./pages/payment/PaymentPage";
 import PaymentCompletePage from "./pages/payment/PaymentCompletePage";
+import MyReceiptPage from "./pages/reservation/MyReceiptPage";
 
 function App() {
     return (
@@ -96,6 +97,7 @@ function App() {
                 <Route path="/my/reservations" element={<MyBookingPage />} />
                 <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
                 <Route path="/review/edit/:reviewCode" element={<MyReviewEditPage />} />
+                <Route path="/reservations/receipt/:bookingUid" element={<MyReceiptPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
