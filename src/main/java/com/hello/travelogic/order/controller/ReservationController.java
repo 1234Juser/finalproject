@@ -142,4 +142,11 @@ public class ReservationController {
         return ResponseEntity.ok(productList);
 //        return ResponseEntity.ok(orderService.getProductListForFilter());
     }
+
+    // bookingUid로 예약 명세서 페이지 출력
+    @GetMapping("/reservations/receipt/{bookingUid}")
+    public ResponseEntity<OrderDTO> getOrderByBookingUid(@PathVariable String bookingUid) {
+        OrderDTO orderDTO = orderService.getOrderByBookingUid(bookingUid);
+        return ResponseEntity.ok(orderDTO);
+    }
 }

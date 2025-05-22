@@ -199,3 +199,13 @@ export async function fetchReservationsByProductCode(productCode, accessToken, s
         throw error;
     }
 }
+// bookingUid로 예약 명세서 페이지 출력
+export const fetchReservationByBookingUid = async (bookingUid) => {
+    try {
+        const response = await axios.get(`${path}/reservations/receipt/${bookingUid}`);
+        return response.data;
+    } catch (error) {
+        console.error("예약 정보 조회 실패:", error);
+        throw error;
+    }
+};
