@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {getOrderByOrderCode} from "../../service/paymentService";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
 
@@ -7,6 +7,7 @@ function PaymentRequest({orderCode, accessToken}) {
     // const { orderCode } = useParams();
     const [orderData, setOrderData] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrderData = async () => {
@@ -25,11 +26,27 @@ function PaymentRequest({orderCode, accessToken}) {
         }
     }, [orderCode, accessToken]);
 
+    // useEffect(() => {
+    //     if (orderData) {
+    //         requestIamportPayment(orderData);
+    //     }
+    // }, [orderData]);
     useEffect(() => {
+        const executePayment = async () => {
+            try {
+                const result = await requestIamportPayment(orderData);
+                navigate("/payments/complete", {
+                    state: result // result: { bookingUid, orderDate, productTitle, ... }
+                });
+            } catch (msg) {
+                alert("결제 실패: " + msg);
+            }
+        };
+
         if (orderData) {
-            requestIamportPayment(orderData);
+            executePayment();
         }
-    }, [orderData]);
+    }, [orderData, navigate]);
 
     if (errorMessage) {
         return <p style={{ color: "red" }}>{errorMessage}</p>;

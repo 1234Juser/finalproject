@@ -1,0 +1,34 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="stamp">
+      <rect width="100%" height="100%" fill="white"></rect>
+      <g stroke="black" fill="black">
+        <!-- 위 -->
+        <circle r="5" cx="10" cy="0"></circle>
+        <circle r="5" cx="30" cy="0"></circle>
+        <circle r="5" cx="50" cy="0"></circle>
+        <circle r="5" cx="70" cy="0"></circle>
+        <circle r="5" cx="90" cy="0"></circle>
+        <!-- 아래 -->
+        <circle r="5" cx="10" cy="200"></circle>
+        <circle r="5" cx="30" cy="200"></circle>
+        <circle r="5" cx="50" cy="200"></circle>
+        <circle r="5" cx="70" cy="200"></circle>
+        <circle r="5" cx="90" cy="200"></circle>
+        <!-- 좌 -->
+        <circle r="5" cy="10" cx="0"></circle>
+        <circle r="5" cy="30" cx="0"></circle>
+        <circle r="5" cy="50" cx="0"></circle>
+        <circle r="5" cy="70" cx="0"></circle>
+        <circle r="5" cy="90" cx="0"></circle>
+        <!-- 우 -->
+        <circle r="5" cy="10" cx="200"></circle>
+        <circle r="5" cy="30" cx="200"></circle>
+        <circle r="5" cy="50" cx="200"></circle>
+        <circle r="5" cy="70" cx="200"></circle>
+        <circle r="5" cy="90" cx="200"></circle>
+      </g>
+    </mask>
+  </defs>
+  <rect width="100%" height="100%" mask="url(#stamp)" fill="white"></rect>
+</svg>

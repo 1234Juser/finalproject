@@ -49,10 +49,14 @@ import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 import OptionFormPage from "./pages/order/OptionFormPage";
 import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
 import CompanionMyPagePage from "./pages/companion/CompanionMyPagePage";
+import InquiryChatAdminPage from "./pages/inquiry/InquiryChatAdminPage";
+import InquiryChatAdminAnswerPage from "./pages/inquiry/InquiryChatAdminAnswerPage";
 import PaymentPage from "./pages/payment/PaymentPage";
 import CustomizePage from "./pages/customize/CustomizePage";
 import CustomizeSearchPage from "./pages/customize/CustomizeSearchPage";
 import CompanyPage from "./pages/common/CompanyPage";
+import PaymentCompletePage from "./pages/payment/PaymentCompletePage";
+import MyReceiptPage from "./pages/reservation/MyReceiptPage";
 
 function App() {
     return (
@@ -100,6 +104,7 @@ function App() {
                 <Route path="/my/reservations" element={<MyBookingPage />} />
                 <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
                 <Route path="/review/edit/:reviewCode" element={<MyReviewEditPage />} />
+                <Route path="/reservations/receipt/:bookingUid" element={<MyReceiptPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
@@ -113,6 +118,8 @@ function App() {
                 <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
                 <Route path="/admin/review/by-product" element={<AdminReviewByProductPage />} />
+                <Route path="/admin/inquirychat" element={<InquiryChatAdminPage/>} />
+                <Route path="/admin/inquirychat/:inquiryChatId" element={<InquiryChatAdminAnswerPage/>} />
 
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>
@@ -125,6 +132,7 @@ function App() {
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
                 <Route path="/products/:productUid/order/create/:optionCode" element={<OrderCheckoutPage/>} />>
                 <Route path="/payments/create/:orderCode" element={<PaymentPage />} />
+                <Route path="/payments/complete" element={<PaymentCompletePage />} />
 
               {/*커뮤니티*/}
               <Route path="/community" element={<CommunityLayout />} >

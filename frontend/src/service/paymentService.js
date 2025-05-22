@@ -30,6 +30,30 @@ export const getOrderByOrderCode = async (orderCode, accessToken) => {
     }
 };
 
+// 결제 수단 목록 불러오기
+export const fetchPaymentMethods = async () => {
+    try {
+        const response = await axios.get(`${path}/payments/methods`);
+        return response.data; // ["CARD", "KAKAO_PAY", "BANK_TRANSFER", ...]
+    } catch (error) {
+        console.error("🔴 결제 수단 불러오기 실패:", error);
+        throw error;
+    }
+};
+
+export const fetchPaymentByBookingUid = async (bookingUid, accessToken) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        };
+        const response = await axios.get(`/payments/${bookingUid}`, config);
+        return response.data;
+    } catch (err) {
+        console.error("결제 정보 조회 실패:", err);
+        throw err;
+    }
+};
+
 // 결제 요청은 아임포트에서 알아서 진행
 // export const requestPayment = async (paymentData, accessToken) => {
 //     try {

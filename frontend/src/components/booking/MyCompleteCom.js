@@ -46,11 +46,22 @@ const GridWrap = styled.div`
     justify-items: center;
     list-style: none;
     box-sizing: border-box;
+
+    ul {
+        list-style: none;
+        padding-right: 40px;   // 기본패딩이랑 똑같게 오른쪽에 여백 추가
+        margin: 0;
+    }
 `;
 const Title = styled.h4`
     font-size: 1rem;
     margin-bottom: 0.5rem;
     box-sizing: border-box;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
 `;
 const Card = styled.div`
     width: 800px;
@@ -93,13 +104,64 @@ const StyledStatus = styled.h3`
 `;
 const StyledInfo = styled.div`
     display: flex;
-    flex-direction: column;
-    margin-left: 40px;
+    margin-left: 70px;
+    margin-right: 70px;
     margin-bottom: 20px;
     box-sizing: border-box;
-    
-    div {
-        gap: 30px;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+
+    span {
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        //gap: 30px;
+
+        strong {
+            min-width: 30px;
+            color: #333;
+        }
+    }
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+`;
+const LeftBlock = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;  // 자식들 간의 간격이다. LeftBlock의 자식은 span과 strong
+    font-size: 0.95rem;
+    color: #333;
+    width: 50%;
+`;
+const RightBlock = styled.div`
+    display: flex;
+    align-items: center;
+    //justify-content: flex-end;
+    justify-content: center;
+    gap: 50px;
+    width: 50%;
+    font-size: 0.95rem;
+`;
+const Item = styled.span`
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+
+    strong {
+        color: #333;
+        font-weight: 600;
+        margin-right: 0;
+    }
+
+    span {
+        color: #555;
     }
 `;
 const StyledButton = styled.button`
@@ -132,6 +194,8 @@ const StyledButtonArea = styled.div`
     margin-bottom: 5px;
     gap: 10px;
     box-sizing: border-box;
+    padding-left: 70px;
+    padding-right: 70px;
     
     @media (max-width: 550px) {
         width: 100%;
@@ -142,25 +206,26 @@ const StyledButtonArea = styled.div`
 `;
 const ThumbImg = styled.img`
     width: 100%;
-    max-width: 120px;
+    max-width: 150px;
     height: 110px;
     object-fit: cover;
     border-radius: 8px;
-    margin-left: 10px;
+    margin-left: 70px;
+    margin-bottom: 20px;
     box-sizing: border-box;
 `;
 const LoadMoreButton = styled.button`
-  padding: 12px 24px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 1rem;
+    padding: 12px 24px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
 
-  &:hover {
-    background-color: #ddd;
-  }
+    &:hover {
+        background-color: #ddd;
+    }
 `;
 
 function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, showMoreComplete, openReviewModal }) {
@@ -170,6 +235,9 @@ function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, 
     const onClickProduct = (productUid) => {
         navigate(`/products/${productUid}`);
     };
+    const onClickReceipt = (bookingUid) => {
+        navigate(`/reservations/receipt/${bookingUid}`);
+    }
 
     if (completed.length === 0) {
         return <p>종료된 여행이 없습니다.</p>;
@@ -197,18 +265,23 @@ function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, 
                                         alt={res.productTitle}
                                     />
                                     <div>
-                                        <Title onClick={() => onClickProduct(res.productUid)}
-                                               style={{ cursor: "pointer" }}>
+                                        <Title onClick={() => onClickProduct(res.productUid)}>
                                             {res.productTitle || `상품코드 ${res.productCode}`}
                                         </Title>
                                     </div>
                                 </div>
                                 <StyledInfo>
-                                    <div><strong>사용 예정일:</strong> {res.reservationDate}</div>
-                                    <div><strong>성인:</strong> {res.adultCount}, <strong>아동:</strong> {res.childCount ?? 0}</div>
+                                    <LeftBlock>
+                                        <strong>사용 예정일</strong><span>{res.reservationDate}</span>
+                                    </LeftBlock>
+                                    <RightBlock>
+                                        <Item><strong>성인</strong><span>{res.adultCount}명</span></Item>
+                                        <Item><strong>아동</strong><span>{res.childCount ?? 0}명</span></Item>
+                                    </RightBlock>
                                 </StyledInfo>
                                 <StyledButtonArea>
                                     <StyledButton>문의하기</StyledButton>
+                                    <StyledButton onClick={() => onClickReceipt(res.bookingUid)}>명세서 보기</StyledButton>
                                     {Boolean(res.reviewed) ? (
                                         <StyledButton onClick={() => openReviewModal(res.orderCode)}>리뷰보기</StyledButton>
                                     ) : (

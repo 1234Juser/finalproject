@@ -1,5 +1,7 @@
 package com.hello.travelogic.inquiry.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hello.travelogic.member.domain.MemberRoleEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})      // Jackson의 Hibernate 프록시 속성 무시
 public class InquiryChatMessageEntity {
 
     @Id
@@ -22,6 +25,8 @@ public class InquiryChatMessageEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ic_id", nullable = false)
+    @ToString.Exclude                       // 양방향 연관 관계에서 toString() 메소드의 재귀 호출로 인한 무한 루프를 방지하기 위해 toString() 생성에서 제외
+    @JsonIgnore                             // 서버에서 클라이언트로 전송되는 JSON 응답의 순환 참조로 인한 무한 루프 방지
     private InquiryChatEntity inquiryChat;  // 필드명 변경: inquiryChatId -> inquiryChat (객체이므로)
 
     @ManyToOne(fetch = FetchType.LAZY)

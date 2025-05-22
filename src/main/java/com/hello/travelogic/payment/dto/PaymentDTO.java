@@ -38,6 +38,9 @@ public class PaymentDTO {
     @NotNull
     private String receiptUrl;
 
+    // 결제 관련 화면 출력을 위한 임시 필드
+    private String productThumbnail;
+
     public PaymentDTO(PaymentEntity entity) {
         this.paymentCode = entity.getPaymentCode();
         this.memberCode = entity.getMember().getMemberCode();
@@ -50,5 +53,20 @@ public class PaymentDTO {
         this.impUid = entity.getImpUid();
         this.merchantUid = entity.getMerchantUid();
         this.receiptUrl = entity.getReceiptUrl();
+
+        // 필드 직접 참조 방지
+        if (entity.getOrder() != null && entity.getOrder().getProduct() != null) {
+//            this.orderCode = entity.getOrder().getOrderCode();
+//            this.productThumbnail = entity.getOrder().getProduct().getProductThumbnail();
+            String productPic = entity.getOrder().getProduct().getProductThumbnail();
+
+            if (productPic == null || productPic.isBlank()) {
+                this.productThumbnail = "/img/empty/empty-list.jpeg";
+            } else if (productPic.contains("/") && productPic.split("/").length >= 2) {
+                this.productThumbnail = "/upload/product/" + productPic;
+            } else {
+                this.productThumbnail = "/static/img/product/" + productPic;
+            }
+        }
     }
 }

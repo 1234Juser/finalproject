@@ -132,6 +132,13 @@ public class OptionService {
         // 한 사람이 한 날에 같은 상품의 옵션 여러개 생성하는거 방지
         // 예) '하이미 가이드와 함께하는 세비야 도보투어'가 25-05-14일자 진행되는 걸로 홍길동이 여러번 예약하는 행위
         boolean exists = orderRepo.existsByMemberAndProductAndOption_ReservationDate(member, product, date);
+        log.info("🟡 중복 예약 여부: {}", exists);
+        List<OptionEntity> options = optionRepo.findByProduct_ProductUidAndReservationDate(productUid, date, date);
+        log.info("🔍 DB에 남아있는 옵션 수: {}", options.size());
+        for (OptionEntity op : options) {
+            log.info("🔸 optionCode: {}, reservationDate: {}, totalPrice: {}, 성인: {}, 아동: {}",
+                    op.getOptionCode(), op.getReservationDate(), op.getTotalPrice(), op.getAdultCount(), op.getChildCount());
+        }
         if (exists) {
             throw new IllegalStateException("해당 날짜에 이미 동일 상품에 대한 예약이 존재합니다.");
         }

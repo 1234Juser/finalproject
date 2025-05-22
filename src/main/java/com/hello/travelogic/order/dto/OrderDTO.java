@@ -34,6 +34,7 @@ public class OrderDTO {
     private String memberEmail;
     private String memberPhone;
     private String productTitle;
+    private String productThumbnail;
     private int adultCount;
     private Integer childCount;
     private LocalDate reservationDate;
@@ -56,6 +57,7 @@ public class OrderDTO {
         this.memberEmail = entity.getMember().getMemberEmail();
         this.memberPhone = entity.getMember().getMemberPhone();
         this.productTitle = entity.getProduct().getProductTitle();
+        this.productThumbnail = entity.getProduct() != null ? entity.getProduct().getProductThumbnail() : null;
         this.adultCount = entity.getOption().getAdultCount();
         this.childCount = entity.getOption().getChildCount();
         this.reservationDate = entity.getOption().getReservationDate();
