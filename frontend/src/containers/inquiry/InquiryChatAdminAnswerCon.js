@@ -1,5 +1,5 @@
 import InquiryChatAdminAnswerCom from "../../components/inquiry/InquiryChatAdminAnswerCom";
-import { useEffect, useReducer, useRef} from "react";
+import { useEffect, useReducer, useRef, useState} from "react";
 import { getMessages } from "../../service/inquiryService";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
@@ -22,6 +22,7 @@ const getAuthInfoFromStorage = () => {
 function InquiryChatAdminAnswerCon({ inquiryChatId }) {
     const [state, dispatch] = useReducer(inquiryReducer, initialState);
     const { messages, newMessage, error, loading, sending, isConnected, currentUser } = state;
+    const [chatClosed, setChatClosed] = useState(false);
     const stompClientRef = useRef(null);
 
 
@@ -63,6 +64,9 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
         try {
             const data = await getMessages(inquiryChatId);
 
+            console.log("데이터 불러오기------", data);
+
+
             const normalizedMessages = data.map(msg => ({
                 ...msg,
                 icmId: msg.inquiryChatMessageId,
@@ -83,6 +87,10 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
 
     // 메시지 전송
     const handleSendMessage = async () => {
+        if (chatClosed) {
+            dispatch({ type: "SET_ERROR", payload: "채팅이 종료되어 메시지를 보낼 수 없습니다." });
+            return;
+        }
         if (newMessage.trim() === "") return;
 
         dispatch({ type: 'SET_SENDING', payload: true });
@@ -162,6 +170,12 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
             stompClient.subscribe(`/topic/inquiry/${inquiryChatId}/send`, (message) => {
                 console.log("STOMP: 사용자 구독 콜백, 받은 메시지:", message.body);
                 const receivedMessage = JSON.parse(message.body);
+
+                if (receivedMessage.senderType === "SYSTEM" && receivedMessage.messageType === "SYSTEM") {
+                    console.log("시스템 메시지 수신: 채팅 종료됨");
+                    setChatClosed(true);
+                }
+
                 const normalizedReceivedMessage = {
                     ...receivedMessage,
                     icmId: receivedMessage.icmId,
@@ -219,6 +233,7 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
             handleKeyPress={handleKeyPress}
             inquiryChatId={inquiryChatId}
             isConnected={isConnected}
+            chatClosed={chatClosed}
         />
     );
 }

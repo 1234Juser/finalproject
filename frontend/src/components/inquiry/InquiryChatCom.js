@@ -38,7 +38,7 @@ const InquiryChatCom = ({
                     {isUserLoggedIn ? ( isConnected ? '연결됨' : '연결 끊김') : ''}
                     {isUserLoggedIn ? ( icId !== null ? ` (ID: ${icId})` : '') : ''}
                 </Description>
-                <CloseButton onClick={handleCloseChat}>종료</CloseButton>
+                {isUserLoggedIn ? <CloseButton onClick={handleCloseChat}>종료</CloseButton> : ''}
             </Header>
             <MessageBox ref={messagesContainerRef}>
                 {error && <ErrorMessageUI>{error}</ErrorMessageUI>}

@@ -22,7 +22,7 @@ function InquiryChatAdminAnswerCom({
     handleSendMessage,
     newMessage,
     handleInputChange,
-    handleKeyPress,
+    handleKeyPress, chatClosed
 }) {
 
     const messagesEndRef = useRef(null);
@@ -80,8 +80,9 @@ function InquiryChatAdminAnswerCom({
                             placeholder="답장을 입력하세요..."
                             onKeyPress={handleKeyPress}
                             rows="3"
+                            disabled={chatClosed}
                         />
-                        <SendButton onClick={handleSendMessage} disabled={false}>
+                        <SendButton onClick={handleSendMessage} disabled={chatClosed}>
                             전송
                         </SendButton>
                     </MessageInputContainer>

@@ -6,7 +6,7 @@ import {
 import React from "react";
 import styled from "styled-components";
 import {MdChat} from "react-icons/md";
-import InquiryChatCom from "../inquiry/InquiryChatCom";
+import { RiChatSmile2Line } from "react-icons/ri";
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 const NavContentWrapper = styled.div`
@@ -80,12 +80,16 @@ function NavCom({roles = [], toggleChat, chatAnchorRef}) {
                                     마이페이지
                                 </a>
                                     {/* 채팅 아이콘에 ref와 토글 함수 연결 */}
-                                    <MdChat
+{/*                                    <MdChat
                                         ref={chatAnchorRef}
-                                        style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer' }}
+                                        style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"30px", height:"30px" }}
                                         title="1:1 문의 채팅"
                                         onClick={toggleChat}
-                                    />
+                                    />*/}
+                                    <RiChatSmile2Line ref={chatAnchorRef}
+                                                      style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}
+                                                      title="1:1 문의 채팅"
+                                                      onClick={toggleChat}/>
                                 </MyPageWrapper>
                             )
                         }
