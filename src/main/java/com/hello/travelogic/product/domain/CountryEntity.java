@@ -1,5 +1,6 @@
 package com.hello.travelogic.product.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class CountryEntity {
     @Column(name = "country_code", nullable = false, unique = true)
     private Long countryCode;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_code", nullable = false)
     private RegionEntity regionCode;

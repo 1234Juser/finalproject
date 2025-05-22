@@ -1,8 +1,12 @@
-import {StyledNav, NavCenter, NavRight, DropdownContainer, DropdownMenu, MyPageWrapper, ChatFloatingWrapper} from "../../style/common/NavStyle";
 import {
-    FaFlag, FaPlaneDeparture, FaGift, FaStar, FaComments, FaEllipsisH,
-    FaHeart, FaUserCircle
-} from "react-icons/fa";
+    DropdownContainer,
+    DropdownMenu,
+    MyPageWrapper,
+    NavCenter,
+    NavRight,
+    StyledNav
+} from "../../style/common/NavStyle";
+import {FaComments, FaEllipsisH, FaFlag, FaGift, FaHeart, FaPlaneDeparture, FaStar, FaUserCircle} from "react-icons/fa";
 import React from "react";
 import styled from "styled-components";
 import {MdChat} from "react-icons/md";
