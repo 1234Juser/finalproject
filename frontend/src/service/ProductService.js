@@ -267,6 +267,22 @@ const toggleWish = async (product) => {
     }
 };
 
+// 랜덤 광고 상품 6개 가져오기
+export const fetchAdProducts = async () => {
+    try {
+        const response = await fetch(`${path}/products/ads`, {
+            method: "GET"
+        });
+        if (!response.ok) {
+            throw new Error(`광고 상품 응답 오류: ${response.status}`);
+        }
+        return response.json();
+    } catch (err) {
+        console.error("광고 상품 fetch 실패:", err);
+        throw err;
+    }
+};
+
 export {
     getProductsList, getDomList, getIntlList, getCountryList, getCityById, getCitiesByCountry, getCitiesByRegion,
     getProductsByCountry, getProductsByCity, getProductDetail, ProductRegist,
