@@ -1,4 +1,4 @@
-export const initialState = {
+const initialState = {
     messages: [],
     newMessage: '',
     icId: null,
@@ -13,7 +13,7 @@ export const initialState = {
     isUserLoggedIn: false,
 };
 
-export function inquiryReducer(state, action) {
+function inquiryReducer(state, action) {
     switch (action.type) {
         case 'SET_CURRENT_USER':
             return {
@@ -81,3 +81,5 @@ export function inquiryReducer(state, action) {
             return state;
     }
 }
+
+export { initialState, inquiryReducer };

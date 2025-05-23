@@ -4,7 +4,6 @@ import com.hello.travelogic.companion.dto.CompanionCommentDTO;
 import com.hello.travelogic.companion.service.CompanionCommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -32,6 +32,7 @@ export const initialState = {
     uploadedFile: null,
     partiError: { participants: "" },
     formErrors: "",
+    adProducts: [],
 };
 
 export const productFormReducer  = (state, action) => {
@@ -69,6 +70,8 @@ export const productFormReducer  = (state, action) => {
             return initialState;
         case "TOGGLE_WISH":
             return { ...state, isWished: action.payload };
+        case "SET_AD_PRODUCTS":
+            return { ...state, adProducts: action.payload };
         default:
             return state;
     }

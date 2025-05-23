@@ -43,7 +43,7 @@ public class OrderEntity {
     private MemberEntity member;     // 회원1 - 주문N
 
     @NotNull
-    @Column( name = "booking_uid", nullable = false )
+    @Column( name = "booking_uid", nullable = false, unique = true )
     private String bookingUid;
 
     @NotNull

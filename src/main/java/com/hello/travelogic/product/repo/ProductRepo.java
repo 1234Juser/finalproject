@@ -4,6 +4,7 @@ import com.hello.travelogic.product.domain.CityEntity;
 import com.hello.travelogic.product.domain.CountryEntity;
 import com.hello.travelogic.product.domain.ProductEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -51,4 +52,7 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     @Query("SELECT p FROM ProductEntity p WHERE p.productTitle LIKE %:kw% OR p.productContent LIKE %:kw%")
     Page<ProductEntity> searchByTitleOrDescription(@Param("kw") String kw, Pageable pageable);
 
+    // 랜덤 상품 조회
+    @Query(value = "SELECT * FROM tbl_product ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    List<ProductEntity> findRandomProducts(@Param("limit") int limit);
 }

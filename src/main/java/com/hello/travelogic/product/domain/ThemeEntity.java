@@ -27,6 +27,9 @@ public class ThemeEntity {
     @Column(name = "theme_name", nullable = false, length = 20)
     private String themeName;
 
+    @Column(name = "theme_condition", nullable = false, length = 20)
+    private String themeCondition;
+
     // 양방향 매핑
     @OneToMany(mappedBy = "themeCode", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductThemeEntity> productThemes = new ArrayList<>();

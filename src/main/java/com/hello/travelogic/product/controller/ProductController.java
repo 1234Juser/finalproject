@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -148,4 +149,9 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body ("일치하는 Uid 없음");
     }
 
+    // 명세서 페이지에 띄울 랜덤 상품 광고
+    @GetMapping("/ads")
+    public List<ProductDTO> getRandomAdProducts() {
+        return productService.getRandomAdProducts(6);
+    }
 }

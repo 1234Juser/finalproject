@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -336,17 +337,38 @@ public class OrderService {
     // PENDING 상태의 주문 삭제 (결제 실패 or 취소)
     @Transactional
     public void deletePendingOrder(Long orderCode) {
-        OrderEntity order = orderRepo.findById(orderCode)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+//        OrderEntity order = orderRepo.findById(orderCode)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        // 중복요청 방지 버전
+        try {
+            Optional<OrderEntity> optionalOrder = orderRepo.findById(orderCode);
 
-        // PENDING 상태가 아닌 경우 삭제 불가
-        if (order.getOrderStatus() != OrderStatus.PENDING) {
-            throw new IllegalStateException("PENDING 상태의 주문만 삭제할 수 있습니다.");
+            if (optionalOrder.isEmpty()) {
+                log.warn("🟠 삭제 요청 시 이미 주문이 없음 (중복 요청 추정): orderCode = {}", orderCode);
+                return;
+            }
+            OrderEntity order = optionalOrder.get();
+
+            // PENDING 상태가 아닌 경우 삭제 불가
+            if (order.getOrderStatus() != OrderStatus.PENDING) {
+                //            throw new IllegalStateException("PENDING 상태의 주문만 삭제할 수 있습니다.");
+                log.warn("🟠 주문 상태가 PENDING이 아님. 삭제 생략: orderCode = {}, status = {}", orderCode, order.getOrderStatus());
+                return;
+            }
+
+            try {
+                Long optionCode = order.getOption().getOptionCode();
+                // 삭제 처리
+                orderRepo.delete(order);
+                optionRepo.deleteById(optionCode);
+                log.info("🟢 PENDING 주문 및 옵션 삭제 완료: orderCode = {}, optionCode = {}", orderCode, optionCode);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                log.warn("🟡 중복 삭제 요청 감지 (Hibernate 에러): orderCode = {}", orderCode);
+            }
+
+        } catch (Exception e) {
+            log.error("🔴 주문 삭제 중 예기치 않은 오류 발생: orderCode = {}", orderCode, e);
         }
-
-        // 삭제 처리
-        orderRepo.delete(order);
-        log.info("🟢 PENDING 주문 삭제 완료: orderCode = {}", orderCode);
     }
 
     // orderStatus가 PENDING인경우 어느정도 대기시간을 주다가 orderCode삭제
@@ -361,5 +383,12 @@ public class OrderService {
             orderRepo.delete(order);
             log.info("🧹 오래된 PENDING 주문 삭제: {}", order.getOrderCode());
         }
+    }
+
+    // bookingUid로 예약 명세서페이지 출력
+    public OrderDTO getOrderByBookingUid(String bookingUid) {
+        OrderEntity order = orderRepo.findByBookingUid(bookingUid)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        return new OrderDTO(order); // → orderCode, product, member, payment 다 포함 가능
     }
 }

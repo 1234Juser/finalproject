@@ -18,6 +18,7 @@ export const ChatWrapper = styled.div`
   flex-direction: column;
   font-family: 'Noto Sans KR', Arial, sans-serif; // 한글 폰트 추가
   background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 `;
 
 export const Header = styled.div`
@@ -66,7 +67,7 @@ export const MessageBox = styled.div`
 // 개별 메시지 스타일
 export const Message = styled.div`
   background-color: ${({ $isSystem, $isUser }) => {
-    if ($isSystem) return '#ffeeba';
+    if ($isSystem) return '#2e4684';
     if ($isUser) return '#daf1ff';
     return '#fff';
   }};
@@ -78,6 +79,7 @@ export const Message = styled.div`
     max-width: 80%;
     text-align: ${(props) => (props.$isSystem ? 'center' : 'left')};
     font-style: ${(props) => (props.$isSystem ? 'italic' : 'normal')};
+    color: ${(props) => (props.$isSystem ? '#FFFFFF' : 'black')};
 `;
 
 
@@ -126,9 +128,8 @@ export const SendButton = styled.button`
 
 export const ErrorMessageUI = styled.p` // ErrorMessage와 이름 충돌 방지
     padding: 10px;
-    background-color: #f8d7da;
+    background-color: #ffffff;
     color: #0025a9;
-    border: 1px solid #f5c6cb;
     border-radius: 4px;
     margin: 10px 15px;
     text-align: center;

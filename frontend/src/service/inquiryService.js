@@ -1,7 +1,7 @@
 const path = "http://localhost:8080";
 
  // REST API로 채팅방 시작/조회 요청
-export const getStartInquiry = async ({inquiryMessage, token}) => {
+const getStartInquiry = async ({inquiryMessage, token}) => {
     try {
         const response = await fetch(`${path}/api/inquiry/start`, { // 실제 API 엔드포인트
             method: 'POST',
@@ -31,7 +31,7 @@ export const getStartInquiry = async ({inquiryMessage, token}) => {
 
 
 // 관리자용 채팅방 목록 조회 요청 (필터 및 정렬 기능 제거)
-export const getAdminChatList = async (token) => {
+const getAdminChatList = async (token) => {
     try {
         const response = await fetch(`${path}/api/inquiry/admin/chat-list`, {
             method: 'GET',
@@ -60,7 +60,7 @@ export const getAdminChatList = async (token) => {
 
 
 // 특정 채팅방의 메시지 가져오기
-export const getMessages = async (inquiryChatId) => {
+const getMessages = async (inquiryChatId) => {
     const token = localStorage.getItem("accessToken");
     try {
         const response = await fetch(`${path}/api/inquiry/messages/${inquiryChatId}`, {
@@ -88,7 +88,7 @@ export const getMessages = async (inquiryChatId) => {
 
 
 // 채팅 종료
-export const closeInquiryChat = async (icId, token) => {
+const closeInquiryChat = async (icId, token) => {
     try {
         const response = await fetch(`${path}/api/inquiry/close/${icId}`, {
             method: 'POST',
@@ -112,5 +112,11 @@ export const closeInquiryChat = async (icId, token) => {
     }
 };
 
+export {
+    getStartInquiry,
+    getAdminChatList,
+    getMessages,
+    closeInquiryChat,
+}
 
 
