@@ -1,13 +1,16 @@
-import {StyledNav, NavCenter, NavRight, DropdownContainer, DropdownMenu, MyPageWrapper, ChatFloatingWrapper} from "../../style/common/NavStyle";
 import {
-    FaFlag, FaPlaneDeparture, FaGift, FaStar, FaComments, FaEllipsisH,
-    FaHeart, FaUserCircle
-} from "react-icons/fa";
+    DropdownContainer,
+    DropdownMenu,
+    MyPageWrapper,
+    NavCenter,
+    NavRight,
+    StyledNav
+} from "../../style/common/NavStyle";
+import {FaComments, FaEllipsisH, FaFlag, FaGift, FaHeart, FaPlaneDeparture, FaStar, FaUserCircle} from "react-icons/fa";
 import React from "react";
 import styled from "styled-components";
 import {MdChat} from "react-icons/md";
-import InquiryChatCom from "../inquiry/InquiryChatCom";
-import { IoNotifications } from "react-icons/io5";
+import {IoNotifications} from "react-icons/io5";
 
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)

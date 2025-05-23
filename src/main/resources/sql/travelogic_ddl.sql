@@ -439,4 +439,16 @@ CREATE TABLE tbl_city_view_count (
 -- 실시간 검색어 순위 조회를 위한 인덱스 추가 (view_count 기준 내림차순 정렬 성능 향상)
 CREATE INDEX idx_city_view_count_view_count ON tbl_city_view_count (view_count DESC);
 
+-- 알림 테이블
+CREATE TABLE tbl_notification (
+                                  noti_id INT NOT NULL AUTO_INCREMENT COMMENT '알림id',
+                                  member_code INT NOT NULL COMMENT '회원번호',
+                                  noti_message VARCHAR(255) NOT NULL COMMENT '알림메시지',
+                                  noti_is_read BOOLEAN DEFAULT FALSE COMMENT '읽음 여부',
+                                  noti_created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '알림시간',
+                                  noti_target_post_id INT NOT NULL COMMENT '대상 게시글 ID',
+                                  PRIMARY KEY (noti_id),
+                                  CONSTRAINT FK_tbl_member_TO_tbl_notification FOREIGN KEY (member_code) REFERENCES tbl_member(member_code)
+) ENGINE=INNODB COMMENT='알림';
+
 commit;

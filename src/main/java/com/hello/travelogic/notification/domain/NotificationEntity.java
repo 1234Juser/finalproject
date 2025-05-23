@@ -36,6 +36,10 @@ public class NotificationEntity {
     @Column(name = "noti_created_at", nullable = false, updatable = false)
     private LocalDateTime notiCreatedAt;
 
+    @Column(name = "noti_target_post_id")
+    private Integer notiTargetPostId;
+
+
 
     // 읽음 처리용 메서드
     public void markAsRead() {

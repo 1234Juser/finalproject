@@ -3,7 +3,9 @@ package com.hello.travelogic.notification.controller;
 import com.hello.travelogic.notification.dto.NotificationRequestDTO;
 import com.hello.travelogic.notification.dto.NotificationResponseDTO;
 import com.hello.travelogic.notification.service.NotificationService;
+import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/notifications", produces = MediaType.APPLICATION_JSON_VALUE)
+@Slf4j
 public class NotificationController {
 
     private final NotificationService notificationService;
     private final Map<Integer, SseEmitter> sseEmitters = new ConcurrentHashMap<>(); // 사용자별 Emitter 관리
+    private final JwtUtil jwtUtil;
 
 
     // SSE 구독(연결) API 엔드포인트 : 클라이언트가 알림을 실시간으로 받을 수 있도록 만들어줌.
@@ -69,48 +73,53 @@ public class NotificationController {
 
 
     // 알림 목록 조회
-    @GetMapping("/{memberCode}")
+    @GetMapping("/member/{memberCode}")
     public ResponseEntity<List<NotificationResponseDTO>> getNotifications(@PathVariable Long memberCode) {
         List<NotificationResponseDTO> list = notificationService.getNotifications(memberCode);
+        log.debug("getNotifications list::::::: {}", list);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
 
-    // 읽음 처리
-    /*@PostMapping("/read")
-    public ResponseEntity<Void> markAsRead(@RequestBody NotificationUpdateRequestDto dto) {
-        notificationService.markAsRead(dto.getNotificationId());
+    // 모든 알림 읽음 처리
+    @PostMapping("/mark-all-as-read/member/{memberCode}")
+    public ResponseEntity<Void> markAllAsRead(@PathVariable Long memberCode) {
+        notificationService.markAllAsRead(memberCode);
         return ResponseEntity.ok().build();
-    }*/
+    }
 
 
+    // 개별 알림 읽음 처리
+    @PostMapping("/mark-as-read/{notiId}")
+    public ResponseEntity<Void> markAsRead(@PathVariable Long notiId) {
+        notificationService.markAsRead(notiId);
+        return ResponseEntity.ok().build();
+    }
 
 
-
-    // 새로운 알림 생성 (내부 시스템 호출용 또는 특정 이벤트 발생 시)
-    // 실제 사용 시에는 인증/인가된 사용자만 호출 가능하도록 보안 설정 필요
-
-
-
-    // 특정 회원의 모든 알림 조회
-    // 예: /api/v1/notifications/member/1
+    // 알림 개별 삭제
+    @DeleteMapping("/delete/{notiId}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable Long notiId) {
+        notificationService.deleteNotification(notiId);
+        return ResponseEntity.noContent().build();
+    }
 
 
-    // 특정 회원의 읽지 않은 알림 조회
-    // 예: /api/v1/notifications/member/1/unread
+    // 모든 알림 삭제
+    @DeleteMapping("/delete-all")
+    public ResponseEntity<Void> deleteAllNotifications(@RequestHeader("Authorization") String token) {
+        // "Bearer " 접두사 제거
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
 
-    // 특정 회원의 읽지 않은 알림 개수 조회
-    // 예: /api/v1/notifications/member/1/unread-count
+        // 토큰에서 memberCode 추출
+        Long memberCode = jwtUtil.getMemberCodeFromToken(token);
+        notificationService.deleteAllNotifications(memberCode);
+        return ResponseEntity.noContent().build();
+    }
 
 
-    // 알림 읽음 처리
-    // 예: /api/v1/notifications/1/read (memberCode는 JWT 등에서 추출하여 서비스에 전달)
-
-    // private Integer getCurrentUserMemberCode(UserDetails userDetails) {
-    //     // Spring Security 사용 시 UserDetails에서 사용자 정보를 추출하여 memberCode 반환
-    //     // 예: ((CustomUserDetails) userDetails).getMemberCode();
-    //     return 1; // 임시
-    // }
 
 }
 

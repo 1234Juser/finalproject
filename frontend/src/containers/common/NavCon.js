@@ -130,12 +130,11 @@ function NavCon() {
                     isVisible={showChat}
                 />
             </ChatFloatingWrapper>
-            <NotificationWrapper
-                style={{ display: showNotifications ? 'block' : 'none' }}
-                ref={notificationRef}
-            >
-                <NotificationListCon/>
-            </NotificationWrapper>
+            {showNotifications && (
+                <NotificationWrapper ref={notificationRef}>
+                    <NotificationListCon />
+                </NotificationWrapper>
+            )}
         </>
     );
 }

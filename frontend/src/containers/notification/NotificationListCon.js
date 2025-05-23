@@ -1,6 +1,13 @@
 import NotificationListCom from "../../components/notification/NotificationListCom";
 import {useEffect, useState} from "react";
-import {getNotificationList} from "../../service/notificationService";
+import {
+    deleteAllNotifications,
+    deleteNotification,
+    getNotificationList,
+    markAllNotificationsAsRead,
+    markNotificationAsRead
+} from "../../service/notificationService";
+import {useNavigate} from "react-router-dom";
 
 
 const authInfo = () => {
@@ -17,74 +24,116 @@ const authInfo = () => {
 };
 
 
-function NotificationListCon({isVisible}){
+function NotificationListCon(){
     const [notifications, setNotifications] = useState([]);
+
+    const navigate = useNavigate();
 
 
 
     useEffect(() => {
         const { memberCode, token } = authInfo();
 
-        console.log('여기서 멤버코드 확인:::', memberCode);
-        console.log('여기서 토큰 확인:::', token);
-
-        // if (memberCode) {
-        if (memberCode && token && isVisible === true && notifications.length === 0) {
+        if (memberCode && token) {
             getNotificationList(token, memberCode)
-                .then(response => {
-                    setNotifications(response.data);
-                    console.log('받아온 데이터 확인 :::::', response.data);
+                .then( data => {
+
+                    setNotifications(data);
+                    console.log('받아온 데이터 확인 :::::', data);
                 })
                 .catch(error => {
                     console.error("알림 목록을 가져오는 중 오류 발생:", error);
                 });
         }
-
-        // 테스트를 위한 임시 데이터 추가
-        // const mockNotifications = [
-        //     {
-        //         notiId: 1,
-        //         content: "첫 번째 알림입니다.",
-        //         isRead: false,
-        //         createdAt: new Date(),
-        //     },
-        //     {
-        //         notiId: 2,
-        //         content: "두 번째 알림입니다.",
-        //         isRead: true,
-        //         createdAt: new Date(),
-        //     },
-        //     // 추가적인 알림 데이터...
-        // ];
     }, []);
 
 
+    // 개별 알림 클릭 시 읽음 처리
+    const onHandleClick = (notiId, targerPostId) => {
+        const { token } = authInfo();
 
-    const onHandleClick = (memberCode) => {
-        // 알림을 클릭했을 때 처리할 로직 (추후 구현)
-        // 예: markNotificationAsRead(id).then(...)
-        setNotifications(prev =>
-            prev.map(n => n.memberCode === memberCode ? { ...n, isRead: true } : n)
-        );
-
-        /*        fetch(`/api/notifications/read`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ notificationId: id })
+        if (token) {
+            markNotificationAsRead(token, notiId)
+                .then(() => {
+                    setNotifications(prev =>
+                        prev.map(n => n.notiId === notiId ? { ...n, notiIsRead: true } : n)
+                    );
+                    console.log(`알림 ${notiId}을(를) 읽음으로 처리했습니다.`);
                 })
-                    .then(() => {
-                        setNotifications(prev =>
-                            prev.map(n => n.id === id ? { ...n, isRead: true } : n)
-                        );
-                    });*/
+                .catch(error => {
+                    console.error(`알림 ${notiId} 읽음 처리 중 오류 발생:`, error);
+                    alert("알림을 읽음으로 처리하는 데 실패했습니다.");
+                });
+        }
+
+
     };
 
+
+    // 모두 읽음 버튼 클릭 시 읽음 처리
+    const handleMarkAllAsRead = () => {
+        const { memberCode, token } = authInfo();
+
+        if (memberCode && token) {
+            markAllNotificationsAsRead(token, memberCode)
+                .then(() => {
+                    setNotifications(prev =>
+                        prev.map(noti => ({ ...noti, notiIsRead: true }))
+                    );
+                    console.log("모든 알림을 읽음으로 처리했습니다.");
+                })
+                .catch(error => {
+                    console.error("모든 알림 읽음 처리 중 오류 발생:", error);
+                });
+        }
+    };
+
+
+    // 알림 삭제
+    const handleDeleteNotification = (notiId) => {
+        const { memberCode, token } = authInfo();
+
+        if (memberCode && token) {
+                deleteNotification(token, notiId)
+                    .then(() => {
+                        setNotifications(prev =>
+                            prev.filter(n => n.notiId !== notiId)
+                        );
+                        console.log(`알림 ${notiId}을(를) 삭제했습니다.`);
+                    })
+                    .catch(error => {
+                        console.error(`알림 ${notiId} 삭제 중 오류 발생:`, error);
+                        alert("알림을 삭제하는 데 실패했습니다.");
+                    });
+        }
+    };
+
+
+    // 모든 알림 삭제
+    const handleDeleteAllNotifications =  () => {
+        const {  token } = authInfo();
+
+        if (token) {
+                deleteAllNotifications(token)
+                    .then(() => {
+                    setNotifications([]); // 모든 알림을 비웁니다.
+                    console.log("모든 알림을 삭제했습니다.");
+                })
+                    .catch(error => {
+                    console.error("모든 알림 삭제 중 오류 발생:", error);
+                    })
+        }
+
+    }
 
 
 
     return(
         <>
-            <NotificationListCom notifications={notifications} onHandleClick={onHandleClick}/>
+            <NotificationListCom notifications={notifications} onHandleClick={onHandleClick}
+                                 onMarkAllAsRead={handleMarkAllAsRead} onDelete={handleDeleteNotification}
+                                 onDeleteAll={handleDeleteAllNotifications}
+            />
         </>
     )
 }

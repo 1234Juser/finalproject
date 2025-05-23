@@ -75,17 +75,24 @@ public class CompanionCommentService {
         CompanionCommentEntity savedComment = companionCommentRepository.save(comment);
 
 
-        // 게시글 작성자에게 알림 생성
-        Long postAuthorCode = companion.getMember().getMemberCode();
-        NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
-                .memberCode(postAuthorCode)
-                .notiMessage("당신의 게시글에 새로운 댓글이 달렸습니다!")
-                .build();
+        // 댓글 알림 (본인 게시글 제외)
+        if(!memberCode.equals(companion.getMember().getMemberCode())){
 
-        log.debug("-------알림 생성 요청 DTO ------- notificationRequest: {}", notificationRequest);
+            // 게시글 작성자에게 알림 생성
+            Long postAuthorCode = companion.getMember().getMemberCode();
+            String companionTitle = companion.getCompanionTitle();
 
+            // 알림 메시지에 게시물 제목 포함
+            String notiMessage = "게시글 \"" + companionTitle + "\"에 새로운 댓글이 달렸습니다!";
 
-        notificationService.createNotification(notificationRequest);
+            NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
+                    .memberCode(postAuthorCode)
+                    .notiMessage(notiMessage)
+                    .notiTargetPostId(companionId)
+                    .build();
+
+            notificationService.createNotification(notificationRequest);
+        }
 
 
         return CompanionCommentDTO.fromEntity(savedComment);

@@ -13,4 +13,5 @@ public class NotificationRequestDTO {
 
     private Long memberCode;
     private String notiMessage;
+    private Integer notiTargetPostId;
 }
