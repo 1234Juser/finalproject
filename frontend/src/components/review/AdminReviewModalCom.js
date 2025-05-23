@@ -1,7 +1,6 @@
 import path, {getReviewImage} from "../../service/reviewService";
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import {useNavigate} from "react-router-dom";
 
 const Overlay = styled.div`
     position: fixed;
@@ -152,7 +151,13 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
                 </Header>
                 <Content>
                     <ThumbnailTitleWrap>
-                        <Thumbnail src={review.reviewPic ? `${path}/review/${encodeURIComponent(review.reviewPic)}` : "/img/default-review.jpg"} alt="리뷰 이미지" />
+                        {/*<Thumbnail src={review.reviewPic ? `${path}/review/${encodeURIComponent(review.reviewPic)}` : "/img/default-review.jpg"} alt="리뷰 이미지" />*/}
+                        <Thumbnail src={`${path}/review/${encodeURIComponent(review.reviewPic)}`}
+                                   alt="리뷰 이미지"
+                                   onError={(e) => {
+                                       e.target.style.display = 'none';
+                                   }}
+                        />
                         <ProductTitle>{review.productTitle}</ProductTitle>
                     </ThumbnailTitleWrap>
                     <ReviewInfo>
