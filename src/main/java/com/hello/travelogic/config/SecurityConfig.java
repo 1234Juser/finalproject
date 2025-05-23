@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 회원 관련 엔드포인트는 인증 없이 허용
                         .requestMatchers("/member/**", "/api/inquiry/**").permitAll()
+                        .requestMatchers("/orders/cancel-pending").permitAll()
                         // 게시물 작성, 마이페이지(MyPage) 등 개인정보/행동이 필요한 API는 인증 필요(원하는 보호 URL 패턴으로 수정)
                         // 마이페이지는 인증 필요
                         .requestMatchers("/member/mypage").authenticated()

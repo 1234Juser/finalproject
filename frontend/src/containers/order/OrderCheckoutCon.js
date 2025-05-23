@@ -1,5 +1,6 @@
 import OrderCheckoutCom from "../../components/order/OrderCheckoutCom";
 import {
+    cancelPendingOrder,
     completeOrder,
     createOrder,
     deletePendingOrder,
@@ -7,10 +8,11 @@ import {
     fetchOptionDetails
 } from "../../service/orderService";
 import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
 import {orderInitialState as result} from "../../modules/orderModule";
 import {fetchPaymentMethods} from "../../service/paymentService";
+import axios from "axios";
 
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
@@ -25,6 +27,7 @@ function OrderCheckoutCon({ accessToken }) {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    // 옵션 로드
     useEffect(() => {
         const loadOptionData = async () => {
             if (!productUid || !optionCode || !accessToken) return;
@@ -59,12 +62,51 @@ function OrderCheckoutCon({ accessToken }) {
         }
     }, [productUid, optionCode, accessToken]);
 
+    // 결제수단 로드
     useEffect(() => {
         fetchPaymentMethods()
             .then((methods) => setPaymentMethods(methods))
             .catch((err) => console.error(err));
     }, []);
 
+    // 탭 삭제시 삭제
+    useEffect(() => {
+        if (!orderCode) return; // orderCode 생성되기 전엔 아무 것도 하지 않음
+
+        const sendCancelRequest = () => {
+            console.log("🟡 sendBeacon 시도 중"); // ✅ 반드시 이 로그 확인
+            const data = JSON.stringify({ orderCode });
+            const blob = new Blob([data], { type: "application/json" });
+            const success = navigator.sendBeacon("/orders/cancel-pending", blob);
+            console.log("📤 sendBeacon 전송 여부:", success);
+        };
+
+        const handleVisibilityChange = () => {
+            console.log("🟠 visibilitychange 발생:", document.visibilityState);
+            if (document.visibilityState === "hidden") {
+                sendCancelRequest();
+            }
+        };
+
+        const handleBeforeUnload = () => {
+            console.log("🔵 beforeunload 발생");
+            sendCancelRequest();
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [orderCode]);
+
+    useEffect(() => {
+        console.log("🔎 [DEBUG] orderCode 바뀜:", orderCode);
+    }, [orderCode]);
+
+    // 10분 후 자동삭제
     useEffect(() => {
         const timer = setTimeout(() => {
             deletePendingOrder(orderCode, accessToken)
@@ -74,6 +116,37 @@ function OrderCheckoutCon({ accessToken }) {
 
         return () => clearTimeout(timer);
     }, [orderCode, accessToken]);
+
+    // 페이지 이동시 삭제
+    // useEffect(() => {
+    //     const locationChangeHandler = () => {
+    //         if (!orderCode || !accessToken) return;
+    //
+    //         const data = { orderCode };
+    //         axios.post("/orders/cancel-pending", data, {
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${accessToken}`,
+    //             },
+    //         })
+    //             .then(() => console.log("🟢 SPA 페이지 이동 중 주문 삭제 완료"))
+    //             .catch((err) => console.warn("🔴 SPA 주문 삭제 실패", err));
+    //     };
+    //
+    //     return () => {
+    //         locationChangeHandler();
+    //     };
+    // }, [orderCode, accessToken, useLocation().pathname]);
+    useEffect(() => {
+        const locationChangeHandler = () => {
+            if (!orderCode || !accessToken) return;
+            cancelPendingOrder(orderCode, accessToken);
+        };
+
+        return () => {
+            locationChangeHandler(); // cleanup 시 실행
+        };
+    }, [orderCode, accessToken, useLocation().pathname]);
 
     // 결제하기 버튼 클릭 시
     const handleCheckout = async () => {

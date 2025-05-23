@@ -254,3 +254,21 @@ export const deletePendingOrder = async (orderCode, accessToken) => {
         throw error;
     }
 };
+
+// 페이지 이동시 PENDING상태 주문 삭제
+export const cancelPendingOrder = async (orderCode, accessToken) => {
+    const data = { orderCode };
+    try {
+        const response = await axios.post("/orders/cancel-pending", data, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        console.log("🟢 SPA 페이지 이동 중 주문 삭제 완료");
+        return response;
+    } catch (error) {
+        console.warn("🔴 SPA 주문 삭제 실패", error);
+        throw error;
+    }
+};

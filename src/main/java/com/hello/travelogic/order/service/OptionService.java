@@ -111,7 +111,7 @@ public class OptionService {
         }
 //        option.setAdultCount(0); // 기본값 설정
 //        option.setChildCount(0);
-        optionRepo.save(option);
+//        optionRepo.save(option);
 
         log.info("🟢 예약 날짜 저장 완료: productUid = {}, reservationDate = {}", productUid, reservationDate);
     }
