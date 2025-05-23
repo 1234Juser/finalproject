@@ -16,18 +16,12 @@ public interface WishGroupRepo extends JpaRepository<WishGroupEntity, Long> {
     // 한 회원의 모든 찜그룹 찾기
     List<WishGroupEntity> findByMember_MemberCode(long memberCode);
 
-    //    WishGroupEntity findByMemberCodeAndGroupTitle(Long memberCode, String groupTitle);
     Optional<WishGroupEntity> findByMemberAndGroupTitle(MemberEntity member, String groupTitle);
 
     // 그룹 삭제하려고 그룹코드 찾기
     Optional<WishGroupEntity> findByGroupCode(long groupCode);
-    // 둘중하나
-//    Optional<WishGroupEntity> findByGroupCodeAndMember_MemberCode(long groupCode, long memberCode);
 
-//    @Query("SELECT wg FROM WishGroupEntity wg WHERE wg.memberEntity.memberCode = :memberCode")
-//    List<WishGroupEntity> findAllByMemberCode(@Param("memberCode") long memberCode);
-
-    boolean existsByGroupCode(long groupCode);
+    boolean existsByGroupCodeAndMember_MemberCode(Long groupCode, Long memberCode);
     // 특정 회원이 동일한 이름의 찜 그룹을 이미 가지고 있는지 확인
     boolean existsByGroupTitleAndMember_MemberCode(String groupTitle, long memberCode);
 

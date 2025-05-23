@@ -114,12 +114,11 @@ const getProductsByCity = async (cityId) => {
 
 
 // 상품 상세 데이터 가져오는 함수
-const getProductDetail = async (productUid) => {
-    const token = localStorage.getItem("accessToken");
+const getProductDetail = async (productUid, accessToken) => {
     try {
         console.log("productUid : ", productUid);
         // 토큰이 있는 경우 Authorization 헤더 추가
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
         const response = await fetch(`${path}/products/${productUid}`, {
             method : "GET",
             headers: headers
@@ -236,10 +235,9 @@ const ProductDelete = (productUid) => {
 
 //  ------------- 상품 관련 부가 기능 함수
 // 찜 추가하기
-const toggleWish = async (product) => {
+const toggleWish = async (product, accessToken) => {
     try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
+        if (!accessToken) {
             const currentPath = window.location.pathname;
             alert("로그인이 필요합니다.");
             window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
@@ -249,7 +247,7 @@ const toggleWish = async (product) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify({})
         });
