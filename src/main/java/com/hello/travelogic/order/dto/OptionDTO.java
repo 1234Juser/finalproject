@@ -29,6 +29,8 @@ public class OptionDTO {
     private Integer productChild;
     private int productMaxParticipants;
     private String productThumbnail;
+    private String availableStartDate;
+    private String availableEndDate;
 
     public OptionDTO(OptionEntity entity) {
         this.optionCode = entity.getOptionCode();
