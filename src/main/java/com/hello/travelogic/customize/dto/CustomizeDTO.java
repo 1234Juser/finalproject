@@ -18,7 +18,7 @@ public class CustomizeDTO {
     private LocalDate endDate; //종료날짜
     private Long countryId; //국가id
     private Long cityId; //도시id
-    private String themeName; // 여행 테마 (Long에서 String으로 변경)
+    private String themeName; // 여행 테마
     private Integer adultCount; //성인인원
     private Integer childCount; // 아동인원
     private Integer minPrice; //최소가격
