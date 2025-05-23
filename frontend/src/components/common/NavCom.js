@@ -92,12 +92,6 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                                     <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                     마이페이지
                                 </a>
-                                    <MdChat
-                                        ref={chatAnchorRef}
-                                        style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"30px", height:"30px" }}
-                                        title="1:1 문의 채팅"
-                                        onClick={toggleChat}
-                                    />
                                     <RiChatSmile2Line ref={chatAnchorRef}
                                                       style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}
                                                       title="1:1 문의 채팅"
