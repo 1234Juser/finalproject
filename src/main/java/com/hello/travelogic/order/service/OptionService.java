@@ -8,20 +8,13 @@ import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.repo.ProductRepo;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +45,16 @@ public class OptionService {
         optionDTO.setReservationDate(null);
 //        optionDTO.setTotalPrice(0); // 초기 가격은 0으로 설정
 
+        // reservationDate로 선택할 수 있는 유효한 날짜 범위 설정
+        LocalDate today = LocalDate.now();
+        LocalDate start = productEntity.getProductStartDate().isAfter(today)
+                ? productEntity.getProductStartDate()
+                : today;
+        LocalDate end = productEntity.getProductEndDate();
+
+        optionDTO.setAvailableStartDate(start.toString());
+        optionDTO.setAvailableEndDate(end.toString());
+
         // 초기 가격은 이미 0으로 설정되어 있으므로 추가 설정 불필요
         log.info("🟢 OptionService - OptionDTO 생성: {}", optionDTO);
         return optionDTO;
@@ -60,9 +63,6 @@ public class OptionService {
     public List<OptionDTO> getOptionsByDate(String productUid, String startDate, String endDate) {
         try {
             // 문자열로 받은 날짜를 LocalDate로 변환
-//            LocalDate date = LocalDate.parse(reservationDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//            LocalDate parsedDate = LocalDate.parse(reservationDate.trim());
-//            log.info("📝 검색할 reservationDate: {}", parsedDate);
             LocalDate start = LocalDate.parse(startDate.trim());
             LocalDate end = LocalDate.parse(endDate.trim());
 
@@ -73,20 +73,11 @@ public class OptionService {
             log.info("🟢 예약 가능한 옵션 조회 ({}개): {}", options.size(), options);
 
             // 조회된 옵션을 DTO로 변환하여 반환
-//            List<OptionDTO> optionDTOs = options.stream()
-//                    .map(OptionDTO::new)
-//                    .collect(Collectors.toList());
-//
-//            log.info("🟢 예약 가능한 옵션 조회: {}", optionDTOs);
-//            return optionDTOs;
-            // DTO로 변환
             return options.stream()
                     .map(OptionDTO::new)
                     .collect(Collectors.toList());
 
         } catch (Exception e) {
-//            log.error("🔴 예약 가능한 옵션 조회 실패:", e);
-//            throw new RuntimeException("예약 가능한 옵션 조회 실패: " + e.getMessage());
             log.error("🔴 예약 가능한 옵션 조회 실패: {}", e.getMessage());
             throw e;
         }
@@ -103,15 +94,11 @@ public class OptionService {
 
         OptionEntity option = new OptionEntity();
         option.setProduct(product);
-//        option.setReservationDate(reservationDate != null ? LocalDate.parse(reservationDate) : null);
         if (reservationDate != null && !reservationDate.isBlank()) {
             option.setReservationDate(LocalDate.parse(reservationDate));
         } else {
             option.setReservationDate(parsedDate);  // 명시적으로 null 설정
         }
-//        option.setAdultCount(0); // 기본값 설정
-//        option.setChildCount(0);
-//        optionRepo.save(option);
 
         log.info("🟢 예약 날짜 저장 완료: productUid = {}, reservationDate = {}", productUid, reservationDate);
     }
@@ -171,8 +158,6 @@ public class OptionService {
         option.setTotalPrice(totalPrice);
         optionRepo.save(option);
 
-//        log.info("🟢 옵션 저장 완료: optionCode = {}", option.getOptionCode());
-//        log.info("🟢 옵션 저장 완료 - optionCode: {}, totalPrice: {}", option.getOptionCode(), option.getTotalPrice());
         log.info("🟢 옵션 저장 완료 - optionCode: {}, adultCount: {}, childCount: {}, totalPrice: {}",
                 option.getOptionCode(), option.getAdultCount(), option.getChildCount(), option.getTotalPrice());
 
@@ -198,12 +183,6 @@ public class OptionService {
         optionDTO.setReservationDate(optionEntity.getReservationDate());
         optionDTO.setAdultCount(optionEntity.getAdultCount());
         optionDTO.setChildCount(optionEntity.getChildCount());
-//        optionDTO.setTotalPrice(optionEntity.getTotalPrice());
-
-//        Integer productAdultPrice = productEntity.getProductAdult() != null ? productEntity.getProductAdult() : 0;
-//        Integer productChildPrice = productEntity.getProductChild() != null ? productEntity.getProductChild() : 0;
-//        int adultTotalPrice = optionEntity.getAdultCount() * productAdultPrice;
-//        int childTotalPrice = optionEntity.getChildCount() * productChildPrice;
         int adultTotalPrice = optionEntity.getAdultCount() * productEntity.getProductAdult();
         int childTotalPrice = optionEntity.getChildCount() * productEntity.getProductChild();
         int totalPrice = adultTotalPrice + childTotalPrice;
