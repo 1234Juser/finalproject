@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import {SubTitle} from "../../style/product/StyleProductDetail";
-import {useState} from "react";
+import React, {useState} from "react";
 import AllReviewModal from "./AllReviewModal";
+import path from "../../service/reviewService";
 
 const ReviewContainer = styled.div`
     padding: 20px;
@@ -150,9 +151,12 @@ function ProductReviewCom({ reviews = [], loading, error,
                                 <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
                                 <Reviewer>{review.memberName}</Reviewer>
                                 <ReviewDate>{review.reviewDate}</ReviewDate>
-                                <Thumbnail
-                                    src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"}
-                                    alt="리뷰 이미지"
+                                {/*<Thumbnail src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"} alt="리뷰 이미지"/>*/}
+                                <Thumbnail src={`${path}/review/${encodeURIComponent(review.reviewPic)}`}
+                                            alt="리뷰 이미지"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                            }}
                                 />
                                 <ReviewContent>{review.reviewContent}</ReviewContent>
                             </ReviewItem>
@@ -185,8 +189,12 @@ function ProductReviewCom({ reviews = [], loading, error,
                                     <Reviewer>{review.memberName}</Reviewer>
                                     <ReviewDate>{review.reviewDate}</ReviewDate>
                                     <Thumbnail
-                                        src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"}
+                                        // src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"} alt="리뷰 이미지"
+                                        src={`${path}/review/${encodeURIComponent(review.reviewPic)}`}
                                         alt="리뷰 이미지"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                        }}
                                     />
                                     <ReviewContent>{review.reviewContent}</ReviewContent>
                                 </ReviewItem>
