@@ -9,7 +9,7 @@ import ProductReviewCon from "../../containers/review/ProductReviewCon";
 import {useNavigate} from "react-router-dom";
 
 
-function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSection}) {
+function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTabClick, activeSection, accessToken}) {
     const navigate = useNavigate();
 
     const handleOptionSelect = () => {
@@ -21,6 +21,8 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
         }
         navigate(`/products/${product.productUid}/option/create`);
     };
+
+    const isClosed = product?.productStatus === "CLOSED";
 
     return (
         <Container>
@@ -51,7 +53,12 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick, activeSe
             <WishButton onClick={onToggleWish} aria-label="찜 토글">
                 {isWished ? <FaHeart /> : <FaRegHeart />}
             </WishButton>
-            <PaymentButton onClick={handleOptionSelect}>옵션선택</PaymentButton>
+                <PaymentButton
+                    onClick={handleOptionSelect}
+                    disabled={isClosed}
+                >
+                    {isClosed ? "판매 종료된 상품입니다." : "옵션 선택"}
+                </PaymentButton>
              </InfoSection>
             </MainSectionWrapper>
             <DetailTabWrapper>

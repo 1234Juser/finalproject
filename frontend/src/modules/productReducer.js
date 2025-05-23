@@ -30,6 +30,7 @@ export const initialState = {
     cities: [],
     themes: [],
     uploadedFile: null,
+    isWished: false,
     partiError: { participants: "" },
     formErrors: "",
     adProducts: [],

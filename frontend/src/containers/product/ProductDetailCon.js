@@ -5,7 +5,7 @@ import {useParams} from "react-router-dom";
 import {initialState, productFormReducer} from "../../modules/productReducer";
 import { toast } from "react-toastify";
 
-function ProductDetailCon({productCode, initialWishState, memberCode}) {
+function ProductDetailCon({productCode, initialWishState, accessToken}) {
 
     const [activeSection, setActiveSection] = useState('basicInfo');
     const { productUid } = useParams();
@@ -20,7 +20,7 @@ function ProductDetailCon({productCode, initialWishState, memberCode}) {
 
 
     useEffect(() => {
-        getProductDetail(productUid)
+        getProductDetail(productUid, accessToken)
             .then((data) => {
                 console.log("투어 상품 데이터: ", data);
                 setProduct(data);
@@ -33,7 +33,7 @@ function ProductDetailCon({productCode, initialWishState, memberCode}) {
 
     const handleWishToggle = async () => {
         try {
-            const result = await toggleWish(product);
+            const result = await toggleWish(product, accessToken);
             if (result === null) return;
             const isLiked = result === "LIKED";
             dispatch({ type: "TOGGLE_WISH", payload: isLiked });
@@ -82,6 +82,7 @@ function ProductDetailCon({productCode, initialWishState, memberCode}) {
                             onToggleWish={handleWishToggle}
                             onTabClick={handleDetailTabClick}
                             activeSection={activeSection}
+                            accessToken={accessToken}
             />
         </>
     )

@@ -42,12 +42,17 @@ public class WishController {
 
     // 위시 상품 불러오기
     @GetMapping("/wish/groups/{groupCode}/items")
-    public ResponseEntity getItemsInGroup(@PathVariable("groupCode") long groupCode) {
+    public ResponseEntity getItemsInGroup(@PathVariable("groupCode") long groupCode,
+                                          Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
+                .getMemberCode();
 
-        if (!wishGroupRepo.existsByGroupCode(groupCode)) {
+        if (!wishGroupRepo.existsByGroupCodeAndMember_MemberCode(groupCode, memberCode)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        List<WishDTO> items = wishService.getItemsByGroupCode(groupCode);
+        List<WishDTO> items = wishService.getItemsByGroupCode(groupCode, memberCode);
         return ResponseEntity.ok(items);
     }
 
@@ -77,7 +82,12 @@ public class WishController {
 
     // 위시 등록취소하기
     @DeleteMapping("/wish/list/{wishCode}")
-    public ResponseEntity cancelWish(@PathVariable long wishCode) {
+    public ResponseEntity cancelWish(@PathVariable long wishCode,
+                                     Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
+                .getMemberCode();
 
         log.debug("delete {}", wishCode);
         try {
