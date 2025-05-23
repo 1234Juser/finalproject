@@ -35,14 +35,14 @@ public class CustomizeService {
                 customizeDTO.getEndDate(),
                 customizeDTO.getCountryId(),
                 customizeDTO.getCityId(),
-                customizeDTO.getThemeName(), // getThemeCode() 대신 getThemeName() 사용
+                customizeDTO.getThemeName(),
                 customizeDTO.getAdultCount(),
                 customizeDTO.getChildCount(),
                 customizeDTO.getMinPrice(),
                 customizeDTO.getMaxPrice(),
                 customizeDTO.getProductType()
         );
-        log.info("CustomizeRepository에서 받은 검색 결과 (개수): {}", products.size()); // Repository 결과 개수 로그
+        log.info("CustomizeRepository에서 받은 검색 결과 (개수): {}", products.size());
         return products;
     }
 
