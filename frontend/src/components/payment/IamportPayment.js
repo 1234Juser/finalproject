@@ -8,7 +8,7 @@ export function requestIamportPayment( orderData, paymentMethod ) {
         alert("아임포트 객체가 로드되지 않았습니다.");
         return;
     }
-    window.IMP.init("imp");
+        window.IMP.init("imp71405518");
 
     // const handlePayment = () => {
     const {

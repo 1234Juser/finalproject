@@ -20,6 +20,7 @@ public class NotificationResponseDTO {
     private boolean notiIsRead;
     private LocalDateTime notiCreatedAt;
     private Integer notiTargetPostId;
+    private Long notiOrderId;
 
 
     // Entity를 DTO로 변환하는 생성자
@@ -30,6 +31,7 @@ public class NotificationResponseDTO {
         this.notiIsRead = entity.isNotiIsRead();
         this.notiCreatedAt = entity.getNotiCreatedAt();
         this.notiTargetPostId = entity.getNotiTargetPostId();
+        this.notiOrderId = entity.getNotiOrderId();
     }
 
 }

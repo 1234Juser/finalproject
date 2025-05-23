@@ -39,6 +39,9 @@ public class NotificationEntity {
     @Column(name = "noti_target_post_id")
     private Integer notiTargetPostId;
 
+    @Column(name = "noti_order_id")
+    private Long notiOrderId;
+
 
 
     // 읽음 처리용 메서드
