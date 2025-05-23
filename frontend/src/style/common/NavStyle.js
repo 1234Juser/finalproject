@@ -125,25 +125,6 @@ export const MyPageWrapper = styled.div`
 
 `;
 
-const slideDownFadeIn = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-
-export const NavContentWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-`;
-
 
 // 채팅 창을 담는 컨테이너 스타일 (절대 위치를 사용하여 MdChat 바로 아래에 위치)
 export const ChatFloatingWrapper = styled.div`
@@ -154,3 +135,36 @@ export const ChatFloatingWrapper = styled.div`
         z-index: 1000;
 `;
 
+
+export const NotificationWrapper = styled.div`
+    position: absolute;
+    //top: 80%;
+    top: 150px; /* 알림 아이콘 바로 아래에 위치하도록 조정 */
+    right: 23%;
+    width: 300px;
+    height: 350px;
+    background: white;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border-radius: 8px; /* 모서리 라운딩 추가 */
+    padding: 10px; /* 내부 여백 추가 */
+
+    /* 스크롤바 스타일 (선택 사항) */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: #ccc;
+    }
+
+`

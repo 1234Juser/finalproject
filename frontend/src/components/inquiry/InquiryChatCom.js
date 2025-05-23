@@ -27,7 +27,7 @@ const InquiryChatCom = ({
     }, [messages, messagesEndRef]);
 
 
-    console.log('메시지 확인:::::::::', messages);
+    // console.log('InquiryChatCom 컴포넌트 실행');
 
 
     return (

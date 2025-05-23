@@ -10,6 +10,7 @@ import {FaComments, FaEllipsisH, FaFlag, FaGift, FaHeart, FaPlaneDeparture, FaSt
 import React from "react";
 import styled from "styled-components";
 import {MdChat} from "react-icons/md";
+import {IoNotifications} from "react-icons/io5";
 import { RiChatSmile2Line } from "react-icons/ri";
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
@@ -22,7 +23,7 @@ const NavContentWrapper = styled.div`
     align-items: center;
 `;
 
-function NavCom({roles = [], toggleChat, chatAnchorRef}) {
+function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, notificationIconRef}) {
     const isAdmin = Array.isArray(roles) && roles.includes("ROLE_ADMIN");
 
     return (
@@ -63,6 +64,14 @@ function NavCom({roles = [], toggleChat, chatAnchorRef}) {
 
                 </NavCenter>
                 <NavRight>
+                    <li
+                        onClick={toggleNotification}
+                        style={{ position: 'relative', cursor: 'pointer' }}
+                        ref={notificationIconRef}
+                    >
+                        <IoNotifications style={{marginRight:6, color:"#80d369"}} />
+                        알림
+                    </li>
                     <li>
                         <a href="/wish/groups">
                             <FaHeart style={{marginRight:6, color:"#f2628e"}} />
@@ -83,13 +92,12 @@ function NavCom({roles = [], toggleChat, chatAnchorRef}) {
                                     <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                     마이페이지
                                 </a>
-                                    {/* 채팅 아이콘에 ref와 토글 함수 연결 */}
-{/*                                    <MdChat
+                                    <MdChat
                                         ref={chatAnchorRef}
                                         style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"30px", height:"30px" }}
                                         title="1:1 문의 채팅"
                                         onClick={toggleChat}
-                                    />*/}
+                                    />
                                     <RiChatSmile2Line ref={chatAnchorRef}
                                                       style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}
                                                       title="1:1 문의 채팅"

@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom"; // 추가
 import NavCom from "../../components/common/NavCom";
-import { ChatFloatingWrapper } from "../../style/common/NavStyle";
+import {ChatFloatingWrapper, NotificationWrapper} from "../../style/common/NavStyle";
 import InquiryChatCon from "../inquiry/InquiryChatCon";
+import NotificationListCon from "../notification/NotificationListCon";
 
 // JWT 토큰에서 역할 뽑기 예시 함수
 function parseJwt(token) {
@@ -20,10 +21,15 @@ function parseJwt(token) {
 }
 
 function NavCon() {
-    const location = useLocation(); // 추가
+    const location = useLocation();
     const [showChat, setShowChat] = useState(false);
     const chatAnchorRef = useRef(null);
     const [chatPosition, setChatPosition] = useState({ top: 0, left: 0 });
+    const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef(null);
+    const notificationIconRef = useRef(null); // 새로 추가된 ref
+
+
 
     const token = localStorage.getItem("accessToken");
     let roles = [];
@@ -67,7 +73,44 @@ function NavCon() {
     // 라우트 변경 시 채팅 창 닫기
     useEffect(() => {
         setShowChat(false);
+        setShowNotifications(false);
     }, [location.pathname]);
+
+
+    // 알림창 보이게 하기
+    const toggleNotification = (e) => {
+        if (e) e.preventDefault();
+        setShowNotifications(prev => !prev);
+        console.log("알림 아이콘 클릭됨");
+    };
+
+
+    // 알림창 외부 클릭 시 알림창 닫히게 하기
+    const handleClickOutside = (event) => {
+        if (
+            notificationRef.current &&
+            !notificationRef.current.contains(event.target) &&
+            notificationIconRef.current &&
+            !notificationIconRef.current.contains(event.target)
+        ) {
+            setShowNotifications(false);
+        }
+    };
+
+    useEffect(() => {
+        if (showNotifications) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showNotifications]);
+
+
+
 
     return (
         <>
@@ -75,6 +118,8 @@ function NavCon() {
                 roles={roles}
                 chatAnchorRef={chatAnchorRef}
                 toggleChat={toggleChat}
+                toggleNotification={toggleNotification}
+                notificationIconRef={notificationIconRef}
             />
             <ChatFloatingWrapper
                 top={chatPosition.top}
@@ -85,6 +130,11 @@ function NavCon() {
                     isVisible={showChat}
                 />
             </ChatFloatingWrapper>
+            {showNotifications && (
+                <NotificationWrapper ref={notificationRef}>
+                    <NotificationListCon />
+                </NotificationWrapper>
+            )}
         </>
     );
 }
