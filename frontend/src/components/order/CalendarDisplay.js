@@ -98,6 +98,11 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
         }
     }, [state.availableStartDate, state.availableEndDate]);
 
+    const defaultMonth = useMemo(() => {
+        if (!isValidDate(startDate)) return todayOnly;
+        return todayOnly < startDate ? startDate : todayOnly;
+    }, [startDate]);
+
     useEffect(() => {
         setCurrentDate(selectedDate ? new Date(selectedDate) : defaultDate);
     }, [optionData, selectedDate]);
@@ -141,10 +146,8 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
     };
 
     const renderDay = (date) => {
-        // const key = date.toISOString().split("T")[0];
         const key = format(date, 'yyyy-MM-dd');
         const price = priceData[key] || null;
-        // const isAvailable = availableDates.some(d => d.toISOString().split("T")[0] === key);
         const isAvailable = availableDates.some(d => format(d, 'yyyy-MM-dd') === key);
 
         return (
@@ -156,69 +159,68 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
             </DayContent>
         );
     };
+    if (!isValidDate(startDate) || !isValidDate(endDate)) {
+        return <div>달력 정보를 불러오는 중입니다...</div>;  // or null
+    }
 
     return(
-    <>
-        <Title>예약 날짜 선택</Title>
-        <CalendarWrapper>
-            {startDate && endDate && (
-            <StyledDayPicker
-                locale={ko}
-                mode="single"
-                // dateFormat='yyyy.MM.dd'
-                // minDate={yesterday}    // minDate 이전 날짜 선택 불가
-                selected={currentDate}
-                month={currentDate}  // 초기에 보여줄 달
-                // selected={new Date(currentDate)}
-                onSelect={handleDateSelect}
-                // selected={selectedDate ? new Date(selectedDate) : undefined}
-                // onSelect={(date) => {
-                //     if (date) {
-                //         onDateSelect(date.toISOString().split("T")[0]); // YYYY-MM-DD 형식으로 변환
-                //     }
-                // }}
-                // fromDate={new Date()}
-                fromDate={startDate}
-                toDate={endDate}
-                // fromDate={today}
-                // fromDate={new Date(today)}  // 시간 제거된 오늘 날짜.
-                // fromDate={localToday}   // 오늘 이전의 날짜 선택 불가
-                // fromDate={state.fromDate}
-                showOutsideDays={true}  // 현재 월에 포함되지 않은 날짜도 표시
-                onChange={(date) => setCurrentDate(date)}
-                components={{
-                    DayContent: ({ date }) => renderDay(date),
-                }}
-                formatters={{
-                    formatCaption: (month) => format(month, 'yyyy년 MM월', { locale: ko }),
-                    formatWeekdayName: (date) => format(date, 'EEE', { locale: ko }),
-                }}
-                classNames={{
-                    months: "flex flex-col w-full", // 월 컨테이너
-                    month: "flex flex-col w-full items-center",
-                    nav_button_previous: "absolute left-0",
-                    nav_button_next: "absolute right-0",
-                    // 개별 요일 셀
-                    weekday: "flex flex-col w-full",
-                }}
-                modifiers={{
-                    disabled: [{ before: startDate, after: endDate }],
-                }}
-                modifiersClassNames={{
-                    disabled: 'rdp-day_disabled',
-                    selected: 'rdp-day_selected',
-                    today: 'rdp-day_today',
-                    outside: 'rdp-day_outside',
-                }}
-            />)}
-            {selectedDate && (
-                <SelectedDate>
-                    {/*선택된 날짜: {selectedDate.toLocaleDateString()}*/}
-                    선택된 날짜: {new Date(selectedDate).toLocaleDateString("ko-KR")}
-                </SelectedDate>
-            )}
-        </CalendarWrapper>
-    </>)
+        <>
+            <Title>예약 날짜 선택</Title>
+            <CalendarWrapper>
+                {startDate && endDate && (
+                    <StyledDayPicker
+                        key={defaultMonth.toString()}
+                        locale={ko}
+                        mode="single"
+                        // dateFormat='yyyy.MM.dd'
+                        // minDate={yesterday}    // minDate 이전 날짜 선택 불가
+                        selected={currentDate}
+                        defaultMonth={defaultMonth}
+                        // month={currentDate}  // 초기에 보여줄 달. 월 이동이 불가능하게 고정된다
+                        onSelect={handleDateSelect}
+                        fromDate={startDate}
+                        toDate={endDate}
+                        fromMonth={startDate}
+                        toMonth={endDate}
+                        // fromDate={today}
+                        // fromDate={new Date(today)}  // 시간 제거된 오늘 날짜.
+                        // fromDate={localToday}   // 오늘 이전의 날짜 선택 불가
+                        // fromDate={state.fromDate}
+                        showOutsideDays={true}  // 현재 월에 포함되지 않은 날짜도 표시
+                        onChange={(date) => setCurrentDate(date)}
+                        components={{
+                            DayContent: ({ date }) => renderDay(date),
+                        }}
+                        formatters={{
+                            formatCaption: (month) => format(month, 'yyyy년 MM월', { locale: ko }),
+                            formatWeekdayName: (date) => format(date, 'EEE', { locale: ko }),
+                        }}
+                        classNames={{
+                            months: "flex flex-col w-full", // 월 컨테이너
+                            month: "flex flex-col w-full items-center",
+                            nav_button_previous: "absolute left-0",
+                            nav_button_next: "absolute right-0",
+                            // 개별 요일 셀
+                            weekday: "flex flex-col w-full",
+                        }}
+                        modifiers={{
+                            disabled: [{ before: startDate, after: endDate }],
+                        }}
+                        modifiersClassNames={{
+                            disabled: 'rdp-day_disabled',
+                            selected: 'rdp-day_selected',
+                            today: 'rdp-day_today',
+                            outside: 'rdp-day_outside',
+                        }}
+                    />)}
+                {selectedDate && (
+                    <SelectedDate>
+                        {/*선택된 날짜: {selectedDate.toLocaleDateString()}*/}
+                        선택된 날짜: {new Date(selectedDate).toLocaleDateString("ko-KR")}
+                    </SelectedDate>
+                )}
+            </CalendarWrapper>
+        </>)
 }
 
 export default CalendarDisplay;
