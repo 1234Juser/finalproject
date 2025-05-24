@@ -14,6 +14,9 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -383,9 +386,9 @@ public class MemberService {
         passwordResetAuthCodeRepository.deleteByExpiredAtBefore(LocalDateTime.now());
     }
     //관리자마이페이지회원전체정보조회
-    public List<MemberAllDTO> getAllMembers() {
-        List<MemberEntity> allMembers = memberRepository.findAll();
-        return allMembers.stream()
+    public Page<MemberAllDTO> getAllMembers(Pageable pageable) {
+        Page<MemberEntity> allMembers = memberRepository.findAll(pageable);
+        List<MemberAllDTO> content = allMembers.getContent().stream()
                 .map(member -> {
                     Set<String> roleNames = member.getRoles().stream()
                             .map(role -> role.getAuthority().getAuthorityName())
@@ -406,6 +409,7 @@ public class MemberService {
                     );
                 })
                 .collect(Collectors.toList());
+        return new PageImpl<>(content, pageable, allMembers.getTotalElements());
     }
 
     //관리자마이페이지회원상태변경
