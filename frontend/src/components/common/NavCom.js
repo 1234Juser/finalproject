@@ -105,5 +105,4 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
         </StyledNav>
     );
 }
-
 export default NavCom;
