@@ -66,7 +66,7 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                 <NavRight>
                     <li
                         onClick={toggleNotification}
-                        style={{ position: 'relative', cursor: 'pointer' }}
+                        style={{ position: 'relative', cursor: 'pointer', fontWeight: 500 }}
                         ref={notificationIconRef}
                     >
                         <IoNotifications style={{marginRight:6, color:"#80d369"}} />
@@ -78,28 +78,32 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                             찜 목록
                         </a>
                     </li>
-                    <li>
                         {isAdmin
-                            ? (
+                            ? (<li>
                                 <a href="/adminmypage">
                                     <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                     관리자 마이페이지
                                 </a>
+                                </li>
                             )
                             : (
-                                <MyPageWrapper>
-                                <a href="/mypage">
-                                    <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
-                                    마이페이지
-                                </a>
-                                    <RiChatSmile2Line ref={chatAnchorRef}
-                                                      style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}
-                                                      title="1:1 문의 채팅"
-                                                      onClick={toggleChat}/>
-                                </MyPageWrapper>
-                            )
+                                <>
+                                    <li>
+                                        <MyPageWrapper>
+                                            <a href="/mypage">
+                                                <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
+                                                마이페이지
+                                            </a>
+                                        </MyPageWrapper>
+                                    </li>
+                                    <li>
+                                        <RiChatSmile2Line ref={chatAnchorRef}
+                                                          style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}
+                                                          title="1:1 문의 채팅"
+                                                          onClick={toggleChat}/>
+                                    </li>
+                                </>)
                         }
-                    </li>
                 </NavRight>
             </NavContentWrapper>
         </StyledNav>

@@ -44,7 +44,13 @@ INSERT INTO tbl_wish (member_code, group_code, product_code) VALUES
     (1, 16, 2),
     (1, 17, 25),
     (1, 18, 26),
-    (1, 19, 27);
+    (1, 19, 27),
+# 테스트 (pk : 24)
+    (4, 1, 1),
+    (4, 1, 2),
+    (4, 1, 3),
+    (4, 1, 4),
+    (4, 1, 5);
 
 INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count) VALUES
 (1, '2025-05-20', 2, 0),
@@ -81,8 +87,13 @@ INSERT INTO tbl_option (product_code, reservation_date, adult_count, child_count
 (18, '2025-05-09', 2, 0),
 #26
 (19, '2025-05-09', 3, 2),
-(20, '2025-05-09', 4, 0);
-
+(20, '2025-05-09', 4, 0),
+#테스트 (pk : 28,29 30, 31, 32)
+(1, '2025-05-25', 1,0),
+(2, '2025-05-25', 1,0),
+(3, '2025-05-25', 1,0),
+(4, '2025-05-26', 1,0),
+(5, '2025-05-26', 1,0);
 
 INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, order_adult_price, order_child_price, total_price, order_date, order_status, is_reviewed) VALUES
 -- 일반상품: 아동 분리 없음
@@ -122,7 +133,13 @@ INSERT INTO tbl_order (product_code, option_code, member_code, booking_uid, orde
 (18, 25, 1, 'RSV20250518-25', 50000, 0, 200000, '2025-05-18 11:30:00', 'COMPLETED', 1),
 #26
 (19, 26, 2, 'RSV20250619-26', 65000, 25000, 270000, '2025-06-19 12:30:00', 'SCHEDULED', 0),
-(20, 27, 3, 'RSV20250720-27', 80000, 0, 320000, '2025-07-20 13:30:00', 'COMPLETED', 1);
+(20, 27, 3, 'RSV20250720-27', 80000, 0, 320000, '2025-07-20 13:30:00', 'COMPLETED', 1),
+#테스트 (pk : 28, 29, 30, 31, 32)
+(1, 28, 4, 'RSV20250523-28', 500, 0, 500, '2025-05-23 19:20:00', 'SCHEDULED', 1),
+(2, 29, 4, 'RSV20250523-29', 500, 0, 500, '2025-05-23 19:20:00', 'SCHEDULED', 1),
+(3, 30, 4, 'RSV20250523-30', 500, 0, 500, '2025-05-23 19:20:00', 'SCHEDULED', 1),
+(4, 31, 4, 'RSV20250523-31', 500, 0, 500, '2025-05-23 19:20:00', 'SCHEDULED', 1),
+(5, 32, 4, 'RSV20250523-32', 500, 0, 500, '2025-05-23 19:20:00', 'SCHEDULED', 1);
 
 INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand, payment_time, payment_amount, payment_status, imp_uid, merchant_uid, receipt_url) VALUES
     (1, 1, 'CARD', '삼성카드', '2025-04-01 10:23:45', 240000, 'COMPLETED', 'imp_1234567890', 'RSV20250401-01', 'https://receipt.url/1'),
@@ -159,7 +176,13 @@ INSERT INTO tbl_payment (member_code, order_code, payment_method, payment_brand,
     (1, 25, 'CARD', '롯데카드', '2025-05-18 11:45:00', 200000, 'COMPLETED', 'imp_1234567918', 'RSV20250518-25', 'https://receipt.url/25'),
     #26
     (2, 26, 'CARD', '우리카드', '2025-06-19 12:45:00', 270000, 'COMPLETED', 'imp_1234567919', 'RSV20250619-26', 'https://receipt.url/26'),
-    (3, 27, 'CARD', '신한카드', '2025-07-20 13:45:00', 320000, 'COMPLETED', 'imp_1234567920', 'RSV20250720-27', 'https://receipt.url/27');
+    (3, 27, 'CARD', '신한카드', '2025-07-20 13:45:00', 320000, 'COMPLETED', 'imp_1234567920', 'RSV20250720-27', 'https://receipt.url/27'),
+# 결제 테스트용 (pk : 28, 29, 30, 31, 32)
+(4, 28, 'CARD', '신한카드', '2025-05-23 19:20:00', 500, 'COMPLETED', 'imp_1234567921', 'RSV20250523-28', 'https://receipt.url/28'),
+(4, 29, 'CARD', '신한카드', '2025-05-23 19:20:00', 500, 'COMPLETED', 'imp_1234567922', 'RSV20250523-29', 'https://receipt.url/28'),
+(4, 30, 'CARD', '신한카드', '2025-05-23 19:20:00', 500, 'COMPLETED', 'imp_1234567923', 'RSV20250523-30', 'https://receipt.url/28'),
+(4, 31, 'CARD', '신한카드', '2025-05-23 19:20:00', 500, 'COMPLETED', 'imp_1234567924', 'RSV20250523-31', 'https://receipt.url/28'),
+(4, 32, 'CARD', '신한카드', '2025-05-23 19:20:00', 500, 'COMPLETED', 'imp_1234567925', 'RSV20250523-32', 'https://receipt.url/28');
 
 
 

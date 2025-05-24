@@ -57,7 +57,6 @@ export const NavRight = styled.ul`
         margin: 0;
         padding: 0;
         li {
-            a {
                 display: flex;
                 align-items: center;    
                 padding: 7px 14px;
@@ -68,9 +67,8 @@ export const NavRight = styled.ul`
                 text-decoration: none;
                 transition: all 0.16s;
             &:hover {
-                    background: linear-gradient(90deg, #f2f8fb 0%, #e0edfe 100%);
-                    color: #409cff;
-                }
+                background: linear-gradient(90deg, #f2f8fb 0%, #e0edfe 100%);
+                color: #409cff;
             }
         }
         position: relative; /* ChatFloatingWrapper의 절대 위치 기준 */
@@ -140,8 +138,8 @@ export const NotificationWrapper = styled.div`
     position: absolute;
     //top: 80%;
     top: 150px; /* 알림 아이콘 바로 아래에 위치하도록 조정 */
-    right: 23%;
-    width: 300px;
+    right: 25%;
+    width: 380px;
     height: 350px;
     background: white;
     overflow-y: auto;

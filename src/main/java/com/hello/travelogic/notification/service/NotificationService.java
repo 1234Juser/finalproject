@@ -35,12 +35,21 @@ public class NotificationService {
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
         log.debug("createNotification member::::::: {}", member);
 
-        NotificationEntity notification = NotificationEntity.builder()
+        NotificationEntity.NotificationEntityBuilder builder = NotificationEntity.builder()
                 .memberCode(member)
-                .notiMessage(requestDTO.getNotiMessage())
-                .notiTargetPostId(requestDTO.getNotiTargetPostId())
+                .notiMessage(requestDTO.getNotiMessage());
+//                .notiTargetPostId(requestDTO.getNotiTargetPostId())
                 // notiIsRead는 기본값 false, notiCreatedAt는 @CreationTimestamp로 자동 설정
-                .build();
+
+        if (requestDTO.getNotiTargetPostId() != null) {
+            builder.notiTargetPostId(requestDTO.getNotiTargetPostId());
+        }
+
+        if (requestDTO.getNotiOrderId() != null) {
+            builder.notiOrderId(requestDTO.getNotiOrderId());
+        }
+
+        NotificationEntity notification = builder.build();
         log.debug("createNotification notification::::::: {}", notification);
 
         NotificationEntity savedNotification = notificationRepo.save(notification);
@@ -73,7 +82,8 @@ public class NotificationService {
                         n.getNotiMessage(),
                         n.isNotiIsRead(),
                         n.getNotiCreatedAt(),
-                        n.getNotiTargetPostId()
+                        n.getNotiTargetPostId(),
+                        n.getNotiOrderId()
                 )).collect(Collectors.toList());
 
         log.debug("getNotifications resonseList::::::: {}", responseList);
