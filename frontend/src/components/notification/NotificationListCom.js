@@ -1,8 +1,9 @@
 import {
+    ActionButtonsGroup,
     DeleteAllSpan,
     DeleteSpan,
     MarkAllAsReadSpan, MarkAllSpanWrapper,
-    NoNotificationsMessage,
+    NoNotificationsMessage, NotificationActionsWrapper, NotificationContentWrapper,
     NotificationItem,
     NotificationListContainer, NotificationMessage, NotificationTimestamp
 } from "../../style/notification/StyleNotification";
@@ -31,20 +32,24 @@ function NotificationListCom({notifications, onHandleClick, onMarkAllAsRead, onD
                         key={n.notiId}
                         isRead={n.notiIsRead}
                     >
-                        <NotificationMessage isRead={n.notiIsRead}>
-                            <a href={`/community/companion/${n.notiTargetPostId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                {n.notiMessage}
-                            </a>
-                        </NotificationMessage>
-                        <NotificationTimestamp isRead={n.notiIsRead}>
-                            {new Date(n.notiCreatedAt).toLocaleString()}
-                        </NotificationTimestamp>
-                        <DeleteSpan onClick={() => onHandleClick(n.notiId, n.notiTargetPostId)}>
-                            읽음
-                        </DeleteSpan>
-                        <DeleteSpan onClick={() => onDelete(n.notiId)}>
-                            삭제
-                        </DeleteSpan>
+                            <NotificationMessage isRead={n.notiIsRead}>
+                                <a href={`/community/companion/${n.notiTargetPostId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                    {n.notiMessage}
+                                </a>
+                            </NotificationMessage>
+                            <NotificationActionsWrapper>
+                                <NotificationTimestamp isRead={n.notiIsRead}>
+                                    {n.notiCreatedAt.substring(0, 10)}
+                                </NotificationTimestamp>
+                                <ActionButtonsGroup >
+                                    <DeleteSpan onClick={() => onHandleClick(n.notiId, n.notiTargetPostId)}>
+                                        읽음
+                                    </DeleteSpan>
+                                    <DeleteSpan onClick={() => onDelete(n.notiId)}>
+                                        삭제
+                                    </DeleteSpan>
+                                </ActionButtonsGroup>
+                            </NotificationActionsWrapper>
                     </NotificationItem>
                 ))
             )}
