@@ -30,8 +30,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -124,9 +122,9 @@ public class PaymentService {
         OrderEntity order = orderRepo.findById(paymentDTO.getOrderCode())
                 .orElseThrow(() -> new IllegalArgumentException("주문 정보가 존재하지 않습니다."));
 
-        // merchantUid 생성
-        String merchantUid = generateMerchantUid(order.getOrderCode());
-        paymentDTO.setMerchantUid(merchantUid);
+        // merchantUid 생성이었는데 프론트에서 생성해준 값 받기로 변경
+//        String merchantUid = generateMerchantUid(order.getOrderCode());
+//        paymentDTO.setMerchantUid(merchantUid);
 
         // 결제 엔티티 생성 및 저장
         PaymentEntity payment = new PaymentEntity(paymentDTO, member, order);
@@ -134,6 +132,7 @@ public class PaymentService {
         payment.setPaymentTime(LocalDateTime.now());
 
         PaymentEntity savedPayment = paymentRepo.save(payment);
+        log.info("🟢 paymentCode={} 생성됨. 결제 정보가 DB에 저장되었습니다.", savedPayment.getPaymentCode());
         return new PaymentDTO(savedPayment);
     }
 
@@ -233,40 +232,85 @@ public class PaymentService {
         };
     }
 
-    // 결제 취소
+    // 결제 취소 2종
     // DB와 아임포트 서버 모두 상태변경
+    @Transactional
+    public void cancelPaymentByOrderCode(Long orderCode) {
+        PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
+                .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
+
+        if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
+            throw new IllegalStateException("결제 완료 상태만 취소할 수 있습니다.");
+        }
+
+        CancelData cancelData = new CancelData(payment.getImpUid(), false);
+        cancelData.setReason("예약 취소로 인한 환불");
+
+        try {
+            IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
+            if (response.getResponse() == null) {
+                throw new IllegalStateException("아임포트 결제 취소 실패: " + response.getMessage());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("결제 취소 중 오류 발생", e);
+        }
+
+        payment.setPaymentStatus(PaymentStatus.CANCELED);
+        paymentRepo.save(payment);
+    }
     @Transactional
     public boolean cancelPayment(String impUid) {
         try {
-            // 결제 취소 데이터 생성
             CancelData cancelData = new CancelData(impUid, false);
             cancelData.setReason("고객 요청에 따른 결제 취소");
 
             IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
-            Payment canceledPayment = response.getResponse();
-
-            // 결제 취소 실패
-            if (canceledPayment == null) {
-                System.out.println("결제 취소 실패: " + response.getMessage());
+            if (response.getResponse() == null) {
+                log.warn("❌ 결제 취소 실패: {}", response.getMessage());
                 return false;
             }
-            // DB의 결제 상태도 변경
-            PaymentEntity payment = paymentRepo.findByImpUid(impUid);
-            if (payment == null) {
-                throw new IllegalArgumentException("해당 결제 정보를 찾을 수 없습니다.");
-            }
-            if (payment != null) {
-                payment.setPaymentStatus(PaymentStatus.CANCELED);
-                paymentRepo.save(payment);
-            }
-            // 결제 취소 성공
-            System.out.println("결제 취소 성공: " + canceledPayment.getMerchantUid());
+
+            PaymentEntity payment = paymentRepo.findOptionalByImpUid(impUid)
+                    .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
+            payment.setPaymentStatus(PaymentStatus.CANCELED);
             return true;
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("❌ 결제 취소 중 예외 발생: {}", e.getMessage());
             return false;
         }
     }
+//    public boolean cancelPayment(String impUid) {
+//        try {
+//            // 결제 취소 데이터 생성
+//            CancelData cancelData = new CancelData(impUid, false);
+//            cancelData.setReason("고객 요청에 따른 결제 취소");
+//
+//            IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
+//            Payment canceledPayment = response.getResponse();
+//
+//            // 결제 취소 실패
+//            if (canceledPayment == null) {
+//                System.out.println("결제 취소 실패: " + response.getMessage());
+//                return false;
+//            }
+//            // DB의 결제 상태도 변경
+//            PaymentEntity payment = paymentRepo.findByImpUid(impUid);
+//            if (payment == null) {
+//                throw new IllegalArgumentException("해당 결제 정보를 찾을 수 없습니다.");
+//            }
+//            if (payment != null) {
+//                payment.setPaymentStatus(PaymentStatus.CANCELED);
+//                paymentRepo.save(payment);
+//            }
+//            // 결제 취소 성공
+//            System.out.println("결제 취소 성공: " + canceledPayment.getMerchantUid());
+//            return true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
     // 결제 상태 조회
     public PaymentDTO getPaymentByImpUid(String impUid) {

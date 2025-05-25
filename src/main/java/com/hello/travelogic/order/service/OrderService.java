@@ -9,10 +9,15 @@ import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.order.repo.OrderRepo;
+import com.hello.travelogic.payment.domain.PaymentEntity;
+import com.hello.travelogic.payment.domain.PaymentStatus;
+import com.hello.travelogic.payment.repo.PaymentRepo;
+import com.hello.travelogic.payment.service.PaymentService;
 import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.review.repo.ReviewRepo;
+import com.siot.IamportRestClient.request.CancelData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -22,7 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +44,10 @@ public class OrderService {
 
     private final OrderRepo orderRepo;
     private final OptionRepo optionRepo;
-    private final ReviewRepo reviewRepo;
     private final ProductRepo productRepo;
     private final MemberRepository memberRepo;
+    private final PaymentRepo paymentRepo;
+    private final PaymentService paymentService;
 
     // 관리자의 주문조회
     // 관리자 상품별 추가하면서 수정됐음
@@ -168,7 +173,21 @@ public class OrderService {
             }
 
             order.setOrderStatus(OrderStatus.CANCELED);
+
+            PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
+                    .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
+            if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
+                throw new IllegalStateException("결제 완료 상태만 취소할 수 있습니다.");
+            }
+            payment.setPaymentStatus(PaymentStatus.CANCELED);
+
+            CancelData cancelData = new CancelData(payment.getImpUid(), false);
+            cancelData.setReason("사용자 예약 취소로 인한 환불");
+
+            paymentService.cancelPaymentByOrderCode(orderCode);
+
             orderRepo.save(order);
+            paymentRepo.save(payment);
         }
     }
 
@@ -183,16 +202,15 @@ public class OrderService {
         if (order.getOrderStatus() != OrderStatus.SCHEDULED) {
             throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
         }
-        //if ("COMPLETED".equals(order.getOrderStatus())) {
-        //    throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
-        //}
         if (order.getOrderStatus() == OrderStatus.COMPLETED) {
             throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
         }
         if (order.getOrderStatus() == OrderStatus.SCHEDULED) {
-            order.setOrderStatus(OrderStatus.CANCELED);
-            orderRepo.save(order);
+            throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
         }
+        order.setOrderStatus(OrderStatus.CANCELED);
+        paymentService.cancelPaymentByOrderCode(orderCode);
+        orderRepo.save(order);
     }
 
     // 필터링

@@ -1,10 +1,14 @@
 import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
-import {getOrderByOrderCode} from "../../service/paymentService";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {getOrderByOrderCode, requestPayment} from "../../service/paymentService";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
+import {completeOrder} from "../../service/orderService";
 
 function PaymentRequest({orderCode, accessToken}) {
     // const { orderCode } = useParams();
+    const location = useLocation();
+    const { selectedPaymentMethod } = location.state || {};
+
     const [orderData, setOrderData] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
@@ -33,8 +37,34 @@ function PaymentRequest({orderCode, accessToken}) {
     // }, [orderData]);
     useEffect(() => {
         const executePayment = async () => {
+            if (!selectedPaymentMethod) {
+                alert("❗ 결제수단이 선택되지 않았습니다.");
+                return;
+            }
             try {
-                const result = await requestIamportPayment(orderData);
+                const result = await requestIamportPayment(orderData, selectedPaymentMethod);
+                console.log("💬 아임포트 결제 응답:", result);
+
+                const paymentData = {
+                    impUid: result.impUid,
+                    merchantUid: result.bookingUid,
+                    receiptUrl: result.receiptUrl,
+                    paymentMethod: selectedPaymentMethod,
+                    paymentBrand: result.paymentBrand,
+                    paymentAmount: result.paymentAmount,
+                    orderCode: result.orderCode,
+                    memberCode: orderData.memberCode,
+                };
+
+                console.log("📤 결제 저장 요청 데이터:", paymentData);
+                try {
+                    await requestPayment(paymentData, accessToken);
+                    // await completeOrder(orderCode, selectedPaymentMethod, paymentData.paymentAmount, accessToken);
+                    await completeOrder(result.orderCode, selectedPaymentMethod, result.paymentAmount, accessToken);
+                    console.log("🟢 PaymentEntity 저장 성공:", paymentData);
+                } catch (err) {
+                    console.error("❌ PaymentEntity 저장 실패:", err);
+                }
                 navigate("/payments/complete", {
                     state: result // result: { bookingUid, orderDate, productTitle, ... }
                 });
@@ -46,7 +76,7 @@ function PaymentRequest({orderCode, accessToken}) {
         if (orderData) {
             executePayment();
         }
-    }, [orderData, navigate]);
+    }, [orderData, selectedPaymentMethod, navigate]);
 
     if (errorMessage) {
         return <p style={{ color: "red" }}>{errorMessage}</p>;
