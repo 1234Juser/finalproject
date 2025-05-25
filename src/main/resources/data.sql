@@ -22,19 +22,21 @@ VALUES
 DELETE FROM tbl_event;
 INSERT INTO tbl_event (event_title, event_content, event_img, event_status, event_startdate, event_enddate)
 VALUES
-    ('기본 이벤트', '기본 이벤트입니다.', 'event/default_event.jpg', '진행중', NOW(), '2025-06-30 23:59:59'),
-    ('기본 이벤트2', '기본 이벤트입니다2.', 'event/default_event.jpg', '진행중', NOW(), '2026-06-30 23:59:59'),
-    ('기본 이벤트3', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트4', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트5', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트6', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트7', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트8', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트9', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트10', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59'),
-    ('기본 이벤트11', '기본 이벤트입니다3.', 'event/default_event.jpg', '진행중', NOW(), '2027-06-30 23:59:59');
+    -- 진행중인 이벤트 (종료 날짜가 미래)
+    ('초특가! 도쿄 3박 4일 자유여행', '지금 예약하면 항공권 할인! 아사쿠사, 시부야, 신주쿠를 내맘대로 즐기는 도쿄 핵심투어.', 'event/default_event.jpg', '진행중', NOW() - INTERVAL 7 DAY, DATE_ADD(NOW(), INTERVAL 14 DAY)),
+    ('낭만가득! 파리&스위스 7박 9일', '에펠탑 야경과 알프스 설산을 한번에! 유럽 베스트셀러 상품, 로맨틱 허니문으로도 강력 추천!', 'event/default_event.jpg', '진행중', NOW() - INTERVAL 3 DAY, DATE_ADD(NOW(), INTERVAL 27 DAY)),
+    ('여름휴가 추천! 다낭 3박 5일 호캉스', '미케비치 해변과 5성급 리조트에서 즐기는 완벽한 휴식. 바나힐 투어 포함 특별 프로모션 진행중!', 'event/default_event.jpg', '진행중', NOW(), DATE_ADD(NOW(), INTERVAL 45 DAY)),
+    ('제주도 완전정복! 렌터카+숙소 패키지', '푸른 제주 바다와 맛집 탐방! 항공권만 준비하세요. 가성비 최고의 제주 여행 상품.', 'event/default_event.jpg', '진행중', NOW() - INTERVAL 1 DAY, DATE_ADD(NOW(), INTERVAL 10 DAY)),
+    ('지금 아니면 언제? 방콕 파타야 5일 특가', '활기 넘치는 방콕 시내와 아름다운 파타야 해변을 동시에! 알찬 일정과 쇼핑 찬스까지!', 'event/default_event.jpg', '진행중', NOW(), DATE_ADD(NOW(), INTERVAL 20 DAY)),
+    ('온가족 해외여행! 싱가포르 4일 유니버셜', '유니버셜 스튜디오 입장권 포함! 멀라이언 파크, 가든스 바이더 베이 등 핵심 관광지와 함께 즐거운 가족여행!', 'event/default_event.jpg', '진행중', NOW() - INTERVAL 5 DAY, DATE_ADD(NOW(), INTERVAL 15 DAY)),
+    -- 종료된 이벤트 (종료 날짜가 과거)
+    ('[종료] 봄맞이 경주 벚꽃여행 1박 2일', '아름다운 벚꽃과 함께한 천년고도 경주 여행, 많은 사랑 감사드립니다. 다음 시즌을 기대해주세요!', 'event/default_event.jpg', '종료', NOW() - INTERVAL 60 DAY, NOW() - INTERVAL 45 DAY),
+    ('[종료] 겨울왕국 삿포로 눈꽃축제 4일', '환상적인 설경과 함께한 삿포로 눈꽃축제! 잊지 못할 추억을 선사해드렸기를 바랍니다.', 'event/default_event.jpg', '종료', NOW() - INTERVAL 120 DAY, NOW() - INTERVAL 100 DAY),
+    ('[종료] 추석연휴 한정! 홍콩 마카오 3박4일', '황금연휴에 떠났던 미식과 쇼핑의 천국! 뜨거운 성원에 감사드립니다.', 'event/default_event.jpg', '종료', NOW() - INTERVAL 90 DAY, NOW() - INTERVAL 80 DAY),
+    ('[종료] 부산 불꽃축제 명당 패키지', '화려한 불꽃과 함께한 가을밤의 추억! 내년에도 더 좋은 상품으로 찾아뵙겠습니다.', 'event/default_event.jpg', '종료', NOW() - INTERVAL 75 DAY, NOW() - INTERVAL 70 DAY),
+    ('[종료] 이탈리아 완전일주 10일', '로마, 피렌체, 베네치아를 포함한 이탈리아 핵심 도시 완전 정복! 고객님의 만족이 저희의 기쁨입니다.', 'event/default_event.jpg', '종료', NOW() - INTERVAL 150 DAY, NOW() - INTERVAL 140 DAY),
+    ('[종료] 코타키나발루 선셋투어 5일', '세계 3대 선셋을 감상했던 코타키나발루! 아름다운 추억과 함께해주셔서 감사합니다.', 'event/default_event.jpg', '종료', NOW() - INTERVAL 80 DAY, NOW() - INTERVAL 75 DAY),
+    ('[종료] 괌 PIC 골드카드 특가', '가족여행의 성지, 괌 PIC 리조트에서의 즐거운 시간! 다음에도 특별한 혜택으로 만나요.', 'event/default_event.jpg', '종료', NOW() - INTERVAL 100 DAY, NOW() - INTERVAL 90 DAY);
 
 -- faq테이블 중복삭제
 DELETE FROM tbl_faq;
@@ -71,38 +73,41 @@ INSERT INTO tbl_companion (companion_id, member_code, companion_title, companion
                                                                                                                                                                                   (11, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '싱가포르 가든스 바이 더 베이 야경 감상 동행', '싱가포르 가든스 바이 더 베이 슈퍼트리 쇼 같이 볼 동행 구합니다. 멋진 야경 보면서 맥주 한 잔 하실 분이면 더 좋을 것 같아요!', NOW(), NULL, 3, false);
 
 -- 여행커뮤니티댓글테이블
--- 게시글 1번에 댓글 11개
 INSERT INTO tbl_companion_comment (companion_comment_id, member_code, companion_id, companion_comment_content, companion_comment_created_at, companion_comment_modified_at)
 VALUES
-(1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '오 저도 제주도 가려고 했는데 혹시 날짜가 어떻게 되시나요? 렌트카 동행 딱 좋네요!', NOW() - INTERVAL 11 DAY, NULL),
-(2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '렌트카 비용 아끼기 좋겠네요! 맛집 탐방이라니 저랑 딱이에요. 자세한 일정 알 수 있을까요?', NOW() - INTERVAL 10 DAY, NULL),
-(3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '혼자 렌트하기 부담스러웠는데 좋은 기회네요! 면허는 있습니다. 혹시 출발지가 어디신가요?', NOW() - INTERVAL 9 DAY, NULL),
-(4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '제주도 맛집리스트 제가 짜드릴 수 있어요! 혹시 몇 분 정도 구하고 계신가요?', NOW() - INTERVAL 8 DAY, NULL),
-(5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '댓글 달아주신 분들 모두 감사해요! 쪽지 보내드릴게요.', NOW() - INTERVAL 7 DAY, NULL),
-(6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '제주도 혼자 여행가려다가 심심할 것 같았는데 잘됐네요! 저도 차 몰 수 있습니다. 합류하고 싶어요.', NOW() - INTERVAL 6 DAY, NULL),
-(7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '렌트카 동행이라니 완전 끌리네요! 저도 다음 주 제주도 가요. 혹시 감성 카페 투어도 좋아하시나요?', NOW() - INTERVAL 5 DAY, NULL),
-(8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '제주도민입니다! 혹시 현지 맛집 추천 필요하시면 제가 리스트 보내드릴게요 :)', NOW() - INTERVAL 4 DAY, NULL),
-(9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 2, '오사카 맛집투어라니! 저도 5월에 오사카 가는데 같이 다니면 좋겠어요. 특히 현지인 맛집 궁금하네요.', NOW() - INTERVAL 10 DAY, NULL),
-(10, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 2, '와 저 진짜 오사카 맛집 박사에요! 같이 다니면 후회 안 하실 겁니다. 언제 가세요?', NOW() - INTERVAL 9 DAY, NULL),
-(11, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2, '도톤보리에서 먹방 찍으실 분 찾고 있었는데! 저도 끼워주세요!', NOW() - INTERVAL 8 DAY, NULL),
-(12, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 3, '유럽 배낭여행! 1달이라니 대단하시네요. 저는 한 달까지는 어렵고 2주 정도 스페인만 동행 가능할 것 같아요.', NOW() - INTERVAL 9 DAY, NULL),
-(13, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 3, '저 체력 하나는 자신 있습니다! 유럽 배낭여행 로망이었는데, 혹시 영국 쪽은 생각 없으신가요?', NOW() - INTERVAL 8 DAY, NULL),
-(14, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 4, '강릉 서핑 저도 초보인데 같이 배울래요? 끝나고 회는 제가 쏩니다!', NOW() - INTERVAL 8 DAY, NULL),
-(15, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 4, '강릉 서핑이라니 시원하겠네요! 저 장비는 있는데 초보에요! 같이 가요!', NOW() - INTERVAL 7 DAY, NULL),
-(16, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 5, '도쿄 디즈니랜드 저도 다음 달 계획 중인데, 어트랙션 위주 좋네요! 같이 오픈런 하실 분?', NOW() - INTERVAL 7 DAY, NULL),
-(17, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 5, '디즈니랜드 완전 좋아해요! 혼자 가면 심심한데 같이 가실 분이라니 완전 환영입니다!', NOW() - INTERVAL 6 DAY, NULL),
-(18, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 6, '부산 요트 투어 정말 낭만적이겠네요! 사진 찍는 거 자신 있습니다. 저랑 같이 가요!', NOW() - INTERVAL 6 DAY, NULL),
-(19, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 6, '선셋 요트라니 환상이네요! 혹시 해운대 근처에서 숙소도 같이 잡으실 분 계신가요?', NOW() - INTERVAL 5 DAY, NULL),
-(20, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 7, '한라산 성판악 코스 힘든데, 같이 올라가면 더 힘낼 수 있을 것 같아요! 정상 김밥 꿀맛이죠.', NOW() - INTERVAL 5 DAY, NULL),
-(21, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 7, '와 한라산 등반이라니 멋있네요! 저도 같이 가고 싶어요. 등산 장비는 다 있습니다!', NOW() - INTERVAL 4 DAY, NULL),
-(22, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 8, '경주 한복 체험 저도 해보고 싶었어요! 같이 예쁜 한복 입고 사진 찍어요!', NOW() - INTERVAL 4 DAY, NULL),
-(23, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 8, '저는 사진 찍는 거 전문입니다! 인생샷 많이 남겨드릴게요. 같이 가요!', NOW() - INTERVAL 3 DAY, NULL),
-(24, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 9, '내일로 기차여행이라니 완전 로망이에요! 저 자유로운 영혼인데, 같이 떠날 수 있을까요?', NOW() - INTERVAL 3 DAY, NULL),
-(25, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 9, '저도 즉흥 여행 좋아해요! 내일로 계획 중이었는데 같이 가면 좋을 것 같아요.', NOW() - INTERVAL 2 DAY, NULL),
-(26, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 10, '태국 야시장 좋아요! 같이 가서 흥정으로 다 쓸어올 자신 있습니다 ㅋㅋㅋ', NOW() - INTERVAL 2 DAY, NULL),
-(27, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 10, '방콕 야시장 먹거리 최고죠! 저도 동행하고 싶어요. 맛집 정보 많이 압니다!', NOW() - INTERVAL 1 DAY, NULL),
-(28, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 11, '싱가포르 야경은 진짜 최고죠! 저도 마침 싱가포르 갈 예정인데, 같이 가든스 바이 더 베이에서 인생샷 남겨요!', NOW() - INTERVAL 1 DAY, NULL),
-(29, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 11, '슈퍼트리 쇼 보면서 맥주라니 완벽하네요! 저도 합류하고 싶습니다.', NOW(), NULL);
+    (1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '오 저도 제주도 가려고 했는데 혹시 날짜가 어떻게 되시나요? 렌트카 동행 딱 좋네요!', NOW() - INTERVAL 10 DAY, NULL),
+    (2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '렌트카 비용 아끼기 좋겠네요! 맛집 탐방이라니 저랑 딱이에요. 자세한 일정 알 수 있을까요?', NOW() - INTERVAL 10 DAY, NULL),
+    (3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '혼자 렌트하기 부담스러웠는데 좋은 기회네요! 면허는 있습니다. 혹시 출발지가 어디신가요?', NOW() - INTERVAL 9 DAY, NULL),
+    (4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '제주도 맛집리스트 제가 짜드릴 수 있어요! 혹시 몇 분 정도 구하고 계신가요?', NOW() - INTERVAL 8 DAY, NULL),
+    (5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '댓글 달아주신 분들 모두 감사해요! 쪽지 보내드릴게요.', NOW() - INTERVAL 7 DAY, NULL),
+    (6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '제주도 혼자 여행가려다가 심심할 것 같았는데 잘됐네요! 저도 차 몰 수 있습니다. 합류하고 싶어요.', NOW() - INTERVAL 6 DAY, NULL),
+    (7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '렌트카 동행이라니 완전 끌리네요! 저도 다음 주 제주도 가요. 혹시 감성 카페 투어도 좋아하시나요?', NOW() - INTERVAL 5 DAY, NULL),
+    (8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '제주도민입니다! 혹시 현지 맛집 추천 필요하시면 제가 리스트 보내드릴게요 :)', NOW() - INTERVAL 4 DAY, NULL),
+    (9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 2, '오사카 맛집투어라니! 저도 5월에 오사카 가는데 같이 다니면 좋겠어요. 특히 현지인 맛집 궁금하네요.', NOW() - INTERVAL 9 DAY, NULL),
+    (10, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 2, '와 저 진짜 오사카 맛집 박사에요! 같이 다니면 후회 안 하실 겁니다. 언제 가세요?', NOW() - INTERVAL 8 DAY, NULL),
+    (11, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2, '도톤보리에서 먹방 찍으실 분 찾고 있었는데! 저도 끼워주세요!', NOW() - INTERVAL 7 DAY, NULL),
+    (12, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 3, '유럽 배낭여행! 1달이라니 대단하시네요. 저는 한 달까지는 어렵고 2주 정도 스페인만 동행 가능할 것 같아요.', NOW() - INTERVAL 8 DAY, NULL),
+    (13, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 3, '저 체력 하나는 자신 있습니다! 유럽 배낭여행 로망이었는데, 혹시 영국 쪽은 생각 없으신가요?', NOW() - INTERVAL 7 DAY, NULL),
+    (14, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 4, '강릉 서핑 저도 초보인데 같이 배울래요? 끝나고 회는 제가 쏩니다!', NOW() - INTERVAL 7 DAY, NULL),
+    (15, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 4, '강릉 서핑이라니 시원하겠네요! 저 장비는 있는데 초보에요! 같이 가요!', NOW() - INTERVAL 6 DAY, NULL),
+    (16, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 5, '도쿄 디즈니랜드 저도 다음 달 계획 중인데, 어트랙션 위주 좋네요! 같이 오픈런 하실 분?', NOW() - INTERVAL 6 DAY, NULL),
+    (17, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 5, '디즈니랜드 완전 좋아해요! 혼자 가면 심심한데 같이 가실 분이라니 완전 환영입니다!', NOW() - INTERVAL 5 DAY, NULL),
+    (18, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 6, '부산 요트 투어 정말 낭만적이겠네요! 사진 찍는 거 자신 있습니다. 저랑 같이 가요!', NOW() - INTERVAL 5 DAY, NULL),
+    (19, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 6, '선셋 요트라니 환상이네요! 혹시 해운대 근처에서 숙소도 같이 잡으실 분 계신가요?', NOW() - INTERVAL 4 DAY, NULL),
+    (20, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 7, '한라산 성판악 코스 힘든데, 같이 올라가면 더 힘낼 수 있을 것 같아요! 정상 김밥 꿀맛이죠.', NOW() - INTERVAL 4 DAY, NULL),
+    (21, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 7, '와 한라산 등반이라니 멋있네요! 저도 같이 가고 싶어요. 등산 장비는 다 있습니다!', NOW() - INTERVAL 3 DAY, NULL),
+    (22, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 8, '경주 한복 체험 저도 해보고 싶었어요! 같이 예쁜 한복 입고 사진 찍어요!', NOW() - INTERVAL 3 DAY, NULL),
+    (23, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 8, '저는 사진 찍는 거 전문입니다! 인생샷 많이 남겨드릴게요. 같이 가요!', NOW() - INTERVAL 2 DAY, NULL),
+    (24, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 9, '내일로 기차여행이라니 완전 로망이에요! 저 자유로운 영혼인데, 같이 떠날 수 있을까요?', NOW() - INTERVAL 2 DAY, NULL),
+    (25, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 9, '저도 즉흥 여행 좋아해요! 내일로 계획 중이었는데 같이 가면 좋을 것 같아요.', NOW() - INTERVAL 1 DAY, NULL),
+    (26, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 10, '태국 야시장 좋아요! 같이 가서 흥정으로 다 쓸어올 자신 있습니다 ㅋㅋㅋ', NOW() - INTERVAL 1 DAY, NULL),
+    (27, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 10, '방콕 야시장 먹거리 최고죠! 저도 동행하고 싶어요. 맛집 정보 많이 압니다!', NOW() - INTERVAL 1 DAY, NULL),
+    (28, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 11, '싱가포르 야경은 진짜 최고죠! 저도 마침 싱가포르 갈 예정인데, 같이 가든스 바이 더 베이에서 인생샷 남겨요!', NOW(), NULL),
+    (29, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 11, '슈퍼트리 쇼 보면서 맥주라니 완벽하네요! 저도 합류하고 싶습니다.', NOW(), NULL),
+    (30, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '제주도 멋있어요?', NOW(), NULL),
+    (31, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '제주도 여행 재미있을꺼 같아요?', NOW(), NULL),
+    (32, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '제주도 흑돼지 삼겹살 먹고 싶어요', NOW(), NULL);
+
 
 -- tbl_like 테이블 더미 데이터 삽입
 INSERT INTO tbl_like (member_code, companion_id, companion_comment_id, created_at)
