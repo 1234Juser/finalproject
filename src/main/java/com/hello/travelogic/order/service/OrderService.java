@@ -9,10 +9,15 @@ import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.order.repo.OrderRepo;
+import com.hello.travelogic.payment.domain.PaymentEntity;
+import com.hello.travelogic.payment.domain.PaymentStatus;
+import com.hello.travelogic.payment.repo.PaymentRepo;
+import com.hello.travelogic.payment.service.PaymentService;
 import com.hello.travelogic.product.domain.ProductEntity;
 import com.hello.travelogic.product.dto.ProductDTO;
 import com.hello.travelogic.product.repo.ProductRepo;
 import com.hello.travelogic.review.repo.ReviewRepo;
+import com.siot.IamportRestClient.request.CancelData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -20,8 +25,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,9 +44,10 @@ public class OrderService {
 
     private final OrderRepo orderRepo;
     private final OptionRepo optionRepo;
-    private final ReviewRepo reviewRepo;
     private final ProductRepo productRepo;
     private final MemberRepository memberRepo;
+    private final PaymentRepo paymentRepo;
+    private final PaymentService paymentService;
 
     // 관리자의 주문조회
     // 관리자 상품별 추가하면서 수정됐음
@@ -167,7 +173,21 @@ public class OrderService {
             }
 
             order.setOrderStatus(OrderStatus.CANCELED);
+
+            PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
+                    .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
+            if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
+                throw new IllegalStateException("결제 완료 상태만 취소할 수 있습니다.");
+            }
+            payment.setPaymentStatus(PaymentStatus.CANCELED);
+
+            CancelData cancelData = new CancelData(payment.getImpUid(), false);
+            cancelData.setReason("사용자 예약 취소로 인한 환불");
+
+            paymentService.cancelPaymentByOrderCode(orderCode);
+
             orderRepo.save(order);
+            paymentRepo.save(payment);
         }
     }
 
@@ -182,16 +202,15 @@ public class OrderService {
         if (order.getOrderStatus() != OrderStatus.SCHEDULED) {
             throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
         }
-        //if ("COMPLETED".equals(order.getOrderStatus())) {
-        //    throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
-        //}
         if (order.getOrderStatus() == OrderStatus.COMPLETED) {
             throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
         }
         if (order.getOrderStatus() == OrderStatus.SCHEDULED) {
-            order.setOrderStatus(OrderStatus.CANCELED);
-            orderRepo.save(order);
+            throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
         }
+        order.setOrderStatus(OrderStatus.CANCELED);
+        paymentService.cancelPaymentByOrderCode(orderCode);
+        orderRepo.save(order);
     }
 
     // 필터링
@@ -336,17 +355,38 @@ public class OrderService {
     // PENDING 상태의 주문 삭제 (결제 실패 or 취소)
     @Transactional
     public void deletePendingOrder(Long orderCode) {
-        OrderEntity order = orderRepo.findById(orderCode)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+//        OrderEntity order = orderRepo.findById(orderCode)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        // 중복요청 방지 버전
+        try {
+            Optional<OrderEntity> optionalOrder = orderRepo.findById(orderCode);
 
-        // PENDING 상태가 아닌 경우 삭제 불가
-        if (order.getOrderStatus() != OrderStatus.PENDING) {
-            throw new IllegalStateException("PENDING 상태의 주문만 삭제할 수 있습니다.");
+            if (optionalOrder.isEmpty()) {
+                log.warn("🟠 삭제 요청 시 이미 주문이 없음 (중복 요청 추정): orderCode = {}", orderCode);
+                return;
+            }
+            OrderEntity order = optionalOrder.get();
+
+            // PENDING 상태가 아닌 경우 삭제 불가
+            if (order.getOrderStatus() != OrderStatus.PENDING) {
+                //            throw new IllegalStateException("PENDING 상태의 주문만 삭제할 수 있습니다.");
+                log.warn("🟠 주문 상태가 PENDING이 아님. 삭제 생략: orderCode = {}, status = {}", orderCode, order.getOrderStatus());
+                return;
+            }
+
+            try {
+                Long optionCode = order.getOption().getOptionCode();
+                // 삭제 처리
+                orderRepo.delete(order);
+                optionRepo.deleteById(optionCode);
+                log.info("🟢 PENDING 주문 및 옵션 삭제 완료: orderCode = {}, optionCode = {}", orderCode, optionCode);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                log.warn("🟡 중복 삭제 요청 감지 (Hibernate 에러): orderCode = {}", orderCode);
+            }
+
+        } catch (Exception e) {
+            log.error("🔴 주문 삭제 중 예기치 않은 오류 발생: orderCode = {}", orderCode, e);
         }
-
-        // 삭제 처리
-        orderRepo.delete(order);
-        log.info("🟢 PENDING 주문 삭제 완료: orderCode = {}", orderCode);
     }
 
     // orderStatus가 PENDING인경우 어느정도 대기시간을 주다가 orderCode삭제
@@ -361,5 +401,12 @@ public class OrderService {
             orderRepo.delete(order);
             log.info("🧹 오래된 PENDING 주문 삭제: {}", order.getOrderCode());
         }
+    }
+
+    // bookingUid로 예약 명세서페이지 출력
+    public OrderDTO getOrderByBookingUid(String bookingUid) {
+        OrderEntity order = orderRepo.findByBookingUid(bookingUid)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        return new OrderDTO(order); // → orderCode, product, member, payment 다 포함 가능
     }
 }

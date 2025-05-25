@@ -42,20 +42,21 @@ export const fetchPaymentMethods = async () => {
 };
 
 // 결제 요청은 아임포트에서 알아서 진행
-// export const requestPayment = async (paymentData, accessToken) => {
-//     try {
-//         const response = await axios.post(
-//             `${path}/payments/create`,
-//             paymentData,
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${accessToken}`,
-//                 },
-//             }
-//         );
-//         return response.data;
-//     } catch (error) {
-//         console.error("결제 요청 실패:", error);
-//         throw error;
-//     }
-// };
+export const requestPayment = async (paymentData, accessToken) => {
+    console.log("[requestPayment] 호출됨:", paymentData);
+    try {
+        const response = await axios.post(
+            `${path}/payments/create`,
+            paymentData,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("결제 요청 실패:", error);
+        throw error;
+    }
+};
