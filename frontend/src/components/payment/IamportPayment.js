@@ -24,9 +24,12 @@ export function requestIamportPayment( orderData, paymentMethod ) {
     } = orderData;
 
     const pgMap = {
-        CARD: "danal_tpay", // PG사
+        // CARD: "danal_tpay", // PG사
+        CARD: "html5_inicis", // PG사
         KAKAO_PAY: "kakaopay.TC0ONETIME", // 카카오페이 PG사 설정
-        VBANK: "html5_inicis"   // 무통장입금
+        BANK_TRANSFER: "html5_inicis",   // 무통장입금
+        NAVER_PAY: "naverpay.TC0ONETIME",
+        TOSS_PAY: "tosspay.tosstest"
     };
 
     if (!pgMap[paymentMethod]) {
@@ -65,6 +68,11 @@ export function requestIamportPayment( orderData, paymentMethod ) {
         }
 
         window.IMP.request_pay(data, function (rsp) {
+            console.log("✅ Iamport 응답 결과:", rsp);
+            console.log("vbank_num:", rsp.vbank_num);
+            console.log("vbank_name:", rsp.vbank_name);
+            console.log("vbank_holder:", rsp.vbank_holder);
+            console.log("vbank_date:", rsp.vbank_date);
             if (rsp.success) {
                 // 백엔드로 넘겨주는 정보들
                 resolve({
@@ -80,6 +88,12 @@ export function requestIamportPayment( orderData, paymentMethod ) {
                     productThumbnail,
                     totalPrice,
                     paymentAmount: totalPrice,
+                    vbankNum: rsp.vbank_num || null,
+                    vbankName: rsp.vbank_name || null,
+                    vbankHolder: rsp.vbank_holder || null,
+                    vbankDue: rsp.vbank_date
+                        ? new Date(rsp.vbank_date.replace(" ", "T")).toISOString()
+                        : null,
                 });
             } else {
                 reject(rsp.error_msg);

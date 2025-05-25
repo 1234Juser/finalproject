@@ -4,18 +4,15 @@ import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import com.hello.travelogic.payment.dto.PaymentDTO;
 import com.hello.travelogic.payment.service.PaymentService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -135,5 +132,14 @@ public class PaymentController {
                 .map(Enum::name)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(methods);
+    }
+
+    // 무통장 입금 결제상태 자동화
+    @PostMapping("/iamport/webhook")
+    public ResponseEntity<String> receiveWebhook(@RequestBody Map<String, Object> payload) {
+        String impUid = (String) payload.get("imp_uid");
+
+        paymentService.processPaymentWebhook(impUid);
+        return ResponseEntity.ok("OK");
     }
 }

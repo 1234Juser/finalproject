@@ -7,5 +7,6 @@ public enum PaymentStatus {
     CANCELED,   // 결제 취소
     FAILED,     // 결제 실패
     REFUNDED,   // 환불 완료
-    EXPIRED     // 결제 만료
+    EXPIRED,    // 결제 만료
+    WAITING_BANK_TRANSFER   // 무통장입금 입금 대기 상태
 }

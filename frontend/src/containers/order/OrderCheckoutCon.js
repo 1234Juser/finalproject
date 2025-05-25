@@ -10,6 +10,7 @@ import {
 import {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
+import {fetchPaymentMethods, requestPayment} from "../../service/paymentService";
 
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
@@ -157,9 +158,10 @@ function OrderCheckoutCon({ accessToken }) {
             alert("결제수단을 선택해주세요.");
             return;
         }
+        console.log("선택된 결제수단:", selectedPaymentMethod);
         const supportedMethods = ["CARD", "KAKAO_PAY", "BANK_TRANSFER"];
         if (!supportedMethods.includes(selectedPaymentMethod)) {
-            alert("카드와 카카오페이 외 결제는 서비스 준비 중 입니다.");
+            alert("카드와 카카오페이, 무통장입금 외 결제는 서비스 준비 중 입니다.");
             return;
         }
 
@@ -252,11 +254,15 @@ function OrderCheckoutCon({ accessToken }) {
             navigate("/payments/complete", {
                 state: {
                     bookingUid: result.bookingUid,
-                    orderDate: new Date().toISOString().split("T")[0],
+                    orderDate: new Date(),
                     productTitle: orderData.productTitle,
                     // productThumbnail: orderData.productThumbnail,
                     productThumbnail: resolvedThumbnail,
                     totalPrice: orderData.totalPrice,
+                    vbankNum: result.vbankNum,
+                    vbankName: result.vbankName,
+                    vbankHolder: result.vbankHolder,
+                    vbankDue: result.vbankDue,
                 },
             });
         } catch (error) {

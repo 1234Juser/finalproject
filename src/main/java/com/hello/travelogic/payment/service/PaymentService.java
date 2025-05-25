@@ -10,6 +10,7 @@ import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.payment.domain.PaymentEntity;
+import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import com.hello.travelogic.payment.dto.PaymentDTO;
 import com.hello.travelogic.payment.repo.PaymentRepo;
@@ -128,7 +129,12 @@ public class PaymentService {
 
         // 결제 엔티티 생성 및 저장
         PaymentEntity payment = new PaymentEntity(paymentDTO, member, order);
-        payment.setPaymentStatus(PaymentStatus.PENDING); // 기본 결제 상태 설정
+//        payment.setPaymentStatus(PaymentStatus.PENDING); // 기본 결제 상태 설정
+        if (paymentDTO.getPaymentMethod() == PaymentMethod.BANK_TRANSFER) {
+            payment.setPaymentStatus(PaymentStatus.WAITING_BANK_TRANSFER);
+        } else {
+            payment.setPaymentStatus(PaymentStatus.PENDING);
+        }
         payment.setPaymentTime(LocalDateTime.now());
 
         PaymentEntity savedPayment = paymentRepo.save(payment);
@@ -490,4 +496,42 @@ public class PaymentService {
         }
     }
 
+    @Transactional
+    public void processPaymentWebhook(String impUid) {
+        // 아임포트에서 impUid 기반 결제정보 확인
+        log.info("📨 Webhook 수신 - impUid: {}", impUid);
+        try {
+            IamportResponse<Payment> response = iamportClient.paymentByImpUid(impUid);
+            Payment iamportPayment = response.getResponse();
+            if (iamportPayment == null) {
+                log.warn("🟠 아임포트 응답이 null입니다. impUid = {}", impUid);
+                return; // 또는 예외 throw
+            }
+
+            // DB 조회
+            PaymentEntity payment = paymentRepo.findByImpUid(impUid);
+            if (payment == null) {
+                throw new IllegalArgumentException("DB 결제 정보 없음");
+            }
+
+            if (iamportPayment.getStatus().equals("paid")) {
+                payment.setPaymentStatus(PaymentStatus.COMPLETED);
+                payment.setPaymentTime(LocalDateTime.now());
+                paymentRepo.save(payment);
+
+                OrderEntity order = payment.getOrder();
+                if (order.getOrderStatus() == OrderStatus.PENDING) {
+                    order.setOrderStatus(OrderStatus.SCHEDULED);
+                    orderRepo.save(order);
+                }
+
+                log.info("🟢 Webhook 처리 완료 - 결제 및 주문 상태 업데이트: impUid = {}", impUid);
+            } else {
+                log.warn("❌ 결제 상태가 paid가 아님: {}", iamportPayment.getStatus());
+            }
+
+        } catch (Exception e) {
+            log.error("❌ 아임포트 서버 통신 실패:", e);
+        }
+    }
 }
