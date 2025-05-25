@@ -41,6 +41,7 @@ function PaymentRequest({orderCode, accessToken}) {
                 alert("❗ 결제수단이 선택되지 않았습니다.");
                 return;
             }
+            console.log("⚙️ 결제 실행 시작");
             try {
                 const result = await requestIamportPayment(orderData, selectedPaymentMethod);
                 console.log("💬 아임포트 결제 응답:", result);
@@ -54,21 +55,40 @@ function PaymentRequest({orderCode, accessToken}) {
                     paymentAmount: result.paymentAmount,
                     orderCode: result.orderCode,
                     memberCode: orderData.memberCode,
+                    vbankNum: result.vbankNum,
+                    vbankName: result.vbankName,
+                    vbankHolder: result.vbankHolder,
+                    vbankDue: result.vbankDue,
                 };
 
                 console.log("📤 결제 저장 요청 데이터:", paymentData);
+                console.log("💬 result:", result);
                 try {
                     await requestPayment(paymentData, accessToken);
                     // await completeOrder(orderCode, selectedPaymentMethod, paymentData.paymentAmount, accessToken);
                     await completeOrder(result.orderCode, selectedPaymentMethod, result.paymentAmount, accessToken);
                     console.log("🟢 PaymentEntity 저장 성공:", paymentData);
+                    console.log("💬 result:", result);
                 } catch (err) {
                     console.error("❌ PaymentEntity 저장 실패:", err);
                 }
                 navigate("/payments/complete", {
-                    state: result // result: { bookingUid, orderDate, productTitle, ... }
+                    // state: result // result: { bookingUid, orderDate, productTitle, ... }
+                    // state: paymentData
+                    state: {
+                        bookingUid: result.bookingUid,
+                        orderDate: result.orderDate,
+                        productTitle: result.productTitle,
+                        productThumbnail: result.productThumbnail,
+                        totalPrice: result.totalPrice,
+                        vbankNum: result.vbankNum,
+                        vbankName: result.vbankName,
+                        vbankHolder: result.vbankHolder,
+                        vbankDue: result.vbankDue,
+                    }
                 });
             } catch (msg) {
+                console.error("❌ 결제 실패 메시지:", msg);
                 alert("결제 실패: " + msg);
             }
         };

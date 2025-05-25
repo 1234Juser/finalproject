@@ -56,6 +56,18 @@ public class PaymentEntity {
     @Column(name = "receipt_url", nullable = false, length = 200)
     private String receiptUrl;
 
+    @Column(name = "vbank_num", nullable = true, length = 30)
+    private String vbankNum;
+
+    @Column(name = "vbank_name", nullable = true, length = 30)
+    private String vbankName;
+
+    @Column(name = "vbank_holder", nullable = true, length = 50)
+    private String vbankHolder;
+
+    @Column(name = "vbank_due", nullable = true)
+    private LocalDateTime vbankDue;
+
     public PaymentEntity(PaymentDTO dto, MemberEntity member, OrderEntity order) {
         this.member = member;
         this.order = order;
@@ -67,5 +79,9 @@ public class PaymentEntity {
         this.impUid = dto.getImpUid();
         this.merchantUid = dto.getMerchantUid();
         this.receiptUrl = dto.getReceiptUrl();
+        this.vbankNum = dto.getVbankNum();
+        this.vbankName = dto.getVbankName();
+        this.vbankHolder = dto.getVbankHolder();
+        this.vbankDue = dto.getVbankDue();
     }
 }
