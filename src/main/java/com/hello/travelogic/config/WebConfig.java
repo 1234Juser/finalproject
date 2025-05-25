@@ -56,6 +56,9 @@ public class WebConfig implements WebMvcConfigurer {
         // 상품 썸네일 경로 설정
         registry.addResourceHandler("/upload/product/**")
                 .addResourceLocations("file:" + new File("upload/product").getAbsolutePath() + "/");
+        //커뮤니티 사진
+        registry.addResourceHandler("/upload/community/**")
+                .addResourceLocations("file:" + new File("upload/community").getAbsolutePath() + "/");
     }
 }
 

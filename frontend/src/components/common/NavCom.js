@@ -1,12 +1,17 @@
-import {StyledNav, NavCenter, NavRight, MyPageWrapper, ChatFloatingWrapper} from "../../style/common/NavStyle";
 import {
-    FaFlag, FaPlaneDeparture, FaGift, FaStar, FaComments, FaEllipsisH,
-    FaHeart, FaUserCircle
-} from "react-icons/fa";
+    DropdownContainer,
+    DropdownMenu,
+    MyPageWrapper,
+    NavCenter,
+    NavRight,
+    StyledNav
+} from "../../style/common/NavStyle";
+import {FaComments, FaEllipsisH, FaFlag, FaGift, FaHeart, FaPlaneDeparture, FaStar, FaUserCircle} from "react-icons/fa";
 import React from "react";
 import styled from "styled-components";
 import {MdChat} from "react-icons/md";
-import InquiryChatCom from "./InquiryChatCom";
+import {IoNotifications} from "react-icons/io5";
+import { RiChatSmile2Line } from "react-icons/ri";
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 const NavContentWrapper = styled.div`
@@ -18,12 +23,12 @@ const NavContentWrapper = styled.div`
     align-items: center;
 `;
 
-function NavCom({roles = [], toggleChat, chatAnchorRef}) {
+function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, notificationIconRef}) {
     const isAdmin = Array.isArray(roles) && roles.includes("ROLE_ADMIN");
 
     return (
-        // 기존 StyledNav는 position:relative 필요! (배경 비디오 위치기준)
-        <StyledNav style={{position: 'relative', overflow: 'hidden'}}>
+
+        <StyledNav style={{position: 'relative'}}>
 
 
             {/* 기존 네비 내용 */}
@@ -42,51 +47,66 @@ function NavCom({roles = [], toggleChat, chatAnchorRef}) {
                         <a href="/event"><FaGift style={{marginRight:6, color:"#fc8b8b"}} />이벤트</a>
                     </li>
                     <li>
-                        <a href="/theme"><FaStar style={{marginRight:6, color:"#ffd465"}} />테마여행</a>
+                        <a href="/customizedtravel"><FaStar style={{marginRight:6, color:"#ffd465"}} />맞춤여행</a>
                     </li>
                     <li>
                         <a href="/community/companion"><FaComments style={{marginRight:6, color:"#a785e9"}} />커뮤니티</a>
                     </li>
-                    <li>
+                    <DropdownContainer>
                         <span><FaEllipsisH style={{marginRight:6, color:"#bbb"}} />더보기</span>
-                    </li>
+                        <DropdownMenu>
+                            <li><a href="/about">회사소개</a></li>
+                            <li><a href="/ceo">ceo 인사말</a></li>
+                            <li><a href="/faq">자주묻는질문(FAQ)</a></li>
+                            <li><a href="/notice">공지사항</a></li>
+                        </DropdownMenu>
+                    </DropdownContainer>
+
                 </NavCenter>
                 <NavRight>
+                    <li
+                        onClick={toggleNotification}
+                        style={{ position: 'relative', cursor: 'pointer', fontWeight: 500 }}
+                        ref={notificationIconRef}
+                    >
+                        <IoNotifications style={{marginRight:6, color:"#80d369"}} />
+                        알림
+                    </li>
                     <li>
                         <a href="/wish/groups">
                             <FaHeart style={{marginRight:6, color:"#f2628e"}} />
                             찜 목록
                         </a>
                     </li>
-                    <li>
                         {isAdmin
-                            ? (
+                            ? (<li>
                                 <a href="/adminmypage">
                                     <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                     관리자 마이페이지
                                 </a>
+                                </li>
                             )
                             : (
-                                <MyPageWrapper>
-                                <a href="/mypage">
-                                    <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
-                                    마이페이지
-                                </a>
-                                    {/* 채팅 아이콘에 ref와 토글 함수 연결 */}
-                                    <MdChat
-                                        ref={chatAnchorRef}
-                                        style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer' }}
-                                        title="1:1 문의 채팅"
-                                        onClick={toggleChat}
-                                    />
-                                </MyPageWrapper>
-                            )
+                                <>
+                                    <li>
+                                        <MyPageWrapper>
+                                            <a href="/mypage">
+                                                <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
+                                                마이페이지
+                                            </a>
+                                        </MyPageWrapper>
+                                    </li>
+                                    <li>
+                                        <RiChatSmile2Line ref={chatAnchorRef}
+                                                          style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}
+                                                          title="1:1 문의 채팅"
+                                                          onClick={toggleChat}/>
+                                    </li>
+                                </>)
                         }
-                    </li>
                 </NavRight>
             </NavContentWrapper>
         </StyledNav>
     );
 }
-
 export default NavCom;

@@ -49,8 +49,15 @@ import AdminReviewByProductPage from "./pages/review/AdminReviewByProductPage";
 import OptionFormPage from "./pages/order/OptionFormPage";
 import OrderCheckoutPage from "./pages/order/OrderCheckoutPage";
 import CompanionMyPagePage from "./pages/companion/CompanionMyPagePage";
+import InquiryChatAdminPage from "./pages/inquiry/InquiryChatAdminPage";
+import InquiryChatAdminAnswerPage from "./pages/inquiry/InquiryChatAdminAnswerPage";
 import PaymentPage from "./pages/payment/PaymentPage";
+import CustomizePage from "./pages/customize/CustomizePage";
+import CustomizeSearchPage from "./pages/customize/CustomizeSearchPage";
+import CompanyPage from "./pages/common/CompanyPage";
 import PaymentCompletePage from "./pages/payment/PaymentCompletePage";
+import MyReceiptPage from "./pages/reservation/MyReceiptPage";
+import CeoPage from "./pages/common/CeoPage";
 
 function App() {
     return (
@@ -59,6 +66,8 @@ function App() {
 
           <Routes>
               <Route path="/" element={<MainPage />} />
+              <Route path="/about" element={<CompanyPage/>}/>
+              <Route path="/ceo" element={<CeoPage/>}/>
               {/*이벤트페이지*/}
               <Route path="/event" element={<EventListPage/>}/>
               <Route path="/event/register" element={<EventRegisterPage />} />
@@ -72,6 +81,9 @@ function App() {
               <Route path="/search" element={<SearchProductPage />} />
               {/*실시간조회수*/}
               <Route path="/realtime" element={<AdminRealTimePage />} />
+              {/*맞춤여행*/}
+              <Route path="/customizedtravel" element={<CustomizePage/>}/>
+              <Route path="/search-results" element={<CustomizeSearchPage/>}/>
 
 
 
@@ -94,6 +106,7 @@ function App() {
                 <Route path="/my/reservations" element={<MyBookingPage />} />
                 <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
                 <Route path="/review/edit/:reviewCode" element={<MyReviewEditPage />} />
+                <Route path="/reservations/receipt/:bookingUid" element={<MyReceiptPage />} />
 
                 {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
@@ -107,6 +120,8 @@ function App() {
                 <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
                 <Route path="/admin/review" element={<AdminReviewPage />} />
                 <Route path="/admin/review/by-product" element={<AdminReviewByProductPage />} />
+                <Route path="/admin/inquirychat" element={<InquiryChatAdminPage/>} />
+                <Route path="/admin/inquirychat/:inquiryChatId" element={<InquiryChatAdminAnswerPage/>} />
 
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>

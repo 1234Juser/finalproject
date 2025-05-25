@@ -14,7 +14,7 @@ import {
 } from "../../style/product/StyleProductCon";
 import { GoCalendar, GoFilter  } from "react-icons/go";
 
-function ProductCom({products, cityName, handleFilterReset, handleSort, filteredProducts}){
+function ProductCom({ cityName, handleFilterReset, handleSort, products: filteredProducts}){
 
     const formatPrice = (price) => {
         if (typeof price !== "number") return price; // 숫자가 아닐 경우 그대로 반환

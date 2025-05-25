@@ -63,4 +63,10 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
 
     // PENDING으로 오랜시간 존재 시 삭제
     List<OrderEntity> findAllByOrderStatusAndOrderDateBefore(OrderStatus orderStatus, LocalDateTime localDateTime);
+
+    // bookingUid로 명세서 출력
+    Optional<OrderEntity> findByBookingUid(String bookingUid);
+
+    // 예약일자와 주문상태 조회
+    List<OrderEntity> findByOrderStatusAndOptionReservationDate (OrderStatus orderStatus, LocalDate tomorrow);
 }

@@ -6,6 +6,9 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -140,8 +143,9 @@ public class MemberController {
 
     //관리자마이페이지회원정보전체조회
     @GetMapping("/all")
-    public ResponseEntity<List<MemberAllDTO>> getAllMembers(){
-        List<MemberAllDTO> members = memberService.getAllMembers();
+    public ResponseEntity<Page<MemberAllDTO>> getAllMembers(
+            @PageableDefault(size = 10, sort = "memberRegisterdate", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable){
+        Page<MemberAllDTO> members = memberService.getAllMembers(pageable);
         return ResponseEntity.ok(members);
     }
     //관리자마이페이지회원상태변경

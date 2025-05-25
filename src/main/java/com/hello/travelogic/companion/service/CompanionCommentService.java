@@ -7,6 +7,8 @@ import com.hello.travelogic.companion.repository.CompanionCommentRepository;
 import com.hello.travelogic.companion.repository.CompanionRepository;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
+import com.hello.travelogic.notification.dto.NotificationRequestDTO;
+import com.hello.travelogic.notification.service.NotificationService;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -32,6 +32,7 @@ public class CompanionCommentService {
     private final CompanionRepository companionRepository;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
+    private final NotificationService notificationService;
 
     // 특정 게시글의 댓글 목록 조회 (만약 CompanionController에서 댓글 목록을 함께 가져오지 않는다면 이 함수를 사용)
 //    @Transactional(readOnly = true)
@@ -70,6 +71,28 @@ public class CompanionCommentService {
                 .build();
 
         CompanionCommentEntity savedComment = companionCommentRepository.save(comment);
+
+
+        // 댓글 알림 (본인 게시글 제외)
+        if(!memberCode.equals(companion.getMember().getMemberCode())){
+
+            // 게시글 작성자에게 알림 생성
+            Long postAuthorCode = companion.getMember().getMemberCode();
+            String companionTitle = companion.getCompanionTitle();
+
+            // 알림 메시지에 게시물 제목 포함
+            String notiMessage = "게시글 \"" + companionTitle + "\"에 새로운 댓글이 달렸습니다!";
+
+            NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
+                    .memberCode(postAuthorCode)
+                    .notiMessage(notiMessage)
+                    .notiTargetPostId(companionId)
+                    .build();
+
+            notificationService.createNotification(notificationRequest);
+        }
+
+
         return CompanionCommentDTO.fromEntity(savedComment);
     }
 

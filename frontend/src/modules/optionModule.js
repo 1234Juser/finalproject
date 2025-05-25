@@ -13,6 +13,8 @@ const initialState = {
     loading: false,
     error: null,
     fromDate: new Date(),
+    availableStartDate: null,
+    availableEndDate: null,
 };
 
 const reducer = (state, action) => {
@@ -24,6 +26,8 @@ const reducer = (state, action) => {
                 productAdult: action.data.productAdult || 0,
                 productChild: action.data.productChild || 0,
                 productMaxParticipants: action.data.productMaxParticipants || 0,
+                availableStartDate: action.data.availableStartDate || null,
+                availableEndDate: action.data.availableEndDate || null,
             };
         case "SET_OPTION_DATA":
             return {

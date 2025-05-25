@@ -10,7 +10,6 @@ import com.hello.travelogic.companion.repository.CompanionRepository;
 import com.hello.travelogic.companion.repository.LikeRepository;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
-import com.hello.travelogic.member.service.MemberService;
 import com.hello.travelogic.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

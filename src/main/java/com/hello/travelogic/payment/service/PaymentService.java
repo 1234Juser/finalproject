@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
+import com.hello.travelogic.notification.dto.NotificationRequestDTO;
+import com.hello.travelogic.notification.service.NotificationService;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.repo.OrderRepo;
@@ -20,6 +22,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +54,7 @@ public class PaymentService {
     private final PaymentRepo paymentRepo;
     private final OrderRepo orderRepo;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     private static final String IAMPORT_TOKEN_URL = "https://api.iamport.kr/users/getToken";
     private static final String IAMPORT_PAYMENT_URL = "https://api.iamport.kr/payments";
@@ -432,8 +437,57 @@ public class PaymentService {
             order.setOrderStatus(OrderStatus.SCHEDULED);
             orderRepo.save(order);
             log.info("🟢 결제 성공 처리 - 주문 상태를 SCHEDULED로 변경: orderCode = {}", orderCode);
+
+
+/*            // 댓글 알림
+            if (order.getOrderStatus().equals(OrderStatus.SCHEDULED)) {
+
+                Long memberCode = order.getMember().getMemberCode();
+                String message = "주문 번호 " + orderCode + "의 결제가 완료되었습니다.";
+
+                NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
+                        .memberCode(memberCode)
+                        .notiMessage(message)
+                        .notiOrderId(orderCode)
+                        .build();
+
+                notificationService.createNotification(notificationRequest);
+                log.debug("결제 알림  요청 DTO 확인 : {}", notificationRequest);
+                log.info("🟢 결제 완료 알림 전송: memberCode = {}, message = {}", memberCode, message);
+            }*/
+
+            // 5초 후에 알림 생성 및 전송
+            sendDelayedNotification(order);
+
         } else {
             log.warn("🟠 결제 성공 처리 중단 - 이미 상태가 변경된 주문: orderCode = {}, status = {}", orderCode, order.getOrderStatus());
         }
     }
+
+    // 비동기적으로 5초 지연 후 알림 생성 및 전송
+    @Async
+    public void sendDelayedNotification(OrderEntity order) {
+        try {
+            // 5초 지연
+            TimeUnit.SECONDS.sleep(5);
+
+            Long memberCode = order.getMember().getMemberCode();
+            String message = "주문 번호 " + order.getOrderCode() + "의 결제가 완료되었습니다.";
+
+            NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
+                    .memberCode(memberCode)
+                    .notiMessage(message)
+                    .notiOrderId(order.getOrderCode())
+                    .build();
+
+            notificationService.createNotification(notificationRequest);
+            log.info("🟢 결제 완료 알림 전송 (5초 지연): memberCode = {}, message = {}", memberCode, message);
+        } catch (InterruptedException e) {
+            log.error("알림 전송 지연 중 오류 발생: {}", e.getMessage());
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            log.error("알림 전송 중 오류 발생: {}", e.getMessage());
+        }
+    }
+
 }

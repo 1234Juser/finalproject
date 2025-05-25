@@ -57,7 +57,6 @@ export const NavRight = styled.ul`
         margin: 0;
         padding: 0;
         li {
-            a {
                 display: flex;
                 align-items: center;    
                 padding: 7px 14px;
@@ -68,46 +67,102 @@ export const NavRight = styled.ul`
                 text-decoration: none;
                 transition: all 0.16s;
             &:hover {
-                    background: linear-gradient(90deg, #f2f8fb 0%, #e0edfe 100%);
-                    color: #409cff;
-                }
+                background: linear-gradient(90deg, #f2f8fb 0%, #e0edfe 100%);
+                color: #409cff;
             }
         }
-        `;
+        position: relative; /* ChatFloatingWrapper의 절대 위치 기준 */
 
+`;
+
+// 드롭다운 메뉴 스타일
+export const DropdownMenu = styled.ul`
+    position: absolute;
+    top: 100%; // "더보기" 메뉴 아래에 위치
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+    min-width: 150px; // 드롭다운 최소 너비
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    display: none; // 기본적으로 숨김
+
+    li {
+        padding: 0;
+        margin: 0;
+        a {
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            display: block;
+            &:hover {
+                background-color: #f1f1f1;
+                color: #409cff;
+            }
+        }
+    }
+`;
+
+// "더보기" 메뉴 hover 시 드롭다운 표시
+export const DropdownContainer = styled.li`
+    position: relative;
+    &:hover ${DropdownMenu} {
+        display: block;
+    }
+`;
 // 마이페이지 오른쪽 아이콘 및 텍스트 묶음용 스타일 컴포넌트
 export const MyPageWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-`;
+  position: relative; /* ChatFloatingWrapper의 절대 위치 기준 */
 
-const slideDownFadeIn = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
 `;
 
 
-// 채팅창을 네비게이션 영역 밖, 화면 최상단에 공중에 띄우기 위한 스타일드 컴포넌트
+// 채팅 창을 담는 컨테이너 스타일 (절대 위치를 사용하여 MdChat 바로 아래에 위치)
 export const ChatFloatingWrapper = styled.div`
-  position: fixed;
-  top: ${({ top }) => top}px;
-  left: ${({ $left }) => $left}px;
-  width: 400px;
-  max-width: calc(100vw - 16px);  /* 화면 가로 여백 최소 16px 확보 */
-  z-index: 9999;
-  background-color: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-radius: 8px;
-
-  animation: ${slideDownFadeIn} 0.3s ease forwards;
-  /* animation: 이름 시간 타이밍함수 지속모드 */
-
+        position: absolute;
+        top: 80%;
+        right: 100px;
+        width: 400px;
+        z-index: 1000;
 `;
 
+
+export const NotificationWrapper = styled.div`
+    position: absolute;
+    //top: 80%;
+    top: 150px; /* 알림 아이콘 바로 아래에 위치하도록 조정 */
+    right: 25%;
+    width: 380px;
+    height: 350px;
+    background: white;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border-radius: 8px; /* 모서리 라운딩 추가 */
+    padding: 10px; /* 내부 여백 추가 */
+
+    /* 스크롤바 스타일 (선택 사항) */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: #ccc;
+    }
+
+`

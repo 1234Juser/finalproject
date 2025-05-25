@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -215,28 +216,6 @@ public class ProductService {
 
         return result;
     }
-
-
-    // themeCode에 따라 productType 설정
-    private ProductEntity.ProductType getProductTypeByThemeCode(ThemeEntity themeEntity) {
-        Long themeCode = themeEntity.getThemeCode();
-
-        if (themeCode == 1) {
-            return ProductEntity.ProductType.TOUR;
-        } else if (themeCode == 2) {
-            return ProductEntity.ProductType.CRUISE;
-        } else if (themeCode == 3) {
-            return ProductEntity.ProductType.GOLF;
-        } else if (themeCode == 4) {
-            return ProductEntity.ProductType.KIDS;
-        } else if (themeCode == 5) {
-            return ProductEntity.ProductType.HONEYMOON;
-        } else if (themeCode == 6) {
-            return ProductEntity.ProductType.SILVER;
-        }
-        throw new IllegalArgumentException("알 수 없는 테마 코드: " + themeCode);
-    }
-
     
     // 리뷰 작성/삭제 시 reviewcount만 업데이트
     public void updateReviewCount(Long productCode) {
@@ -339,7 +318,6 @@ public class ProductService {
                     productE.setProductChild(productDTO.getProductChild());
                     productE.setProductMinParticipants(productDTO.getProductMinParticipants());
                     productE.setProductMaxParticipants(productDTO.getProductMaxParticipants());
-                    productE.setProductType(productDTO.getProductType());
                     productE.setProductStatus(productDTO.getProductStatus());
                     productE.setProductThumbnail(productDTO.getProductThumbnail());
                 }
@@ -394,5 +372,11 @@ public class ProductService {
         return 0;
     }
     
-    
+    // 명세서 페이지에 띄울 랜덤 상품 광고
+    public List<ProductDTO> getRandomAdProducts(int count) {
+        return productRepo.findRandomProducts(count)
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
+    }
 }

@@ -1,5 +1,7 @@
 package com.hello.travelogic.order.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -74,6 +76,23 @@ public class OrderController {
         } catch (Exception e) {
             log.error("🔴 PENDING 주문 삭제 실패:", e);
             return ResponseEntity.status(500).body("주문 삭제 실패: " + e.getMessage());
+        }
+    }
+
+    // 주문검토페이지 이탈시 생성되었던 orderCode와 optionCode 자동삭제
+    @PostMapping("/orders/cancel-pending")
+    public ResponseEntity<?> cancelPendingOrderOnPageExit(@RequestBody String body) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Long> request = objectMapper.readValue(body, new TypeReference<>() {});
+            Long orderCode = request.get("orderCode");
+
+            log.info("📥 페이지 이탈 주문 삭제 요청 수신됨: {}", orderCode);
+            orderService.deletePendingOrder(orderCode);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("🔴 페이지 이탈 삭제 처리 중 예외 발생", e);
+            return ResponseEntity.ok("중복 요청 또는 삭제 예외: 무시됨");
         }
     }
 

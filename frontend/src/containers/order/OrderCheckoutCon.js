@@ -10,7 +10,6 @@ import {
 import {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
-import {fetchPaymentMethods, requestPayment} from "../../service/paymentService";
 
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();

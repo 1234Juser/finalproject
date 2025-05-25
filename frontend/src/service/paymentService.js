@@ -41,6 +41,19 @@ export const fetchPaymentMethods = async () => {
     }
 };
 
+export const fetchPaymentByBookingUid = async (bookingUid, accessToken) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        };
+        const response = await axios.get(`/payments/${bookingUid}`, config);
+        return response.data;
+    } catch (err) {
+        console.error("결제 정보 조회 실패:", err);
+        throw err;
+    }
+};
+
 // 결제 요청은 아임포트에서 알아서 진행
 export const requestPayment = async (paymentData, accessToken) => {
     console.log("[requestPayment] 호출됨:", paymentData);

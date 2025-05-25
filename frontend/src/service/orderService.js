@@ -1,4 +1,5 @@
 import axios from "axios";
+import {format} from "date-fns";
 
 const path = "http://localhost:8080"
 
@@ -93,19 +94,14 @@ export const fetchOptionsByDate = async (productUid, reservationDate) => {
         throw error;
     }
 };
-// export const fetchOptionsByDate = async (productUid) => {
-//     try {
-//         const response = await axios.get(`${path}/products/${productUid}/options`);
-//         return response.data;
-//     } catch (error) {
-//         console.error("🔴 옵션 가격 데이터를 불러오는 데 실패했습니다:", error);
-//         throw error;
-//     }
-// };
+
 export const fetchOptionsByDateRange = async (productUid, startDate, endDate) => {
     try {
+        const s = typeof startDate === "string" ? startDate : format(startDate, "yyyy-MM-dd");
+        const e = typeof endDate   === "string" ? endDate   : format(endDate,   "yyyy-MM-dd");
+
         const response = await axios.get(`${path}/products/${productUid}/option`, {
-            params: { startDate, endDate },
+            params: { startDate: s, endDate: e },
         });
         console.log("🟢 옵션 가격 데이터 가져오기 성공:", response.data);
         return response.data;
@@ -251,6 +247,24 @@ export const deletePendingOrder = async (orderCode, accessToken) => {
         return response.data;
     } catch (error) {
         console.error("🔴 주문 삭제 실패:", error);
+        throw error;
+    }
+};
+
+// 페이지 이동시 PENDING상태 주문 삭제
+export const cancelPendingOrder = async (orderCode, accessToken) => {
+    const data = { orderCode };
+    try {
+        const response = await axios.post("/orders/cancel-pending", data, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        console.log("🟢 SPA 페이지 이동 중 주문 삭제 완료");
+        return response;
+    } catch (error) {
+        console.warn("🔴 SPA 주문 삭제 실패", error);
         throw error;
     }
 };

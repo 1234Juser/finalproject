@@ -44,7 +44,13 @@ public class WishService {
     }
 
     // 특정 위시 그룹의 상품 조회
-    public List<WishDTO> getItemsByGroupCode(long groupCode) {
+    public List<WishDTO> getItemsByGroupCode(long groupCode, long memberCode) {
+        WishGroupEntity group = wishGroupRepo.findByGroupCode(groupCode)
+                .orElseThrow(() -> new NoSuchElementException("그룹이 존재하지 않습니다."));
+
+        if (!group.getMember().getMemberCode().equals(memberCode)) {
+            throw new SecurityException("해당 그룹에 대한 접근 권한이 없습니다.");
+        }
 
         // 리뷰 숫자와 평점 추가
         List<WishEntity> entities = wishRepo.findByGroup_GroupCode(groupCode);
