@@ -40,61 +40,69 @@ VALUES
 DELETE FROM tbl_faq;
 INSERT INTO tbl_faq (faq_title, faq_content)
 VALUES
-    ('자주 묻는 질문 1', '첫 번째 FAQ 내용'),
-    ('자주 묻는 질문 2', '두 번째 FAQ 내용'),
-    ('자주 묻는 질문 3', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 4', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 5', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 6', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 7', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 8', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 9', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 10', '세 번째 FAQ 내용'),
-    ('자주 묻는 질문 11', '열한 번째 FAQ 내용'),
-    ('자주 묻는 질문 12', '열두 번째 FAQ 내용');
+    ('예약은 어떻게 하나요?', '저희 웹사이트에서 원하는 여행 상품을 선택하신 후, 예약하기 버튼을 클릭하여 안내에 따라 정보를 입력하시면 됩니다. 궁금한 점이 있으시면 고객센터로 문의해주세요.'),
+    ('결제는 어떤 방법으로 가능한가요?', '신용카드(Visa, MasterCard, American Express), 계좌 이체, 그리고 페이팔을 통해 결제가 가능합니다. 일부 상품의 경우 무통장 입금도 지원합니다.'),
+    ('예약 취소 및 환불 규정은 어떻게 되나요?', '예약 취소 및 환불 규정은 상품별로 상이합니다. 일반적으로 출발일로부터 며칠 전까지는 전액 환불이 가능하며, 그 이후에는 위약금이 발생할 수 있습니다. 자세한 내용은 예약 시 상품 페이지를 참고하시거나 고객센터로 문의해주세요.'),
+    ('항공권은 어떻게 수령하나요?', '예약 및 결제가 완료되면, 등록하신 이메일 주소로 전자 항공권(e-ticket)이 발송됩니다. 해당 전자 항공권을 출력하시거나 모바일 기기에 저장하여 공항에서 사용하시면 됩니다.'),
+    ('수하물 규정은 어떻게 되나요?', '수하물 규정은 이용하시는 항공사 및 항공권 종류에 따라 다릅니다. 일반적으로 위탁 수하물과 기내 수하물의 무게 및 크기 제한이 있으니, 예약하신 항공사의 홈페이지를 통해 확인하시거나 고객센터로 문의해주세요.'),
+    ('단체 여행도 가능한가요?', '네, 단체 여행도 가능합니다. 10인 이상의 단체 여행의 경우, 별도의 맞춤형 견적 및 특별 할인을 제공해 드립니다. 고객센터로 문의하시면 자세한 상담을 받으실 수 있습니다.'),
+    ('여행자 보험 가입은 필수인가요?', '여행자 보험은 필수는 아니지만, 만약의 사태에 대비하여 가입하시는 것을 강력히 권장합니다. 저희는 다양한 여행자 보험 상품을 제휴하고 있으니, 필요하시면 안내해 드릴 수 있습니다.'),
+    ('현지에서 비상 상황 발생 시 어떻게 해야 하나요?', '현지에서 비상 상황이 발생하면, 즉시 저희 고객센터 비상 연락처로 연락 주십시오. 24시간 운영되는 비상 연락망을 통해 도움을 드릴 것입니다.'),
+    ('어린이와 함께하는 여행 시 주의사항은 무엇인가요?', '어린이와 함께하는 여행은 특별한 준비가 필요합니다. 유아용 카시트, 유모차 대여 가능 여부, 어린이 메뉴 제공 여부 등을 미리 확인하시고, 여권 유효기간과 비자 필요 여부를 꼭 확인해주세요.'),
+    ('맞춤형 여행 상품 개발도 가능한가요?', '네, 고객님의 취향과 예산에 맞춰 맞춤형 여행 상품 개발도 가능합니다. 원하시는 목적지, 예산, 여행 기간 등을 알려주시면 전문가가 최적의 여행 계획을 설계해 드립니다.'),
+    ('여행 중 현지 통화는 어떻게 준비해야 하나요?', '여행 국가의 현지 통화는 출발 전 국내 은행에서 환전하시거나, 현지 공항 또는 시내 환전소에서 환전하실 수 있습니다. 일부 지역에서는 신용카드 사용이 편리합니다.'),
+    ('비자 발급에 대한 도움을 받을 수 있나요?', '네, 여행하시려는 국가에 따라 비자가 필요한 경우, 비자 발급에 필요한 정보나 절차에 대해 안내해 드릴 수 있습니다. 다만, 비자 발급은 개인의 책임이므로 미리 준비하시는 것이 좋습니다.');
 
 -- 게시물테이블 중복삭제
 DELETE FROM tbl_like;
 DELETE FROM tbl_companion_comment;
 DELETE FROM tbl_companion;
 INSERT INTO tbl_companion (companion_id, member_code, companion_title, companion_content, companion_created_at, companion_modified_at, companion_view_count,companion_notice) VALUES
-                                                                                                                                                                 (1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 1', '1번 동행글 내용입니다.', NOW() - INTERVAL 10 DAY, NULL, 12, true),
-                                                                                                                                                                 (2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 2', '2번 동행글 내용입니다.', NOW() - INTERVAL 9 DAY, NULL, 34, false),
-                                                                                                                                                                 (3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 3', '3번 동행글 내용입니다.', NOW() - INTERVAL 8 DAY, NULL, 56, false),
-                                                                                                                                                                 (4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '제목 4', '4번 동행글 내용입니다.', NOW() - INTERVAL 7 DAY, NULL, 21, false),
-                                                                                                                                                                 (5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 5', '5번 동행글 내용입니다.', NOW() - INTERVAL 6 DAY, NULL, 0, false),
-                                                                                                                                                                 (6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 6', '6번 동행글 내용입니다.', NOW() - INTERVAL 5 DAY, NULL, 13, false),
-                                                                                                                                                                 (7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 7', '7번 동행글 내용입니다.', NOW() - INTERVAL 4 DAY, NULL, 88, false),
-                                                                                                                                                                 (8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '제목 8', '8번 동행글 내용입니다.', NOW() - INTERVAL 3 DAY, NULL, 45, false),
-                                                                                                                                                                 (9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제목 9', '9번 동행글 내용입니다.', NOW() - INTERVAL 2 DAY, NULL, 7, false),
-                                                                                                                                                                 (10, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '제목 10', '10번 동행글 내용입니다.', NOW() - INTERVAL 1 DAY, NULL, 99, false),
-                                                                                                                                                                 (11, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제목 11', '11번 동행글 내용입니다.', NOW(), NULL, 3, false);
-
+                                                                                                                                                                                  (1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '제주도 2박 3일 동행 구해요! (렌트카 필수)', '다음주 제주도 여행 계획 중인데, 같이 동행하실 분 찾아요! 렌트카 같이 빌려서 나눠내면 좋을 것 같아요. 맛집 탐방 좋아하시면 더 환영입니다!', NOW() - INTERVAL 10 DAY, NULL, 12, true),
+                                                                                                                                                                                  (2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '오사카 맛집 투어 동행 구합니다!', '5월 황금연휴에 오사카 맛집 투어 계획 중이에요. 현지 맛집 잘 아시는 분이나 같이 찾아다닐 분 계시면 연락 주세요! 식비 N빵으로 즐겁게 먹방 찍어요~', NOW() - INTERVAL 9 DAY, NULL, 34, false),
+                                                                                                                                                                                  (3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '유럽 배낭여행 1달 동행 구합니다 (체력 필수!)', '7월 한 달간 유럽 배낭여행 동행자를 찾습니다! 스페인-이탈리아-프랑스 루트 예상하고 있어요. 걷는 거 좋아하고 즉흥적인 여행 즐기시는 분이면 좋겠습니다.', NOW() - INTERVAL 8 DAY, NULL, 56, false),
+                                                                                                                                                                                  (4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '강릉 서핑 같이 타러 가실 분?', '이번 주말 강릉에서 서핑 배우러 가려고 하는데, 같이 가실 분 계신가요? 초보도 환영입니다! 끝나고 맛있는 회 한 접시 같이 하실 분 구해요.', NOW() - INTERVAL 7 DAY, NULL, 21, false),
+                                                                                                                                                                                  (5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '도쿄 디즈니랜드 같이 갈 파티원 모집!', '다음 달 도쿄 디즈니랜드 갈 예정인데, 혼자 가는 것보다 같이 가면 더 재밌을 것 같아서 동행 구합니다! 어트랙션 위주로 빠르게 돌고 싶어요.', NOW() - INTERVAL 6 DAY, NULL, 0, false),
+                                                                                                                                                                                  (6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '부산 해운대 요트 투어 동행하실 분?', '이번 여름 부산 해운대에서 요트 투어 계획 중이에요. 선셋 보면서 힐링하고 싶으신 분들 같이 가요! 사진 찍는 거 좋아하시면 더 좋아요.', NOW() - INTERVAL 5 DAY, NULL, 13, false),
+                                                                                                                                                                                  (7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '제주 한라산 등반 동행 구합니다 (성판악 코스)', '이번 주말 한라산 성판악 코스 등반 계획 중입니다. 혼자보단 같이 오르면서 힘이 되어줄 동행 구해요! 정상에서 김밥 같이 먹어요.', NOW() - INTERVAL 4 DAY, NULL, 88, false),
+                                                                                                                                                                                  (8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), '경주 한복 체험 같이 하실 분?', '경주 여행 가서 예쁜 한복 입고 사진 남기고 싶은데, 혼자서는 좀 민망해서 동행 구해요! 사진 예쁘게 찍어주실 분이면 더 좋아요!', NOW() - INTERVAL 3 DAY, NULL, 45, false),
+                                                                                                                                                                                  (9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), '내일로 기차여행 동행자 구함 (자유로운 영혼 환영)', '이번 여름 내일로 기차여행 계획 중인데, 자유롭게 떠날 수 있는 동행자를 찾습니다. 즉흥적인 여행 스타일 선호하고, 새로운 사람 만나는 거 좋아하는 분 연락 주세요!', NOW() - INTERVAL 2 DAY, NULL, 7, false),
+                                                                                                                                                                                  (10, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), '태국 방콕 야시장 투어 동행 구합니다', '다음 달 방콕 여행 가는데, 짜뚜짝 시장이랑 딸랏롯파이 야시장 같이 구경하고 맛있는 거 먹을 동행 찾아요! 흥정의 달인 환영합니다!', NOW() - INTERVAL 1 DAY, NULL, 99, false),
+                                                                                                                                                                                  (11, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), '싱가포르 가든스 바이 더 베이 야경 감상 동행', '싱가포르 가든스 바이 더 베이 슈퍼트리 쇼 같이 볼 동행 구합니다. 멋진 야경 보면서 맥주 한 잔 하실 분이면 더 좋을 것 같아요!', NOW(), NULL, 3, false);
 
 -- 여행커뮤니티댓글테이블
 -- 게시글 1번에 댓글 11개
-INSERT INTO tbl_companion_comment (companion_comment_id, member_code, companion_id, companion_comment_content, companion_comment_created_at, companion_comment_modified_at) VALUES
-                                                                                                                                                                                (1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '1번 게시물의 댓글 1', NOW() - INTERVAL 11 DAY, NULL),
-                                                                                                                                                                                (2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '1번 게시물의 댓글 2', NOW() - INTERVAL 10 DAY, NULL),
-                                                                                                                                                                                (3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '1번 게시물의 댓글 3', NOW() - INTERVAL 9 DAY, NULL),
-                                                                                                                                                                                (4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '1번 게시물의 댓글 4', NOW() - INTERVAL 8 DAY, NULL),
-                                                                                                                                                                                (5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '1번 게시물의 댓글 5', NOW() - INTERVAL 7 DAY, NULL),
-                                                                                                                                                                                (6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '1번 게시물의 댓글 6', NOW() - INTERVAL 6 DAY, NULL),
-                                                                                                                                                                                (7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '1번 게시물의 댓글 7', NOW() - INTERVAL 5 DAY, NULL),
-                                                                                                                                                                                (8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '1번 게시물의 댓글 8', NOW() - INTERVAL 4 DAY, NULL),
-                                                                                                                                                                                (9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '1번 게시물의 댓글 9', NOW() - INTERVAL 3 DAY, NULL),
-                                                                                                                                                                                (10, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '1번 게시물의 댓글 10', NOW() - INTERVAL 2 DAY, NULL),
-                                                                                                                                                                                (11, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '1번 게시물의 댓글 11', NOW() - INTERVAL 1 DAY, NULL),
-                                                                                                                                                                                (12, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2, '2번 게시물의 댓글', NOW() - INTERVAL 10 DAY, NULL),
-                                                                                                                                                                                (13, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 3, '3번 게시물의 댓글', NOW() - INTERVAL 9 DAY, NULL),
-                                                                                                                                                                                (14, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 4, '4번 게시물의 댓글', NOW() - INTERVAL 8 DAY, NULL),
-                                                                                                                                                                                (15, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 5, '5번 게시물의 댓글', NOW() - INTERVAL 7 DAY, NULL),
-                                                                                                                                                                                (16, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 6, '6번 게시물의 댓글', NOW() - INTERVAL 6 DAY, NULL),
-                                                                                                                                                                                (17, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 7, '7번 게시물의 댓글', NOW() - INTERVAL 5 DAY, NULL),
-                                                                                                                                                                                (18, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 8, '8번 게시물의 댓글', NOW() - INTERVAL 4 DAY, NULL),
-                                                                                                                                                                                (19, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 9, '9번 게시물의 댓글', NOW() - INTERVAL 3 DAY, NULL),
-                                                                                                                                                                                (20, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 10, '10번 게시물의 댓글', NOW() - INTERVAL 2 DAY, NULL),
-                                                                                                                                                                                (21, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 11, '11번 게시물의 댓글', NOW() - INTERVAL 1 DAY, NULL);
+INSERT INTO tbl_companion_comment (companion_comment_id, member_code, companion_id, companion_comment_content, companion_comment_created_at, companion_comment_modified_at)
+VALUES
+(1, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '오 저도 제주도 가려고 했는데 혹시 날짜가 어떻게 되시나요? 렌트카 동행 딱 좋네요!', NOW() - INTERVAL 11 DAY, NULL),
+(2, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '렌트카 비용 아끼기 좋겠네요! 맛집 탐방이라니 저랑 딱이에요. 자세한 일정 알 수 있을까요?', NOW() - INTERVAL 10 DAY, NULL),
+(3, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '혼자 렌트하기 부담스러웠는데 좋은 기회네요! 면허는 있습니다. 혹시 출발지가 어디신가요?', NOW() - INTERVAL 9 DAY, NULL),
+(4, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '제주도 맛집리스트 제가 짜드릴 수 있어요! 혹시 몇 분 정도 구하고 계신가요?', NOW() - INTERVAL 8 DAY, NULL),
+(5, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 1, '댓글 달아주신 분들 모두 감사해요! 쪽지 보내드릴게요.', NOW() - INTERVAL 7 DAY, NULL),
+(6, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 1, '제주도 혼자 여행가려다가 심심할 것 같았는데 잘됐네요! 저도 차 몰 수 있습니다. 합류하고 싶어요.', NOW() - INTERVAL 6 DAY, NULL),
+(7, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1, '렌트카 동행이라니 완전 끌리네요! 저도 다음 주 제주도 가요. 혹시 감성 카페 투어도 좋아하시나요?', NOW() - INTERVAL 5 DAY, NULL),
+(8, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 1, '제주도민입니다! 혹시 현지 맛집 추천 필요하시면 제가 리스트 보내드릴게요 :)', NOW() - INTERVAL 4 DAY, NULL),
+(9, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 2, '오사카 맛집투어라니! 저도 5월에 오사카 가는데 같이 다니면 좋겠어요. 특히 현지인 맛집 궁금하네요.', NOW() - INTERVAL 10 DAY, NULL),
+(10, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 2, '와 저 진짜 오사카 맛집 박사에요! 같이 다니면 후회 안 하실 겁니다. 언제 가세요?', NOW() - INTERVAL 9 DAY, NULL),
+(11, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2, '도톤보리에서 먹방 찍으실 분 찾고 있었는데! 저도 끼워주세요!', NOW() - INTERVAL 8 DAY, NULL),
+(12, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 3, '유럽 배낭여행! 1달이라니 대단하시네요. 저는 한 달까지는 어렵고 2주 정도 스페인만 동행 가능할 것 같아요.', NOW() - INTERVAL 9 DAY, NULL),
+(13, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 3, '저 체력 하나는 자신 있습니다! 유럽 배낭여행 로망이었는데, 혹시 영국 쪽은 생각 없으신가요?', NOW() - INTERVAL 8 DAY, NULL),
+(14, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 4, '강릉 서핑 저도 초보인데 같이 배울래요? 끝나고 회는 제가 쏩니다!', NOW() - INTERVAL 8 DAY, NULL),
+(15, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 4, '강릉 서핑이라니 시원하겠네요! 저 장비는 있는데 초보에요! 같이 가요!', NOW() - INTERVAL 7 DAY, NULL),
+(16, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 5, '도쿄 디즈니랜드 저도 다음 달 계획 중인데, 어트랙션 위주 좋네요! 같이 오픈런 하실 분?', NOW() - INTERVAL 7 DAY, NULL),
+(17, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 5, '디즈니랜드 완전 좋아해요! 혼자 가면 심심한데 같이 가실 분이라니 완전 환영입니다!', NOW() - INTERVAL 6 DAY, NULL),
+(18, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 6, '부산 요트 투어 정말 낭만적이겠네요! 사진 찍는 거 자신 있습니다. 저랑 같이 가요!', NOW() - INTERVAL 6 DAY, NULL),
+(19, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 6, '선셋 요트라니 환상이네요! 혹시 해운대 근처에서 숙소도 같이 잡으실 분 계신가요?', NOW() - INTERVAL 5 DAY, NULL),
+(20, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 7, '한라산 성판악 코스 힘든데, 같이 올라가면 더 힘낼 수 있을 것 같아요! 정상 김밥 꿀맛이죠.', NOW() - INTERVAL 5 DAY, NULL),
+(21, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 7, '와 한라산 등반이라니 멋있네요! 저도 같이 가고 싶어요. 등산 장비는 다 있습니다!', NOW() - INTERVAL 4 DAY, NULL),
+(22, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 8, '경주 한복 체험 저도 해보고 싶었어요! 같이 예쁜 한복 입고 사진 찍어요!', NOW() - INTERVAL 4 DAY, NULL),
+(23, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 8, '저는 사진 찍는 거 전문입니다! 인생샷 많이 남겨드릴게요. 같이 가요!', NOW() - INTERVAL 3 DAY, NULL),
+(24, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 9, '내일로 기차여행이라니 완전 로망이에요! 저 자유로운 영혼인데, 같이 떠날 수 있을까요?', NOW() - INTERVAL 3 DAY, NULL),
+(25, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 9, '저도 즉흥 여행 좋아해요! 내일로 계획 중이었는데 같이 가면 좋을 것 같아요.', NOW() - INTERVAL 2 DAY, NULL),
+(26, (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), 10, '태국 야시장 좋아요! 같이 가서 흥정으로 다 쓸어올 자신 있습니다 ㅋㅋㅋ', NOW() - INTERVAL 2 DAY, NULL),
+(27, (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 10, '방콕 야시장 먹거리 최고죠! 저도 동행하고 싶어요. 맛집 정보 많이 압니다!', NOW() - INTERVAL 1 DAY, NULL),
+(28, (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 11, '싱가포르 야경은 진짜 최고죠! 저도 마침 싱가포르 갈 예정인데, 같이 가든스 바이 더 베이에서 인생샷 남겨요!', NOW() - INTERVAL 1 DAY, NULL),
+(29, (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 11, '슈퍼트리 쇼 보면서 맥주라니 완벽하네요! 저도 합류하고 싶습니다.', NOW(), NULL);
 
 -- tbl_like 테이블 더미 데이터 삽입
 INSERT INTO tbl_like (member_code, companion_id, companion_comment_id, created_at)
