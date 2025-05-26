@@ -5,17 +5,16 @@ import {
 import {useEffect, useState} from "react";
 import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
 import TimedifferenceCom from "./exchange/TimedifferenceCom";
-// ... 생략
+import EventSliderCom from "./event/EventSliderCom";
 
 export default function MainCom() {
-    // ...useState, useEffect 생략
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
         const lastIndex = images.length - 1;
         const timer = setInterval(() => {
             setIndex(prev => (prev === lastIndex ? 0 : prev + 1));
-        }, 3000); // 1초마다
+        }, 3000); // 3초마다
 
         return () => clearInterval(timer); // 언마운트 시 해제
     }, []);
@@ -79,6 +78,8 @@ export default function MainCom() {
                 <TimedifferenceCom style={{ flex: 1 }} /> {/* flex: 1 추가 */}
             </div>
 
+            {/* 4. 이벤트 슬라이드쇼 */}
+            <EventSliderCom />
 
 
         </div>

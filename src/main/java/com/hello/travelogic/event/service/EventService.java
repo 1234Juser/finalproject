@@ -4,7 +4,9 @@ import com.hello.travelogic.event.domain.EventEntity;
 import com.hello.travelogic.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -128,5 +130,14 @@ public class EventService {
     public void deleteEvent(Integer id) {
         eventRepository.deleteById(id);
     }
+
+    // 메인 슬라이드용 진행 중인 이벤트 조회 (최신 6개)
+    public List<EventEntity> findOngoingEventsForMainSlider() {
+        // eventCode를 기준으로 내림차순 정렬하여 최신 이벤트부터 가져오고, 6개만 가져옵니다.
+        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "eventCode"));
+        LocalDateTime now = LocalDateTime.now();
+        return eventRepository.findByEventEnddateGreaterThanEqual(now, pageable).getContent();
+    }
+
 }
 
