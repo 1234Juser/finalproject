@@ -80,9 +80,9 @@ export const Period = styled.span`
 
 export const DetailImage = styled.img`
     width: 100%;
-    max-height: 350px;
+    //max-height: 350px;
     border-radius: 15px;
-    object-fit: cover;
+    object-fit: initial;
     margin: 30px 0 16px 0;
     box-shadow: 0 5px 26px 0 #62c6ef22;
     background: #cde3f7;
