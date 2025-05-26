@@ -3,7 +3,11 @@ VALUES
 ('관리자1', 'user01', '$2a$10$8ygMfWX3HMqordLnpduoNOHD049O.rJCWbNJpbctoVdWVnjpKIuRq', 'user01@gmail.com', '010-1234-5678',null, '2025-04-27 21:41:01', NULL, 'N', NULL, NULL,'Y'),
 ('관리자2', 'user02', '$2a$10$W1NEKHPHdPx8F4Cx6BqWXe/BPGBFLz/ZieDKXxcKUpieDdaKMZs2q', 'user02@gmail.com', '010-1234-5678',null, '2025-04-27 21:41:21', NULL, 'N', NULL, NULL,'Y'),
 ('관리자3', 'user03', '$2a$10$1K6C8wBhLf1M8p2EeSB61.MagmzTz7EQugD9VtkStJBv7Sjbr2nqS', 'user03@gmail.com', '010-1234-5678',null, '2025-04-27 21:41:37', NULL, 'N', NULL, NULL,'Y'),
-('유저테스트용', 'user04', '$2a$10$oeEYhmRfa3bxZhSSGPAElei6l1ya0KgsRUAaRmBduD8c1EIOIpLU2', 'user04@gmail.com', '010-1234-5678',null, '2025-04-27 21:42:46', NULL, 'N', NULL, NULL,'Y');
+('유저테스트용', 'user04', '$2a$10$oeEYhmRfa3bxZhSSGPAElei6l1ya0KgsRUAaRmBduD8c1EIOIpLU2', 'user04@gmail.com', '010-1234-5678',null, '2025-04-27 21:42:46', NULL, 'N', NULL, NULL,'Y'),
+('유저테스트1', 'user05', '$2a$10$7hjrnBTQVe1wpysxUtD.W.FGZXmYj5oSOU4LpL6HvYt.f0d39bwLy', 'user05@gmail.com', '010-1234-5678',null, '2025-05-26 17:09:36', NULL, 'N', NULL, NULL,'Y'),
+('유저테스트2', 'user06', '$2a$10$ucJEwEQ8rufXz1AIXb5oZOE7UXyC4SCyVJZ8iHPdNEJHAmZ2iqgnq', 'user06@gmail.com', '010-1234-5678',null, '2025-05-26 17:09:55', NULL, 'N', NULL, NULL,'Y');
+
+
 
 INSERT IGNORE INTO tbl_authority (authority_name)
 VALUES ('ROLE_ADMIN'), ('ROLE_USER');
@@ -16,7 +20,10 @@ VALUES
 ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), 2),  -- user02: USER
 ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 1),  -- user03: ADMIN
 ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), 2),  -- user03: USER
-((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2);  -- user04: USER
+((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), 2),  -- user04: USER
+((SELECT member_code FROM tbl_member WHERE member_id = 'user05'), 2),  -- user05: USER
+((SELECT member_code FROM tbl_member WHERE member_id = 'user06'), 2);  -- user06: USER
+
 
 -- 이벤트 데이터 중복삭제
 DELETE FROM tbl_event;
@@ -141,11 +148,15 @@ INSERT INTO tbl_follow (follower_member_code, following_member_code, followed_at
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NOW() - INTERVAL 20 DAY),
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NOW() - INTERVAL 18 DAY),
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), NOW() - INTERVAL 15 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user05'), NOW() - INTERVAL 14 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user04'), (SELECT member_code FROM tbl_member WHERE member_id = 'user06'), NOW() - INTERVAL 13 DAY),
 
                                                                                       -- user04의 팔로워 (다른 사람이 user04를 팔로우) - 3개
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 19 DAY),
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 17 DAY),
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user03'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 14 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user05'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 13 DAY),
+                                                                                      ((SELECT member_code FROM tbl_member WHERE member_id = 'user06'), (SELECT member_code FROM tbl_member WHERE member_id = 'user04'), NOW() - INTERVAL 12 DAY),
 
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), (SELECT member_code FROM tbl_member WHERE member_id = 'user02'), NOW() - INTERVAL 25 DAY),
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user02'), (SELECT member_code FROM tbl_member WHERE member_id = 'user01'), NOW() - INTERVAL 24 DAY),
