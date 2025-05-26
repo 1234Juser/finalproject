@@ -20,4 +20,7 @@ public interface PaymentRepo extends JpaRepository<PaymentEntity, Long> {
 
     // orderStatus를 기본값 PENDING에서 SCHEDULED로 변경
     Optional<PaymentEntity> findOptionalByImpUid(String impUid);
+
+    // 결제 상태 변경을 위해서 바꾼버전
+    Optional<PaymentEntity> findTopByOrder_OrderCode(Long orderCode);
 }

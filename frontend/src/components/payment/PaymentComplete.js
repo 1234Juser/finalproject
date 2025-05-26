@@ -2,7 +2,15 @@ import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
 import { FaEarthAsia } from "react-icons/fa6";
 
-function PaymentComplete({ bookingUid, orderDate, productTitle, productThumbnail, totalPrice }) {
+function PaymentComplete({ bookingUid,
+                             orderDate,
+                             productTitle,
+                             productThumbnail,
+                             totalPrice,
+                             vbankNum,
+                             vbankName,
+                             vbankHolder,
+                             vbankDue}) {
     const navigate = useNavigate();
 
     const handleGoToReservations = () => {
@@ -19,7 +27,7 @@ function PaymentComplete({ bookingUid, orderDate, productTitle, productThumbnail
                 <strong>주문번호:</strong> {bookingUid}
             </InfoText>
             <InfoText className="date">
-                <strong>주문일자:</strong> {orderDate}
+                <strong>주문일자:</strong> {orderDate?.toLocaleString()}
             </InfoText>
 
             <ProductBox>
@@ -43,6 +51,21 @@ function PaymentComplete({ bookingUid, orderDate, productTitle, productThumbnail
                 </ProductInfo>
                 </OrderInfo>
             </ProductBox>
+
+            {vbankNum ? (
+                <VbankInfo>
+                    <h3>무통장 입금 안내</h3>
+                    <p><strong>입금 은행:</strong> {vbankName}</p>
+                    <p><strong>계좌 번호:</strong> {vbankNum}</p>
+                    <p><strong>예금주:</strong> {vbankHolder}</p>
+                    <p><strong>입금 마감일시:</strong> {vbankDue}</p>
+                    <p style={{ color: "#d00", marginTop: "1rem" }}>
+                        ※ 입금 기한 내에 정확한 금액을 입금해야 예약이 확정됩니다.
+                    </p>
+                </VbankInfo>
+            ) : (
+                <p style={{ color: "gray" }}>무통장입금 정보 없음</p>
+            )}
 
             <ConfirmButton onClick={handleGoToReservations}>예정된 여행 목록 보기</ConfirmButton>
         </Wrapper>
@@ -191,5 +214,37 @@ const ConfirmButton = styled.button`
 
     &:hover {
         background-color: #3f5974;
+    }
+`;
+
+const VbankInfo = styled.div`
+    background-color: #e8f0fb;
+    padding: 2rem;
+    border-radius: 16px;
+    margin-top: 2rem;
+    width: 90%;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    font-size: 1.05rem;
+    color: #003153;
+    box-shadow: 0 4px 12px rgba(0, 31, 63, 0.08);
+
+    h3 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #001F3F;
+    }
+
+    p {
+        margin: 0.3rem 0;
+        line-height: 1.6;
+        strong {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            color: #001F3F;
+        }
     }
 `;

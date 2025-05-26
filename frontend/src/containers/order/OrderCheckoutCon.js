@@ -10,9 +10,7 @@ import {
 import {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
-import {orderInitialState as result} from "../../modules/orderModule";
-import {fetchPaymentMethods} from "../../service/paymentService";
-import axios from "axios";
+import {fetchPaymentMethods, requestPayment} from "../../service/paymentService";
 
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
@@ -160,9 +158,10 @@ function OrderCheckoutCon({ accessToken }) {
             alert("결제수단을 선택해주세요.");
             return;
         }
-        const supportedMethods = ["CARD", "KAKAO_PAY"];
+        console.log("선택된 결제수단:", selectedPaymentMethod);
+        const supportedMethods = ["CARD", "KAKAO_PAY", "BANK_TRANSFER"];
         if (!supportedMethods.includes(selectedPaymentMethod)) {
-            alert("카드와 카카오페이 외 결제는 서비스 준비 중 입니다.");
+            alert("카드와 카카오페이, 무통장입금 외 결제는 서비스 준비 중 입니다.");
             return;
         }
 
@@ -228,7 +227,24 @@ function OrderCheckoutCon({ accessToken }) {
             //     orderData.totalPrice,
             //     accessToken
             // );
-            await completeOrder(orderCode, "CARD", orderData.totalPrice, accessToken);
+
+            // 결제 성공 후 결제 정보 저장
+            const paymentData = {
+                impUid: result.impUid,
+                merchantUid: result.bookingUid,
+                receiptUrl: result.receiptUrl,
+                paymentMethod: selectedPaymentMethod,
+                paymentBrand: result.paymentBrand,
+                paymentAmount: result.paymentAmount,
+                orderCode: result.orderCode,
+                memberCode: memberInfo.memberCode,
+            };
+            await requestPayment(paymentData, accessToken);
+            console.log("🟢 PaymentEntity 저장 성공:", paymentData);
+
+            // await completeOrder(orderCode, "CARD", orderData.totalPrice, accessToken);
+            await completeOrder(orderCode, selectedPaymentMethod, orderData.totalPrice, accessToken);
+
 
             const resolvedThumbnail =
                 orderData.productThumbnail?.includes("upload/")
@@ -238,11 +254,15 @@ function OrderCheckoutCon({ accessToken }) {
             navigate("/payments/complete", {
                 state: {
                     bookingUid: result.bookingUid,
-                    orderDate: new Date().toISOString().split("T")[0],
+                    orderDate: new Date(),
                     productTitle: orderData.productTitle,
                     // productThumbnail: orderData.productThumbnail,
                     productThumbnail: resolvedThumbnail,
                     totalPrice: orderData.totalPrice,
+                    vbankNum: result.vbankNum,
+                    vbankName: result.vbankName,
+                    vbankHolder: result.vbankHolder,
+                    vbankDue: result.vbankDue,
                 },
             });
         } catch (error) {

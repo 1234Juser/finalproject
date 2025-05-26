@@ -4,6 +4,7 @@ import com.hello.travelogic.payment.domain.PaymentEntity;
 import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -37,9 +38,15 @@ public class PaymentDTO {
     private String merchantUid;
     @NotNull
     private String receiptUrl;
+    private String vbankNum;
+    private String vbankName;
+    private String vbankHolder;
+    private LocalDateTime vbankDue;
 
     // 결제 관련 화면 출력을 위한 임시 필드
     private String productThumbnail;
+    private String depositorName;
+    private LocalDateTime depositConfirmedAt;
 
     public PaymentDTO(PaymentEntity entity) {
         this.paymentCode = entity.getPaymentCode();
@@ -53,6 +60,10 @@ public class PaymentDTO {
         this.impUid = entity.getImpUid();
         this.merchantUid = entity.getMerchantUid();
         this.receiptUrl = entity.getReceiptUrl();
+        this.vbankNum = entity.getVbankNum();
+        this.vbankName = entity.getVbankName();
+        this.vbankHolder = entity.getVbankHolder();
+        this.vbankDue = entity.getVbankDue();
 
         // 필드 직접 참조 방지
         if (entity.getOrder() != null && entity.getOrder().getProduct() != null) {
@@ -60,12 +71,12 @@ public class PaymentDTO {
 //            this.productThumbnail = entity.getOrder().getProduct().getProductThumbnail();
             String productPic = entity.getOrder().getProduct().getProductThumbnail();
 
-            if (productPic == null || productPic.isBlank()) {
+            if (productThumbnail == null || productThumbnail.isBlank()) {
                 this.productThumbnail = "/img/empty/empty-list.jpeg";
-            } else if (productPic.contains("/") && productPic.split("/").length >= 2) {
-                this.productThumbnail = "/upload/product/" + productPic;
+            } else if (productThumbnail.contains("/") && productThumbnail.split("/").length >= 2) {
+                this.productThumbnail = "/upload/product/" + productThumbnail;
             } else {
-                this.productThumbnail = "/static/img/product/" + productPic;
+                this.productThumbnail = "/static/img/product/" + productThumbnail;
             }
         }
     }
