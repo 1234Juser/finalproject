@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export function requestIamportPayment( orderData, paymentMethod ) {
     // useEffect(() => {
     //     if (!window.IMP) return;
@@ -8,7 +10,7 @@ export function requestIamportPayment( orderData, paymentMethod ) {
         alert("아임포트 객체가 로드되지 않았습니다.");
         return;
     }
-        window.IMP.init("imp");
+        window.IMP.init("imp71405518");
 
     // const handlePayment = () => {
     const {
@@ -57,14 +59,26 @@ export function requestIamportPayment( orderData, paymentMethod ) {
             data.pay_method = "card";
         } else if (paymentMethod === "BANK_TRANSFER") {
             data.pay_method = "vbank";
+            // const now = new Date();
+            // const orderDate = format(now, "yyyy-MM-dd HH:mm:ss");
+
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(23, 59, 0, 0);
-            const vbank_due = tomorrow
-                .toISOString()
-                .replace(/[-T:]/g, "")
-                .substring(0, 14);
-            data.vbank_due = vbank_due;
+            tomorrow.setHours(23, 59, 59, 0);
+            // const kstDue = new Date(tomorrow.getTime() - (tomorrow.getTimezoneOffset() * 60000));
+            //
+            // const year = kstDue.getFullYear();
+            // const month = String(kstDue.getMonth() + 1).padStart(2, "0");
+            // const day = String(kstDue.getDate()).padStart(2, "0");
+            // const hour = String(kstDue.getHours()).padStart(2, "0");
+            // const minute = String(kstDue.getMinutes()).padStart(2, "0");
+            // const second = String(kstDue.getSeconds()).padStart(2, "0");
+            //
+            // const formatted = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+            // console.log("입금 마감일시:", formatted);
+            // data.vbank_due = formatted;
+            const vbankDue = format(tomorrow, "yyyy-MM-dd HH:mm:ss");
+            data.vbank_due = vbankDue;
         }
 
         window.IMP.request_pay(data, function (rsp) {
@@ -77,9 +91,11 @@ export function requestIamportPayment( orderData, paymentMethod ) {
                 // 백엔드로 넘겨주는 정보들
                 resolve({
                     bookingUid: rsp.merchant_uid,
+                    merchantUid,
                     impUid: rsp.imp_uid,
                     receiptUrl: rsp.receipt_url,
                     pay_method: rsp.pay_method,
+                    paymentMethod: paymentMethod,
                     paymentBrand: rsp.card_name || rsp.vbank_name || "기타",
                     orderCode: orderData.orderCode,
                     memberCode: orderData.memberCode,
@@ -91,9 +107,10 @@ export function requestIamportPayment( orderData, paymentMethod ) {
                     vbankNum: rsp.vbank_num || null,
                     vbankName: rsp.vbank_name || null,
                     vbankHolder: rsp.vbank_holder || null,
-                    vbankDue: rsp.vbank_date
-                        ? new Date(rsp.vbank_date.replace(" ", "T")).toISOString()
-                        : null,
+                    vbankDue: data.vbank_due,
+                    // vbankDue: rsp.vbank_date
+                    //     ? rsp.vbank_date.replace(" ", " ")  // ✅ 이건 LocalDateTime에서만 필요 (toISOString 금지!)
+                    //     : null
                 });
             } else {
                 reject(rsp.error_msg);

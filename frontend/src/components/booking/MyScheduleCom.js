@@ -230,7 +230,10 @@ const LoadMoreButton = styled.button`
 `;
 
 function MyScheduleCom({ reservations = [], onCancelReservation, onLoadOldReservations, showMoreSchedule }){
-    const scheduled = (reservations ?? []).filter(res => res.orderStatus === "SCHEDULED");
+    // const scheduled = (reservations ?? []).filter(res => res.orderStatus === "SCHEDULED");
+    const scheduled = (reservations ?? []).filter(
+        res => res.orderStatus === "SCHEDULED" || res.orderStatus === "WAITING_BANK_TRANSFER"
+    );
     console.log("예약 상태들:", reservations.map(r => r.orderStatus));
     const navigate = useNavigate();
     const onClickProduct = (productUid) => {
@@ -256,14 +259,16 @@ function MyScheduleCom({ reservations = [], onCancelReservation, onLoadOldReserv
                             {scheduled && scheduled.map(res => (
                                 <li key={res.orderCode}>
                                     <Card>
-                                    <StyledStatus>
-                                        예약확정 | <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>
-                                    </StyledStatus>
-                                    <div style={{ display: "flex", gap: "50px" }}>
-                                        <ThumbImg
-                                            src={res.productThumbnail || "../../style/empty/empty-list.jpeg"}
-                                            alt={res.productTitle}
-                                        />
+                                        <StyledStatus>
+                                            {res.orderStatus === "WAITING_BANK_TRANSFER"
+                                                ? "무통장 입금 대기"
+                                                : "예약확정"} | <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>
+                                        </StyledStatus>
+                                        <div style={{ display: "flex", gap: "50px" }}>
+                                            <ThumbImg
+                                                src={res.productThumbnail || "../../style/empty/empty-list.jpeg"}
+                                                alt={res.productTitle}
+                                            />
                                         <div>
                                             <Title onClick={() => onClickProduct(res.productUid)}>
                                                 {res.productTitle || `상품코드 ${res.productCode}`}

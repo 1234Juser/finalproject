@@ -1,5 +1,6 @@
 package com.hello.travelogic.payment.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hello.travelogic.payment.domain.PaymentEntity;
 import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
@@ -41,6 +42,7 @@ public class PaymentDTO {
     private String vbankNum;
     private String vbankName;
     private String vbankHolder;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime vbankDue;
 
     // 결제 관련 화면 출력을 위한 임시 필드

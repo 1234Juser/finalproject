@@ -345,7 +345,12 @@ public class OrderService {
         }
 
         // 결제 완료 처리
-        order.setOrderStatus(OrderStatus.SCHEDULED); // 결제 완료 후 예약 확정
+        if (paymentMethod.equals("BANK_TRANSFER")) {
+            order.setOrderStatus(OrderStatus.WAITING_BANK_TRANSFER);
+        } else {
+            order.setOrderStatus(OrderStatus.SCHEDULED);
+        }
+//        order.setOrderStatus(OrderStatus.SCHEDULED); // 결제 완료 후 예약 확정
         order.setTotalPrice(totalPrice);
         orderRepo.save(order);
 

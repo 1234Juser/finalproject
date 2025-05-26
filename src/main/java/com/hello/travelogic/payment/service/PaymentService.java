@@ -440,7 +440,12 @@ public class PaymentService {
                 .orElseThrow(() -> new RuntimeException("주문 정보를 찾을 수 없습니다."));
 
         if (order.getOrderStatus() == OrderStatus.PENDING) {
-            order.setOrderStatus(OrderStatus.SCHEDULED);
+            if (payment.getPaymentMethod() == PaymentMethod.BANK_TRANSFER) {
+                // 무통장입금이면 WAITING_BANK_TRANSFER로 상태 설정
+                order.setOrderStatus(OrderStatus.WAITING_BANK_TRANSFER);
+            } else {
+                order.setOrderStatus(OrderStatus.SCHEDULED);
+            }
             orderRepo.save(order);
             log.info("🟢 결제 성공 처리 - 주문 상태를 SCHEDULED로 변경: orderCode = {}", orderCode);
 
