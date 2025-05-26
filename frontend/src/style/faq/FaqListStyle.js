@@ -148,33 +148,33 @@ export const FaqDeleteButton = styled.button`
 `;
 
 export const Pagination = styled.div`
-    margin: 30px 0 0;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 38px;
+    margin-bottom: 40px;
+    gap: 10px;
 
     button {
-        background: #f2f6f9;
-        color: ${Palette.blue};
-        font-weight: 500;
+        background: ${({ active }) => (active ? Palette.mainGradient : "#f2f6f9")};
+        color: ${({ active }) => (active ? "#fff" : Palette.blue)};
+        font-weight: ${({ active }) => (active ? 600 : 500)};
         font-size: 1.01rem;
         border: none;
         border-radius: 8px;
         padding: 8px 20px;
         cursor: pointer;
         transition: background 0.18s, color 0.18s;
+        box-shadow: ${({ active }) => (active ? Palette.tabShadow : "none")};
         letter-spacing: -0.5px;
-        margin: 0 5px;
-        box-shadow: none;
 
-        &:hover:not(:disabled) {
+        &:hover {
             background: ${Palette.mainGradient};
             color: #fff;
-            box-shadow: 0 2px 8px #53bbef77;
         }
         &:disabled {
             opacity: .5;
             cursor: not-allowed;
-            background: #dce0f5;
-            color: #8a91b4;
+            /* FaqListStyle.js에만 있던 disabled 배경/글자색 제거 */
         }
     }
 
@@ -182,7 +182,7 @@ export const Pagination = styled.div`
         background: ${Palette.mainGradient};
         color: #fff;
         font-weight: 600;
-        box-shadow: 0 2px 8px #53bbef77;
+        box-shadow: ${({ active }) => (active ? Palette.tabShadow : "none")};
     }
 
     span {

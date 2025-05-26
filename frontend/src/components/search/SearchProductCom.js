@@ -19,8 +19,8 @@ import {
     FilterResetBtn,
     SortSection,
     SortBtn,
-    PagingWrapper, // PagingWrapper import
-    PagingButton, // PagingButton import
+    PagingWrapper,
+    PagingButton,
 } from "../../style/search/SearchProductStyle";
 import { GoCalendar, GoFilter } from "react-icons/go";
 
@@ -34,18 +34,23 @@ const formatPrice = (price) => {
 // 페이징 버튼 렌더링 함수
 const renderPaginationButtons = (currentPage, totalPages, handlePageChange) => {
     const pageNumbers = [];
-    const maxPageButtons = 5; // 한 번에 보여줄 페이지 버튼 개수
-    const startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
-    const endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+    const maxPageButtons = 10; // 한 번에 보여줄 페이지 버튼 개수
 
-    // 시작 페이지가 1보다 크면 이전 페이지 버튼 추가
-    if (startPage > 1) {
-        pageNumbers.push(
-            <PagingButton key="prev" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                이전
-            </PagingButton>
-        );
+    // 시작 페이지와 끝 페이지 계산
+    let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+    let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+    // 만약 endPage가 maxPageButtons보다 작으면 startPage를 조정하여 항상 maxPageButtons 개수만큼 보이도록 함
+    if (endPage - startPage + 1 < maxPageButtons) {
+        startPage = Math.max(1, endPage - maxPageButtons + 1);
     }
+
+    // 이전 페이지 버튼
+    pageNumbers.push(
+        <PagingButton key="prev" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+            이전
+        </PagingButton>
+    );
 
     for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(
@@ -55,17 +60,16 @@ const renderPaginationButtons = (currentPage, totalPages, handlePageChange) => {
         );
     }
 
-    // 끝 페이지가 totalPages보다 작으면 다음 페이지 버튼 추가
-    if (endPage < totalPages) {
-        pageNumbers.push(
-            <PagingButton key="next" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                다음
-            </PagingButton>
-        );
-    }
+    // 다음 페이지 버튼
+    pageNumbers.push(
+        <PagingButton key="next" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+            다음
+        </PagingButton>
+    );
 
     return pageNumbers;
 };
+
 
 
 function SearchProductCom({
