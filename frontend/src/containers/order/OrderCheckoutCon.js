@@ -200,7 +200,8 @@ function OrderCheckoutCon({ accessToken }) {
                 productCode: optionData.productCode,
                 productTitle: optionData.productTitle,
                 optionCode: optionData.optionCode,
-                memberCode: optionData.memberCode,
+                // memberCode: optionData.memberCode,
+                memberCode: memberInfo.memberCode,
                 memberName: memberInfo.memberName,
                 memberEmail: memberInfo.memberEmail,
                 memberPhone: memberInfo.memberPhone,
@@ -239,8 +240,8 @@ function OrderCheckoutCon({ accessToken }) {
                 orderCode: result.orderCode,
                 memberCode: memberInfo.memberCode,
             };
-            await requestPayment(paymentData, accessToken);
-            console.log("🟢 PaymentEntity 저장 성공:", paymentData);
+            await requestPayment(result, accessToken);
+            console.log("🟢 PaymentEntity 저장 성공:", result);
 
             // await completeOrder(orderCode, "CARD", orderData.totalPrice, accessToken);
             await completeOrder(orderCode, selectedPaymentMethod, orderData.totalPrice, accessToken);

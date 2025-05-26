@@ -1,5 +1,6 @@
 package com.hello.travelogic.payment.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.payment.dto.PaymentDTO;
@@ -66,6 +67,7 @@ public class PaymentEntity {
     private String vbankHolder;
 
     @Column(name = "vbank_due", nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime vbankDue;
 
     public PaymentEntity(PaymentDTO dto, MemberEntity member, OrderEntity order) {
