@@ -153,6 +153,7 @@ function AdminBookingByProductCom({
         SCHEDULED: "예약확정",
         COMPLETED: "여행완료",
         CANCELED: "예약취소",
+        WAITING_BANK_TRANSFER: "무통장 입금대기"
     };
     console.log("reservations", reservations);
     const isEmpty = !Array.isArray(reservations) || reservations.length === 0;
