@@ -9,9 +9,8 @@ import {
 import {FaComments, FaEllipsisH, FaFlag, FaGift, FaHeart, FaPlaneDeparture, FaStar, FaUserCircle} from "react-icons/fa";
 import React from "react";
 import styled from "styled-components";
-import {MdChat} from "react-icons/md";
 import {IoNotifications} from "react-icons/io5";
-import { RiChatSmile2Line } from "react-icons/ri";
+import {RiChatSmile2Line} from "react-icons/ri";
 
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 const NavContentWrapper = styled.div`

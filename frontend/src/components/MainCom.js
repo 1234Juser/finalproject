@@ -4,6 +4,7 @@ import {
 } from "../style/MainStyle";
 import {useEffect, useState} from "react";
 import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
+import TimedifferenceCom from "./exchange/TimedifferenceCom";
 // ... 생략
 
 export default function MainCom() {
@@ -66,9 +67,19 @@ export default function MainCom() {
             </MainSectionWrapper>
 
             {/* === 환율 박스 여기에 넣기 === */}
-            <div>
-                <ExchangeBoxCom />
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px", // 환율 박스와 시차 박스 사이의 간격 (이미 0이지만 다시 확인)
+                marginTop: "16px", // 위쪽 공간 확보
+                width: "100%", // 부모 너비를 꽉 채우도록 설정
+                boxSizing: "border-box" // padding이 포함된 너비 계산 방식
+            }}>
+                <ExchangeBoxCom style={{ flex: 1 }} /> {/* flex: 1 추가 */}
+                <TimedifferenceCom style={{ flex: 1 }} /> {/* flex: 1 추가 */}
             </div>
+
+
 
         </div>
     );
