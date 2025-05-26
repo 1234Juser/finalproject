@@ -28,7 +28,7 @@ public class SearchDTO {
         return builder()
                 .type("product")
                 .title(e.getProductTitle())
-                .description(e.getProductDescription())
+                .description(e.getProductDetail() != null ? e.getProductDetail().getProductInfo() : null)  // getProductDetail()을 통해 접근
                 .extraInfo(e.getFullLocation())
                 .productUid(e.getProductUid()) // productUid 설정
                 .productAdult(e.getProductAdult()) //설정

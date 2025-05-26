@@ -106,7 +106,7 @@ function ProductRegCom({
                                 <option value="">-- 선택하세요 --</option>
                                 {countries.map((country) => (
                                     <option key={country.countryId} value={country.countryId}>
-                                        {country.countryName}
+                                        {country.countryNameKR}
                                     </option>
                                 ))}
                             </StyledSelect>

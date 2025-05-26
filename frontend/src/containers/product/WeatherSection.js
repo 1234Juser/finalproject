@@ -1,4 +1,14 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
+import {
+    CityName,
+    DetailContainer,
+    DetailRow,
+    Temperature,
+    TemperatureRow, TemperatureSpan,
+    WeatherCard,
+    WeatherIcon,
+    WeatherInfoContainer
+} from "../../style/product/StyleWeatherSection";
 
 function WeatherSection({city}) {
     
@@ -49,16 +59,27 @@ function WeatherSection({city}) {
 
       
     return (
-      <div>
-        <h3>{city} 날씨</h3>
-        <p>온도: {weatherData?.main?.temp}°C</p>
-        <p>날씨: {weatherData?.weather[0]?.description || '정보 없음'}</p>
-        <div>
-          {iconUrl && <img src={iconUrl} alt={weatherDescription} />}
-          </div>
-        <p>습도: {weatherData?.main?.humidity}%</p>
-        <p>풍속: {weatherData?.wind?.speed || 0} m/s</p>
-      </div>
+        <WeatherCard>
+            <CityName>{city}</CityName>
+            <WeatherInfoContainer>
+                <TemperatureRow>
+                    {iconUrl && <WeatherIcon src={iconUrl} alt={weatherDescription} />}
+                    <Temperature>{Math.round(weatherData?.main?.temp_min)}°C</Temperature>
+                    <TemperatureSpan>/</TemperatureSpan>
+                    <Temperature>{Math.round(weatherData?.main?.temp_max)}°C</Temperature>
+                </TemperatureRow>
+                <DetailContainer>
+                    <DetailRow>
+                        <span>습도</span>
+                        <span>{weatherData?.main?.humidity}%</span>
+                    </DetailRow>
+                    <DetailRow>
+                        <span>풍속</span>
+                        <span>{weatherData?.wind?.speed || 0} m/s</span>
+                    </DetailRow>
+                </DetailContainer>
+            </WeatherInfoContainer>
+        </WeatherCard>
     )
 }
 

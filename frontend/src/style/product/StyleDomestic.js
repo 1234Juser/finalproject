@@ -7,6 +7,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 700px;
 
   @media (max-width: 768px) {
     padding: 30px 16px;
@@ -38,6 +39,7 @@ export const RegionCard = styled.div`
   justify-content: center;
   margin: 0.5rem;
   flex-direction: column;
+  gap: 10px;
 `;
 
 
@@ -66,6 +68,16 @@ export const RegionButton = styled.button`
     padding: 8px 14px;
   }
 `;
+
+
+export const FullWidthDiv = styled.div`
+  display: inline-block;  // 핵심: 줄바꿈 방지
+  vertical-align: top;    // 위 정렬
+  margin: 6px;            // 기존 CountryBox margin과 동일하게
+  width: 152px; /* 핵심: 한 줄 전체 차지하지 않도록 */
+  flex-direction: column;
+`;
+
 
 export const CountryBox = styled.button`
   display: flex;
@@ -123,7 +135,24 @@ export const CityListContainer = styled.div`
   background-color: #f9f9f9;
   border-radius: 16px;
   min-height: 56px;
+  width: 900px;
+  max-height: 200px;
 `;
+
+// DomesticCon 전용 CityListContainer
+export const DomesticCityListContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 가운데 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 (필요 시) */
+    width: 600px;
+    height: max-content;
+    gap: 10px;
+    /* 추가적인 스타일이 필요하면 여기에 작성 */
+    background-color: #f9f9f9;
+  padding-bottom: 15px;
+`;
+
 
 
 
@@ -132,6 +161,7 @@ export const CityList = styled.div`
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 1rem;
+  width: max-content;
 `;
 
 export const CityButton = styled.button`
