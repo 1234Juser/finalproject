@@ -62,7 +62,7 @@ public class OrderEntity {
     private LocalDateTime orderDate;
 
     @NotNull
-    @Column( name = "order_status", nullable = false )
+    @Column( name = "order_status", nullable = false, length = 20 )
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.PENDING;
 

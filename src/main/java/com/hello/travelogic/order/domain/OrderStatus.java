@@ -5,5 +5,6 @@ public enum OrderStatus {
     PENDING,
     SCHEDULED,
     COMPLETED,
-    CANCELED
+    CANCELED,
+    WAITING_BANK_TRANSFER
 }

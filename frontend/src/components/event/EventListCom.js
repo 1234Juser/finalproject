@@ -26,7 +26,13 @@ function EventListCom({
             // 기본이미지의 경우
             return "/img/event/default_event.jpg";
         }
+        // event/로 시작하는 경로의 경우 이미 event 폴더 내에 있는 이미지이므로 그대로 사용
+        // 그 외의 경우는 /upload/events/ 경로를 붙여줌 (UUID 파일명 처리)
+        if (imgPath.startsWith("event/")) {
+            return `/img/${imgPath}`;
+        }
         return `/events/${imgPath}`;
+
     };
 
     return (

@@ -79,5 +79,12 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 
+    // 메인 슬라이드용 진행 중인 이벤트 조회
+    @GetMapping("/ongoing-slider")
+    public ResponseEntity<List<EventEntity>> findOngoingEventsForMainSlider() {
+        return ResponseEntity.ok(eventService.findOngoingEventsForMainSlider());
+    }
+
+
 
 }

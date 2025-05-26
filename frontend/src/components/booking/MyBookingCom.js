@@ -42,7 +42,10 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         showMoreSchedule, showMoreComplete, showMoreCancel,
                         openReviewModal}){
     const filtered = {
-        0: reservations.filter(r => r.orderStatus.toUpperCase() === "SCHEDULED"),
+        // 0: reservations.filter(r => r.orderStatus.toUpperCase() === "SCHEDULED"),
+        0: reservations.filter(r =>
+            ["SCHEDULED", "WAITING_BANK_TRANSFER"].includes(r.orderStatus?.toUpperCase())
+        ),
         1: reservations.filter(r => r.orderStatus.toUpperCase() === "COMPLETED"),
         2: reservations.filter(r => r.orderStatus.toUpperCase() === "CANCELED"),
     };

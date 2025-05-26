@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import {useNavigate} from "react-router-dom";
 
 const RankingContainer = styled.div`
     margin-left: 20px; // 검색창과의 간격 조절
@@ -106,6 +107,7 @@ function RealtimeRanking() {
     const [error, setError] = useState(null);
     const [isRankingVisible, setIsRankingVisible] = useState(false); // 랭킹 목록 표시/숨김 상태
     const [currentRankingIndex, setCurrentRankingIndex] = useState(0); // 현재 표시할 랭킹 항목의 인덱스
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchRanking = async () => {
@@ -144,13 +146,16 @@ function RealtimeRanking() {
         return () => clearInterval(slideInterval);
     }, [isRankingVisible, ranking]); // isRankingVisible 또는 ranking 상태 변경 시 useEffect 다시 실행
 
-    // 클릭 시 해당 도시 검색 기능 (예시)
-    const handleCityClick = (cityName) => {
-        // 실제 검색 기능을 구현해야 합니다.
-        // 예: 검색 페이지로 이동하며 검색어 전달
-        console.log(`${cityName} 검색 기능 실행 (구현 필요)`);
-        // navigate(`/search?query=${encodeURIComponent(cityName)}`); // react-router-dom의 useNavigate 사용 시
+    // 클릭 시 해당 도시 검색 기능
+    const handleCityClick = (cityId) => {
+        if (cityId) { // cityId가 유효한 값일 경우에만 이동
+            console.log(`${cityId} 검색 기능 실행`);
+            navigate(`/products/city?city_id=${cityId}`); // 도시 상세 페이지로 이동
+        } else {
+            console.log("유효하지 않은 cityId:", cityId);
+        }
     };
+
 
     if (error) {
         return <RankingContainer>{error}</RankingContainer>;
@@ -177,7 +182,7 @@ function RealtimeRanking() {
                 {isRankingVisible ? (
                     // 펼쳤을 때 전체 목록 표시
                     displayedRanking.map((item, index) => (
-                        <RankingItem key={index} onClick={() => handleCityClick(item.cityNameKR)} $isVisible={isRankingVisible}>
+                        <RankingItem key={index} onClick={() => handleCityClick(item.cityId)} $isVisible={isRankingVisible}>
                             <span className="rank-number">{index + 1}.</span> {/* 모든 항목에 순위 번호 표시 */}
                             <span className="city-name">{item.cityNameKR}</span>
                         </RankingItem>
@@ -185,7 +190,7 @@ function RealtimeRanking() {
                 ) : (
                     // 접었을 때 현재 인덱스에 해당하는 항목만 표시
                     displayedRanking.length > 0 && (
-                        <RankingItem key={currentRankingIndex} onClick={() => handleCityClick(displayedRanking[currentRankingIndex].cityNameKR)} $isVisible={isRankingVisible}>
+                        <RankingItem key={currentRankingIndex} onClick={() => handleCityClick(displayedRanking[currentRankingIndex].cityId)} $isVisible={isRankingVisible}>
                             <span className="rank-number">{currentRankingIndex + 1}.</span> {/* 현재 인덱스의 순위 번호 */}
                             <span className="city-name">{displayedRanking[currentRankingIndex].cityNameKR}</span> {/* 현재 인덱스의 도시 이름 */}
                         </RankingItem>

@@ -50,6 +50,20 @@ export const BannerContainer = styled.div`
     border: 2px solid #efd492;
 `;
 
+// 이벤트 슬라이더를 위한 컨테이너 (새로 추가)
+export const EventSliderContainer = styled(BannerContainer)`
+    margin-top: 40px; /* 환율 박스 아래 공간 조정 */
+    margin-bottom: 80px; /* 하단 여백 추가 */
+    height: 300px; /* 이벤트 슬라이더 높이 조정 */
+    width: 60%; /* 이벤트 슬라이더 너비 조정 */
+    background: linear-gradient(to bottom right, #eaf2ff 80%, #dbe4ff 100%);
+    box-shadow:
+        0 4px 36px 10px rgba(100,120,200,0.13),
+        0 0 0 7px #d5e0ff inset;
+    border: 2px solid #b8caff;
+`;
+
+
 // 슬라이드 전체를 감싸는 래퍼
 export const SlideWrapper = styled.div`
     display: flex;
@@ -181,4 +195,17 @@ export const SubTextFx = styled.div`
     border-radius: 14px; padding: 7px 18px;
     box-shadow: 0 4px 24px 0 rgba(170,130,60,0.07);
     animation: fadeUp 1.3s .18s cubic-bezier(.44,1,.46,1) both;
+`;
+
+// 이벤트 슬라이드 텍스트 추가 (이벤트 기간 표시용)
+export const EventSlidePeriodText = styled.div`
+    position: absolute;
+    left: 24px;
+    bottom: 22px;
+    color: #fff;
+    font-size: 1.2rem; /* 텍스트 크기 조정 */
+    font-weight: 500; /* 폰트 굵기 조정 */
+    z-index: 4;
+    text-shadow: 1px 2px 8px rgba(30, 16, 2, 0.28);
+    letter-spacing: -0.5px; /* 자간 조정 */
 `;

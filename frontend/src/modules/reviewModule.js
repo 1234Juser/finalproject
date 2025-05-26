@@ -17,6 +17,8 @@ const initialState = {
     reviewPic: null,
     averageRating: 0,
     reviewCount: 0,
+    reviewRequest: null,         // 리뷰 요청 대상 order 정보
+    showReviewRequestModal: false, // 리뷰 요청 모달 상태
 };
 
 const reducer = (state, action) => {
@@ -85,6 +87,18 @@ const reducer = (state, action) => {
                         ? { ...review, reviewStatus: action.payload.reviewStatus }
                         : review
                 )
+            };
+        case "SET_REVIEW_REQUEST":
+            return {
+                ...state,
+                reviewRequest: action.payload,
+                showReviewRequestModal: true,
+            };
+
+        case "CLOSE_REVIEW_REQUEST_MODAL":
+            return {
+                ...state,
+                showReviewRequestModal: false,
             };
         case "SET_SORT_OPTION":
             return { ...state, sortOption: action.data };

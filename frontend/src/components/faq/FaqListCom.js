@@ -99,7 +99,6 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
                         key={idx}
                         className={page === idx ? "active-page" : ""}
                         onClick={() => setPage(idx)}
-                        disabled={page === idx}
                     >
                         {idx + 1}
                     </button>

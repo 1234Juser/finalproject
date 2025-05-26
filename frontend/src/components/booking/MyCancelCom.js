@@ -254,8 +254,15 @@ function MyCancelCom({ reservations = [], onLoadOldReservations, showMoreCancel 
                     <ul>
                         {canceled && canceled.map(res => (
                             <Card key={res.orderCode}>
+                                {/*<StyledStatus>*/}
+                                {/*    예약취소 | <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>*/}
+                                {/*</StyledStatus>*/}
                                 <StyledStatus>
-                                    예약취소 | <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>
+                                    {res.paymentStatus === "EXPIRED"
+                                        ? "무통장 입금 만료"
+                                        : "예약취소"}
+                                    {" | "}
+                                    <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>
                                 </StyledStatus>
                                 <div style={{ display: "flex", gap: "50px" }}>
                                     <ThumbImg

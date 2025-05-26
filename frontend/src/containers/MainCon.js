@@ -1,10 +1,16 @@
-import React from "react";
+import React, {useReducer} from "react";
 import MainCom from "../components/MainCom";
+import { initialState, reducer } from "../modules/reviewModule";
 
-function MainCon() {
+function MainCon({accessToken}) {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
     return(
         <>
-        <MainCom />
+        <MainCom
+            accessToken={accessToken}
+            state={state}
+            dispatch={dispatch}/>
         </>
     )
 }
