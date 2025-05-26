@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react'; // useState 추가
 import MyPageSideBarPage from '../../pages/common/MyPageSideBarPage';
 import { format } from 'date-fns';
 import {FaRegNewspaper, FaRegCommentDots, FaRegCalendarAlt, FaEye, FaThumbtack, FaHeart} from 'react-icons/fa';
@@ -19,6 +19,7 @@ import {
     commentContentStyle,
     iconStyle,
 } from '../../style/companion/CompanionMyPageStyle';
+import {useNavigate} from "react-router-dom";
 
 function CompanionMyPageCom({
                                 activeTab,
@@ -35,6 +36,23 @@ function CompanionMyPageCom({
                                 handleTabChange,
                                 renderPagination
                             }) {
+
+    const navigate= useNavigate();
+    const [hoveredPostId, setHoveredPostId] = useState(null); // 게시글 호버 상태
+    const [hoveredCommentId, setHoveredCommentId] = useState(null); // 댓글 호버 상태
+    const [hoveredTab, setHoveredTab] = useState(null); // 탭 호버 상태
+
+    // 게시글 클릭 시 상세 페이지로 이동하는 함수
+    const handlePostClick = (companionId) => {
+        navigate(`/community/companion/${companionId}`);
+    };
+
+    // 댓글 클릭 시 해당 게시글 상세 페이지로 이동하고 댓글 위치로 스크롤
+    const handleCommentClick = (companionId, commentId) => {
+        navigate(`/community/companion/${companionId}#comment-${commentId}`);
+    };
+
+
     return (
         <div style={containerStyle}>
             <aside style={sidebarStyle}>
@@ -44,29 +62,37 @@ function CompanionMyPageCom({
                 <h2>나의 커뮤니티 활동</h2>
                 <div style={tabContainerStyle}>
                     <button
-                        style={tabButtonStyle(activeTab === 'posts')}
+                        style={tabButtonStyle(activeTab === 'posts', hoveredTab === 'posts')} // hoveredTab 상태 전달
                         onClick={() => handleTabChange('posts')}
+                        onMouseEnter={() => setHoveredTab('posts')} // 호버 시 상태 변경
+                        onMouseLeave={() => setHoveredTab(null)} // 호버 해제 시 상태 변경
                         disabled={loading}
                     >
                         내 게시글 ({postsPageInfo.totalElements})
                     </button>
                     <button
-                        style={tabButtonStyle(activeTab === 'comments')}
+                        style={tabButtonStyle(activeTab === 'comments', hoveredTab === 'comments')} // hoveredTab 상태 전달
                         onClick={() => handleTabChange('comments')}
+                        onMouseEnter={() => setHoveredTab('comments')} // 호버 시 상태 변경
+                        onMouseLeave={() => setHoveredTab(null)} // 호버 해제 시 상태 변경
                         disabled={loading}
                     >
                         내 댓글 ({commentsPageInfo.totalElements})
                     </button>
                     <button // 좋아요한 게시글 탭 추가
-                        style={tabButtonStyle(activeTab === 'likedPosts')}
+                        style={tabButtonStyle(activeTab === 'likedPosts', hoveredTab === 'likedPosts')} // hoveredTab 상태 전달
                         onClick={() => handleTabChange('likedPosts')}
+                        onMouseEnter={() => setHoveredTab('likedPosts')} // 호버 시 상태 변경
+                        onMouseLeave={() => setHoveredTab(null)} // 호버 해제 시 상태 변경
                         disabled={loading}
                     >
                         좋아요한 게시글 ({likedPostsPageInfo.totalElements})
                     </button>
                     <button // 좋아요한 댓글 탭 추가
-                        style={tabButtonStyle(activeTab === 'likedComments')}
+                        style={tabButtonStyle(activeTab === 'likedComments', hoveredTab === 'likedComments')} // hoveredTab 상태 전달
                         onClick={() => handleTabChange('likedComments')}
+                        onMouseEnter={() => setHoveredTab('likedComments')} // 호버 시 상태 변경
+                        onMouseLeave={() => setHoveredTab(null)} // 호버 해제 시 상태 변경
                         disabled={loading}
                     >
                         좋아요한 댓글 ({likedCommentsPageInfo.totalElements})
@@ -83,7 +109,12 @@ function CompanionMyPageCom({
                         ) : (
                             <ul style={listStyle}>
                                 {posts.map(post => (
-                                    <li key={post.companionId} style={listItemStyle}>
+                                    <li key={post.companionId}
+                                        style={listItemStyle(hoveredPostId === post.companionId)} // hoveredPostId 상태 전달
+                                        onClick={() => handlePostClick(post.companionId)}
+                                        onMouseEnter={() => setHoveredPostId(post.companionId)} // 호버 시 상태 변경
+                                        onMouseLeave={() => setHoveredPostId(null)} // 호버 해제 시 상태 변경
+                                    >
                                         <div style={itemHeaderStyle}>
                                             <FaRegNewspaper style={iconStyle} />
                                             <div style={titleStyle}>{post.companionTitle}</div>
@@ -119,7 +150,12 @@ function CompanionMyPageCom({
                         ) : (
                             <ul style={listStyle}>
                                 {comments.map(comment => (
-                                    <li key={comment.companionCommentId} style={listItemStyle}>
+                                    <li key={comment.companionCommentId}
+                                        style={listItemStyle(hoveredCommentId === comment.companionCommentId)} // hoveredCommentId 상태 전달
+                                        onClick={() => handleCommentClick(comment.companionId, comment.companionCommentId)}
+                                        onMouseEnter={() => setHoveredCommentId(comment.companionCommentId)} // 호버 시 상태 변경
+                                        onMouseLeave={() => setHoveredCommentId(null)} // 호버 해제 시 상태 변경
+                                    >
                                         <div style={itemHeaderStyle}>
                                             <FaRegCommentDots style={iconStyle} />
                                             <div style={titleStyle}>Re: {comment.companionTitle}</div>
@@ -147,7 +183,12 @@ function CompanionMyPageCom({
                         ) : (
                             <ul style={listStyle}>
                                 {likedPosts.map(post => (
-                                    <li key={post.companionId} style={listItemStyle}>
+                                    <li key={post.companionId}
+                                        style={listItemStyle(hoveredPostId === post.companionId)} // hoveredPostId 상태 전달
+                                        onClick={() => handlePostClick(post.companionId)}
+                                        onMouseEnter={() => setHoveredPostId(post.companionId)} // 호버 시 상태 변경
+                                        onMouseLeave={() => setHoveredPostId(null)} // 호버 해제 시 상태 변경
+                                    >
                                         <div style={itemHeaderStyle}>
                                             <FaHeart style={{...iconStyle, color: Palette.heartRed}} /> {/* 좋아요 아이콘 */}
                                             <div style={titleStyle}>{post.companionTitle}</div>
@@ -178,10 +219,15 @@ function CompanionMyPageCom({
                         ) : (
                             <ul style={listStyle}>
                                 {likedComments.map(comment => (
-                                    <li key={comment.companionCommentId} style={listItemStyle}>
+                                    <li key={comment.companionCommentId}
+                                        style={listItemStyle(hoveredCommentId === comment.companionCommentId)} // hoveredCommentId 상태 전달
+                                        onClick={() => handleCommentClick(comment.companionId, comment.companionCommentId)}
+                                        onMouseEnter={() => setHoveredCommentId(comment.companionCommentId)} // 호버 시 상태 변경
+                                        onMouseLeave={() => setHoveredCommentId(null)} // 호버 해제 시 상태 변경
+                                    >
                                         <div style={itemHeaderStyle}>
                                             <FaHeart style={{...iconStyle, color: Palette.heartRed}} /> {/* 좋아요 아이콘 */}
-                                            <div style={titleStyle}>Re: {comment.companionTitle}</div>
+                                            <div style={titleStyle}>Re: {comment.companionCommentContent}</div> {/* title -> content로 수정 */}
                                         </div>
                                         <p style={commentContentStyle}>{comment.companionCommentContent}</p>
                                         <div style={itemMetaContainerStyle}>
