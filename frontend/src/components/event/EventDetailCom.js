@@ -23,9 +23,14 @@ function EventDetailCom({ event, onBack, onEdit, onDelete }) {
 
     // 이미지 경로 처리
     let imgSrc = "/img/event/default_event.jpg";
-    if (event.eventImg && event.eventImg !== "event/default_event.jpg") {
-        imgSrc = `/events/${event.eventImg}`;
+    if (event.eventImg) {
+        if (event.eventImg.startsWith("event/")) {
+            imgSrc = `/img/${event.eventImg}`;
+        } else {
+            imgSrc = `/events/${event.eventImg}`; // WebConfig.java의 /events/** 핸들러에 맞게 수정
+        }
     }
+
 
 
     // 상태 뱃지
