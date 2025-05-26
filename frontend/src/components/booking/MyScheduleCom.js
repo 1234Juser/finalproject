@@ -259,10 +259,26 @@ function MyScheduleCom({ reservations = [], onCancelReservation, onLoadOldReserv
                             {scheduled && scheduled.map(res => (
                                 <li key={res.orderCode}>
                                     <Card>
+                                        {/*<StyledStatus>*/}
+                                        {/*    {res.orderStatus === "WAITING_BANK_TRANSFER"*/}
+                                        {/*        ? "무통장 입금 대기"*/}
+                                        {/*        : "예약확정"} | <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>*/}
+                                        {/*</StyledStatus>*/}
                                         <StyledStatus>
-                                            {res.orderStatus === "WAITING_BANK_TRANSFER"
-                                                ? "무통장 입금 대기"
-                                                : "예약확정"} | <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>
+                                            {res.orderStatus === "WAITING_BANK_TRANSFER" ? (
+                                                <>
+                                                    무통장 입금 대기
+                                                    {res.vbankDue ? (
+                                                        <> (입금기한: {res.vbankDue.replace("T", " ").slice(0, 16)})</>
+                                                    ) : (
+                                                        <> (입금기한 정보 없음)</>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                "예약확정"
+                                            )}
+                                            {" | "}
+                                            <span style={{ fontSize: "0.9rem", color: "#555" }}>{res.bookingUid}</span>
                                         </StyledStatus>
                                         <div style={{ display: "flex", gap: "50px" }}>
                                             <ThumbImg

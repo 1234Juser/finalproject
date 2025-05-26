@@ -73,12 +73,12 @@ public class PaymentDTO {
 //            this.productThumbnail = entity.getOrder().getProduct().getProductThumbnail();
             String productPic = entity.getOrder().getProduct().getProductThumbnail();
 
-            if (productThumbnail == null || productThumbnail.isBlank()) {
+            if (productPic == null || productPic.isBlank()) {
                 this.productThumbnail = "/img/empty/empty-list.jpeg";
-            } else if (productThumbnail.contains("/") && productThumbnail.split("/").length >= 2) {
-                this.productThumbnail = "/upload/product/" + productThumbnail;
+            } else if (productPic.contains("/") && productPic.split("/").length >= 2) {
+                this.productThumbnail = "/upload/product/" + productPic;
             } else {
-                this.productThumbnail = "/static/img/product/" + productThumbnail;
+                this.productThumbnail = "/static/img/product/" + productPic;
             }
         }
     }
