@@ -1,7 +1,10 @@
 package com.hello.travelogic.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
+import com.hello.travelogic.payment.domain.PaymentEntity;
+import com.hello.travelogic.payment.domain.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -23,6 +26,7 @@ public class OrderDTO {
     private int orderAdultPrice;
     private Integer orderChildPrice;
     private int totalPrice;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime orderDate;
     @NotNull
     private OrderStatus orderStatus;
@@ -40,8 +44,10 @@ public class OrderDTO {
     private LocalDate reservationDate;
     // 주문내역에서 useNavigate(링크) 걸기위해
     private String productUid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime vbankDue;
 
-    public OrderDTO(OrderEntity entity) {
+    public OrderDTO(OrderEntity entity, PaymentEntity payment) {
         this.orderCode = entity.getOrderCode();
         this.productCode = entity.getProduct().getProductCode();
         this.optionCode = entity.getOption().getOptionCode();
@@ -62,5 +68,10 @@ public class OrderDTO {
         this.childCount = entity.getOption().getChildCount();
         this.reservationDate = entity.getOption().getReservationDate();
         this.productUid = entity.getProduct() != null ? entity.getProduct().getProductUid() : null;
+        if (payment != null &&
+                payment.getPaymentMethod() == PaymentMethod.BANK_TRANSFER &&
+                payment.getVbankDue() != null) {
+            this.vbankDue = payment.getVbankDue();
+        }
     }
 }

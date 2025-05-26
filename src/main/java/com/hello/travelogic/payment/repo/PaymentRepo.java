@@ -1,6 +1,8 @@
 package com.hello.travelogic.payment.repo;
 
 import com.hello.travelogic.payment.domain.PaymentEntity;
+import com.hello.travelogic.payment.domain.PaymentMethod;
+import com.hello.travelogic.payment.domain.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -23,4 +25,6 @@ public interface PaymentRepo extends JpaRepository<PaymentEntity, Long> {
 
     // 결제 상태 변경을 위해서 바꾼버전
     Optional<PaymentEntity> findTopByOrder_OrderCode(Long orderCode);
+
+    List<PaymentEntity> findAllByPaymentMethodAndPaymentStatus(PaymentMethod paymentMethod, PaymentStatus paymentStatus);
 }

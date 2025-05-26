@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -245,10 +246,14 @@ public class PaymentService {
         PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
                 .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
 
-        if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
-            throw new IllegalStateException("결제 완료 상태만 취소할 수 있습니다.");
-        }
+        PaymentStatus status = payment.getPaymentStatus();
 
+//        if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
+//            throw new IllegalStateException("결제 완료 상태만 취소할 수 있습니다.");
+//        }
+
+        if (status == PaymentStatus.COMPLETED) {
+            // 카드/카카오페이 등의 결제 완료 → 아임포트 서버에 취소 요청
         CancelData cancelData = new CancelData(payment.getImpUid(), false);
         cancelData.setReason("예약 취소로 인한 환불");
 
@@ -260,6 +265,13 @@ public class PaymentService {
         } catch (Exception e) {
             throw new RuntimeException("결제 취소 중 오류 발생", e);
         }
+
+    } else if (status == PaymentStatus.WAITING_BANK_TRANSFER) {
+        // 무통장 입금은 입금이 안 된 상태이므로 아임포트에 취소 요청 불필요
+        log.info("무통장 입금 대기 상태로, 아임포트 취소 API는 호출하지 않습니다.");
+    } else {
+        throw new IllegalStateException("결제 완료 또는 무통장 입금 대기 상태만 취소할 수 있습니다.");
+    }
 
         payment.setPaymentStatus(PaymentStatus.CANCELED);
         paymentRepo.save(payment);
@@ -537,6 +549,30 @@ public class PaymentService {
 
         } catch (Exception e) {
             log.error("❌ 아임포트 서버 통신 실패:", e);
+        }
+    }
+
+    @Scheduled(cron = "0 0 * * * *") // 매 시 정각
+    public void expireUnpaidBankTransfers() {
+        LocalDateTime now = LocalDateTime.now();
+        List<PaymentEntity> waitingList = paymentRepo.findAllByPaymentMethodAndPaymentStatus(
+                PaymentMethod.BANK_TRANSFER,
+                PaymentStatus.WAITING_BANK_TRANSFER
+        );
+
+        for (PaymentEntity payment : waitingList) {
+            // 예: 결제 생성 후 24시간이 지났는지 확인
+            if (payment.getPaymentTime().isBefore(now.minusHours(24))) {
+                payment.setPaymentStatus(PaymentStatus.EXPIRED);
+                paymentRepo.save(payment);
+
+                OrderEntity order = payment.getOrder();
+                if (order.getOrderStatus() == OrderStatus.WAITING_BANK_TRANSFER) {
+                    order.setOrderStatus(OrderStatus.CANCELED);
+                    orderRepo.save(order);
+                    log.info("🔴 무통장입금 미입금으로 자동 취소: orderCode = {}", order.getOrderCode());
+                }
+            }
         }
     }
 }
