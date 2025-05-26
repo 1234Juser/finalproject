@@ -27,43 +27,41 @@ export const tabContainerStyle = {
     borderBottom: `1px solid #e0e0e0`, // 탭 컨테이너 하단 라인
 };
 
-export const tabButtonStyle = (isActive) => ({
-    padding: '12px 25px', // 패딩 조정
+export const tabButtonStyle = (isActive, isHovered) => ({
+    padding: '12px 25px',
     cursor: 'pointer',
-    border: 'none', // 상단, 좌우 테두리 제거
-    borderBottom: isActive ? `3px solid ${Palette.blue}` : '3px solid transparent', // 활성 탭 하단 강조
-    backgroundColor: Palette.white, // 기본 배경색 투명 또는 흰색
-    color: isActive ? Palette.blue : Palette.secondaryTextColor, // 텍스트 색상 변경
-    fontWeight: isActive ? '600' : '500', // 폰트 두께 조정
-    marginRight: '10px', // 탭 간 간격
-    transition: 'color 0.2s ease-in-out, border-bottom 0.2s ease-in-out', // 부드러운 전환 효과
-    fontSize: '1.05rem', // 폰트 크기 살짝 키움
-    ':hover': { // 호버 효과 (실제 적용은 styled-components 등 필요)
-        color: Palette.blue,
-    }
+    border: 'none',
+    borderBottom: isActive ? `3px solid ${Palette.blue}` : (isHovered ? `3px solid ${Palette.lightBlue}` : '3px solid transparent'), // 호버 시 테두리 색상 변경
+    backgroundColor: isHovered ? Palette.inactiveButtonBackground : Palette.white,
+    color: isActive ? Palette.blue : (isHovered ? Palette.blue : Palette.secondaryTextColor), // 호버 시 텍스트 색상 변경
+    fontWeight: isActive ? '600' : (isHovered ? '600' : '500'), // 호버 시 폰트 굵기 변경
+    marginRight: '10px',
+    transition: 'all 0.2s ease-in-out',
+    fontSize: '1.05rem',
 });
+
 
 export const listStyle = {
     listStyleType: 'none',
     padding: 0,
 };
 
-export const listItemStyle = {
-    backgroundColor: Palette.white, // 배경색 명시
-    border: '1px solid #e8e8e8', // 테두리 색상 변경
-    padding: '20px', // 패딩 증가
-    marginBottom: '15px', // 마진 증가
-    borderRadius: '8px', // 모서리 둥글게
-    boxShadow: Palette.listItemShadow, // 그림자 효과 추가
-    transition: 'transform 0.2s ease-in-out, boxShadow 0.2s ease-in-out',
+export const listItemStyle = (isHovered) => ({
+    backgroundColor: isHovered ? Palette.lightBlue : Palette.white, // 호버 시 배경색 변경 (더 밝은 색)
+    border: isHovered ? `1px solid ${Palette.hoverBorder}` : '1px solid #e8e8e8', // 호버 시 테두리 색상 변경
+    padding: '20px',
+    marginBottom: '15px',
+    borderRadius: '8px',
+    boxShadow: isHovered ? '0 4px 12px rgba(0, 0, 0, 0.15)' : Palette.listItemShadow,
+    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out, border 0.2s ease-in-out, color 0.2s ease-in-out', // 전환 효과에 border, color 추가
     display: 'flex',
+    cursor: 'pointer',
     flexDirection: 'column',
-    gap: '10px', // 내부 요소 간 간격
-    ':hover': { // 호버 시 살짝 떠오르는 효과 (실제 적용은 styled-components 등 필요)
-        transform: 'translateY(-3px)',
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.12)',
-    }
-};
+    gap: '10px',
+    transform: isHovered ? 'translateY(-3px) scale(1.005)' : 'translateY(0) scale(1)', // 살짝 위로 이동 + 미세하게 확대
+    color: isHovered ? Palette.textColor : Palette.textColor, // 호버 시 텍스트 색상 변경 (필요에 따라)
+});
+
 
 export const itemHeaderStyle = { // 게시글/댓글 제목 및 공지 뱃지 컨테이너
     display: 'flex',
