@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import AdminSideBarCon from "../../containers/common/AdminSideBarCon";
-import {containerStyle,
+import {
+    containerStyle,
     sidebarStyle,
     contentStyle,
     tableWrapperStyle,
@@ -11,6 +12,7 @@ import {containerStyle,
     buttonStyle,
     activeRowStyle
 } from "../../style/member/AdminMemberListStyle";
+import {PagingWrapper, PagingButton} from "../../style/event/EventListStyle"; // EventListStyle에서 PagingWrapper와 PagingButton을 import
 
 function AdminMemberListCom({ memberList, onToggleStatus, currentPage, totalPages, totalElements, onPageChange }) {
     const [hoverIdx, setHoverIdx] = useState(null);
@@ -91,38 +93,29 @@ function AdminMemberListCom({ memberList, onToggleStatus, currentPage, totalPage
                     </table>
 
                     {/* Pagination */}
-                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                        <button
+                    <PagingWrapper>
+                        <PagingButton
                             onClick={() => onPageChange(currentPage - 1)}
                             disabled={currentPage === 0}
-                            style={{ margin: '0 5px', padding: '8px 16px', cursor: 'pointer' }}
                         >
                             이전
-                        </button>
+                        </PagingButton>
                         {pageNumbers.map(number => (
-                            <button
+                            <PagingButton
                                 key={number}
                                 onClick={() => onPageChange(number)}
-                                style={{
-                                    margin: '0 5px',
-                                    padding: '8px 16px',
-                                    cursor: 'pointer',
-                                    backgroundColor: currentPage === number ? '#007bff' : '#f8f9fa',
-                                    color: currentPage === number ? 'white' : 'black',
-                                    border: '1px solid #ddd'
-                                }}
+                                active={currentPage === number}
                             >
                                 {number + 1}
-                            </button>
+                            </PagingButton>
                         ))}
-                        <button
+                        <PagingButton
                             onClick={() => onPageChange(currentPage + 1)}
                             disabled={currentPage === totalPages - 1}
-                            style={{ margin: '0 5px', padding: '8px 16px', cursor: 'pointer' }}
                         >
                             다음
-                        </button>
-                    </div>
+                        </PagingButton>
+                    </PagingWrapper>
                 </div>
             </div>
         </div>
