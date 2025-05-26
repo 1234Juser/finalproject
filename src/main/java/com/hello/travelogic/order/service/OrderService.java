@@ -414,4 +414,12 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
         return new OrderDTO(order); // → orderCode, product, member, payment 다 포함 가능
     }
+
+    @Transactional(readOnly = true)
+    public Optional<OrderDTO> getLatestUnreviewedCompletedOrder(Long memberCode) {
+        return orderRepo
+                .findFirstByMember_MemberCodeAndOrderStatusAndIsReviewedFalseOrderByOrderDateDesc(
+                        memberCode, OrderStatus.COMPLETED)
+                .map(OrderDTO::new);  // 필요 시 DTO 변환
+    }
 }

@@ -4,10 +4,11 @@ import {
 } from "../style/MainStyle";
 import {useEffect, useState} from "react";
 import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
+import RecentReviewRequestModalCon from "../containers/review/RecentReviewRequestModalCon";
 import TimedifferenceCom from "./exchange/TimedifferenceCom";
 import EventSliderCom from "./event/EventSliderCom";
 
-export default function MainCom() {
+export default function MainCom({accessToken, state, dispatch}) {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -28,6 +29,12 @@ export default function MainCom() {
     ];
 
     return (
+    <>
+        <RecentReviewRequestModalCon
+            accessToken={accessToken}
+            state={state}
+            dispatch={dispatch}
+        />
         <div style={{position:"relative", minHeight:"100vh", overflow:"hidden"}}>
             {/* 1. 상단 풀 비주얼 영상 */}
             <MainVideoWrapper>
@@ -83,5 +90,6 @@ export default function MainCom() {
 
 
         </div>
+    </>
     );
 }
