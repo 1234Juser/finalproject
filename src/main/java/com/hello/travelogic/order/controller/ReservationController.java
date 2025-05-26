@@ -149,4 +149,17 @@ public class ReservationController {
         OrderDTO orderDTO = orderService.getOrderByBookingUid(bookingUid);
         return ResponseEntity.ok(orderDTO);
     }
+
+    // 리뷰 작성 요청 모달
+    @GetMapping("/my/reservations/review-request")
+    public ResponseEntity<?> getLatestUnreviewedOrder(Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
+                .getMemberCode();
+
+        return orderService.getLatestUnreviewedCompletedOrder(memberCode)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());  // 없으면 204
+    }
 }

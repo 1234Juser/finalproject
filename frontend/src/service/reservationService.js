@@ -1,4 +1,5 @@
 import axios from "axios";
+// import axios from "../util/axiosInstance";
 
 const path = "http://localhost:8080";
 
@@ -209,3 +210,29 @@ export const fetchReservationByBookingUid = async (bookingUid) => {
         throw error;
     }
 };
+
+// 로그인 회원의 최신 미작성 리뷰 주문 조회
+export async function fetchLatestUnreviewedOrder(accessToken) {
+    if (!accessToken) {
+        console.error("accessToken 없음");
+        return [];
+    }
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+    try {
+        const response = await axios.get("/my/reservations/review-request", config);
+        return response.data; // 성공 시 OrderDTO 객체
+    } catch (error) {
+        if (error.response && error.response.status === 204) {
+            return null; // 리뷰 대상 없음
+        } else {
+            console.error("리뷰 요청 대상 주문 조회 실패:", error);
+            throw error;
+        }
+    }
+}
