@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
     MainSectionWrapper,
-    EventSliderContainer, // 새로 추가된 스타일 컴포넌트
+    EventSliderContainer,
     SlideWrapper,
     SlideCard,
     SlideImage,
     SlideOverlay,
     SlideText,
-    EventSlidePeriodText // 새로 추가된 스타일 컴포넌트
+    EventSlidePeriodText
 } from "../../style/MainStyle";
-import { useNavigate } from "react-router-dom"; // 이벤트 클릭 시 상세 페이지로 이동
+import { useNavigate } from "react-router-dom";
 
 const EventSliderCom = () => {
     const [events, setEvents] = useState([]);
@@ -22,11 +22,23 @@ const EventSliderCom = () => {
         // 진행 중인 이벤트 데이터를 가져옵니다.
         axios.get("http://localhost:8080/event/ongoing-slider")
             .then(response => {
-                // eventImg 경로를 "events/"로 시작하도록 조정
-                const formattedEvents = response.data.map(event => ({
-                    ...event,
-                    eventImg: event.eventImg ? `/events/${event.eventImg}` : '/img/event/default_event.jpg'
-                }));
+                // eventImg 경로를 조정
+                const formattedEvents = response.data.map(event => {
+                    let imageUrl = '/img/event/default_event.jpg'; // 기본 이미지
+                    if (event.eventImg) {
+                        // data.sql에서 온 이미지인 경우 (경로에 'event/' 포함)
+                        if (event.eventImg.startsWith("event/")) {
+                            imageUrl = `/img/${event.eventImg}`;
+                        } else {
+                            // 새로 등록된 이미지인 경우
+                            imageUrl = `/events/${event.eventImg}`;
+                        }
+                    }
+                    return {
+                        ...event,
+                        eventImg: imageUrl
+                    };
+                });
                 setEvents(formattedEvents);
             })
             .catch(error => {
@@ -54,7 +66,6 @@ const EventSliderCom = () => {
     if (events.length === 0) {
         return null; // 이벤트가 없으면 슬라이더를 표시하지 않음
     }
-
     return (
         <MainSectionWrapper style={{marginTop: "40px", zIndex: 2}}> {/* 위치 조정 */}
             <h2 style={{
@@ -74,7 +85,7 @@ const EventSliderCom = () => {
                             {/* BestLabel 대신 이벤트 제목을 표시 */}
                             <SlideText style={{bottom: "55px", fontSize: "1.5rem"}}>{event.eventTitle}</SlideText>
                             <SlideImage
-                                src={`http://localhost:8080${event.eventImg}`}
+                                src={event.eventImg}
                                 alt={event.eventTitle}
                             />
                             <SlideOverlay />
