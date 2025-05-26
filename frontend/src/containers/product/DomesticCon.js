@@ -2,7 +2,15 @@ import React, {useEffect, useState} from 'react';
 import DomesticCom from "../../components/product/DomesticCom";
 import {getDomList, getCitiesByRegion} from "../../service/ProductService";
 import { useNavigate } from 'react-router-dom';
-import { Container, Title, RegionGrid, CityList, CityButton } from '../../style/product/StyleDomestic';
+import {
+    Container,
+    Title,
+    RegionGrid,
+    CityList,
+    CityButton,
+    CityListContainer,
+    DomesticCityListContainer
+} from '../../style/product/StyleDomestic';
 
 
 const DomesticCon = () => {
@@ -65,6 +73,7 @@ const DomesticCon = () => {
                 onRegionClick={handleRegionClick} selectedRegion={selectedRegion}
                 getImageByRegion={getImageByRegion}/>
             {cityVisible && (
+                <DomesticCityListContainer>
                 <CityList>
                         {koCities.map((c, i) => (
                             <CityButton
@@ -74,6 +83,7 @@ const DomesticCon = () => {
                             </CityButton>
                         ))}
                 </CityList>
+                </DomesticCityListContainer>
             )}
         </Container>
     );

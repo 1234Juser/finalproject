@@ -23,7 +23,7 @@ export const MainSectionWrapper = styled.div`
 
 
 export const ImageSection = styled.div`
-  flex: 1;
+  flex: 2;
   img {
     width: 100%;
     height: auto;
@@ -49,9 +49,9 @@ export const Title = styled.h2`
 `;
 
 export const PriceWrapper = styled.div`
-  font-size: 22px;
+  font-size: 38px;
   font-weight: bold;
-  color: #000;
+  color: #222;
 
   .discount {
     color: #f73434;
@@ -79,7 +79,7 @@ export const Badge = styled.div`
   width: fit-content;
 `;
 
-export const DetailText = styled.p`
+export const DetailText = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #444;
@@ -106,17 +106,37 @@ export const WishButton = styled.button`
   }
 `;
 
+// PaymentButton 수정: 상태에 따라 색상과 텍스트 변경
 export const PaymentButton = styled.button`
-  background-color: #00b6ff; 
-  color: #FFFFFF;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width : 200px;
+    background-color: ${({ status }) => {
+        switch (status) {
+            case 'ON_SALE':
+                return '#00b6ff'; // 파란색
+            case 'CLOSED':
+            case 'SOLD_OUT':
+                return '#ccc'; // 회색
+            default:
+                return '#00b6ff';
+        }
+    }};
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: ${({ status }) => (status === 'ON_SALE' ? 'pointer' : 'not-allowed')};
+    transition: background-color 0.3s ease;
+    width: 200px;
+
+    &:hover {
+        background-color: ${({ status }) => {
+            if (status === 'ON_SALE') return '#009ae6';
+            return '#ccc';
+        }};
+    }
 `;
+
+
 
 export const DetailTabWrapper = styled.div`
   display: flex;
@@ -188,18 +208,30 @@ export const SectionWrapper = styled.section`
 
 
 export const SubTitle = styled.h3`
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 30px;
-  margin-bottom: 10px;
-  color: #222;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 10px;
 `;
+
+export const LeftAlignedSubTitle = styled(SubTitle)`
+  align-self: flex-start;
+  margin-left: 10px;
+`;
+
 
 export const Divider = styled.hr`
   margin: 30px 0;
   border: none;
   border-top: 1px solid #eee;
 `;
+
+export const NoMarginDivider = styled(Divider)`
+  margin-left: 10px;
+    margin: 0;
+    width: 50%;
+`;
+
 
 
 export const FlexSectionWrapper = styled(SectionWrapper)`
@@ -209,13 +241,36 @@ export const FlexSectionWrapper = styled(SectionWrapper)`
 
 export const MapWrapper = styled.div`
   flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
-  border : 1px solid black;
 `;
 
 export const WeatherWrapper = styled.div`
-  flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
+  flex: 0.5; /* 남은 공간을 모두 차지하도록 설정 */
   display: flex;
   align-items: center; /* 세로 중앙 정렬 */
   gap: 10px; /* 텍스트와 이모티콘 사이의 간격 */
-  border : 1px solid black;
+  border-left : 1px solid #eee;
+    flex-direction: column;
 `;
+
+
+export const SaleStatus = styled.span`
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background-color: ${({ status }) => {
+        switch (status) {
+            case 'ON_SALE':
+                return '#97d7bf'; // 녹색
+            case 'CLOSED':
+                return '#ccc'; // 회색
+            case 'SOLD_OUT':
+                return '#2967ec'; // 빨간색
+            default:
+                return '#000'; // 기본 색상
+        }
+    }};
+    color: white;
+    font-size: 14px;
+    font-weight: 300;
+`;
+

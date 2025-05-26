@@ -2,7 +2,15 @@ import React, {useEffect, useState} from 'react';
 import InternationalCom from "../../components/product/InternationalCom";
 import {getCitiesByCountry, getCountryList, getIntlList} from "../../service/ProductService";
 import { useNavigate } from 'react-router-dom';
-import {Container, CityList, Title, CityButton, CityListContainer, CountryBox} from '../../style/product/StyleDomestic';
+import {
+    Container,
+    CityList,
+    Title,
+    CityButton,
+    CityListContainer,
+    CountryBox,
+    FullWidthDiv
+} from '../../style/product/StyleDomestic';
 
 const InternationalCon = () => {
 
@@ -90,12 +98,11 @@ const InternationalCon = () => {
             {countriesVisible && (
                 <CityListContainer>
                         {country.map((c, index) => (
-                            <div key={index}>
+                            <FullWidthDiv key={index}>
                             <CountryBox
                                 onClick={() => {handleCountryClick(c.countryId)}}>
                                 {c.countryNameKR}
                             </CountryBox>
-
                                 {/* City List (해당 Country에 속한 도시 목록만 표시) */}
                                 {selectedCountry === c.countryId && (
                                     <CityList>
@@ -112,7 +119,7 @@ const InternationalCon = () => {
                                     )}
                                      </CityList>
                                     )}
-                            </div>
+                            </FullWidthDiv>
                         ))}
                 </CityListContainer>
             )}

@@ -93,8 +93,9 @@ public class ProductEntity {
     @Column(name = "full_location", nullable = false, length = 100)
     private String fullLocation;
 
-    @Column(name = "product_description", nullable = true, columnDefinition = "TEXT")
-    private String productDescription;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_detail_code")
+    private ProductDetailEntity productDetail;      // 상품 N - 상품상세 1 관계
 
 
 
@@ -138,7 +139,6 @@ public class ProductEntity {
         this.cityName = productDTO.getCityName();
         this.countryName = productDTO.getCountryName();
         this.fullLocation = productDTO.getFullLocation();
-        this.productDescription = productDTO.getProductDescription();
     }
 
     public enum ProductStatus {

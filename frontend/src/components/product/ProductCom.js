@@ -13,12 +13,19 @@ import {
 
 } from "../../style/product/StyleProductCon";
 import { GoCalendar, GoFilter  } from "react-icons/go";
+import {SaleStatus} from "../../style/product/StyleProductDetail";
 
 function ProductCom({ cityName, handleFilterReset, handleSort, products: filteredProducts}){
 
     const formatPrice = (price) => {
         if (typeof price !== "number") return price; // 숫자가 아닐 경우 그대로 반환
         return new Intl.NumberFormat("ko-KR").format(price);
+    };
+
+    const productStatus = {
+        ON_SALE: "판매 중",
+        CLOSED: "판매 종료",
+        SOLD_OUT: "매진",
     };
 
 
@@ -37,40 +44,44 @@ function ProductCom({ cityName, handleFilterReset, handleSort, products: filtere
             </FilterSortBar>
 
 
-            {filteredProducts.map((p, i) => (
-                <TourCard key={p.productUid}>
-                        <CardImageWrapper>
-                            <CardImage src={p.productThumbnail?.startsWith('/static/') 
-                                                ? p.productThumbnail
-                                                : `/upload/product/${p.productThumbnail}`} 
-                                        alt="상품 이미지" 
-                                        onError={(e) => {
-                                            e.target.onerror = null; // 무한 루프 방지
-                                            e.target.src = '/static/img/earth.jpg';
-                                        }}/>
-                        </CardImageWrapper>
-                        <CardContent>
-                            <CardSubInfo>
-                                <span>{p.productStatus}</span>
-                                <ProductUid>상품번호 {p.productUid}</ProductUid>
-                            </CardSubInfo>
-                            <CardTitle>{p.productTitle}</CardTitle>
-                            <CalendarText>{p.productContent}</CalendarText>
-                            <CardPrice>￦ {formatPrice(p.productAdult)}원</CardPrice>
-                            <CardSubInfo $noSpaceBetween> {/* noSpaceBetween prop을 적용 */}
-                                <GoCalendar size={24}/>
-                                <CalendarTextContainer>
-                                    <CalendarText>출발 기간 : {p.productStartDate} ~ {p.productEndDate} </CalendarText>
-                                </CalendarTextContainer>
-                            </CardSubInfo>
-                            <Link to={`/products/${p.productUid}`}>
-                                <ViewDetailButton
-                                >자세히 보기</ViewDetailButton
-                                >
-                            </Link>
-                        </CardContent>
-                </TourCard>
-            ))}
+            {filteredProducts.map((p, i) => {
+                const displayStatusText = productStatus[p.productStatus]
+                    return (
+                        <TourCard key={p.productUid}>
+                                <CardImageWrapper>
+                                    <CardImage src={p.productThumbnail?.startsWith('/static/')
+                                                        ? p.productThumbnail
+                                                        : `/upload/product/${p.productThumbnail}`}
+                                                alt="상품 이미지"
+                                                onError={(e) => {
+                                                    e.target.onerror = null; // 무한 루프 방지
+                                                    e.target.src = '/static/img/earth.jpg';
+                                                }}/>
+                                </CardImageWrapper>
+                                <CardContent>
+                                    <CardSubInfo>
+                                        <SaleStatus status={p.productStatus}>
+                                            {displayStatusText}
+                                        </SaleStatus>
+                                        <ProductUid>상품번호 {p.productUid}</ProductUid>
+                                    </CardSubInfo>
+                                    <CardTitle>{p.productTitle}</CardTitle>
+                                    <CalendarText>{p.productContent}</CalendarText>
+                                    <CardPrice>￦ {formatPrice(p.productAdult)}원</CardPrice>
+                                    <CardSubInfo $noSpaceBetween> {/* noSpaceBetween prop을 적용 */}
+                                        <GoCalendar size={24}/>
+                                        <CalendarTextContainer>
+                                            <CalendarText>출발 기간 : {p.productStartDate} ~ {p.productEndDate} </CalendarText>
+                                        </CalendarTextContainer>
+                                    </CardSubInfo>
+                                    <Link to={`/products/${p.productUid}`}>
+                                        <ViewDetailButton
+                                        >자세히 보기</ViewDetailButton
+                                        >
+                                    </Link>
+                                </CardContent>
+                        </TourCard>
+                    )})}
 
         </TourPageContainer>
     )

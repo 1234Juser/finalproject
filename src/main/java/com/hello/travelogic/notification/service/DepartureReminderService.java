@@ -27,8 +27,8 @@ public class DepartureReminderService {
 
 
 
-     @Scheduled(cron = "0 * * * * ?")      // 매분 0초에 실행 (테스트용)
-//    @Scheduled(cron = "0 0 0 * * ?")        // 매일 자정에 실행
+//     @Scheduled(cron = "0 * * * * ?")      // 매분 0초에 실행 (테스트용)
+    @Scheduled(cron = "0 0 0 * * ?")        // 매일 자정에 실행
     @Transactional
     public void sendDepartureReminders() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
