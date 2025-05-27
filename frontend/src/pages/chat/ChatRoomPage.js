@@ -1,4 +1,4 @@
-import ChatRoomCon from "../../../containers/community/chat/ChatRoomCon";
+import ChatRoomCon from "../../containers/chat/ChatRoomCon";
 import {useParams} from "react-router-dom";
 
 function ChatRoomPage() {

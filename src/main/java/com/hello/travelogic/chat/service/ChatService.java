@@ -1,6 +1,7 @@
 package com.hello.travelogic.chat.service;
 
 import com.hello.travelogic.chat.dto.ChatMessageDTO;
+import com.hello.travelogic.chat.dto.ChatRoomCreateResponse;
 import com.hello.travelogic.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -63,19 +65,28 @@ public class ChatService {
 
         message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
-        // 입장 사용자 프로필 이미지 URL 설정 (일반적으로 JOIN/LEAVE 메시지에는 프로필 이미지를 표시하지 않으나, 필요시 추가)
+        // 입장 사용자 프로필 이미지 URL 설정
         if (message.getSender() != null) {
             String profileImageUrl = memberService.getProfileImageUrl(message.getSender());
-            log.debug("유저 참가할 때 message.getSender(): {}", message.getSender());
-            log.debug("유저 참가할 때 profileImageUrl: {}", profileImageUrl);
             message.setProfileImageUrl(profileImageUrl);
         }
 
+        // WebSocket 세션 속성에 유저 정보 저장
         if (headerAccessor.getSessionAttributes() != null) {
             headerAccessor.getSessionAttributes().put("username", message.getSender());
             headerAccessor.getSessionAttributes().put("roomId", roomId);
-//            headerAccessor.getSessionAttributes().put("memberCode", message.getMemberCode()); // memberCode도 저장 필요
         }
+/*        // 참여 인원 업데이트
+        chatRoomService.addMemberToRoom(roomId, message.getSender()); // 채팅방에 멤버 추가
+        // 현재 참여 인원 수 계산
+        long currentParticipants = chatRoomService.getCurrentParticipantsCount(roomId);
+
+        // 참여 인원을 포함한 메시지를 생성
+        Map<String, Object> payload = Map.of(
+                "type", "USER_UPDATE", // 메시지 타입
+                "message", message.getSender() + "님이 참여했습니다.", // 출력 메시지
+                "currentParticipants", currentParticipants // 현재 참여 인원
+        );*/
 
         chatLogger.info("[{}] User: {}", message.getType(), message.getSender());
         generalLogger.debug("User {} joined, broadcasting to /topic/chat/{}", message.getSender(), roomId);
@@ -83,7 +94,12 @@ public class ChatService {
         // 입장 멤버 중간 테이블에 추가 (ChatService.addUser 내부에서 처리하도록 이동 권장)
         chatRoomService.addMemberToRoom(roomId, message.getSender());
 
-        // roomId에 따라 구독한 유저에게만 입장 알림 전송
+/*        // 메시지 전송
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId + "/updates", payload);
+        log.debug("Broadcasting user updates to /topic/chat/{}/updates: {}", roomId, payload);
+        log.debug("User added to room {}. Broadcasting participants count: {}", roomId, currentParticipants);*/
+
+         // roomId에 따라 구독한 유저에게만 입장 알림 전송
         messagingTemplate.convertAndSend("/topic/chat/" + roomId, message);
 
         return message;

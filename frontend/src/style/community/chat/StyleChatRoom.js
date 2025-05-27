@@ -43,14 +43,14 @@ export const MessageRow = styled.div`
 
 export const JoinMsg = styled.em`
     color: #28a745;
-    margin-left: 10px;
+    //margin-left: 10px;
     font-style: normal;
     font-weight: 600;
 `;
 
 export const LeaveMsg = styled.em`
     color: #dc3545;
-    margin-left: 10px;
+    //margin-left: 10px;
     font-style: normal;
     font-weight: 600;
 `;
@@ -159,14 +159,14 @@ export const profileImageStyle = {
 export const messageContentStyle = {
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: '10px',
+    // marginBottom: '10px',
 };
 
 // 메시지 텍스트 부분 스타일 (발신자, 시간, 메시지 내용)
 export const messageTextStyle = {
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: '85%',
+    // maxWidth: '85%',
     wordBreak: 'break-word',
 };
 
