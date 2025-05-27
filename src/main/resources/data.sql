@@ -164,7 +164,6 @@ INSERT INTO tbl_follow (follower_member_code, following_member_code, followed_at
                                                                                       ((SELECT member_code FROM tbl_member WHERE member_id = 'user01'), (SELECT member_code FROM tbl_member WHERE member_id = 'user03'), NOW() - INTERVAL 21 DAY);
 
 
-DELETE FROM tbl_region;
 INSERT IGNORE INTO tbl_region (region_code, region_uid, region_name, region_type)
 VALUES
 (1,'SEOULGYEONGGI', '서울/경기/강원/충청', 'DOMESTIC'),
@@ -177,7 +176,6 @@ VALUES
 (8,'AFRICA', '아프리카', 'INTERNATIONAL');
 
 
-DELETE FROM tbl_country;
 INSERT IGNORE INTO tbl_country (country_code, region_code, country_uid, country_name, country_name_kr) VALUES
                                                                                                            (01, 4, 'KR01', 'South Korea', '대한민국'),
                                                                                                            (02, 4, 'JP02', 'Japan', '일본'),
@@ -207,7 +205,6 @@ INSERT IGNORE INTO tbl_country (country_code, region_code, country_uid, country_
                                                                                                            (26, 5, 'CH30', 'Switzerland', '스위스');
 
 
-DELETE FROM tbl_city;
 INSERT IGNORE INTO tbl_city (city_code, country_id, city_uid, city_name, city_name_kr, region_code) VALUES
                                                                                                         (0101, 01, 'SEOUL0101', 'SEOUL', '서울', 1),
                                                                                                         (0102, 01, 'BUSAN0102', 'BUSAN', '부산', 2),
@@ -260,7 +257,6 @@ INSERT IGNORE INTO tbl_city (city_code, country_id, city_uid, city_name, city_na
                                                                                                         (2601, 26, 'ZURICH3001', 'ZURICH', '취리히', 5);
 
 
-DELETE FROM tbl_theme;
 INSERT IGNORE INTO tbl_theme (theme_code, theme_uid, theme_name, theme_condition) VALUES
 (1,'THEME_001', '투어', '가이드동반'),
 (2,'THEME_002', '골프', '단독여행'),
@@ -280,7 +276,6 @@ INSERT IGNORE INTO tbl_theme (theme_code, theme_uid, theme_name, theme_condition
 
 
 
-DELETE FROM tbl_product_detail;
 INSERT INTO tbl_product_detail (
     product_Info,
     product_meeting_info,
@@ -684,7 +679,6 @@ INSERT INTO tbl_product_detail (
 
 
 
-DELETE FROM tbl_product;
 INSERT IGNORE INTO tbl_product (
     product_uid, country_id, city_id, theme_code,
     product_title, product_content, product_adult_price, product_child_price,
@@ -903,7 +897,6 @@ INSERT IGNORE INTO tbl_product (
 
 
 
-DELETE FROM tbl_product_theme;
 INSERT IGNORE INTO tbl_product_theme (product_code, theme_code) VALUES
                                                                     (1,1),
                                                                     (2,7),
