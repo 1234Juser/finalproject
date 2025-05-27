@@ -39,7 +39,8 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(memberId)
-                .claim("roles", roles)
+//                .claim("roles", roles)
+                .claim("roles", prefixedRoles)
                 .claim("memberCode", memberCode)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
