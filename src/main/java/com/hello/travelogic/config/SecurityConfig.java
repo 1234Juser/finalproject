@@ -74,7 +74,8 @@ public class SecurityConfig {
                                         "/event","/event/{id}","/event/ongoing-slider",
                                         "/companions",  "/companions/{id}", "/likes/companion/{id}/count", "/likes/comment/{id}/count",
                                         "/cities/region/**", "/products/city", "/country/**", "/cities/**","/products/**",
-                                        "/review/product/**",   "/payments/methods","/orders/cancel-pending", "/api/chatrooms"
+                                        "/review/product/**",   "/payments/methods","/orders/cancel-pending", "/api/chatrooms",
+                                        "/oauth/google/**", "/oauth/kakao/**"
 
                                 ).permitAll()
                                 //  경로는 인증된 사용자만 접근을 허용합니다.

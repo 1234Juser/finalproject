@@ -185,11 +185,11 @@ function CompanionRegisterCon() {
         });
 
         // 추가: 전송 직전 값 확인
-        console.log('Submitting data:', { title, content, token, images });
-        console.log('FormData entries:');
-        for (let pair of formData.entries()) {
-            console.log(pair[0]+ ', '+ pair[1]);
-        }
+        // console.log('Submitting data:', { title, content, token, images });
+        // console.log('FormData entries:');
+        // for (let pair of formData.entries()) {
+        //     console.log(pair[0]+ ', '+ pair[1]);
+        // }
 
         try {
             await axios.post(
@@ -208,7 +208,7 @@ function CompanionRegisterCon() {
             alert('게시글이 성공적으로 등록되었습니다.');
             navigate('/community/companion');
         } catch (err) {
-            console.error('게시글 등록 실패:', err.response?.data || err.message);
+            // console.error('게시글 등록 실패:', err.response?.data || err.message);
             if (err.response && err.response.status === 401) {
                 setFormError('인증되지 않은 사용자입니다. 다시 로그인해주세요.');
             } else if (err.response && err.response.status === 403) {

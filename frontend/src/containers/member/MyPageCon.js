@@ -22,7 +22,7 @@ function MyPageCon() {
                 const res = await axios.get("/member/mypage", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                console.log('API Response - /member/mypage:', res.data); // <--- 이 로그를 추가해보세요.
+                // console.log('API Response - /member/mypage:', res.data);
                 setMemberData(res.data);
                 // memberData가 성공적으로 로드된 후 팔로우 정보 가져오기
                 if (res.data && res.data.memberCode) {
@@ -54,13 +54,13 @@ function MyPageCon() {
                 ]);
 
                 // API 응답 데이터 확인용 로그 추가
-                console.log('API Response - Following List:', followingRes.data);
-                console.log('API Response - Follower List:', followersRes.data);
+                // console.log('API Response - Following List:', followingRes.data);
+                // console.log('API Response - Follower List:', followersRes.data);
 
                 setFollowingList(followingRes.data);
                 setFollowerList(followersRes.data);
             } catch (err) {
-                console.error("팔로우 정보를 가져오는데 실패했습니다.", err);
+                // console.error("팔로우 정보를 가져오는데 실패했습니다.", err);
                 // 팔로우 정보 로드 실패 시 빈 배열로 설정하거나, 사용자에게 알림을 줄 수 있습니다.
                 setFollowingList([]);
                 setFollowerList([]);
@@ -124,7 +124,7 @@ function MyPageCon() {
         if(!window.confirm("카카오 연동을 해제하시겠습니까?")) return;
         const token = localStorage.getItem("accessToken");
         const kakaoToken = localStorage.getItem("kakaoAccessToken");
-        console.log("Unlink 시도. kakaoAccessToken=", kakaoToken);
+        // console.log("Unlink 시도. kakaoAccessToken=", kakaoToken);
         try{
             await axios.post("/oauth/kakao/unlink",
                 {accessToken: kakaoToken,}

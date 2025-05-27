@@ -44,7 +44,7 @@ function InquiryChatCon({ isVisible }) {
     // Step 1: 사용자 인증 정보 로드
     useEffect(() => {
         const authInfo = getAuthInfoFromStorage();
-        console.log("---------Auth Info:", authInfo);
+        // console.log("---------Auth Info:", authInfo);
 
         if (authInfo.token && authInfo.memberCode !== null) {
             dispatch({ type: "SET_CURRENT_USER", payload: authInfo });
