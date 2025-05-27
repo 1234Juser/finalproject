@@ -39,7 +39,7 @@ function CompanionEditCon() {
                     setIsAdmin(true);
                 }
             } catch (e) {
-                // console.error("Error decoding token for role check:", e);
+                console.error("Error decoding token for role check:", e);
             }
         }
 
@@ -48,7 +48,7 @@ function CompanionEditCon() {
             setError(null);
             try {
                 const response = await axios.get(`/companions/${companionId}`);
-                // console.log('응답확인:', response.data);
+                console.log('응답확인:', response.data);
                 setTitle(response.data.companionTitle);
                 setContent(response.data.companionContent);
                 setIsNotice(response.data.companionNotice || false);
@@ -87,7 +87,7 @@ function CompanionEditCon() {
                         }
 
                     } catch (decodeError) {
-                        // console.error("토큰 디코딩 실패:", decodeError);
+                        console.error("토큰 디코딩 실패:", decodeError);
                         alert("인증 정보가 유효하지 않습니다. 다시 로그인해주세요.");
                         navigate('/login'); // 로그인 페이지로 이동
                     }
@@ -97,7 +97,7 @@ function CompanionEditCon() {
                 }
 
             } catch (err) {
-                // console.error("게시글 상세 정보를 불러오는데 실패 했습니다.", err);
+                console.error("게시글 상세 정보를 불러오는데 실패 했습니다.", err);
                 setError("게시글 상세 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.");
             } finally {
                 setLoading(false);
@@ -344,11 +344,11 @@ function CompanionEditCon() {
 
 
         // 추가: 전송 직전 값 확인
-        // console.log('Submitting data:', { title, content, token, newImages, deletedImageIds });
-        // console.log('FormData entries:');
-        // for (let pair of formData.entries()) {
-        //     console.log(pair[0]+ ', '+ pair[1]);
-        // }
+        console.log('Submitting data:', { title, content, token, newImages, deletedImageIds });
+        console.log('FormData entries:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0]+ ', '+ pair[1]);
+        }
 
         try {
             await axios.put(
@@ -364,7 +364,7 @@ function CompanionEditCon() {
             alert('게시글이 성공적으로 수정되었습니다.');
             navigate(`/community/companion/${companionId}`); // 수정된 게시글 상세 페이지로 이동
         } catch (err) {
-            // console.error('게시글 수정 실패:', err.response?.data || err.message);
+            console.error('게시글 수정 실패:', err.response?.data || err.message);
             if (err.response && err.response.status === 401) {
                 setFormError('인증되지 않은 사용자입니다. 다시 로그인해주세요.');
             } else if (err.response && err.response.status === 403) {
