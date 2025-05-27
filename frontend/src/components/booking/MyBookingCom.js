@@ -2,37 +2,7 @@ import MyCancelCom from "./MyCancelCom";
 import MyScheduleCom from "./MyScheduleCom";
 import MyCompleteCom from "./MyCompleteCom";
 import emptyImage from "../../style/empty/empty-list.jpeg";
-import styled from "styled-components";
-
-const TabWrapperStyle = styled.div`
-    display: flex;
-    border-bottom: 2px solid #ddd;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto 20px;
-    gap: 12px;
-`;
-
-const TabButton = styled.button`
-    padding: 12px 0;
-    margin-right: 30px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-weight: ${({ $active }) => ($active ? 'bold' : 'normal')};
-    border-bottom: ${({ $active }) => ($active ? '4px solid black' : 'none')};
-`;
-
-const activeTabStyle = {
-    fontWeight: "bold",
-    borderBottom: "4px solid black"
-};
-
-const inactiveTabStyle = {
-    fontWeight: "normal",
-    // borderBottom: "2px solid transparent"
-    borderBottom: "none"
-};
+import {TabButton, TabWrapperStyle} from "../../style/booking/StyleMyBooking"
 
 function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         onCancelReservation,
@@ -40,7 +10,8 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         onLoadOldReservationsForComplete,
                         onLoadOldReservationsForCancel,
                         showMoreSchedule, showMoreComplete, showMoreCancel,
-                        openReviewModal}){
+                        openReviewModal,
+                        autoLoadingDone}){
     const filtered = {
         // 0: reservations.filter(r => r.orderStatus.toUpperCase() === "SCHEDULED"),
         0: reservations.filter(r =>
@@ -115,7 +86,7 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         />}
                 </>
             ) : (
-                <EmptyState message={`${tabLabels[selectedTab]}이 없습니다.`} />
+                autoLoadingDone && <EmptyState message={`${tabLabels[selectedTab]}이 없습니다.`} />
             )}
         </>
     )

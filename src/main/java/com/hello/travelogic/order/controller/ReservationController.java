@@ -162,4 +162,18 @@ public class ReservationController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());  // 없으면 204
     }
+
+    // 예약 상태별 조회
+    @GetMapping("/my/reservations/old/{status}")
+    public ResponseEntity<?> getOldOrdersByStatus(@PathVariable String status,
+                                                  @RequestParam String startDate,
+                                                  @RequestParam String endDate,
+                                                  Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
+                .getMemberCode();
+
+        return ResponseEntity.ok(orderService.getOldOrdersByStatus(memberCode, status, startDate, endDate));
+    }
 }
