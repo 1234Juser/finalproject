@@ -90,6 +90,7 @@ export default function MainCom({accessToken, state, dispatch}) {
             <EventSliderCom />
 
 
+
         </div>
     </>
     );

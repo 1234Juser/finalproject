@@ -155,9 +155,9 @@ public class ProductController {
         return productService.getRandomAdProducts(6);
     }
 
-    @GetMapping("/scheduler")
-    public String runSchedulerManually() {
-        productService.updateExpiredProductStatus();
-        return "Scheduler 수동 동작 중.";
-    }
+//    @GetMapping("/scheduler")
+//    public String runSchedulerManually() {
+//        productService.updateExpiredProductStatus();
+//        return "Scheduler 수동 동작 중.";
+//    }
 }

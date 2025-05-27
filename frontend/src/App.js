@@ -151,7 +151,6 @@ function App() {
                   <Route path="companion/edit/:companionId" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]["ROLE_USER"]}><CompanionEditPage /></PrivateRoute>} />
               </Route>
 
-
             </Routes>
             <FooterCom/>
             {/* 토스트 창 : 찜하기 완료 후 사용 */}
