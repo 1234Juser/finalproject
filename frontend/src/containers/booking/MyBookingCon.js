@@ -23,7 +23,7 @@ function MyBookingCon({accessToken}){
     // 가장 오래된 예약찾기
     function getEarliestReservationDate(status) {
         const filtered = state.reservations
-            .filter(r => r.orderStatus === status)
+            .filter(r => r.orderStatus?.toUpperCase() === status.toUpperCase())
             .map(r => dayjs(r.reservationDate));
 
         if (filtered.length === 0) return dayjs(); // fallback
@@ -38,39 +38,26 @@ function MyBookingCon({accessToken}){
             alert("로그인이 필요합니다.");
             return;
         }
-        try {
-            dispatch({ type: "LOADING" });
-            fetchRecentReservations(accessToken)
-                .then(data => {
-                    dispatch({ type: "FETCH_SUCCESS", payload: data });
-                })
-                .catch((err) => {
-                    console.error("예약 조회 실패:", err.message);
-                    dispatch({ type: "FETCH_ERROR", payload: err.message });
-                });
-        } catch (e) {
-            console.error("토큰 파싱 실패", e);
-            alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
-        }
+        const fetchData = async () => {
+            try {
+                dispatch({ type: "LOADING" });
+                const data = await fetchRecentReservations(accessToken);
+                dispatch({ type: "FETCH_SUCCESS", payload: data });
+            } catch (err) {
+                console.error("예약 조회 실패:", err.message);
+                dispatch({ type: "FETCH_ERROR", payload: err.message });
+            } finally {
+                setAutoLoadingDone(true);
+            }
+        };
+        fetchData();
     }, [accessToken]);
-    //         try {
-    //             const data = await fetchRecentReservations(accessToken);
-    //             dispatch({ type: "FETCH_SUCCESS", payload: data });
-    //         } catch (err) {
-    //             console.error("예약 조회 실패:", err.message);
-    //             dispatch({ type: "FETCH_ERROR", payload: err.message });
-    //         }
-    //     }
-    //     loadRecent();
-    // }, [accessToken]);
 
     const filteredCompleted = state.reservations.filter(r => r.orderStatus === "COMPLETED");
     // 최초 진입 시 실행. 예약 존재하긴 한다면 나오는 그 순간까지.
     useEffect(() => {
         const loadCompletedInPastRanges = async () => {
             let found = false;
-            // let beforeDate = dayjs(); // 기준은 오늘부터 시작
-            // const loopLimit = 10; // 무한 루프 방지
             let attempts = 0;
             setAutoLoadingDone(false);
             const today = dayjs();
@@ -103,6 +90,44 @@ function MyBookingCon({accessToken}){
             loadCompletedInPastRanges();
         } else if (selectedTab === 1) {
             setAutoLoadingDone(true); // 이미 데이터 있음
+        }
+    }, [selectedTab]);
+
+    const filteredCanceled = state.reservations.filter(r => r.orderStatus === "CANCELED");
+    useEffect(() => {
+        const loadCanceledInPastRanges = async () => {
+            let found = false;
+            let attempts = 0;
+            setAutoLoadingDone(false);
+            const today = dayjs();
+
+            for (let attempts = 1; attempts <= 3; attempts++) {
+                const endDate = today.subtract(6 * (attempts - 1), "month");
+                const startDate = endDate.subtract(6, "month");
+                try {
+                    const data = await fetchOldReservationsByStatus(
+                        "CANCELED",
+                        accessToken,
+                        startDate.format("YYYY-MM-DD"),
+                        endDate.format("YYYY-MM-DD")
+                    );
+                    const canceled = data.filter(r => r.orderStatus === "CANCELED");
+
+                    if (canceled.length > 0) {
+                        dispatch({ type: "ADD_OLD_RESERVATIONS", payload: canceled });
+                        break;
+                    }
+                } catch (err) {
+                    console.error("자동 로딩 실패:", err);
+                    break;
+                }
+            }
+            setAutoLoadingDone(true);
+        };
+        if (selectedTab === 2 && filteredCanceled.length === 0) {
+            loadCanceledInPastRanges();
+        } else if (selectedTab === 2) {
+            setAutoLoadingDone(true);
         }
     }, [selectedTab]);
 
@@ -143,7 +168,15 @@ function MyBookingCon({accessToken}){
     };
     const handleLoadOldForCancel = async () => {
         try {
-            const oldData = await fetchOldReservations(accessToken);
+            const earliest = getEarliestReservationDate("CANCELED");
+            const endDate = dayjs(earliest).subtract(1, "day");
+            const startDate = endDate.subtract(6, "month");
+            const oldData = await fetchOldReservations(
+                "CANCELED",
+                accessToken,
+                startDate.format("YYYY-MM-DD"),
+                endDate.format("YYYY-MM-DD")
+            );
             if (oldData.length > 0) {
                 dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             } else {
@@ -201,19 +234,6 @@ function MyBookingCon({accessToken}){
             console.error("리뷰 삭제 오류:", error);
         }
     };
-
-    useEffect(() => {
-        const hasCompleted = state.reservations.some(r => r.orderStatus === "COMPLETED");
-        const hasCanceled = state.reservations.some(r => r.orderStatus === "CANCELED");
-
-        if (selectedTab === 1 && !hasCompleted && showMoreComplete && autoLoadingDone) {
-            handleLoadOldForComplete(); // 자동 로딩 후 추가 요청 허용
-        }
-
-        if (selectedTab === 2 && !hasCanceled && showMoreCancel) {
-            handleLoadOldForCancel();
-        }
-    }, [selectedTab, state.reservations, autoLoadingDone]);
 
     return(
         <>

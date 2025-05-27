@@ -395,8 +395,8 @@ public class ProductService {
                 LocalDateTime endDateWithCutoff = product.getProductEndDate().atTime(20, 0);
 
                 // 20:00을 기준으로 비교
-                log.info("상품 상태 검사: UID={} / 종료기한={} / 현재시간={} / 현재상태={}",
-                        product.getProductUid(), endDateWithCutoff, now, product.getProductStatus());
+//                log.info("상품 상태 검사: UID={} / 종료기한={} / 현재시간={} / 현재상태={}",
+//                        product.getProductUid(), endDateWithCutoff, now, product.getProductStatus());
 
                 if (now.isAfter(endDateWithCutoff) && product.getProductStatus() == ProductEntity.ProductStatus.ON_SALE) {
                     product.setProductStatus(ProductEntity.ProductStatus.CLOSED);

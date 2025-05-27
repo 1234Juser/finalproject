@@ -6,33 +6,40 @@ import {initialState, reducer} from "../../modules/reviewModule";
 function RecentReviewRequestModalCon({accessToken, state, dispatch}) {
     // const [state, dispatch] = useReducer(reducer, initialState);
     const { reviewRequest, showReviewRequestModal } = state;
+    const memberCode = localStorage.getItem("memberCode");
 
     useEffect(() => {
-        if (!accessToken) {
-            console.log("accessToken 없음");
-            return;
-        }
+        const memberCode = localStorage.getItem("memberCode");
+        if (!accessToken || !memberCode) return;
 
-        const hiddenDate = localStorage.getItem("reviewModalHideDate");
-        const today = new Date().toISOString().split("T")[0];
+        // 자정까지 숨김 설정 확인
+        const hideUntilRaw = sessionStorage.getItem(`reviewHideUntil_${memberCode}`);
+        const hideUntil = hideUntilRaw ? Number(hideUntilRaw) : null;
+        const now = Date.now();
 
-        if (hiddenDate === today) {
-            console.log("오늘은 모달 표시 안함");
+        console.log("hideUntil:", hideUntil);
+        console.log("now:", now);
+        console.log("hideUntil > now ?", hideUntil > now);
+
+        if (hideUntil && hideUntil > now) {
+            console.log("모달 숨김 유지 중 (자정까지)");
             return;
         }
 
         const checkReviewRequest = async () => {
             try {
                 const order = await fetchLatestUnreviewedOrder(accessToken);
-                const hiddenOrders = JSON.parse(localStorage.getItem("hiddenReviewOrders") || "[]");
+                if (!order) return;
 
-                if (order && !hiddenOrders.includes(Number(order.orderCode))) {
+                const key = `reviewHiddenOrders_${memberCode}`;
+                const hiddenOrders = JSON.parse(sessionStorage.getItem(key) || "[]");
+                if (!hiddenOrders.includes(Number(order.orderCode))) {
                     dispatch({ type: "SET_REVIEW_REQUEST", payload: order });
                 } else {
-                    console.log("숨긴 주문 또는 없음:", order?.orderCode);
+                    console.log("해당 orderCode는 숨김 처리됨:", order.orderCode);
                 }
             } catch (err) {
-                console.error("리뷰 요청 주문 조회 실패:", err);
+                console.error("리뷰 요청 조회 실패:", err);
             }
         };
 
@@ -46,19 +53,29 @@ function RecentReviewRequestModalCon({accessToken, state, dispatch}) {
 
     // 오늘보지 않기
     const handleDoNotShowToday = () => {
-        const today = new Date().toISOString().split("T")[0];
-        localStorage.setItem("reviewModalHideDate", today);
-        handleClose();
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0); // 자정
+
+        const hideUntil = midnight.getTime();
+        if (memberCode) {
+            sessionStorage.setItem(`reviewHideUntil_${memberCode}`, hideUntil.toString());
+        }
+        dispatch({ type: "CLOSE_REVIEW_REQUEST_MODAL" });
     };
 
     // 영원히 안보기
     const handleDoNotShowThisOrder = () => {
-        const hiddenOrders = JSON.parse(localStorage.getItem("hiddenReviewOrders") || "[]");
-        if (!hiddenOrders.includes(reviewRequest.orderCode)) {
-            hiddenOrders.push(reviewRequest.orderCode);
-            localStorage.setItem("hiddenReviewOrders", JSON.stringify(hiddenOrders));
+        if (!memberCode) return;
+        const key = `reviewHiddenOrders_${memberCode}`;
+        const hiddenOrders = JSON.parse(sessionStorage.getItem(key) || "[]");
+        const code = Number(reviewRequest.orderCode);
+
+        if (!hiddenOrders.includes(code)) {
+            hiddenOrders.push(code);
+            sessionStorage.setItem(key, JSON.stringify(hiddenOrders));
         }
-        handleClose();
+        dispatch({ type: "CLOSE_REVIEW_REQUEST_MODAL" });
     };
 
     if (!showReviewRequestModal || !reviewRequest) return null;

@@ -3,6 +3,7 @@ import MyScheduleCom from "./MyScheduleCom";
 import MyCompleteCom from "./MyCompleteCom";
 import emptyImage from "../../style/empty/empty-list.jpeg";
 import {TabButton, TabWrapperStyle} from "../../style/booking/StyleMyBooking"
+import {useMemo} from "react";
 
 function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         onCancelReservation,
@@ -12,6 +13,7 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         showMoreSchedule, showMoreComplete, showMoreCancel,
                         openReviewModal,
                         autoLoadingDone}){
+
     const filtered = {
         // 0: reservations.filter(r => r.orderStatus.toUpperCase() === "SCHEDULED"),
         0: reservations.filter(r =>
@@ -20,6 +22,8 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
         1: reservations.filter(r => r.orderStatus.toUpperCase() === "COMPLETED"),
         2: reservations.filter(r => r.orderStatus.toUpperCase() === "CANCELED"),
     };
+
+    if (selectedTab < 0 || selectedTab > 2) return null;
 
     const tabLabels = ["예정된 여행", "지난 여행", "취소된 여행"];
     const EmptyState = ({ message }) => (
@@ -42,6 +46,7 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
         CANCELED: filtered[2].length
     });
 
+
     return(
         <>
             {/* 탭 UI */}
@@ -61,32 +66,34 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                 })}
             </TabWrapperStyle>
 
-            {filtered[selectedTab].length > 0 ? (
-                <>
-                    {selectedTab === 0 && (
-                        <MyScheduleCom
-                            reservations={filtered[0]}
-                            onCancelReservation={onCancelReservation}
-                            onLoadOldReservations={onLoadOldReservationsForSchedule}
-                            showMoreSchedule={showMoreSchedule}
-                        />
-                    )}
-                    {selectedTab === 1 && (
-                        <MyCompleteCom
-                            reservations={filtered[1]}
-                            onLoadOldReservations={onLoadOldReservationsForComplete}
-                            showMoreComplete={showMoreComplete}
-                            openReviewModal={openReviewModal}
-                        />
-                    )}
-                    {selectedTab === 2 &&
-                        <MyCancelCom reservations={filtered[2]}
-                                     onLoadOldReservations={onLoadOldReservationsForCancel}
-                                     showMoreCancel={showMoreCancel}
-                        />}
-                </>
-            ) : (
-                autoLoadingDone && <EmptyState message={`${tabLabels[selectedTab]}이 없습니다.`} />
+
+            {!autoLoadingDone ? null : (filtered[selectedTab].length > 0 ? (
+                    <>
+                        {selectedTab === 0 && (
+                            <MyScheduleCom
+                                reservations={filtered[0]}
+                                onCancelReservation={onCancelReservation}
+                                onLoadOldReservations={onLoadOldReservationsForSchedule}
+                                showMoreSchedule={showMoreSchedule}
+                            />
+                        )}
+                        {selectedTab === 1 && (
+                            <MyCompleteCom
+                                reservations={filtered[1]}
+                                onLoadOldReservations={onLoadOldReservationsForComplete}
+                                showMoreComplete={showMoreComplete}
+                                openReviewModal={openReviewModal}
+                            />
+                        )}
+                        {selectedTab === 2 &&
+                            <MyCancelCom reservations={filtered[2]}
+                                         onLoadOldReservations={onLoadOldReservationsForCancel}
+                                         showMoreCancel={showMoreCancel}
+                            />}
+                    </>
+                ) : (
+                    <EmptyState message={`${tabLabels[selectedTab]}이 없습니다.`} />
+                )
             )}
         </>
     )
