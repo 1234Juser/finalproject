@@ -1,21 +1,21 @@
 import {useEffect, useReducer, useRef} from "react";
-import ChatRoomCom from "../../../components/community/chat/ChatRoomCom";
+import ChatRoomCom from "../../components/chat/ChatRoomCom";
 import SockJS from "sockjs-client";
 import {Stomp} from '@stomp/stompjs';
-import {chatReducer, initialState} from "../../../modules/chatReducer";
+import {chatReducer, initialState} from "../../modules/chatReducer";
 import {
     AuthErrorButton,
     AuthErrorContainer,
     AuthErrorMessage,
     AuthErrorTitle,
-} from "../../../style/community/chat/StyleChatRoom";
+} from "../../style/community/chat/StyleChatRoom";
 import {useNavigate} from "react-router-dom";
-import { deleteChatRoom, leaveChatRoom } from "../../../service/chatService";
+import {deleteChatRoom, getAllChatRooms, getChatRoomDetail, leaveChatRoom} from "../../service/chatService";
 
 
 function ChatRoomCon({roomUid}) {
     const [state, dispatch] = useReducer(chatReducer, initialState);
-    const { messages, newMessage, username, memberCode, isConnected, currentRoomId, isLoading, authError } = state;
+    const { messages, newMessage, username, memberCode, isConnected, isLoading, authError, roomDetails } = state;
     const stompClientRef = useRef(null); // STOMP 클라이언트 인스턴스를 저장하기 위한 ref
     const navigate = useNavigate();
 
@@ -78,6 +78,13 @@ function ChatRoomCon({roomUid}) {
         ) {
             console.log(`Attempting to connect with username: ${username}, memberCode: ${memberCode}, roomId: ${roomUid}`);
             connect(authInfo.token);
+            // getChatRoomDetail(roomUid, authInfo.token)
+            //     .then(data => {
+            //         console.log("채팅방 상세 정보 조회 : ", data)
+            //         dispatch({type : "SET_ROOM_DETAILS", payload : data})
+            //     }).catch(err => {
+            //         console.log("채팅방 상세 정보 조회 실패 : ", err);
+            // })
         }
     }, [username, memberCode, roomUid, isLoading, authError]);
 
@@ -119,14 +126,26 @@ function ChatRoomCon({roomUid}) {
                 dispatch({ type: 'SET_AUTH_ERROR', payload: null });    // 연결 성공 시 이전 인증 오류 해제
                 dispatch({ type: 'SET_CONNECTED', payload: true });
 
-                
-                // 사용자 입장/퇴장 알림 메시지 구독
-                stompClient.subscribe('/topic/public', (message) => {
-                    const receivedPublicMessage = JSON.parse(message.body);
-                    console.log(">>>>> 받은 공개 메시지 확인 : ", receivedPublicMessage);
-                    dispatch({ type: 'ADD_MESSAGE', payload: receivedPublicMessage });
-                    
+
+                // 참가 정보 업데이트 구독
+                stompClient.subscribe(`/topic/chat/${roomUid}/updates`, (message) => {
+                    const payload = JSON.parse(message.body);
+                    console.log('---------------------from server updates : ', payload);
+
+                    if (payload.type === "USER_UPDATE") {
+                        // 참여 인원이 서버로부터 브로드캐스트된 경우 UI에 반영
+                        dispatch({ type: 'SET_ROOM_DETAILS', payload: { ...roomDetails, currentParticipants: payload.currentParticipants } });
+                    }
+
                 });
+
+                // // 사용자 입장/퇴장 알림 메시지 구독
+                // stompClient.subscribe('/topic/public', (message) => {
+                //     const receivedPublicMessage = JSON.parse(message.body);
+                //     console.log(">>>>> 받은 공개 메시지 확인 : ", receivedPublicMessage);
+                //     dispatch({ type: 'ADD_MESSAGE', payload: receivedPublicMessage });
+                //
+                // });
                 
                 // 1. >>>>클라이언트<<<가 채팅방에 입장할 때 서버로 메시지 전송
                 const joinMessage = {
@@ -265,46 +284,41 @@ function ChatRoomCon({roomUid}) {
     // 채팅방 나가기
     // 사용자가 명시적으로 채팅방에서 퇴장 (나가기 버튼 클릭 등) 시 호출되는 함수.
     const onHandleLeaveChatRoom = async () => {
-    const authInfo = getAuthInfo();
-    const currentStompClient = stompClientRef.current;
+        const authInfo = getAuthInfo();
+        const currentStompClient = stompClientRef.current;
 
-    const confirmExit = window.confirm("정말 이 채팅방에서 나가시겠습니까?");
+        const confirmExit = window.confirm("정말 이 채팅방에서 나가시겠습니까?");
         if (!confirmExit) return;
 
-        
         try {
+
             // 1. 서버로 LEAVE 메시지 전송 (다른 사용자들에게 알림)
             if (currentStompClient && currentStompClient.connected && authInfo.memberCode && roomUid) {
                 console.log(`---------Sending explicit LEAVE message for user ${authInfo.username} (memberCode: ${authInfo.memberCode}) from room ${roomUid}...`);
-        
                 const leaveMessage = {
-                    type: 'LEAVE', // ★ LEAVE 타입 사용 ★
+                    type: 'LEAVE',
                     roomId: roomUid,
-                    sender: authInfo.username, // 퇴장 메시지에는 username 사용 (표시용)
-                    // memberCode: authInfo.memberCode, // ★ memberCode도 함께 보냄 ★ // ChatMessageDTO에 memberCode 필드가 없다면 제외
+                    sender: authInfo.username,
                     message: authInfo.username + "님이 채팅방을 나갔습니다.", 
-                    sentAt: new Date().toISOString() // 클라이언트 시간 (서버에서 다시 설정하는 것이 좋음)
+                    sentAt: new Date().toISOString()
                 };
-                // 서버의 퇴장 메시지 핸들러 경로로 전송 (ChatController에 정의한 @MessageMapping("/chat.leave/{roomId}") 경로 사용)
                 currentStompClient.send(`/app/chat.leave/${roomUid}`, {}, JSON.stringify(leaveMessage));
                 console.log("Explicit LEAVE message sent.");
-                // 메시지 전송 후 채팅방 목록 페이지 등으로 이동
-                navigate("/community/chat"); // 예시: 퇴장 후 채팅방 목록으로 이동
+                navigate("/community/chat");
             } else {
                  console.warn("WebSocket is not connected. Cannot send LEAVE message via STOMP.");
-                 // WebSocket이 연결되지 않은 경우, 퇴장 메시지 브로드캐스트는 건너뜁니다.
-            } 
+            }
 
             // 2. REST API 호출하여 DB 업데이트 (퇴장 시간 기록 등)
             console.log(`Calling REST API to exit chat room ${roomUid} for user ${authInfo.username}...`);
-            // exitChatRoomApi 함수는 퇴장 REST API (/api/chatrooms/exit/{chatRoomUid})를 호출하는 함수라고 가정합니다.
-            // 이 함수는 roomUid와 토큰을 파라미터로 받을 것입니다.
-            const res = await leaveChatRoom(roomUid, authInfo.token); // exitChatRoomApi 함수 구현 필요
+            const res = await leaveChatRoom(roomUid, authInfo.token);
 
             if (res.ok) {
                 console.log("---채팅방 퇴장 처리 완료 (DB 업데이트)---");
+
+                // 3. 채팅방 목록 갱신
+                // getAllChatRooms().then((updatedRooms) => setRooms(updatedRooms || []));
                 alert("채팅방에서 나갔습니다.");
-                // 퇴장 처리 성공 후 채팅방 목록 페이지로 이동
                 navigate("/community/chat");
             } else {
                 const errorData = await res.json().catch(() => ({ message: "채팅방 퇴장 처리 중 오류가 발생했습니다." }));
@@ -320,10 +334,6 @@ function ChatRoomCon({roomUid}) {
             // 사용자에게 오류 알림 등을 표시할 수 있습니다.
             alert("퇴장 처리 중 오류가 발생했습니다.");
         }
-    // } else {
-    //     console.warn("Cannot send leave message. Conditions not met: ", { roomUid, memberCode: authInfo.memberCode, connected: currentStompClient?.connected });
-    //     alert("퇴장할 수 없는 상태입니다. 다시 시도해주세요.");
-    // }
     }
 
 
@@ -335,7 +345,9 @@ function ChatRoomCon({roomUid}) {
                              setNewMessage={(msg) => dispatch({ type: 'SET_NEW_MESSAGE', payload: msg })}
                              roomUid={roomUid}
                              onDeleteChatRoom={onDeleteChatRoom}
-                             onHandleLeaveChatRoom={onHandleLeaveChatRoom}/>
+                             onHandleLeaveChatRoom={onHandleLeaveChatRoom}
+                             currentParticipants={roomDetails?.currentParticipants || 0} // 여기서 전달
+                />
             </div>
         </>
     )

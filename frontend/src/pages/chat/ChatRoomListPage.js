@@ -1,4 +1,4 @@
-import ChatRoomListCon from "../../../containers/community/chat/ChatRoomListCon";
+import ChatRoomListCon from "../../containers/chat/ChatRoomListCon";
 
 function ChatRoomListPage() {
 

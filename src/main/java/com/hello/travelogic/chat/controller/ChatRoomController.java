@@ -29,9 +29,11 @@ public class ChatRoomController {
     public ResponseEntity<List<ChatRoomCreateResponse>> getAllChatRooms() {
         try {
             List<ChatRoomCreateResponse> rooms = chatRoomService.getAllChatRooms();
+            log.info("-------------Final DTO Response: {}", rooms);
+
             if (rooms.isEmpty() || rooms == null) {
                 log.info("조회된 채팅방 없음");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();    // 204 No Content 상태 코드 반환
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
             log.info("채팅방 {}개 조회 성공", rooms.size());
             return ResponseEntity.status(HttpStatus.OK).body(rooms);
@@ -40,6 +42,23 @@ public class ChatRoomController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+
+    // 특정 채팅방 세부 정보 조회
+    @GetMapping("/detail/{chatRoomUid}")
+    public ResponseEntity<ChatRoomCreateResponse> getChatRoomDetails(@PathVariable String chatRoomUid) {
+        try {
+            ChatRoomCreateResponse response = chatRoomService.getChatRoomDetails(chatRoomUid);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (RuntimeException e) {
+            log.warn("채팅방 세부 정보 조회 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            log.error("채팅방 세부 정보 조회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 
 
     // 채팅방 생성

@@ -1,13 +1,13 @@
-import ChatRoomListCom from "../../../components/community/chat/ChatRoomListCom";
+import ChatRoomListCom from "../../components/chat/ChatRoomListCom";
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import {createChatRoom, getAllChatRooms} from "../../../service/chatService";
+import {createChatRoom, getAllChatRooms} from "../../service/chatService";
 import {
     AuthErrorButton,
     AuthErrorContainer,
     AuthErrorMessage,
     AuthErrorTitle
-} from "../../../style/community/chat/StyleChatRoom";
+} from "../../style/community/chat/StyleChatRoom";
 
 function ChatRoomListCon() {
 
@@ -31,8 +31,9 @@ function ChatRoomListCon() {
             setIsLoggedIn(true);
             getAllChatRooms()
                 .then(res => {
-                        if (res) {
+                            console.log("<<<<<<<< API 응답 데이터 >>>>>>");
                             console.log("받아온 데이터", res);
+                        if (res) {
                             setRooms(res);
                         } else {
                             setRooms([]); // 빈 배열로 초기화
@@ -138,6 +139,11 @@ function ChatRoomListCon() {
 
     // 채팅방으로 이동
     const goToRoom = (room) => {
+        if (room.currentParticipants >= room.chatRoomMaxParticipants) {
+            alert(`'${room.chatRoomTitle}'에 입장할 수 없습니다. 최대 인원(${room.chatRoomMaxParticipants}) 초과.`);
+            return; // 입장 차단
+        }
+
         navigate(`/community/chat/${encodeURIComponent(room.chatRoomUid)}`);
     };
 

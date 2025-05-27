@@ -2,6 +2,7 @@ package com.hello.travelogic.chat.dto;
 
 import com.hello.travelogic.chat.domain.ChatRoomEntity;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
@@ -31,11 +32,8 @@ public class ChatRoomCreateResponse {
         this.chatRoomCreateAt = chatRoomEntity.getChatRoomCreateAt();
         this.chatRoomDescription = chatRoomEntity.getChatRoomDescription();
         this.chatRoomMaxParticipants = chatRoomEntity.getChatRoomMaxParticipants();
-        this.currentParticipants = chatRoomEntity.getChatRoomMembers().size();
-    }
+        this.currentParticipants = currentParticipants;
 
-    // 이 DTO는 생성 실패 시 컨트롤러에서 new ChatRoomCreateResponse()로 빈 객체를 반환하는 용도로도 사용되었으나,
-    // 오류 응답은 별도의 방식 (문자열 메시지, Error DTO 등)으로 처리하는 것이 더 명확합니다.
-    // 따라서 이 DTO는 성공적인 응답에만 사용되는 것이 이상적입니다.
+    }
 
 }
