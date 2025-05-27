@@ -247,5 +247,4 @@ function CompanionMyPageCom({
         </div>
     );
 }
-
 export default CompanionMyPageCom;

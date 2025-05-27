@@ -902,7 +902,6 @@ INSERT IGNORE INTO tbl_product (
 
 
 
-
 DELETE FROM tbl_product_theme;
 INSERT IGNORE INTO tbl_product_theme (product_code, theme_code) VALUES
                                                                     (1,1),

@@ -32,8 +32,8 @@ export const RegionGrid = styled.div`
 
 export const RegionCard = styled.div`
   position: relative;
-  width: 180px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -183,11 +183,12 @@ export const CityButton = styled.button`
 `;
 
 export const RegionImage = styled.div`
-    width: 100%;
-    height: 100px;
+    //width: 100%;
+    //height: 100px;
     overflow: hidden;
-    border-radius: 5px;
+    border-radius: 30px;
     background-color: #f8f8f8;
+  box-shadow: 2px 1px 1px 0px rgb(179 179 179 / 15%);
 
     img {
         width: 100%;

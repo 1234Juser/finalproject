@@ -32,6 +32,6 @@ public class ProductDetailEntity {
     private String productNotice;
 
     // 상품 목록 역방향 (양방향 필요할 경우)
-    @OneToMany(mappedBy = "productDetail")
+    @OneToMany(mappedBy = "productDetail", fetch = FetchType.LAZY)
     private List<ProductEntity> products;
 }
