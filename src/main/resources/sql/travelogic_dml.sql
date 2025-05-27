@@ -281,7 +281,7 @@ INSERT INTO tbl_payment_cancel (payment_code, cancel_time, cancel_amount, pg_tid
     (24, '2025-05-09 11:55:00', 280000, 'pg_cancel_1234567917', 'https://receipt.url/cancel/24');
 
 INSERT INTO tbl_review (member_code, product_code, option_code, order_code, review_rating, review_content, review_date, review_pic, review_status) VALUES
-    (4, 76, 3, 3, 5, '이탈리아학회 사람들과 단체로 방문하면서 구매했던건데 공홈보다 저렴해서 선택했습니다', '2023-05-21 14:30:00', 'upload/review/IMG_2881.JPG', 'ACTIVE'),
+    (4, 76, 3, 3, 5, '이탈리아학회 사람들과 단체로 방문하면서 구매했던건데 공홈보다 저렴해서 선택했습니다', '2023-05-21 14:30:00', 'IMG_2881.JPG', 'ACTIVE'),
     (3, 76, 2, 2, 1, NULL, '2023-05-22 09:15:00', NULL, 'DELETE_BY_ADMIN'),
     (2, 76, 1, 1, 3, '다리 아파요... 무릎 안좋으면 가지마셈ㅠ', '2023-05-23 09:15:00', NULL, 'ACTIVE'),
     (5, 76, 4, 4, 4, '존.잼. 석조 건축물은 정말 대단해요', '2023-05-23 10:15:00', NULL, 'ACTIVE'),
