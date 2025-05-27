@@ -99,7 +99,7 @@ function TimedifferenceCom() {
         <TimeBoxWrapper>
             <TimeTitle>
                 <FaClock style={{ marginRight: 8 }} />
-                주요 도시 현재 시간
+                주요 국가 현재 시간
             </TimeTitle>
             <TimeTable>
                 <tbody>
@@ -135,7 +135,7 @@ function TimedifferenceCom() {
                 </TimeRow>
                 <TimeRow>
                     <TimeIconCell><FaClock color="#2b7eb8" /></TimeIconCell>
-                    <TimeNameCell>두바이</TimeNameCell>
+                    <TimeNameCell>아랍에미리트</TimeNameCell>
                     <TimeValueCell>{times.dubai}</TimeValueCell>
                 </TimeRow>
                 <TimeRow>
