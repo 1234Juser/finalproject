@@ -7,8 +7,7 @@ import {
     Title,
     PriceWrapper,
     Badge,
-    DetailText
-    ,
+    DetailText,
     DetailTabWrapper,
     DetailTab,
     DetailContentWrapper,
@@ -124,7 +123,6 @@ function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTab
             <DetailContentWrapper>
                 <SectionWrapper id="basicInfo">
                     <DetailText>
-                        {/*{product.productDescription.productInfo}*/}
                         <div dangerouslySetInnerHTML={{__html : product?.productDescription?.productInfo }} />
                     </DetailText>
                         <Divider />
