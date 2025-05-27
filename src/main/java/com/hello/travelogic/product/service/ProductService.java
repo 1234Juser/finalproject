@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,13 +26,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 public class ProductService {
 
     @Autowired
@@ -378,5 +380,33 @@ public class ProductService {
                 .stream()
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    // 실행 가능 기간이 지난 상품의 경우 productStatus를 자동으로 CLOSED로 바뀌게 해 옵션 선택 버튼 클릭 막기
+    // 매일 밤12시 정각에 종료된 상품 상태를 CLOSED로 변경
+    @Scheduled(cron = "0 0 20 * * *", zone = "Asia/Seoul") // 한국시간 기준 매일 01:00
+    public void updateExpiredProductStatus() {
+        log.info("[스케줄러 실행됨] updateExpiredProductStatus()");
+        try {
+            List<ProductEntity> products = productRepo.findAllByProductStatusNot(ProductEntity.ProductStatus.CLOSED);
+            LocalDateTime now = LocalDateTime.now();
+
+            for (ProductEntity product : products) {
+                LocalDateTime endDateWithCutoff = product.getProductEndDate().atTime(20, 0);
+
+                // 20:00을 기준으로 비교
+                log.info("상품 상태 검사: UID={} / 종료기한={} / 현재시간={} / 현재상태={}",
+                        product.getProductUid(), endDateWithCutoff, now, product.getProductStatus());
+
+                if (now.isAfter(endDateWithCutoff) && product.getProductStatus() == ProductEntity.ProductStatus.ON_SALE) {
+                    product.setProductStatus(ProductEntity.ProductStatus.CLOSED);
+                    productRepo.save(product); // <- 명시적 저장
+                    log.info("상품 상태 CLOSED로 변경됨: UID={}", product.getProductUid());
+                }
+            }
+            productRepo.flush();
+        } catch (Exception e) {
+            log.error("[스케줄러 에러] 상태 변경 실패: ", e);
+        }
     }
 }

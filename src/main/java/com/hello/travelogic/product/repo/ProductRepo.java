@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,4 +56,8 @@ public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
     // 랜덤 상품 조회
     @Query(value = "SELECT * FROM tbl_product ORDER BY RAND() LIMIT :limit", nativeQuery = true)
     List<ProductEntity> findRandomProducts(@Param("limit") int limit);
+
+    // 실행 가능 기간이 지난 상품의 경우 productStatus를 자동으로 CLOSED로 바뀌게 해 옵션 선택 버튼 클릭 막기
+    List<ProductEntity> findByProductEndDateBeforeAndProductStatusNot(LocalDate date, ProductEntity.ProductStatus status);
+    List<ProductEntity> findAllByProductStatusNot(ProductEntity.ProductStatus productStatus);
 }
