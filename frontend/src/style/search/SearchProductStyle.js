@@ -15,12 +15,12 @@ const Palette = {
     tabShadow: "0 2px 8px #92c7eb55"
 };
 
-
 export const TourPageContainer = styled.div`
     max-width: 1200px;
     margin: 0 auto;
     padding: 24px 16px;
 `;
+
 
 export const TourHeader = styled.h3`
     font-size: 24px;
@@ -28,7 +28,6 @@ export const TourHeader = styled.h3`
     margin-bottom: 20px;
     text-align: center;
 `;
-
 
 
 export const TourCard = styled.div`

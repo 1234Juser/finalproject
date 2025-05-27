@@ -23,6 +23,7 @@ import {
     PagingButton,
 } from "../../style/search/SearchProductStyle";
 import { GoCalendar, GoFilter } from "react-icons/go";
+import { SaleStatus } from "../../style/product/StyleProductDetail"; // SaleStatus 임포트 추가
 
 // 가격 포맷 함수
 const formatPrice = (price) => {
@@ -83,6 +84,13 @@ function SearchProductCom({
                               handlePageChange, // 페이징 props
                               totalProducts // 전체 상품 개수 props
                           }) {
+
+    const productStatusMap = { // productStatus 맵 추가
+        ON_SALE: "판매 중",
+        CLOSED: "판매 종료",
+        SOLD_OUT: "매진",
+    };
+
     return (
         <TourPageContainer>
             <TourHeader>“{keyword}” 검색 결과 ({totalProducts}개)</TourHeader> {/* 전체 상품 개수 표시 */}
@@ -102,52 +110,53 @@ function SearchProductCom({
             {!loading && products.length === 0 && <div style={{ textAlign: "center", fontSize: "1.2em", padding: "20px" }}>검색 결과가 없습니다.</div>}
             {!loading && products.length > 0 && (
                 <div>
-                    {products.map((p) => (
-                        p.type === "product" && (
-                            <TourCard key={p.productUid}>
-                                <CardImageWrapper>
-                                    <CardImage
-                                        src={`/upload/product/${p.productThumbnail}`} // ProductCom.js의 이미지 소스 사용
-                                        alt={p.title || "상품 이미지"}
-                                        onError={(e) => { // 에러 핸들링 추가
-                                            e.target.onerror = null;
-                                            e.target.src = p.productThumbnail?.startsWith('/static/') // productThumbnail이 있는지 확인
+                    {products.map((p) => {
+                        const displayStatusText = productStatusMap[p.productStatus]; // productStatus 맵 사용
+                        return (
+                            p.type === "product" && (
+                                <TourCard key={p.productUid}>
+                                    <CardImageWrapper>
+                                        <CardImage
+                                            src={p.productThumbnail?.startsWith('/static/')
                                                 ? p.productThumbnail
-                                                : '/static/img/earth.jpg';
-                                        }}
-                                    />
-                                </CardImageWrapper>
-                                <CardContent>
-                                    <CardSubInfo $noSpaceBetween>
-                                        <span>{p.productStatus || '상태 정보 없음'}</span>
-                                        <ProductUid>상품번호 {p.productUid || '정보 없음'}</ProductUid>
-                                    </CardSubInfo>
-                                    <CardTitle>{p.title || "제목 없음"}</CardTitle>
-                                    <CardPrice>￦ {formatPrice(p.productAdult)}원</CardPrice>
-                                    {p.extraInfo && (
+                                                : `/upload/product/${p.productThumbnail}`}
+                                            alt="상품 이미지"
+                                            onError={(e) => { // 에러 핸들링 추가
+                                                e.target.onerror = null;
+                                                e.target.src = '/static/img/earth.jpg';
+                                            }}
+                                        />
+                                    </CardImageWrapper>
+                                    <CardContent>
                                         <CardSubInfo>
-                                            {p.extraInfo}
+                                            <SaleStatus status={p.productStatus}> {/* SaleStatus 컴포넌트 사용 */}
+                                                {displayStatusText}
+                                            </SaleStatus>
+                                            <ProductUid>상품번호 {p.productUid || '정보 없음'}</ProductUid>
                                         </CardSubInfo>
-                                    )}
-                                    {(p.productStartDate || p.productEndDate) && (
-                                        <CardSubInfo $noSpaceBetween>
-                                            <GoCalendar size={24}/>
-                                            <CalendarTextContainer>
-                                                <CalendarText>
-                                                    출발 기간: {p.productStartDate || '미정'} ~ {p.productEndDate || '미정'}
-                                                </CalendarText>
-                                            </CalendarTextContainer>
-                                        </CardSubInfo>
-                                    )}
-                                    {p.productUid && (
-                                        <Link to={`/products/${p.productUid}`} style={{ textDecoration: 'none' }}>
-                                            <ViewDetailButton>자세히 보기</ViewDetailButton>
-                                        </Link>
-                                    )}
-                                </CardContent>
-                            </TourCard>
-                        )
-                    ))}
+                                        <CardTitle>{p.title || "제목 없음"}</CardTitle>
+                                        <CalendarText>{p.productContent || "내용 없음"}</CalendarText>
+                                        <CardPrice>￦ {formatPrice(p.productAdult)}원</CardPrice>
+                                        {(p.productStartDate || p.productEndDate) && (
+                                            <CardSubInfo $noSpaceBetween>
+                                                <GoCalendar size={24}/>
+                                                <CalendarTextContainer>
+                                                    <CalendarText>
+                                                        출발 기간: {p.productStartDate || '미정'} ~ {p.productEndDate || '미정'}
+                                                    </CalendarText>
+                                                </CalendarTextContainer>
+                                            </CardSubInfo>
+                                        )}
+                                        {p.productUid && (
+                                            <Link to={`/products/${p.productUid}`} style={{ textDecoration: 'none' }}>
+                                                <ViewDetailButton>자세히 보기</ViewDetailButton>
+                                            </Link>
+                                        )}
+                                    </CardContent>
+                                </TourCard>
+                            )
+                        );
+                    })}
                 </div>
             )}
             {/* 페이징 UI 렌더링 */}

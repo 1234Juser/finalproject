@@ -13,14 +13,15 @@ public class SearchDTO {
     private String title;
     private String description;
     private String extraInfo;
-    private String productUid; // 상품 UID 필드 추가
-    // 필요하다면 가격, 이미지 URL, 여행 기간 등의 필드도 추가 가능
+    private String productUid;
     private Integer productAdult;
     private Integer productChild;
     private ProductEntity.ProductStatus productStatus;
     private String productStartDate;
     private String productEndDate;
     private String productThumbnail;
+    private String productContent;
+
 
 
 
@@ -37,6 +38,7 @@ public class SearchDTO {
                 .productStartDate(e.getProductStartDate() != null ? e.getProductStartDate().toString() : null)
                 .productEndDate(e.getProductEndDate() != null ? e.getProductEndDate().toString() : null)
                 .productThumbnail(e.getProductThumbnail())
+                .productContent(e.getProductContent())
                 .build();
     }
 
