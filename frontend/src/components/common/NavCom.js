@@ -57,7 +57,6 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                             <li><a href="/about">회사소개</a></li>
                             <li><a href="/ceo">ceo 인사말</a></li>
                             <li><a href="/faq">자주묻는질문(FAQ)</a></li>
-                            <li><a href="/notice">공지사항</a></li>
                         </DropdownMenu>
                     </DropdownContainer>
 
