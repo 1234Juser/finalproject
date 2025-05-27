@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 
 export const TourPageContainer = styled.div`
   max-width: 1200px;
@@ -28,8 +27,8 @@ export const TourCard = styled.div`
   display: flex;
   flex-direction: row;
   transition: 0.3s;
-    gap: 16px;
     width: 100%;
+    margin: 15px 0;
     
     &:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -37,16 +36,18 @@ export const TourCard = styled.div`
 `;
 
 export const CardImageWrapper = styled.div`
-  width: 250px; /* 이미지 영역의 고정 너비 설정 (캡처 이미지 비율을 고려) */
-  height: 200px; /* 이미지 높이 유지 */
+  width: 300px; /* 이미지 영역의 고정 너비 설정 (캡처 이미지 비율을 고려) */
+  height: 250px; /* 이미지 높이 유지 */
   flex-shrink: 0; /* 이미지 영역 크기 유지 */
   border-radius: 8px 0 0 8px; /* 왼쪽 상단과 왼쪽 하단 둥글게 */
   overflow: hidden; /* 이미지가 wrapper 밖으로 나가지 않도록 */
+    padding: 16px;
+    align-content: center;
 `;
 
 export const CardImage = styled.img`
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
     border-radius: 8px; /* 왼쪽 하단과 왼쪽 상단 둥글게 */
     flex-shrink: 0; /* 이미지 크기 고정 */

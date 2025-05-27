@@ -5,10 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import {
     Container,
     Title,
-    RegionGrid,
     CityList,
     CityButton,
-    CityListContainer,
     DomesticCityListContainer
 } from '../../style/product/StyleDomestic';
 
