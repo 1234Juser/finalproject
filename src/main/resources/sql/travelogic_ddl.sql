@@ -21,14 +21,17 @@ DROP TABLE IF EXISTS tbl_wish_group CASCADE;
 DROP TABLE IF EXISTS `tbl_product_theme` CASCADE;
 DROP TABLE IF EXISTS `tbl_product` CASCADE;
 DROP TABLE IF EXISTS `tbl_theme` CASCADE;
+DROP TABLE IF EXISTS `tbl_city_view_count` CASCADE;
 DROP TABLE IF EXISTS `tbl_city` CASCADE;
 DROP TABLE IF EXISTS `tbl_country` CASCADE;
 DROP TABLE IF EXISTS `tbl_theme` CASCADE;
 DROP TABLE IF EXISTS `tbl_region` CASCADE;
+DROP TABLE IF EXISTS `tbl_like` CASCADE;
 DROP TABLE IF EXISTS `tbl_companion_comment` CASCADE;
 DROP TABLE IF EXISTS `tbl_companion` CASCADE;
 DROP TABLE IF EXISTS `tbl_chat_room_member` CASCADE;
 DROP TABLE IF EXISTS `tbl_chat` CASCADE;
+DROP TABLE IF EXISTS `tbl_inquiry_chat_message` CASCADE;
 DROP TABLE IF EXISTS `tbl_inquiry_chat` CASCADE;
 DROP TABLE IF EXISTS `tbl_notification` CASCADE;
 DROP TABLE IF EXISTS tbl_faq CASCADE;
@@ -36,6 +39,8 @@ DROP TABLE IF EXISTS tbl_event CASCADE;
 DROP TABLE IF EXISTS tbl_member_role CASCADE;
 DROP TABLE IF EXISTS tbl_authority CASCADE;
 DROP TABLE IF EXISTS tbl_password_reset_code CASCADE;
+DROP TABLE IF EXISTS tbl_chat_room CASCADE;
+DROP TABLE IF EXISTS tbl_follow CASCADE;
 DROP TABLE IF EXISTS tbl_member CASCADE;
 
 -- 1. 회원정보 테이블 (tbl_member)
