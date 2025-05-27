@@ -99,13 +99,13 @@ function CompanionRegisterCom({
                             {existingImages?.map((image, index) => (
                                 <ImagePreviewWrapper key={`existing-${image.id}`}>
                                     <ImagePreview src={image.imageUrl} alt={`Existing image ${index + 1}`} />
-                                    <RemoveImageButton onClick={() => onRemoveExistingImage(image.id, image.imageUrl, index)}>
+                                    <RemoveImageButton onClick={() => onRemoveExistingImage(image.imageUrl)}>
                                         X
                                     </RemoveImageButton>
                                 </ImagePreviewWrapper>
                             ))}
                             {/* 새로 추가된 이미지 미리보기 */}
-                            {imagePreviews?.map((preview, index) => (
+                            {imagePreviews.filter((preview, index) => index >= existingImages.length).map((preview, index) => (
                                 <ImagePreviewWrapper key={`new-${index}`}>
                                     <ImagePreview src={preview} alt={`New image preview ${index + 1}`} />
                                     <RemoveImageButton type="button" onClick={() => onRemoveNewImage(index)}>
@@ -113,7 +113,6 @@ function CompanionRegisterCom({
                                     </RemoveImageButton>
                                 </ImagePreviewWrapper>
                             ))}
-
                         </ImagePreviewContainer>
                     </FormRow>
                 )}

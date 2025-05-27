@@ -13,8 +13,8 @@ const tabList = [
 
 function EventListCom({
                           events,
-                          tab, // 현재 선택된 탭
-                          onTabChange, // 탭 클릭시 호출
+                          tab,
+                          onTabChange,
                           showRegisterButton,
                           onRegisterClick
                       }) {
@@ -53,7 +53,7 @@ function EventListCom({
                         {tabList.map(tb => (
                             <TabButton
                                 key={tb.key}
-                                active={tab === tb.key}
+                                active={(tab === tb.key).toString()}
                                 onClick={() => onTabChange(tb.key)}
                             >
                                 {tb.label}

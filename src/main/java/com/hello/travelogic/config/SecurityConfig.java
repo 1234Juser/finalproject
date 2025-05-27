@@ -19,12 +19,14 @@ import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -34,8 +36,11 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
+                // 스프링 부트의 일반적인 정적 리소스 위치를 무시합니다.
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico");
+                // 추가적으로 특정 경로의 정적 리소스들도 무시하도록 설정합니다.
+                .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/static/**",
+                        "/upload/**", "/events/**");
     }
 
     @Bean
@@ -43,39 +48,57 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
+                    // 요청을 허용할 오리진(도메인)을 설정합니다.
                     config.setAllowedOrigins(List.of("http://localhost:3000"));
+                    // 허용할 HTTP 메서드를 설정합니다.
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                    // 허용할 헤더를 설정합니다. 모든 헤더를 허용합니다.
                     config.setAllowedHeaders(List.of("*"));
+                    // 클라이언트에게 노출할 헤더를 설정합니다. 주로 'Authorization' 헤더를 노출하여 클라이언트가 접근할 수 있도록 합니다.
                     config.setExposedHeaders(List.of("Authorization"));
+                    // 자격 증명(쿠키, HTTP 인증 헤더 등)을 포함한 요청을 허용할지 여부를 설정합니다.
                     config.setAllowCredentials(true);
                     return config;
                 }))
-//                .cors(withDefaults())
+//                .cors(withDefaults()) // Spring Boot의 기본 CORS 설정을 사용하려면 이 주석을 해제할 수 있습니다.
+                // CSRF(Cross-Site Request Forgery) 보호 기능을 비활성화합니다.
+                // REST API 서버의 경우 토큰 기반 인증(JWT 등)을 사용하므로 CSRF 보호가 필요 없거나 충돌할 수 있어 비활성화하는 경우가 많습니다.
                 .csrf(AbstractHttpConfigurer::disable)
-//                .csrf(csrf -> csrf.disable())
+//                .csrf(csrf -> csrf.disable()) // 다른 CSRF 비활성화 방식 (동일한 기능)
+                // HTTP 요청에 대한 인가(Authorization) 규칙을 설정합니다.
                 .authorizeHttpRequests(auth -> auth
-                        // 회원 관련 엔드포인트는 인증 없이 허용
-                        .requestMatchers("/member/**", "/api/inquiry/**").permitAll()
-                        .requestMatchers("/orders/cancel-pending").permitAll()
-                        // 게시물 작성, 마이페이지(MyPage) 등 개인정보/행동이 필요한 API는 인증 필요(원하는 보호 URL 패턴으로 수정)
-                        // 마이페이지는 인증 필요
-                        .requestMatchers("/member/mypage").authenticated()
-                        .requestMatchers("/member/adminmypage").hasRole("ADMIN")
-                        .requestMatchers("/wish/**").authenticated()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
-                        // 웹소켓 핸드셰이크 경로 허용
-                        .requestMatchers("/ws/**").permitAll()
+                                // 다음 경로들은 인증 없이(누구나) 접근을 허용합니다.
+                                .requestMatchers("/member/**", "/api/inquiry/**","/main", "/","/customize/search", "/search",
+                                        "/about", "/ceo","/faq", "/faq/{id}","/domestic", "/international",
+                                        "/city/ranking", "/city/all-view-counts","/exchange/main",
+                                        "/event","/event/{id}","/event/ongoing-slider",
+                                        "/companions",  "/companions/{id}", "/likes/companion/{id}/count", "/likes/comment/{id}/count",
+                                        "/cities/region/**", "/products/city", "/country/**", "/cities/**","/products/**",
+                                        "/review/product/**",   "payments/methods","/orders/cancel-pending", "/api/chatrooms"
 
-                        // 그 외 모두 허용
-                        .anyRequest().permitAll()
-
+                                ).permitAll()
+                                //  경로는 인증된 사용자만 접근을 허용합니다.
+                                .requestMatchers("/member/mypage","/wish/**").authenticated()
+                                // 경로는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
+                                .requestMatchers("/member/adminmypage").hasRole("ADMIN")
+                                //  경로는 'ADMIN' 권한을 가진 사용자만 접근을 허용합니다. (hasRole은 'ROLE_' 접두사를 자동으로 붙여줌)
+                                .requestMatchers("/event/register", "/event/edit/**","/member/all").hasAnyAuthority("ROLE_ADMIN")
+                                //  경로는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                //  경로는 'USER' 또는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
+                                .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
+                                // 웹소켓 핸드셰이크 경로('/ws/**')는 인증 없이(누구나) 접근을 허용합니다.
+                                .requestMatchers("/ws/**").permitAll()
+                                // 위에서 명시적으로 허용한 경로를 제외한 모든 나머지 요청은 인증된 사용자만 접근을 허용합니다.
+                                .anyRequest().authenticated()
+                        // 모든 요청을 허용하려면 위 줄 대신 아래 주석 처리된 줄을 사용합니다. (보안상 위험하므로 주의)
+//                      .anyRequest().permitAll()
                 )
-                // JWT 인증 필터 적용
+
+                // 이 필터에서 요청 헤더의 JWT를 검증하고 SecurityContext에 인증 정보를 설정합니다.
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
+        // 구성된 HttpSecurity 객체를 빌드하여 SecurityFilterChain을 반환합니다.
         return http.build();
     }
-
 }
-

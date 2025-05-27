@@ -28,6 +28,7 @@ export default function MainCom({accessToken, state, dispatch}) {
         "5번 배너 설명"
     ];
 
+
     return (
     <>
         <RecentReviewRequestModalCon
@@ -39,7 +40,7 @@ export default function MainCom({accessToken, state, dispatch}) {
             {/* 1. 상단 풀 비주얼 영상 */}
             <MainVideoWrapper>
                 <video autoPlay muted loop playsInline>
-                    <source src="http://localhost:8080/img/logo/finalvideo.mp4" type="video/mp4" />
+                    <source src="/img/logo/finalvideo.mp4" type="video/mp4" />
                     브라우저가 video 태그를 지원하지 않습니다.
                 </video>
                 <MainVideoOverlay />

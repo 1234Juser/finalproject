@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaDollarSign, FaWonSign, FaEuroSign, FaPoundSign, FaYenSign } from "react-icons/fa"; // FaYuanSign 삭제
+import { FaDollarSign, FaWonSign, FaEuroSign, FaPoundSign, FaYenSign } from "react-icons/fa";
 import {
     ExchangeBoxWrapper,
     ExchangeTitle,

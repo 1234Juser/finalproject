@@ -58,6 +58,8 @@ import CompanyPage from "./pages/common/CompanyPage";
 import PaymentCompletePage from "./pages/payment/PaymentCompletePage";
 import MyReceiptPage from "./pages/reservation/MyReceiptPage";
 import CeoPage from "./pages/common/CeoPage";
+import PrivateRoute from "./components/PrivateRoute";
+import UserOnlyRoute from "./components/UserOnlyRoute";
 
 function App() {
     return (
@@ -70,17 +72,17 @@ function App() {
               <Route path="/ceo" element={<CeoPage/>}/>
               {/*이벤트페이지*/}
               <Route path="/event" element={<EventListPage/>}/>
-              <Route path="/event/register" element={<EventRegisterPage />} />
+              <Route path="/event/register" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><EventRegisterPage /></PrivateRoute>} />
               <Route path="/event/:id" element={<EventDetailPage />} />
-              <Route path="/event/edit/:id" element={<EventRegisterCon />} />
+              <Route path="/event/edit/:id" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><EventRegisterCon /></PrivateRoute>} />
               {/*faq페이지*/}
               <Route path="/faq" element={<FaqListPage/>}/>
-              <Route path="/faq/register" element={<FaqRegisterPage />} />
-              <Route path="/faq/edit/:faqCode" element={<FaqEditCon />} />
+              <Route path="/faq/register" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><FaqRegisterPage /></PrivateRoute>} />
+              <Route path="/faq/edit/:faqCode" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><FaqEditCon /></PrivateRoute>} />
               {/*검색어리스트창*/}
               <Route path="/search" element={<SearchProductPage />} />
               {/*실시간조회수*/}
-              <Route path="/realtime" element={<AdminRealTimePage />} />
+              <Route path="/realtime" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminRealTimePage /></PrivateRoute>} />
               {/*맞춤여행*/}
               <Route path="/customizedtravel" element={<CustomizePage/>}/>
               <Route path="/search-results" element={<CustomizeSearchPage/>}/>
@@ -99,29 +101,30 @@ function App() {
 
                 {/*  회원마이페이지*/}
                 <Route path="/mypage">
-                    <Route path="" element={<MyPagePage />} />
-                    <Route path="withdrawl" element={<WithdrawlPage />} />
-                    <Route path="community" element={<CompanionMyPagePage/>}/>
+                    <Route path="" element={<UserOnlyRoute><MyPagePage /></UserOnlyRoute>} />
+                    <Route path="withdrawl" element={<UserOnlyRoute><WithdrawlPage /></UserOnlyRoute>} />
+                    <Route path="community" element={<UserOnlyRoute><CompanionMyPagePage/></UserOnlyRoute>} />
                 </Route>
-                <Route path="/my/reservations" element={<MyBookingPage />} />
-                <Route path="/review/write/:orderCode" element={<MyReviewFormPage />} />
-                <Route path="/review/edit/:reviewCode" element={<MyReviewEditPage />} />
-                <Route path="/reservations/receipt/:bookingUid" element={<MyReceiptPage />} />
+              <Route path="/my/reservations" element={<UserOnlyRoute><MyBookingPage /></UserOnlyRoute>} />
+              <Route path="/review/write/:orderCode" element={<UserOnlyRoute><MyReviewFormPage /></UserOnlyRoute>} />
+              <Route path="/review/edit/:reviewCode" element={<UserOnlyRoute><MyReviewEditPage /></UserOnlyRoute>} />
+              <Route path="/reservations/receipt/:bookingUid" element={<UserOnlyRoute><MyReceiptPage /></UserOnlyRoute>} />
 
-                {/*관리자마이페이지*/}
+
+              {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
                 <Route path="/admin">
-                    <Route path="memberSearch" element={<AdminMemberListPage />} />
-                    <Route path="productAll" element={<ProductAllAdminPage/>}/>
-                    <Route path="productReg" element={<ProductRegPage/>} />
-                    <Route path="productEdit/:productUid" element={<ProductRegPage/>} />
+                    <Route path="memberSearch" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminMemberListPage /></PrivateRoute>} />
+                    <Route path="productAll" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><ProductAllAdminPage/></PrivateRoute>} />
+                    <Route path="productReg" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><ProductRegPage/></PrivateRoute>} />
+                    <Route path="productEdit/:productUid" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><ProductRegPage/></PrivateRoute>} />
                 </Route>
-                <Route path="/admin/booking" element={<AdminBookingPage />} />
-                <Route path="/admin/booking/by-product" element={<AdminBookingByProductPage />} />
-                <Route path="/admin/review" element={<AdminReviewPage />} />
-                <Route path="/admin/review/by-product" element={<AdminReviewByProductPage />} />
-                <Route path="/admin/inquirychat" element={<InquiryChatAdminPage/>} />
-                <Route path="/admin/inquirychat/:inquiryChatId" element={<InquiryChatAdminAnswerPage/>} />
+                <Route path="/admin/booking" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminBookingPage /></PrivateRoute>} />
+                <Route path="/admin/booking/by-product" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminBookingByProductPage /></PrivateRoute>} />
+                <Route path="/admin/review" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminReviewPage /></PrivateRoute>} />
+                <Route path="/admin/review/by-product" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminReviewByProductPage /></PrivateRoute>} />
+                <Route path="/admin/inquirychat" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><InquiryChatAdminPage/></PrivateRoute>} />
+                <Route path="/admin/inquirychat/:inquiryChatId" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><InquiryChatAdminAnswerPage/></PrivateRoute>} />
 
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>
@@ -143,9 +146,9 @@ function App() {
                   <Route path="chat" element={<ChatRoomListPage/>}/>
                   <Route path="chat/:roomUid" element={<ChatRoomPage />} />  {/* 상세 경로 추가 */}
                   <Route path="companion" element={<CompanionListPage/>}/>
-                  <Route path="companion/new" element={<CompanionRegisterPage/>}/>
-                  <Route path="companion/:companionId" element={<CompanionDetailPage />} />
-                  <Route path="companion/edit/:companionId" element={<CompanionEditPage />} />
+                  <Route path="companion/new" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]["ROLE_USER"]}><CompanionRegisterPage/>/></PrivateRoute>} />
+                  <Route path="companion/:companionId" element={<CompanionDetailPage />}/>
+                  <Route path="companion/edit/:companionId" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]["ROLE_USER"]}><CompanionEditPage /></PrivateRoute>} />
               </Route>
 
 
