@@ -1,132 +1,21 @@
-import path, {getReviewImage} from "../../service/reviewService";
+import {getReviewImage} from "../../service/reviewService";
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-
-const Overlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-`;
-
-const Modal = styled.div`
-    width: 500px;
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-`;
-
-const Header = styled.div`
-    padding: 1rem;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const Title = styled.h2`
-    font-size: 1.5rem;
-    margin: 0;
-`;
-
-const CloseButton = styled.button`
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-`;
-
-const Content = styled.div`
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`;
-
-const ThumbnailTitleWrap = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-`;
-
-const Thumbnail = styled.img`
-    width: 80px;
-    height: 80px;
-    border-radius: 10px;
-    object-fit: cover;
-    margin-right: 1rem;
-`;
-
-const ProductTitle = styled.h3`
-    margin-left: 10px;
-    font-size: 1.3rem;
-    flex-grow: 1;
-`;
-
-const TitleRow = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-`;
-
-const ReviewInfo = styled.div`
-    width: 100%;
-    max-width: 320px;
-    text-align: left;
-    word-wrap: break-word;
-    word-break: break-word;
-    margin-left: 10px;
-`;
-
-const ReviewDate = styled.p`
-    color: #888;
-    font-size: 0.9rem;
-    margin: 0.5rem 0;
-`;
-
-const Rating = styled.div`
-    font-size: 1.2rem;
-    color: #ffd700;
-    margin-bottom: 1rem;
-`;
-
-const ReviewText = styled.p`
-    white-space: pre-wrap;
-    line-height: 1.6;
-`;
-
-const Footer = styled.div`
-    padding: 1rem;
-    background-color: #f5f5f5;
-    border-top: 1px solid #ddd;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-`;
-
-const FooterButton = styled.button`
-    background-color: #007bff;
-    color: #fff;
-    padding: 0.5rem 1.5rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    &:hover {
-        background-color: #0056b3;
-    }
-`;
+import {useNavigate} from "react-router-dom";
+import {
+    CloseButton,
+    Content, Footer, FooterButton, FullImage, FullImageOverlay,
+    Header,
+    Modal,
+    Overlay, ProductTitle, Rating, RatingDateRow, ReviewDate, ReviewInfo, ReviewText, Thumbnail,
+    ThumbnailTitleWrap,
+    Title
+} from "../../style/review/StyleReviewModal";
 
 function AdminReviewModalCom({ review, onClose, onDelete }) {
     const [imageSrc, setImageSrc] = useState("/img/default-review.jpg");
+    const [showFullImage, setShowFullImage] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (review.reviewPic) {
@@ -151,20 +40,23 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
                 </Header>
                 <Content>
                     <ThumbnailTitleWrap>
-                        {/*<Thumbnail src={review.reviewPic ? `${path}/review/${encodeURIComponent(review.reviewPic)}` : "/img/default-review.jpg"} alt="리뷰 이미지" />*/}
-                        <Thumbnail src={`${path}/review/${encodeURIComponent(review.reviewPic)}`}
-                                   alt="리뷰 이미지"
-                                   onError={(e) => {
-                                       e.target.style.display = 'none';
-                                   }}
+                        {review.reviewPic && (
+                        <Thumbnail src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                                    alt="리뷰 이미지"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                    }}
+                                   onClick={() => setShowFullImage(true)}
+                                   style={{ cursor: 'pointer' }}
                         />
-                        <ProductTitle>{review.productTitle}</ProductTitle>
+                        )}
+                        <ProductTitle onClick={() => navigate(`/products/${review.productUid}`)}>{review.productTitle}</ProductTitle>
                     </ThumbnailTitleWrap>
                     <ReviewInfo>
-                        <TitleRow>
+                            <RatingDateRow>
                             <Rating>{"★".repeat(review.reviewRating)}</Rating>
                             <ReviewDate>{new Date(review.reviewDate).toLocaleString()}</ReviewDate>
-                        </TitleRow>
+                            </RatingDateRow>
                         <ReviewText>{review.reviewContent}</ReviewText>
                     </ReviewInfo>
                 </Content>
@@ -172,6 +64,14 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
                     <FooterButton onClick={onDelete}>삭제</FooterButton>
                 </Footer>
             </Modal>
+            {showFullImage && review.reviewPic && (
+                <FullImageOverlay onClick={(e) => {
+                    e.stopPropagation();
+                    setShowFullImage(false);
+                }}>
+                    <FullImage src={`/upload/review/${encodeURIComponent(review.reviewPic)}`} alt="원본 리뷰 이미지" />
+                </FullImageOverlay>
+            )}
         </Overlay>
     </>)
 }

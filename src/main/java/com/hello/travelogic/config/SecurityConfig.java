@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 // 추가적으로 특정 경로의 정적 리소스들도 무시하도록 설정합니다.
                 .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/static/**",
-                        "/upload/**", "/events/**", "/review/**");
+                        "/upload/**", "/events/**");
     }
 
     @Bean
@@ -73,7 +73,7 @@ public class SecurityConfig {
                                         "/companions",  "/companions/{id}", "/likes/companion/{id}/count", "/likes/comment/{id}/count",
                                         "/cities/region/**", "/products/city", "/country/**", "/cities/**","/products/**",
                                         "/review/product/**",   "/payments/methods","/orders/cancel-pending", "/api/chatrooms",
-                                        "/review/*/image", "/review/product/*/average", "/review/product/*/count",
+                                        "/review/*/image", "/review/product/*/average", "/review/product/*/count", "/review/{reviewPic}/image",
                                         "/payments/methods", "/users/getToken", "/iamport/webhook", "/reservations/receipt/**",
                                         "/products/*/option/create", "/products/*/reservation", "/products/*/option", "/products/*/reservation-date",
                                         "/products/*/option/*", "/products/ads",
