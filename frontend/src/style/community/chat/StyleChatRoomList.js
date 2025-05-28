@@ -54,7 +54,7 @@ export const RoomItem = styled.li`
         color: #0f172a;
         font-size: 1.18rem;
         margin-bottom: 8px;
-        font-weight: 700;
+        font-weight: 500;
     }
 `;
 
@@ -65,7 +65,7 @@ export const CreateButton = styled.button`
     padding: 14px 0;
     background: linear-gradient(90deg, #3b82f6, #2563eb);
     color: white;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 1.1rem;
     border: none;
     border-radius: 28px;
@@ -104,7 +104,7 @@ export const ModalContent = styled.div`
 export const ModalHeader = styled.h3`
     margin-bottom: 28px;
     color: #1e293b;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 1.7rem;
     text-align: center;
 `;
@@ -143,7 +143,7 @@ export const Button = styled.button`
     flex: 1;
     padding: 14px 0;
     font-size: 1.1rem;
-    font-weight: 700;
+    font-weight: 500;
     border-radius: 28px;
     border: none;
     cursor: pointer;
@@ -176,6 +176,6 @@ export const ErrorMessage = styled.div`
     font-size: 0.9rem;
     margin-top: -18px;
     margin-bottom: 24px;
-    font-weight: 600;
+    font-weight: 500;
     text-align: center;
 `;
