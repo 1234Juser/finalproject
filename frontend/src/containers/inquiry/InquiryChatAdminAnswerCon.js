@@ -29,7 +29,6 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
     useEffect(() => {
         // 사용자 인증 정보 로드
         const authInfo = getAuthInfoFromStorage();
-        console.log("---------Auth Info:", authInfo);
 
         if (authInfo.token && authInfo.memberCode !== null) {
             dispatch({ type: "SET_CURRENT_USER", payload: authInfo });
@@ -52,10 +51,10 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
     }, [inquiryChatId]);
 
 
-    // useEffect를 하나 더 사용하여 currentUser 변경 시 로그 확인 (디버깅용)
+/*    // useEffect를 하나 더 사용하여 currentUser 변경 시 로그 확인 (디버깅용)
     useEffect(() => {
         console.log("Current User (updated in state):", currentUser);
-    }, [currentUser]);
+    }, [currentUser]);*/
 
 
     // 메시지 불러오기
@@ -63,9 +62,6 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
         dispatch({ type: 'SET_LOADING', payload: true });
         try {
             const data = await getMessages(inquiryChatId);
-
-            console.log("데이터 불러오기------", data);
-
 
             const normalizedMessages = data.map(msg => ({
                 ...msg,
@@ -107,8 +103,6 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
             sendAt: new Date().toISOString(),
         };
 
-        console.log("-------------------messagePayload", messagePayload);
-
         if (stompClientRef.current && stompClientRef.current.connected) {
             stompClientRef.current.send(
                 sendPath,
@@ -131,7 +125,7 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
     // 웹소켓 연결
     const connectWebSocket = () => {
         if (stompClientRef.current && stompClientRef.current.connected) {
-            console.log('이미 WebSocket에 연결되어 있습니다.');
+            // console.log('이미 WebSocket에 연결되어 있습니다.');
             return;
         }
 
@@ -145,15 +139,14 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
         };
 
         stompClient.connect(headers, () => {
-            console.log('STOMP 연결 성공');
+            // console.log('STOMP 연결 성공');
             dispatch({ type: 'SET_CONNECTED', payload: true });
 
             // 관리자 메시지 구독
             stompClient.subscribe(`/topic/admin/inquiry/${inquiryChatId}/send`
                 , (message) => {
-                    console.log("STOMP: 관리자 구독 콜백 실행됨, 받은 메시지:", message.body);
+                    // console.log("STOMP: 관리자 구독 콜백 실행됨, 받은 메시지:", message.body);
                     const receivedMessage = JSON.parse(message.body);
-                    console.log("<<<<<<<<<<파싱된 받은 메시지:", receivedMessage);
 
                     const normalizedReceivedMessage = {
                         ...receivedMessage,
@@ -163,16 +156,15 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
                         inquiryChatMessageSentAt: receivedMessage.sendAt,
                     };
                     dispatch({ type: 'ADD_MESSAGE', payload: normalizedReceivedMessage});
-                    console.log("-------------------normalizedReceivedMessage", normalizedReceivedMessage)
             });
 
             // 사용자 메시지 구독
             stompClient.subscribe(`/topic/inquiry/${inquiryChatId}/send`, (message) => {
-                console.log("STOMP: 사용자 구독 콜백, 받은 메시지:", message.body);
+                // console.log("STOMP: 사용자 구독 콜백, 받은 메시지:", message.body);
                 const receivedMessage = JSON.parse(message.body);
 
                 if (receivedMessage.senderType === "SYSTEM" && receivedMessage.messageType === "SYSTEM") {
-                    console.log("시스템 메시지 수신: 채팅 종료됨");
+                    // console.log("시스템 메시지 수신: 채팅 종료됨");
                     setChatClosed(true);
                 }
 
@@ -185,7 +177,7 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
                 };
                 dispatch({ type: 'ADD_MESSAGE', payload: normalizedReceivedMessage });
             });
-            console.log(`>>>>>Subscribed to /topic/admin/inquiry/${inquiryChatId}/send and /topic/inquiry/${inquiryChatId}/send<<<<<<`);
+            // console.log(`>>>>>Subscribed to /topic/admin/inquiry/${inquiryChatId}/send and /topic/inquiry/${inquiryChatId}/send<<<<<<`);
 
         }, (error) => {
             console.error('STOMP 연결 오류:', error);
@@ -198,7 +190,7 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
     const disconnectWebSocket = () => {
         if (stompClientRef.current) {
             stompClientRef.current.disconnect(() => {
-                console.log('STOMP 연결 해제');
+                // console.log('STOMP 연결 해제');
                 dispatch({ type: 'SET_CONNECTED', payload: false });
             });
             stompClientRef.current = null;  // 완전 초기화
