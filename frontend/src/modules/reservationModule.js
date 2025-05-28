@@ -4,22 +4,31 @@ const initialState = {
     currentPage: 1,
     loading: false,
     error: null,
+    order: null,
+    option: null,
+    payment: null,
+    product: null
 };
 
 function reservationReducer(state = initialState, action) {
     switch (action.type) {
         case 'FETCH_SUCCESS':
             const payload = action.payload || {};
+            // 단일 예약의 경우
+            if (payload.orderCode) {
+                return {
+                    ...state,
+                    order: payload,
+                    option: payload,
+                    loading: false
+                };
+            }
+            // 여러 예약 목록의 경우
             const reservations = Array.isArray(payload)
                 ? payload
                 : payload.reservations || payload.list || [];
             return {
                 ...state,
-                //reservations: Array.isArray(action.payload)
-                //    ? action.payload
-                //    : action.payload.reservations ?? action.payload.list ?? [],
-                //totalPages: action.payload?.totalPages ?? 1,
-                //currentPage: action.payload?.currentPage ?? 1,
                 reservations,
                 totalPages: payload.totalPages || 1,
                 currentPage: payload.currentPage || 1,
@@ -72,6 +81,10 @@ function reservationReducer(state = initialState, action) {
             };
         case 'CANCEL_RESERVATION_ERROR':
             return { ...state, error: action.payload };
+        case "SET_PAYMENT":
+            return { ...state, payment: action.payload };
+        case "SET_PRODUCT":
+            return { ...state, product: action.payload };
         case 'FETCH_ERROR':
             return { ...state, error: action.payload, loading: false };
         case 'LOADING':

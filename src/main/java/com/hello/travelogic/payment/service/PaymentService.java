@@ -575,4 +575,10 @@ public class PaymentService {
             }
         }
     }
+
+    public PaymentDTO getPaymentByBookingUid(String bookingUid) {
+        PaymentEntity payment = paymentRepo.findByOrder_BookingUid(bookingUid)
+                .orElseThrow(() -> new RuntimeException("해당 bookingUid의 결제 정보를 찾을 수 없습니다."));
+        return new PaymentDTO(payment);
+    }
 }

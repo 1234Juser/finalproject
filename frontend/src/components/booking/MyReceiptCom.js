@@ -1,17 +1,31 @@
-import styled from "styled-components";
-import {FaCopy} from "react-icons/fa6";
-import {Link} from "react-router-dom";
+import {FaAngleLeft, FaCopy} from "react-icons/fa6";
 import AdSlider from "../ad/AdSlider";
+import MapSection from "../../containers/product/MapSection";
+import {useNavigate} from "react-router-dom";
+import dayjs from "dayjs";
+import {
+    AdSection, BackButton,
+    BookingNumber, CancelButton, CancelButtonWrapper, CancelPolicy, CancelSection, CancelTitle,
+    ContentCard, CopyButton,
+    CreatedDate, DetailWrapper,
+    Header, HeaderLeft, InfoCard, InfoLabel, InfoRow,
+    InfoValue, Inquiry,
+    Label, MapWrap, PaymentCard, PaymentHighlight,
+    ProductImage, ProductInfo, ProductLocation, ProductSection,
+    ProductTitle, Section, SectionTitle,
+    StatusTag, Title, Value, Wrapper
+} from "../../style/booking/StyleReceipt";
 
-function MyReceiptCom({bookingUid,
+function MyReceiptCom({order, option, payment, bookingUid,
                         adProducts = [],
-                        productTitle,
-                        productThumbnail,
-                        productCity,
-                        orderDateTime,
-                        productDescription,
-                        mapUrl,
-                        onCheckPayment}){
+                        product, onBack, onCancelReservation}){
+    const navigate = useNavigate();
+
+    if (!order || !option || !payment || !product) {
+        return <p>로딩 중입니다...</p>;
+    }
+
+    const location = product.fullLocation || `${product.countryName || ''} ${product.cityName || ''}`;
 
     const onCopy = () => {
         navigator.clipboard.writeText(bookingUid)
@@ -19,390 +33,163 @@ function MyReceiptCom({bookingUid,
             .catch((err) => console.error("복사 실패:", err));
     };
 
-    // const getRandomProducts = (products, count = 6) => {
-    //     const shuffled = [...products].sort(() => 0.5 - Math.random());
-    //     return shuffled.slice(0, count);
-    // };
+    const thumbnail = product.productThumbnail?.startsWith('/static/')
+        ? product.productThumbnail
+        : `/upload/product/${product.productThumbnail}`;
+
+    const formattedTime = payment?.paymentTime
+        ? dayjs(payment.paymentTime).format("YYYY-MM-DD HH:mm:ss")
+        : "시간 정보 없음";
+
+    const getOrderStatusText = (status) => {
+        switch (status) {
+            case "SCHEDULED":
+                return "예약확정";
+            case "COMPLETED":
+                return "여행완료";
+            case "CANCELED":
+                return "예약취소";
+            default:
+                return "상태 없음";
+        }
+    };
+    const getOrderStatusMessage = (status) => {
+        switch (status) {
+            case "SCHEDULED":
+                return "설레는 여행 같이 준비할까요?";
+            case "COMPLETED":
+                return "여행은 어떠셨나요?";
+            case "CANCELED":
+                return "다른 여행은 어떠세요?";
+            default:
+                return "여행 정보";
+        }
+    };
+
+    const getPaymentStatusText = (status) => {
+        switch (status) {
+            case "COMPLETED":
+                return "결제 완료";
+            case "PENDING":
+                return "결제 대기";
+            case "WAITING_BANK_TRANSFER ":
+                return "무통장 입금 대기"
+            case "CANCELED":
+                return "결제 취소";
+            default:
+                return "상태 없음";
+        }
+    };
 
     return(
     <>
         <Wrapper>
             <Header>
-                <BookingNumber>
-                    예약번호 {bookingUid}
-                    <CopyButton onClick={onCopy}><FaCopy size={14} /></CopyButton>
-                </BookingNumber>
+                <HeaderLeft>
+                    <BackButton onClick={onBack}>
+                        <FaAngleLeft size={20} />
+                    </BackButton>
+                    <BookingNumber>
+                        예약번호 {bookingUid}
+                        <CopyButton onClick={onCopy}><FaCopy size={14} /></CopyButton>
+                    </BookingNumber>
+                </HeaderLeft>
+                <CreatedDate>
+                    <Label>예약 생성 일시</Label>
+                    <Value>{order?.orderDate || "예약일 정보 없음"}</Value>
+                </CreatedDate>
             </Header>
             <ContentCard>
-                <StatusTag>예약확정</StatusTag>
-                <Title>설레는 여행 같이 준비해요!</Title>
+                <StatusTag status={order?.orderStatus}>{getOrderStatusText(order?.orderStatus)}</StatusTag>
+                <Title>{getOrderStatusMessage(order?.orderStatus)}</Title>
 
                 <ProductSection>
-                    <ProductImage src={productThumbnail} alt={productTitle} />
+                    <ProductImage src={thumbnail} alt="상품 이미지"
+                                style={{ width: "300px", borderRadius: "8px" }}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                }} />
                     <ProductInfo>
-                        <ProductTitle>{productTitle}</ProductTitle>
-                        <ProductLocation>{productCity}</ProductLocation>
+                        <ProductTitle onClick={() => navigate(`/products/${product.productUid}`)}>{product.productTitle}</ProductTitle>
+                        <ProductLocation>{product.cityName}</ProductLocation>
                     </ProductInfo>
                     <Inquiry>문의하기</Inquiry>
                 </ProductSection>
+                <Section>
+                    <SectionTitle>상품 정보</SectionTitle>
+                    <InfoCard>
+                        <InfoRow>
+                            <InfoLabel>사용일</InfoLabel>
+                            <InfoValue>{option?.reservationDate || "예약 날짜 정보 없음"}</InfoValue>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>성인 / 아동</InfoLabel>
+                            <InfoValue>{option?.adultCount ?? 0}명 / {option?.childCount ?? 0}명</InfoValue>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>총 인원</InfoLabel>
+                            <InfoValue>{(option?.adultCount ?? 0) + (option?.childCount ?? 0)}명</InfoValue>
+                        </InfoRow>
+                    </InfoCard>
+                </Section>
             </ContentCard>
 
             <CancelSection>
                 <CancelTitle>예약 취소</CancelTitle>
                 <CancelPolicy>
                     - 체크인 30일 전 취소 전액 환불<br />
-                    - 체크인 29 ~ 15일 전 취소 30% 공제<br />
-                    - 체크인 14 ~ 4일 전 취소 50% 공제<br />
-                    - 체크인 3일 ~ 당일 취소 및 노쇼 환불불가<br />
+                    - 체크인 하루 전 ~ 당일 취소 및 노쇼 환불불가<br />
                     - 숙소 이용 후, 시설 파손 등은 보상 불가<br />
                     - 고객 잘못으로 발생한 손해는 보상 대상 아님<br />
+                    - 도난은 여행사 측에서 보상 불가. 해외 여행 시 여행자 보험 필수 가입<br />
                 </CancelPolicy>
-                <CancelButtons>
-                    <button>환불 규정 보기</button>
-                    <button>예약 취소</button>
-                </CancelButtons>
+                <CancelButtonWrapper>
+                <CancelButton onClick={(e) => {
+                    e.stopPropagation();
+                    if (order?.orderCode) {
+                        onCancelReservation(order.orderCode);
+                    } else {
+                        console.error("orderCode가 정의되지 않음:", order);
+                    }
+                }}>예약 취소</CancelButton>
+                </CancelButtonWrapper>
             </CancelSection>
 
             <DetailWrapper>
                 <Section>
-                    <SectionTitle>세부 사항</SectionTitle>
-                    <DetailGrid>
-                        <div>
-                            <Label>헬로, 트래블로직! 예약 번호</Label>
-                            <Value blue>{bookingUid}</Value>
-                        </div>
-                        <div>
-                            <Label>예약 생성 일시</Label>
-                            <Value>{orderDateTime}</Value>
-                        </div>
-                    </DetailGrid>
-                </Section>
-
-                <Section>
                     <SectionTitle>상품 정보</SectionTitle>
                     <MapWrap>
-                        <img src={mapUrl} alt="오시는 길" />
-                        <Rules>{productDescription}</Rules>
+                        {product.fullLocation && (
+                                <MapSection location={product.fullLocation} />
+                        )}
                     </MapWrap>
-                    <MoreButton>설명 더 보기</MoreButton>
                 </Section>
                 <Section>
                     <SectionTitle>결제 정보</SectionTitle>
-                    <PaymentButton onClick={onCheckPayment}>결제 정보 확인</PaymentButton>
+                    <PaymentCard>
+                        <InfoRow>
+                            <InfoLabel>결제금액</InfoLabel>
+                            <PaymentHighlight>￦{payment?.paymentAmount?.toLocaleString() || "금액 없음"}</PaymentHighlight>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>결제수단</InfoLabel>
+                            <InfoValue>{payment?.paymentBrand || "정보 없음"}</InfoValue>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>결제시간</InfoLabel>
+                            <InfoValue>{formattedTime}</InfoValue>
+                        </InfoRow>
+                        <InfoRow>
+                            <InfoLabel>결제상태</InfoLabel>
+                            <InfoValue>{getPaymentStatusText(payment?.paymentStatus || "상태 없음")}</InfoValue>
+                        </InfoRow>
+                    </PaymentCard>
                 </Section>
                 <AdSection>
-                    {/*<AdBanner>*/}
-                    {/*    <AdGrid>*/}
-                    {/*        {adProducts && adProducts.map(product => (*/}
-                    {/*            <AdCard key={product.productCode}>*/}
-                    {/*                <ImageWrapper>*/}
-                    {/*                <Link to={`/products/${product.productUid}`} style={{ textDecoration: 'none', color: 'inherit' }}>*/}
-                    {/*                    <StyledImg*/}
-                    {/*                        src={product.productThumbnail || "/style/empty/empty-list.jpeg"}*/}
-                    {/*                        alt={product.productTitle}*/}
-                    {/*                        onError={(e) => {*/}
-                    {/*                            e.target.onerror = null;}}*/}
-                    {/*                    />*/}
-                    {/*                    <OverlayText>{product.productTitle}</OverlayText>*/}
-                    {/*                <span>{product.cityName}</span>*/}
-                    {/*                </Link>*/}
-                    {/*                </ImageWrapper>*/}
-                    {/*            </AdCard>*/}
-                    {/*        ))}*/}
-                    {/*    </AdGrid>*/}
-                    {/*</AdBanner>*/}
-                        <AdSlider adProducts={adProducts} />
+                    <AdSlider adProducts={adProducts} />
                 </AdSection>
             </DetailWrapper>
         </Wrapper>
     </>)
 }
 export default MyReceiptCom;
-
-const Wrapper = styled.div`
-    width: 100%;
-    max-width: 800px;
-    padding: 2rem;
-    display: flex;
-    margin: 0 auto;
-    justify-content: center;
-    flex-direction: column;
-    //align-items: center;
-    box-sizing: border-box;
-`;
-
-const Header = styled.div`
-    margin-bottom: 1.5rem;
-`;
-
-const BookingNumber = styled.div`
-    font-size: 0.95rem;
-    font-weight: bold;
-`;
-
-const CopyButton = styled.button`
-    margin-left: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #888;
-`;
-
-const ContentCard = styled.div`
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 1.5rem;
-    background: #fff;
-    margin-bottom: 2rem;
-`;
-
-const StatusTag = styled.div`
-    display: inline-block;
-    background-color: #d3f5f0;
-    color: #008080;
-    padding: 0.2rem 0.5rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    margin-bottom: 0.75rem;
-`;
-
-const Title = styled.h2`
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-`;
-
-const ProductSection = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-`;
-
-const ProductImage = styled.img`
-    width: 80px;
-    height: 80px;
-    border-radius: 10px;
-    object-fit: cover;
-`;
-
-const ProductInfo = styled.div`
-    flex-grow: 1;
-`;
-
-const ProductTitle = styled.h3`
-    font-size: 1rem;
-    font-weight: 600;
-`;
-
-const ProductLocation = styled.p`
-    font-size: 0.9rem;
-    color: #666;
-`;
-
-const Inquiry = styled.div`
-    color: #007aff;
-    cursor: pointer;
-    font-size: 0.9rem;
-`;
-
-const CancelSection = styled.div`
-    padding: 1.5rem;
-    background-color: #fafafa;
-    border-radius: 12px;
-`;
-
-const CancelTitle = styled.h4`
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-`;
-
-const CancelPolicy = styled.div`
-    font-size: 0.85rem;
-    color: #555;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-`;
-
-const CancelButtons = styled.div`
-    display: flex;
-    gap: 1rem;
-
-    button {
-        padding: 0.6rem 1rem;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        cursor: pointer;
-        background: #f5f5f5;
-
-        &:last-child {
-            background: #fbeff1;
-            border-color: #fbeff1;
-        }
-    }
-`;
-
-const DetailWrapper = styled.div`
-    padding: 2rem;
-`;
-
-const Section = styled.div`
-    margin-bottom: 2rem;
-`;
-
-const SectionTitle = styled.h4`
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-`;
-
-const DetailGrid = styled.div`
-    display: flex;
-    gap: 3rem;
-    font-size: 0.95rem;
-`;
-
-const Label = styled.div`
-    color: #666;
-    font-weight: 500;
-    margin-bottom: 0.2rem;
-`;
-
-const Value = styled.div`
-    font-weight: bold;
-    color: ${props => props.blue ? "#007aff" : "#333"};
-`;
-
-const MapWrap = styled.div`
-    display: flex;
-    gap: 1.5rem;
-
-    img {
-        width: 240px;
-        height: 120px;
-        border-radius: 8px;
-        object-fit: cover;
-    }
-`;
-
-const Rules = styled.div`
-    font-size: 0.9rem;
-    color: #444;
-    line-height: 1.5;
-`;
-
-const MoreButton = styled.button`
-    margin-top: 1rem;
-    padding: 8px 16px;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-`;
-
-const PaymentButton = styled.button`
-    padding: 10px 20px;
-    background: #fbeff1;
-    border: 1px solid #fbeff1;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-
-    &:hover {
-        background: #f8dbe1;
-    }
-`;
-
-const AdSection = styled.div`
-    margin-top: 3rem;
-
-    //h4 {
-    //    font-size: 1.1rem;
-    //    font-weight: bold;
-    //    margin-bottom: 0.5rem; /* 기존 간격보다 확 줄임 */
-    //}
-`;
-
-const AdBox = styled.div`
-    display: flex;
-    justify-content: center;
-`;
-
-const AdBanner = styled.div`
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: #111;
-    color: white;
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    img {
-        width: 120px;
-        border-radius: 8px;
-    }
-
-    span {
-        color: #ff7777;
-        font-weight: bold;
-    }
-`;
-
-const AdGrid = styled.div`
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-`;
-
-const AdCard = styled.div`
-    width: 200px;
-    padding: 0.5rem;
-    background: #f8f8f8;
-    color: black;
-    border-radius: 8px;
-    text-align: center;
-
-    img {
-        width: 100%;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 6px;
-    }
-
-    div {
-        margin-top: 0.5rem;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    span {
-        font-size: 0.85rem;
-        color: black;
-    }
-`;
-const ImageWrapper = styled.div`
-    position: relative;
-    width: 100%;
-    height: 200px; /* 또는 이미지 비율에 맞게 조절 */
-    overflow: hidden;
-    border-radius: 8px;
-`;
-
-const StyledImg = styled.img`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-`;
-
-const OverlayText = styled.div`
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
-    color: #fff;
-    padding: 0.5rem;
-    font-weight: bold;
-    font-size: 1rem;
-    text-align: center;
-`;

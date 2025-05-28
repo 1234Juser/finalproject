@@ -69,7 +69,7 @@ public class PaymentController {
     }
 
     // impUid로 결제 상태 조회
-    @GetMapping("/payments/{impUid}")
+    @GetMapping("/payments/imp/{impUid}")
     public ResponseEntity<PaymentDTO> getPaymentByImpUid(@PathVariable String impUid) {
         PaymentDTO payment = paymentService.getPaymentByImpUid(impUid);
         return ResponseEntity.ok(payment);
@@ -141,5 +141,11 @@ public class PaymentController {
 
         paymentService.processPaymentWebhook(impUid);
         return ResponseEntity.ok("OK");
+    }
+
+    @GetMapping("/payments/booking/{bookingUid}")
+    public ResponseEntity<PaymentDTO> getPaymentByBookingUid(@PathVariable String bookingUid) {
+        PaymentDTO payment = paymentService.getPaymentByBookingUid(bookingUid);
+        return ResponseEntity.ok(payment);
     }
 }
