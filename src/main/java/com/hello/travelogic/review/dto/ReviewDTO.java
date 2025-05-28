@@ -74,6 +74,7 @@ public class ReviewDTO {
         this.reviewPic = entity.getReviewPic();
         this.reviewStatus = entity.getReviewStatus() != null ? entity.getReviewStatus().name() : "ACTIVE";
         this.optionCode = 0L;
+        this.productUid = entity.getProduct() != null ? entity.getProduct().getProductUid() : null;
 
         // 필드 직접 참조 방지
         if (entity.getOrder() != null) {
@@ -90,7 +91,8 @@ public class ReviewDTO {
             this.productCode = entity.getProduct().getProductCode();
             this.productTitle = entity.getProduct().getProductTitle();
             this.productUid = entity.getProduct().getProductUid();
-            log.debug("🟡 ProductEntity 로드 완료 - productCode: {}, productTitle: {}", this.productCode, this.productTitle);
+            log.debug("🟡 ProductEntity: code={}, title={}, uid={}",
+                    this.productCode, this.productTitle, this.productUid);
         }
         if (entity.getOption() != null) {
             this.optionCode = entity.getOption().getOptionCode();

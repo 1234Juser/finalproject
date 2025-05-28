@@ -3,6 +3,7 @@ const initialState = {
     myReview: null,        // 내 여행(주문)에 대한 단일 리뷰
     // selectedReview: null,  // 관리자 또는 사용자 선택 리뷰
     selectedReview: {
+        reviewCode: null,
         reviewRating: null,
         reviewContent: "",
         reviewPic: null,
@@ -43,6 +44,7 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 selectedReview: {
+                    reviewCode: action.data.reviewCode || null,
                     reviewRating: action.data.reviewRating !== undefined ? action.data.reviewRating : 5,
                     reviewContent: action.data.reviewContent || "",
                     reviewPic: action.data.reviewPic || null,
@@ -51,10 +53,11 @@ const reducer = (state, action) => {
         case "UPDATE_SELECTED_REVIEW":
             return {
                 ...state,
-                // selectedReview: {
-                //     ...state.selectedReview,
-                //     ...action.data,
-                // },
+                selectedReview: {
+                    reviewStatus: action.payload.reviewStatus,
+                    reviewContent: action.payload.reviewStatus === "DELETE_BY_ADMIN" ? "" : state.selectedReview.reviewContent,
+                    reviewPic: action.payload.reviewStatus === "DELETE_BY_ADMIN" ? null : state.selectedReview.reviewPic,
+                },
                 reviews: state.reviews.map(review =>
                     review.reviewCode === action.payload.reviewCode
                         ? {
