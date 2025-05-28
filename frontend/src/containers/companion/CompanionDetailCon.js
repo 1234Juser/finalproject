@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CompanionDetailCom from '../../components/companion/CompanionDetailCom';
-import { jwtDecode } from 'jwt-decode'; // 기본 임포트 대신 명명된 임포트 사용
+import { jwtDecode } from 'jwt-decode';
 
 function CompanionDetailCon() {
     const { companionId } = useParams(); // URL에서 companionId를 가져옵니다.
@@ -35,10 +35,10 @@ function CompanionDetailCon() {
             // 현재 로그인된 사용자 정보 가져오기
             const token = localStorage.getItem("accessToken");
             if (token) {
-                console.log("토큰 존재:", token); // 이 줄을 추가
+                // console.log("토큰 존재:", token);
 
                 setIsLoggedIn(true);
-                console.log("로그인 상태 설정: true"); // 이 줄을 추가
+                // console.log("로그인 상태 설정: true");
 
                 try {
                     const decodedToken = jwtDecode(token);
@@ -59,7 +59,7 @@ function CompanionDetailCon() {
                     if (isAdmin) {
                         setCanDelete(true);
                     }
-                    console.log("현재 사용자 코드:", memberCode, "역할:", userRoles);
+                    // console.log("현재 사용자 코드:", memberCode, "역할:", userRoles);
 
                     // 게시물 좋아요 상태 및 개수 가져오기 (로그인 상태일 경우)
                     const likeStatusResponse = await axios.get(`/likes/companion/${companionId}/status`, {
@@ -69,7 +69,7 @@ function CompanionDetailCon() {
 
 
                 } catch (decodeError) {
-                    console.error("토큰 디코딩 실패:", decodeError);
+                    // console.error("토큰 디코딩 실패:", decodeError);
                     // 토큰이 유효하지 않으면 권한 없음 및 로그인 상태 false
                     setIsLoggedIn(false);
                     setCurrentMemberCode(null);
@@ -77,7 +77,7 @@ function CompanionDetailCon() {
                     setCanEdit(false);
                     setCanDelete(false);
                     setIsCompanionLiked(false); // 좋아요 상태 초기화
-                    console.log("로그인 상태 설정: false (토큰 디코딩 실패)");
+                    // console.log("로그인 상태 설정: false (토큰 디코딩 실패)");
                 }
             } else {
                 // 토큰이 없으면 권한 없음 및 로그인 상태 false
@@ -87,7 +87,7 @@ function CompanionDetailCon() {
                 setCanEdit(false);
                 setCanDelete(false);
                 setIsCompanionLiked(false); // 좋아요 상태 초기화
-                console.log("로그인 상태 설정: false (토큰 없음)");
+                // console.log("로그인 상태 설정: false (토큰 없음)");
             }
             // 게시물 좋아요 개수 가져오기 (로그인 상태와 무관)
             const likeCountResponse = await axios.get(`/likes/companion/${companionId}/count`);
@@ -112,7 +112,7 @@ function CompanionDetailCon() {
                         });
                         commentStatuses[comment.companionCommentId] = commentStatusResponse.data;
                     } catch (statusError) {
-                        console.error(`댓글 ${comment.companionCommentId} 좋아요 상태 확인 실패:`, statusError);
+                        // console.error(`댓글 ${comment.companionCommentId} 좋아요 상태 확인 실패:`, statusError);
                         commentStatuses[comment.companionCommentId] = false; // 실패 시 false로 처리
                     }
                 } else {
@@ -124,7 +124,7 @@ function CompanionDetailCon() {
 
 
         } catch (err) {
-            console.error("게시글 상세 정보를 불러오는데 실패 했습니다.", err);
+            // console.error("게시글 상세 정보를 불러오는데 실패 했습니다.", err);
             setError("게시글 상세 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.");
             // 게시글 로드 실패 시에도 권한 없음 처리
             setCanEdit(false);
@@ -159,7 +159,7 @@ function CompanionDetailCon() {
                 alert("게시글이 삭제되었습니다.");
                 navigate("/community/companion");
             } catch (err) {
-                console.error("게시글 삭제에 실패 했습니다.", err);
+                // console.error("게시글 삭제에 실패 했습니다.", err);
                 // 에러 메시지 상세화
                 if (err.response && err.response.status === 403) {
                     alert("게시글 삭제 권한이 없습니다.");
@@ -182,7 +182,7 @@ function CompanionDetailCon() {
                 }
             });
 
-            console.log("댓글 등록 API 호출 성공"); // 이 줄을 추가
+            // console.log("댓글 등록 API 호출 성공");
 
             //댓글 등록 성공 후 댓글 목록 새로고침 (게시글 정보 재조회)
             fetchCompanionDetail(); // 이제 fetchCompanionDetail 호출 가능

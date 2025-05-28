@@ -60,7 +60,7 @@ function CustomizeCon(){
             ];
             setCountries(countriesList);
         } catch (error) {
-            console.error("국가 목록 가져오기 오류:", error);
+            // console.error("국가 목록 가져오기 오류:", error);
         }
     };
 
@@ -97,7 +97,7 @@ function CustomizeCon(){
             const filteredCities = allCities.filter(city => city.countryId === countryId);
             setCities(filteredCities);
         } catch (error) {
-            console.error("도시 목록 가져오기 오류:", error);
+            // console.error("도시 목록 가져오기 오류:", error);
         }
     };
 
@@ -250,22 +250,22 @@ function CustomizeCon(){
 
         if (Object.keys(errors).length > 0) {
             setValidationErrors(errors);
-            console.error("유효성 검사 오류:", errors); // 유효성 검사 오류 로그
+            // console.error("유효성 검사 오류:", errors); // 유효성 검사 오류 로그
             return;
         }
 
 
         try {
-            console.log("서버로 전송될 검색 조건:", customizeConditions); // 서버로 보내는 데이터 로그
+            // console.log("서버로 전송될 검색 조건:", customizeConditions); // 서버로 보내는 데이터 로그
             const response = await axios.post('http://localhost:8080/customize/search', customizeConditions); // Axios 요청 URL 수정
-            console.log('검색 결과:', response.data);
+            // console.log('검색 결과:', response.data);
             navigate('/search-results', { state: { searchResults: response.data } }); // 검색 결과 페이지로 이동
         } catch (error) {
-            console.error('검색 중 오류 발생:', error);
+            // console.error('검색 중 오류 발생:', error);
             // 오류 발생 시 사용자에게 메시지 표시
             if (error.response && error.response.data && error.response.data.message) {
-                console.error("응답 데이터:", error.response.data); // 서버에서 에러 응답이 온 경우
-                console.error("응답 상태:", error.response.status);
+                // console.error("응답 데이터:", error.response.data); // 서버에서 에러 응답이 온 경우
+                // console.error("응답 상태:", error.response.status);
                 alert('검색 중 오류가 발생했습니다: ' + error.response.data.message);
             } else {
                 alert('검색 중 알 수 없는 오류가 발생했습니다.');

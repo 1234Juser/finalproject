@@ -33,12 +33,13 @@ function KakaoCallbackPage() {
                 } = res.data;
 
                 // 응답 데이터에 memberCode가 있는지 확인
-                if (memberCode !== undefined && memberCode !== null) {
-                    console.log("로그인 응답 데이터에 memberCode가 있습니다:", memberCode);
-                } else {
-                    console.error("로그인 응답 데이터에 memberCode가 없습니다.");
-                }
+                // if (memberCode !== undefined && memberCode !== null) {
+                //     console.log("로그인 응답 데이터에 memberCode가 있습니다:", memberCode);
+                // } else {
+                //     console.error("로그인 응답 데이터에 memberCode가 없습니다.");
+                // }
 
+                // console.log("카카오 로그인 응답으로 받은 roles:", roles);
 
                 // 3. JWT와 유저정보 저장 (ex. localStorage)
                 localStorage.setItem("loginType", "kakao");
@@ -50,12 +51,12 @@ function KakaoCallbackPage() {
                 localStorage.setItem("memberCode", memberCode); // memberCode 저장
 
                 // 로컬 스토리지에 저장된 memberCode 확인
-                const storedMemberCode = localStorage.getItem("memberCode");
-                if (storedMemberCode !== null && storedMemberCode !== 'undefined' && storedMemberCode !== 'null') {
-                    console.log("로컬 스토리지에 memberCode가 저장되었습니다:", storedMemberCode);
-                } else {
-                    console.error("로컬 스토리지에 memberCode 저장이 실패했거나 값이 유효하지 않습니다.");
-                }
+                // const storedMemberCode = localStorage.getItem("memberCode");
+                // if (storedMemberCode !== null && storedMemberCode !== 'undefined' && storedMemberCode !== 'null') {
+                //     console.log("로컬 스토리지에 memberCode가 저장되었습니다:", storedMemberCode);
+                // } else {
+                //     console.error("로컬 스토리지에 memberCode 저장이 실패했거나 값이 유효하지 않습니다.");
+                // }
 
 
                 // 성공적으로 처리됐으니 complete로 변경

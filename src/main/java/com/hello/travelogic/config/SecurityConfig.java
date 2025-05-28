@@ -18,6 +18,9 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -79,7 +82,8 @@ public class SecurityConfig {
                                         "/products/*/option/*", "/products/ads",
                                         "/orders/cancel-pending", "/products/country/**", "/products/city/**", "/products/**",
                                         "/country/{regionCode}", "/city/{cityId}", "/cities/{countryId}", "/cities/region/{regionCode}",
-                                        "/domestic", "/international", "/region/{regionType}", "/themes"
+                                        "/domestic", "/international", "/region/{regionType}", "/themes",
+                                        "/oauth/google/**", "/oauth/kakao/**"
 
                                 ).permitAll()
                                 //  경로는 인증된 사용자만 접근을 허용합니다.

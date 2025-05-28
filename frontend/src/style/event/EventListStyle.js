@@ -163,13 +163,13 @@ export const TabButton = styled.button`
     padding: 10px 30px;
     border: none;
     border-radius: 18px;
-    background: ${({active}) => active ? "linear-gradient(95deg,#0268aff9 0%,#45d5e9e9 100%)" : "#f1f6fb"};
-    color: ${({active}) => active ? "#fff" : Palette.blue};
+    background: ${({active}) => active === 'true' ? "linear-gradient(95deg,#0268aff9 0%,#45d5e9e9 100%)" : "#f1f6fb"};
+    color: ${({active}) => active === 'true' ? "#fff" : Palette.blue};
     cursor: pointer;
-    font-weight: ${({active}) => active ? 800 : 500};
-    box-shadow: ${({active}) => active ? "0 2.5px 8px #53bbef77" : "none"};
+    font-weight: ${({active}) => active === 'true' ? 800 : 500};
+    box-shadow: ${({active}) => active === 'true' ? "0 2.5px 8px #53bbef77" : "none"};
     letter-spacing: -0.6px;
-    border: 1.5px solid ${({active}) => active ? "#198dbb33" : "#e4e9f1"};
+    border: 1.5px solid ${({active}) => active === 'true' ? "#198dbb33" : "#e4e9f1"};
     transition: background 0.17s, color 0.17s, box-shadow 0.15s, border 0.22s;
     &:hover {
         background: ${Palette.mainGradient};
@@ -178,4 +178,5 @@ export const TabButton = styled.button`
         border: 1.5px solid #198dbb55;
     }
 `;
+
 

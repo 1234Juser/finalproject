@@ -20,7 +20,7 @@ function AdminRealTimeCon() {
             } catch (err) {
                 setError(err);
                 setLoading(false);
-                console.error("도시 조회수 데이터 가져오기 오류:", err);
+                // console.error("도시 조회수 데이터 가져오기 오류:", err);
             }
         };
 
