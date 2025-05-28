@@ -1,125 +1,25 @@
-import styled from "styled-components";
 import {SubTitle} from "../../style/product/StyleProductDetail";
 import React, {useState} from "react";
 import AllReviewModal from "./AllReviewModal";
-import path from "../../service/reviewService";
-
-const ReviewContainer = styled.div`
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    margin-bottom: 40px;
-`;
-
-const HeaderWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-`;
-
-// const SubTitle = styled.h2`
-//     font-size: 24px;
-//     font-weight: bold;
-//     color: #333;
-// `;
-
-const SortWrapper = styled.div`
-    select {
-        padding: 8px 16px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        background-color: #fff;
-        font-size: 14px;
-        cursor: pointer;
-    }
-`;
-
-const ReviewList = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-`;
-
-const ReviewItem = styled.div`
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-
-    &:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-`;
-
-const Rating = styled.div`
-    font-size: 20px;
-    font-weight: bold;
-    color: #ffa500;
-    margin-bottom: 10px;
-`;
-
-const Reviewer = styled.div`
-    font-size: 16px;
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 5px;
-`;
-
-const ReviewDate = styled.div`
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 15px;
-`;
-
-const ReviewContent = styled.p`
-    font-size: 14px;
-    color: #333;
-    line-height: 1.5;
-`;
-
-const NoReviewMessage = styled.p`
-    font-size: 14px;
-    color: #888;
-    text-align: center;
-    grid-column: span 2;
-`;
-
-const ShowMoreButton = styled.button`
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin: 20px auto;
-    display: block;
-    transition: background-color 0.2s;
-
-    &:hover {
-        background-color: #0056b3;
-    }
-`;
-const Thumbnail = styled.img`
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    margin-right: 16px;
-    object-fit: cover;
-    flex-shrink: 0;
-`;
-
+import {
+    FullImage,
+    FullImageOverlay,
+    HeaderWrapper, LeftSide, NoReviewMessage, Rating, RatingAndReviewerRow,
+    ReviewContainer, ReviewContent, ReviewDate, Reviewer,
+    ReviewItem,
+    ReviewList, ShowMoreButton,
+    SortWrapper, Thumbnail
+} from "../../style/review/StyleProductReview";
 
 function ProductReviewCom({ reviews = [], loading, error,
-                              sortOption = "date",
-                              onSortChange,
-                              averageRating = 0,
-                              reviewCount = 0 }) {
+                            sortOption = "date",
+                            onSortChange,
+                            averageRating = 0,
+                            reviewCount = 0 }) {
     const [isModalOpen, setModalOpen] = useState(false);
     const top3Reviews = reviews.slice(0, 3);
+    const [showFullImage, setShowFullImage] = useState(false);
+    const [fullImageSrc, setFullImageSrc] = useState(null);
     const handleModalToggle = () => {
         setModalOpen(!isModalOpen);
     };
@@ -128,6 +28,14 @@ function ProductReviewCom({ reviews = [], loading, error,
         console.error("onSortChange는 함수여야 합니다.");
         return null;
     }
+
+    const handleImageClick = (review) => {
+        if (review.reviewPic) {
+            const src = `/upload/review/${encodeURIComponent(review.reviewPic)}`;
+            setFullImageSrc(src);
+            setShowFullImage(true);
+        }
+    };
 
     return(
         <>
@@ -147,17 +55,28 @@ function ProductReviewCom({ reviews = [], loading, error,
                 <ReviewList>
                     {top3Reviews.length > 0 ? (
                         top3Reviews && top3Reviews.map((review) => (
-                            <ReviewItem key={review.reviewCode}>
-                                <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
-                                <Reviewer>{review.memberName}</Reviewer>
-                                <ReviewDate>{review.reviewDate}</ReviewDate>
+                            <ReviewItem key={review.reviewCode} onClick={() => setModalOpen(true)}>
+                                <RatingAndReviewerRow>
+                                    <LeftSide>
+                                        <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
+                                        <Reviewer>{review.memberName}</Reviewer>
+                                    </LeftSide>
+                                    <ReviewDate>{review.reviewDate}</ReviewDate>
+                                </RatingAndReviewerRow>
                                 {/*<Thumbnail src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"} alt="리뷰 이미지"/>*/}
-                                <Thumbnail src={`${path}/review/${encodeURIComponent(review.reviewPic)}`}
+                                {review.reviewPic && (
+                                <Thumbnail src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                             alt="리뷰 이미지"
+                                            onClick={() => {
+                                                setFullImageSrc(`/upload/review/${encodeURIComponent(review.reviewPic)}`);
+                                                setShowFullImage(true);
+                                            }}
                                             onError={(e) => {
                                                 e.target.style.display = 'none';
                                             }}
+                                            style={{ cursor: 'pointer' }}
                                 />
+                                )}
                                 <ReviewContent>{review.reviewContent}</ReviewContent>
                             </ReviewItem>
                         ))
@@ -185,17 +104,25 @@ function ProductReviewCom({ reviews = [], loading, error,
                         {reviews.length > 0 ? (
                             reviews && reviews.map((review) => (
                                 <ReviewItem key={review.reviewCode}>
-                                    <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
-                                    <Reviewer>{review.memberName}</Reviewer>
+                                    <RatingAndReviewerRow>
+                                        <LeftSide>
+                                        <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
+                                        <Reviewer>{review.memberName}</Reviewer>
+                                        </LeftSide>
                                     <ReviewDate>{review.reviewDate}</ReviewDate>
+                                    </RatingAndReviewerRow>
+                                    {review.reviewPic && (
                                     <Thumbnail
                                         // src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"} alt="리뷰 이미지"
-                                        src={`${path}/review/${encodeURIComponent(review.reviewPic)}`}
+                                        src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                         alt="리뷰 이미지"
+                                        onClick={() => handleImageClick(review)}
                                         onError={(e) => {
                                             e.target.style.display = 'none';
                                         }}
+                                        style={{ cursor: 'pointer' }}
                                     />
+                                    )}
                                     <ReviewContent>{review.reviewContent}</ReviewContent>
                                 </ReviewItem>
                             ))
@@ -203,6 +130,14 @@ function ProductReviewCom({ reviews = [], loading, error,
                             <NoReviewMessage>아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해 주세요!</NoReviewMessage>
                         )}
                     </ReviewList>
+                    {showFullImage && (
+                        <FullImageOverlay onClick={(e) => {
+                            e.stopPropagation();
+                            setShowFullImage(false);
+                        }}>
+                            <FullImage src={fullImageSrc} alt="원본 리뷰 이미지" />
+                        </FullImageOverlay>
+                    )}
                 </AllReviewModal>
             )}
         </>)
