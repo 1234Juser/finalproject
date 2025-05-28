@@ -188,7 +188,7 @@ export const RegionImage = styled.div`
     overflow: hidden;
     border-radius: 30px;
     background-color: #f8f8f8;
-  box-shadow: 2px 1px 1px 0px rgb(179 179 179 / 15%);
+  box-shadow:  0px 0 8px 3px rgb(179 179 179 / 15%);
 
     img {
         width: 100%;
