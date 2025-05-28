@@ -1,6 +1,7 @@
 import {
     MainVideoWrapper, MainVideoOverlay, MainTitleOnVisual, SubTextFx,
-    MainSectionWrapper, BannerContainer, SlideWrapper, SlideCard, SlideImage, SlideOverlay, SlideText, BestLabel, images
+    MainSectionWrapper, BannerContainer, SlideWrapper, SlideCard, SlideImage, SlideOverlay, SlideText, BestLabel, images,
+    PageWrapper, BannerSectionStyledWrapper, ExchangeTimeContainer,
 } from "../style/MainStyle";
 import {useEffect, useState} from "react";
 import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
@@ -21,13 +22,12 @@ export default function MainCom({accessToken, state, dispatch}) {
     }, []);
 
     const slideTexts = [
-        "1번 배너 설명",
-        "2번 배너 설명",
-        "3번 배너 설명",
-        "4번 배너 설명",
-        "5번 배너 설명"
+        <>천년의 미소, 앙코르와트 속으로—<br/>신비로운 캄보디아 유적 탐험</>,
+        <>바다와 별이 만나는 곳, 남해—<br/>자연이 주는 가장 고요한 선물</>,
+        <>파도 위의 천국, 하와이—<br/>당신의 여름은 여기서 시작돼요</>,
+        <>북유럽 하늘에 별이 춤추는 순간,<br/>당신도 거기 있을 수 있어요.</>,
+        <>‘여기 진짜 실화냐?’ 싶은 풍경,<br/>중국 장가계 투어 전격 오픈!</>
     ];
-
 
     return (
     <>
@@ -36,7 +36,7 @@ export default function MainCom({accessToken, state, dispatch}) {
             state={state}
             dispatch={dispatch}
         />
-        <div style={{position:"relative", minHeight:"100vh", overflow:"hidden"}}>
+        <PageWrapper>
             {/* 1. 상단 풀 비주얼 영상 */}
             <MainVideoWrapper>
                 <video autoPlay muted loop playsInline>
@@ -55,7 +55,7 @@ export default function MainCom({accessToken, state, dispatch}) {
             </MainTitleOnVisual>
 
             {/* 3. 슬라이드 배너 */}
-            <MainSectionWrapper style={{marginTop:"62vh", zIndex:2}}>
+            <BannerSectionStyledWrapper>
                 <BannerContainer>
                     <SlideWrapper style={{ transform: `translateX(-${index * 100}%)` }}>
                         {images.map((src, idx) => (
@@ -71,27 +71,23 @@ export default function MainCom({accessToken, state, dispatch}) {
                         ))}
                     </SlideWrapper>
                 </BannerContainer>
-            </MainSectionWrapper>
+            </BannerSectionStyledWrapper>
 
             {/* === 환율 박스 여기에 넣기 === */}
-            <div style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "10px", // 환율 박스와 시차 박스 사이의 간격 (이미 0이지만 다시 확인)
-                marginTop: "16px", // 위쪽 공간 확보
-                width: "100%", // 부모 너비를 꽉 채우도록 설정
-                boxSizing: "border-box" // padding이 포함된 너비 계산 방식
-            }}>
+            <ExchangeTimeContainer>
                 <ExchangeBoxCom style={{ flex: 1 }} /> {/* flex: 1 추가 */}
                 <TimedifferenceCom style={{ flex: 1 }} /> {/* flex: 1 추가 */}
-            </div>
+            </ExchangeTimeContainer>
 
             {/* 4. 이벤트 슬라이드쇼 */}
             <EventSliderCom />
+            
+            <MainSectionWrapper>
+
+            </MainSectionWrapper>
 
 
-
-        </div>
+        </PageWrapper>
     </>
     );
 }
