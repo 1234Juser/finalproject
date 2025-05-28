@@ -12,15 +12,7 @@ const getStartInquiry = async ({inquiryMessage, token}) => {
             body: JSON.stringify(inquiryMessage),
         });
 
-        const data = await response.json();
-        console.log("API 응답 데이터 ::::: ", data);
-        
-        if (!response.ok) {
-            console.error("서버 응답 오류:", data);
-            throw new Error(data.message || `채팅방을 시작하지 못했습니다: ${data.status}`);
-        }
-        console.log("1:1 채팅방 시작, 채팅방 생성 ", data);
-        return data;
+        return response.json();
         
     } catch (error) {
         console.error("문의 전송 오류 : ", error);
@@ -42,15 +34,7 @@ const getAdminChatList = async (token) => {
             },
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("서버 응답 오류:", errorData);
-            throw new Error(errorData.message || "관리자 채팅방 목록을 불러오는 데 실패했습니다.");
-        }
-
-        const data = await response.json();
-        console.log("관리자용 채팅방 목록 조회 : ", data);
-        return data;
+        return response.json();
 
     } catch (error) {
         console.error("관리자 채팅방 목록 조회 오류:", error);
@@ -71,15 +55,8 @@ const getMessages = async (inquiryChatId) => {
             },
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("서버 응답 오류:", errorData);
-            throw new Error(errorData.message || "메시지 조회에 실패했습니다.");
-        }
+        return response.json();
 
-        const data = await response.json();
-        console.log("메시지 조회 성공 : ", data);
-        return data;
     } catch (error) {
         console.error("메시지 조회 오류:", error);
         throw error;
@@ -97,15 +74,9 @@ const closeInquiryChat = async (icId, token) => {
                 'Content-Type': 'application/json',
             },
         })
-        const data = await response.json();
-        console.log("채팅 종료 응답 데이터:", data);
 
-        if (!response.ok) {
-            console.error("채팅 종료 서버 응답 오류:", data);
-            throw new Error(data.message || `채팅 종료에 실패했습니다: ${data.status}`);
-        }
+        return response.json();
 
-        return data;
     } catch (error) {
         console.error("채팅 종료 실패!!");
         throw error; // 에러를 상위에서 처리할 수 있도록 던짐

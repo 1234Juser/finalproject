@@ -29,7 +29,6 @@ const InternationalCon = () => {
     useEffect(() => {
         getIntlList()
             .then( data => {
-                console.log("대륙 리스트 : ", data)
                 setIntl(data);
             })
             .catch((err) => console.error(err))
@@ -40,14 +39,13 @@ const InternationalCon = () => {
             // 동일한 regionCode를 다시 클릭하면, 리스트를 닫는다.
             setCountriesVisible(false);
             setSelectedRegion(null);
-            setCountry([]); // 국가 데이터 초기화
+            setCountry([]);
         } else {
             // 새로운 regionCode가 선택되면 리스트를 열고, API로 데이터 가져옴
             setSelectedRegion(regionCode);
             setCountriesVisible(true);
             await getCountryList(regionCode)
             .then(data => {
-                console.log("country data : ", data)
                 setCountry(data);
                 
         })
@@ -55,37 +53,22 @@ const InternationalCon = () => {
         }
     }
 
+    // 버튼 클릭 시 countryId 불러오는 함수
     const handleCountryClick = async (countryId) => {
         if (selectedCountry === countryId) {
             // 동일한 countryId를 다시 클릭하면 도시 목록을 닫음
             setSelectedCountry(null);
-            setCities([]); // 도시 데이터 초기화
+            setCities([]);
         } else {
             // 새로운 countryId를 선택하면 도시 목록을 가져옴
             setSelectedCountry(countryId);
             await getCitiesByCountry(countryId)
                 .then(data => {
-                    console.log(`${countryId}에 해당하는 도시들: `, data);
                     setCities(data);
                 })
                 .catch((err) => console.error("도시 조회 오류:", err));
         }
     };
-
-
-    // 버튼 클릭 시 countryId 불러오는 함수
-    const onClickHandler = async (countryId) => {
-
-        // 해당 countryCode에 포함된 도시들 요청
-        await getCitiesByCountry(countryId)
-        .then(data => {
-            console.log(`${countryId}에 해당하는 도시들: `, data);
-            setCities(data); // 도시 리스트 상태 업데이트
-        })
-        .catch((err) => console.error("도시 조회 오류:", err));
-
-        
-    }
 
 
     return (
@@ -110,7 +93,7 @@ const InternationalCon = () => {
                                         cities.map((city, idx) => (
                                             <CityButton
                                                 key={idx}
-                                                onClick={() => navigate(`/products/city?city_id=${city.cityId}`)} // Navigate to city page
+                                                onClick={() => navigate(`/products/city?city_id=${city.cityId}`)}
                                             >
                                                 {city.cityNameKR}
                                             </CityButton>

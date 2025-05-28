@@ -31,12 +31,10 @@ function ChatRoomListCon() {
             setIsLoggedIn(true);
             getAllChatRooms()
                 .then(res => {
-                            console.log("<<<<<<<< API 응답 데이터 >>>>>>");
-                            console.log("받아온 데이터", res);
                         if (res) {
                             setRooms(res);
                         } else {
-                            setRooms([]); // 빈 배열로 초기화
+                            setRooms([]);
                     }})
                 .catch ( err => {
                     console.error("채팅방 목록 불러오기 실패:", err);
@@ -98,14 +96,12 @@ function ChatRoomListCon() {
 
         try {
             const token = localStorage.getItem('accessToken');
-            console.log("token 확인 : ", token);
             
             const newRoom = {
                 chatRoomTitle: newRoomName.trim(),
                 chatRoomDescription: newRoomDescription.trim(),
                 chatRoomMaxParticipants: maxParticipants
             }
-            console.log("요청 보낼 데이터 확인 : ", newRoom);
             
             const createdRoom = await createChatRoom(newRoom, token);
 
@@ -115,8 +111,6 @@ function ChatRoomListCon() {
                 return;
             }
 
-            /*// 서버에서 생성된 방 데이터를 받아서 상태에 추가
-            setRooms(prev => [...prev, createdRoom]);*/
             // 생성 성공 후, 다시 서버에서 채팅방 목록을 불러와 상태에 반영
             const updatedRooms = await getAllChatRooms();
             setRooms(updatedRooms || []);
@@ -128,12 +122,7 @@ function ChatRoomListCon() {
             alert('채팅방 생성에 실패했습니다: ' + error.message);
         }
 
-
-
-        // 모달 닫고, 새 페이지로 이동
         closeModal();
-        // 예: /chat/room/{roomName} 경로로 이동 (라우터 설정 필요)
-        // navigate(`/api/chat/room/${encodeURIComponent(newRoomName.trim())}`);
     };
 
 

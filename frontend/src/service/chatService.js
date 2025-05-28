@@ -10,14 +10,12 @@ export const getAllChatRooms = async () => {
 
         // 204 No Content 상태 코드 처리
         if (response.status === 204) {
-            console.log("조회된 채팅방 없음 (서버 응답 204 No Content)");
+            // console.log("조회된 채팅방 없음 (서버 응답 204 No Content)");
             return [];  // 내용이 없으므로 빈 배열 반환
         }
 
         // 204가 아닌 다른 성공 응답
-        const data = await response.json();
-        console.log("개설된 채팅방 목록 불러오기 : ", data);
-        return data;
+        return response.json();
 
     } catch (error) {
         console.error('채팅방 목록 가져오기 실패:', error);
@@ -38,16 +36,7 @@ export const createChatRoom = async (roomData, token) => {
             body: JSON.stringify(roomData)
         });
 
-        const data = await response.json();
-
-        // 성공 여부 체크
-        if (!response.ok) {
-        console.error("서버 응답 오류:", data);
-        throw new Error(data.message || '채팅방 생성 실패');
-        }
-
-        console.log("생성된 채팅방 확인 : ", data);
-        return data;
+        return response.json();
         
     } catch (error) {
         console.error("채팅방 생성 실패 : ", error);
@@ -65,11 +54,9 @@ export const deleteChatRoom = async (chatRoomUid, token) => {
                 'Content-Type': 'application/json'
             }
         });
-        if (!response.ok) {
-            throw new Error(`삭제 실패: ${response.status}`);
-        }
-        console.log("삭제 응답 확인 : ", response);
+
         return response;
+
     } catch (error) {
         console.error('채팅방 삭제 실패:', error);
         return false;
@@ -119,10 +106,9 @@ export const startInquiryChat = async (token, memberId) => {
                 icStartDate: new Date().toISOString(),
             }),
         });
-        
-        const chat = await response.json();
-        console.log("채팅방 생성 완료:", chat);
-        return chat.icId; // 생성된 채팅방 ID
+
+        return response.json();
+
     } catch (error) {
         console.error('채팅방 퇴장 실패 : ', error);
     }
@@ -140,16 +126,7 @@ export const getChatRoomDetail = async (chatRoomUid, token) => {
             }
         });
 
-        const data = await response.json();
-
-        // 성공 여부 체크
-        if (!response.ok) {
-            console.error("서버 응답 오류:", data);
-            throw new Error(data.message || '채팅방 세부 정보 조회 실패');
-        }
-
-        console.log("해당 채팅방 세부 정보 확인 : ", data);
-        return data;
+        return response.json();
 
     } catch(error) {
         console.error("채팅방 세부 정보 불러오기 실패:", error);

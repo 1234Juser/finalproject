@@ -41,14 +41,14 @@ function Modal({ isOpen, onClose,  showId,  profileImageUrl}) {
             }}>
                 <h3>회원 정보</h3>
                 <img
-                    src={profileImageUrl || "/img/default-profile.jpg"} // 기본 이미지를 fallback으로 설정
+                    src={profileImageUrl || "/img/default-profile.jpg"}
                     alt="프로필 이미지"
                     style={{
                         width: '100px',
                         height: '100px',
                         borderRadius: '50%',
                         marginBottom: '10px',
-                        objectFit: 'cover', // 이미지를 중앙에 맞추고 자름
+                        objectFit: 'cover',
                         border: '1px solid #ddd'
                     }}
                 />
@@ -106,25 +106,24 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
                         <div style={messageContentStyle}>
-                            {msg.type === "CHAT" && ( // 일반 채팅 메시지(CHAT 타입)일 때만 프로필 이미지 표시
+                            {msg.type === "CHAT" && (
                                 <img
-                                    src={msg.profileImageUrl || "/img/default-profile.jpg"} // 기본 프로필 이미지 경로를 설정해주세요.
+                                    src={msg.profileImageUrl || "/img/default-profile.jpg"}
                                     alt="profile"
                                     style={profileImageStyle}
-                                    onClick={() => handleSenderClick(msg.sender, msg.profileImageUrl)} // 이미지 클릭 이벤트
+                                    onClick={() => handleSenderClick(msg.sender, msg.profileImageUrl)}
                                 />
                             )}
                             <div style={messageTextStyle}>
                                 {msg.type === "CHAT" && (
                                     <span style={senderInfoStyle}
-                                          onClick={() => handleSenderClick(msg.sender, msg.profileImageUrl)} // 발신자 클릭 이벤트
+                                          onClick={() => handleSenderClick(msg.sender, msg.profileImageUrl)}
                                     >
                                             <strong>{msg.sender}</strong>
                                             <small> ({FormatDate(msg.sentAt || Date.now())})</small>
                                     </span>
                                 )}
                                 <span>
-                                    {/* 실제 메시지 내용 */}
                                     {msg.message}
                                 </span>
                                 {msg.type === "JOIN" && <JoinMsg><strong>{msg.sender}</strong>님이 입장했습니다.</JoinMsg>}
@@ -148,7 +147,6 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
                 </ChatButton>
             </ChatForm>
 
-            {/* 모달 컴포넌트 */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}

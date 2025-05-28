@@ -22,12 +22,9 @@ const InquiryChatCom = ({
         const container = messagesEndRef.current;
         if (container) {
             container.scrollTop = container.scrollHeight;
-            // messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages, messagesEndRef]);
 
-
-    // console.log('InquiryChatCom 컴포넌트 실행');
 
 
     return (

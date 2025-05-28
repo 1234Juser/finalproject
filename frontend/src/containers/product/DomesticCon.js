@@ -25,7 +25,6 @@ const DomesticCon = () => {
             1: '/images/asia.jpg',
             2: '/images/europe.jpg',
             3: '/images/america.jpg',
-            // ... 필요한 지역코드 이미지 추가 가능
         };
         return images[regionCode] || '/static/img/earth.jpg'; // 매칭이 없는 경우 기본 이미지
 
@@ -35,7 +34,6 @@ const DomesticCon = () => {
     useEffect(() => {
         getDomList()
             .then( data => {
-                console.log("data : ", data)
                 setDomestic(data);
             })
             .catch((err) => console.error(err))
@@ -43,19 +41,17 @@ const DomesticCon = () => {
 
     const handleRegionClick = async (RegionCode) => {
         if (selectedRegion === RegionCode && cityVisible) {
-            // 동일한 regionCode를 다시 클릭하면, 리스트를 닫는다.
+            // 동일한 regionCode를 다시 클릭하면 리스트 닫기
             setCityVisible(false);
             setSelectedRegion(null);
-            setKoCities([]); // 국가 데이터 초기화
+            setKoCities([]);
         } else {
             // 새로운 regionCode가 선택되면 리스트를 열고, API로 데이터 가져옴
             setSelectedRegion(RegionCode);
             setCityVisible(true);
             await getCitiesByRegion(RegionCode)
             .then(data => {
-                console.log("city data : ", data)
                 setKoCities(data);
-                
         })
             .catch((err) => console.error(err))
         }

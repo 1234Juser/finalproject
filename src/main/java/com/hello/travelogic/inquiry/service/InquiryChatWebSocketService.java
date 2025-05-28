@@ -84,6 +84,7 @@ public class InquiryChatWebSocketService {
                 .message("1:1 상담은 회원에게만 제공됩니다. 로그인 혹은 회원가입이 필요합니다.")
                 .sendAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .messageType(InquiryChatMessageEntity.MessageType.SYSTEM)
+                .memberId("GUEST")
                 .build();
 
         String destination = "/topic/inquiry/" + guestIcId + "/send";

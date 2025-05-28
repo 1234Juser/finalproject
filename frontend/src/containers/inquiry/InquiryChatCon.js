@@ -76,7 +76,6 @@ function InquiryChatCon({ isVisible }) {
                 inquiryMessage: inquiryChatRequest,
                 token: currentUser?.token,
             });
-            console.log("Chat room initialized with ID:", data.icId);
             dispatch({ type: "SET_INQUIRY_CHAT_ID", payload: data.icId });
             return data;
         } catch (err) {
@@ -86,14 +85,14 @@ function InquiryChatCon({ isVisible }) {
         }
     }, [isUserLoggedIn, currentUser]);
 
+    // 채팅방 초기화
     useEffect(() => {
         const initializeChat = async () => {
             if (currentUser && currentUser.username && isVisible && icId === null) {
-                console.log("Initializing chat room...");
+                // console.log("Initializing chat room...");
 
                 try {
                     const data = await createInquiryChat();
-                    console.log("Chat room initialized with ID:", data.icId);
                 } catch (error) {
                     console.error("Error initializing chat room:", error);
                 }
@@ -111,9 +110,9 @@ function InquiryChatCon({ isVisible }) {
         const connectHeaders = {};
         if (isUserLoggedIn && currentUser.token) { // 회원이고 토큰이 있을 때만 헤더 추가
             connectHeaders['Authorization'] = `Bearer ${currentUser.token}`;
-            console.log("WebSocket 연결 헤더 (회원):", connectHeaders);
+            // console.log("WebSocket 연결 헤더 (회원):", connectHeaders);
         } else {
-            console.log("WebSocket 연결 헤더 (비회원): No Authorization header");
+            // console.log("WebSocket 연결 헤더 (비회원): No Authorization header");
         }
 
         const socket = new SockJS("http://localhost:8080/ws");
@@ -124,7 +123,7 @@ function InquiryChatCon({ isVisible }) {
             (frame) => {
                 stompClientRef.current = stompClient;
 
-                console.log("Connected to WebSocket:", frame);
+                // console.log("Connected to WebSocket:", frame);
 
                 dispatch({ type: "SET_CONNECTED", payload: true });
 
@@ -136,10 +135,10 @@ function InquiryChatCon({ isVisible }) {
 
                 stompClient.subscribe(subscribePath, (message) => {
                     const newMessage = JSON.parse(message.body);
-                    console.log("<<<<<<<<< Received message:", newMessage);
+                    // console.log("<<<<<<<<< Received message:", newMessage);
                     dispatch({ type: "ADD_MESSAGE", payload: newMessage });
                 });
-                console.log(`Subscribed to ${subscribePath}`);
+                // console.log(`Subscribed to ${subscribePath}`);
             },
             (error) => {
                 console.error("WebSocket connection error:", error);
@@ -160,7 +159,6 @@ function InquiryChatCon({ isVisible }) {
     // Step 4: WebSocket 연결 실행
     useEffect(() => {
 
-        console.log("=============웹소켓 연결 실행============= 마운트 됨==================");
         if (icId && isVisible && !manualDisconnectRef.current) {
             connectWebSocket();
         }
@@ -175,7 +173,6 @@ function InquiryChatCon({ isVisible }) {
 
     // 메시지 전송 로직
     const handleSendMessage = useCallback(() => {
-        console.log("메시지 전송 버튼 클릭됨");
 
         // 비회원인 경우 시스템 메시지 표시
         if (!isUserLoggedIn) {
@@ -210,7 +207,7 @@ function InquiryChatCon({ isVisible }) {
             sendAt: new Date().toISOString(),
         };
 
-        console.log("Message Payload:", messagePayload);
+        // console.log("Message Payload:", messagePayload);
 
         // memberCode가 null이 아닌지 확인 후 전송
         if (isAdmin && !messagePayload.memberCode) {
@@ -271,7 +268,7 @@ function InquiryChatCon({ isVisible }) {
             icId={icId}
             messages={messages}
             currentUser={currentUser}
-            messagesEndRef={messagesEndRef} // Ref 전달
+            messagesEndRef={messagesEndRef}
             inputRef={inputRef}
             handleSendMessage={handleSendMessage}
             newMessage={newMessage}

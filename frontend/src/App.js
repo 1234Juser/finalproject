@@ -59,13 +59,15 @@ import MyReceiptPage from "./pages/reservation/MyReceiptPage";
 import CeoPage from "./pages/common/CeoPage";
 import PrivateRoute from "./components/PrivateRoute";
 import UserOnlyRoute from "./components/UserOnlyRoute";
+import ScrollToTop from "./utils/ScrollToTop";
 
 function App() {
     return (
         <div className="main-content">
             <HeaderCon /> {/* 항상 헤더/네비가 상단에 고정 */}
+            <ScrollToTop /> {/* 라우트를 감지하고 스크롤을 최상단으로 이동 */}
 
-          <Routes>
+            <Routes>
               <Route path="/" element={<MainPage />} />
               <Route path="/about" element={<CompanyPage/>}/>
               <Route path="/ceo" element={<CeoPage/>}/>
