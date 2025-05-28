@@ -177,7 +177,6 @@ function CompanionEditCon() {
         return reindexedContent;
     };
 
-
     const handleImageChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
         // 새로 선택된 파일들을 newImages 상태에 추가

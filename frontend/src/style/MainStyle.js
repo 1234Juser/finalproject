@@ -43,11 +43,8 @@ export const BannerContainer = styled.div`
     overflow: visible;
     position: relative;
     border-radius: 32px;
-    background: linear-gradient(to bottom right, #fffdf6 80%, #feeabf 100%);
-    box-shadow:
-        0 4px 36px 10px rgba(220,167,50,0.13),
-        0 0 0 7px #fff8e2 inset;
-    border: 2px solid #efd492;
+    /*background: linear-gradient(to bottom right, #fffdf6 80%, #feeabf 100%);*/
+    
 `;
 
 // 이벤트 슬라이더를 위한 컨테이너 (새로 추가)
@@ -56,11 +53,8 @@ export const EventSliderContainer = styled(BannerContainer)`
     margin-bottom: 80px; /* 하단 여백 추가 */
     height: 300px; /* 이벤트 슬라이더 높이 조정 */
     width: 60%; /* 이벤트 슬라이더 너비 조정 */
-    background: linear-gradient(to bottom right, #eaf2ff 80%, #dbe4ff 100%);
-    box-shadow:
-        0 4px 36px 10px rgba(100,120,200,0.13),
-        0 0 0 7px #d5e0ff inset;
-    border: 2px solid #b8caff;
+    /*background: linear-gradient(to bottom right, #eaf2ff 80%, #dbe4ff 100%);*/
+    
 `;
 
 

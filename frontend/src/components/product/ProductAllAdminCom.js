@@ -54,15 +54,7 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
             </aside>
             <main style={mainStyle}>
                 <StyledTitle>전체 상품 목록</StyledTitle>
-                <PaginationContainer>
-                    <NavButton onClick={handlePrev} disabled={pageRange.start === 1}>
-                        &lt;&lt;
-                    </NavButton>
-                    {renderPageButtons()}
-                    <NavButton onClick={handleNext} disabled={pageRange.end === totalPages}>
-                        &gt;&gt;
-                    </NavButton>
-                </PaginationContainer>
+
                 <DivContainer>
                     <div>
                         <ul>
@@ -131,6 +123,15 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
                         </tbody>
                     </StyledTable>
                 </TableContainer>
+                <PaginationContainer>
+                    <NavButton onClick={handlePrev} disabled={pageRange.start === 1}>
+                        &lt;&lt;
+                    </NavButton>
+                    {renderPageButtons()}
+                    <NavButton onClick={handleNext} disabled={pageRange.end === totalPages}>
+                        &gt;&gt;
+                    </NavButton>
+                </PaginationContainer>
             </main>
         </div>
     )
