@@ -2,6 +2,7 @@ package com.hello.travelogic.inquiry.dto;
 
 import com.hello.travelogic.inquiry.domain.InquiryChatMessageEntity;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Slf4j
 public class InquiryChatMessageDTO {
     private Long icmId;
     private Long icId;
@@ -20,6 +22,7 @@ public class InquiryChatMessageDTO {
     private InquiryChatMessageEntity.MessageType messageType;
     private String message;
     private LocalDateTime sendAt;   // 서버 시간 사용 시 DTO에서 필요 없을 수도 있음
+    private String memberId;
 
 
 
@@ -32,6 +35,10 @@ public class InquiryChatMessageDTO {
         this.messageType = icmDTO.getInquiryChatMessageType();
         this.message = icmDTO.getInquiryChatMessage();
         this.sendAt = icmDTO.getInquiryChatMessageSentAt();
+        this.memberId = icmDTO.getMemberRole().getMember().getMemberId();
+
+        log.debug("this.memberId = {} " , icmDTO.getMemberRole().getMember().getMemberId());
+
     }
 }
 

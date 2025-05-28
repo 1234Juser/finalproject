@@ -50,7 +50,6 @@ function InquiryChatAdminAnswerCom({
                 <ContentWrapper>
                     <Header>채팅방 ID: {inquiryChatId}</Header>
 
-                    {/* 메시지 목록 */}
                     {loading ? (
                         <p>로딩 중...</p>
                     ) : error ? (
@@ -60,7 +59,7 @@ function InquiryChatAdminAnswerCom({
                         {messages.map(message => (
                                 <Message key={message.icmId} senderType={message.senderType}>
                                     <Sender>
-                                        {message.senderType === "ADMIN" ? "관리자" : "사용자"}
+                                        {message.senderType === "ADMIN" ? "관리자" : message.memberId}
                                     </Sender>
                                     <MessageContent>{message.message}</MessageContent>
                                     <Timestamp>
