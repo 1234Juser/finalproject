@@ -99,7 +99,7 @@ function CompanionRegisterCom({
                             {existingImages?.map((image, index) => (
                                 <ImagePreviewWrapper key={`existing-${image.id}`}>
                                     <ImagePreview src={image.imageUrl} alt={`Existing image ${index + 1}`} />
-                                    <RemoveImageButton onClick={() => onRemoveExistingImage(image.imageUrl)}>
+                                    <RemoveImageButton onClick={() => onRemoveExistingImage(image.id)}>
                                         X
                                     </RemoveImageButton>
                                 </ImagePreviewWrapper>
