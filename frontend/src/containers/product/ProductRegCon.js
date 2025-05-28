@@ -26,7 +26,6 @@ function ProductRegCon() {
         if(productUid) {
             getProductModify(productUid)
             .then( data => {
-                console.log("-------수정용 data 확인-------", data);
                 dispatch({
                     type: "INIT_FORM",
                     payload: {
@@ -45,34 +44,41 @@ function ProductRegCon() {
     }, [productUid]);
 
 
+/*
     // formInput 로그용
     useEffect(() => {
         console.log("-------formInput 변경 확인하기-------", formInput);
     }, [formInput]);
+*/
 
 
     // formInput 상태 관리
     const handleFormChange = (name, value) => {
-        // 숫자 입력 제한: 참가자 수 필드에만 적용
-        // ----/^\d*$/ ----> "숫자(0~9)로만 이루어진 문자열"을 의미하는 정규식
+        dispatch({ type: "SET_FORM_INPUT", payload: { [name]: value } });
+
+        let errorMsg = "";
+
+        // 숫자 입력이 필요한 필드에 대해 유효성 검사 (/^\d*$/ : "숫자(0~9)로만 이루어진 문자열"을 의미하는 정규식)
         if (
             (name === "productMinParticipants" || name === "productMaxParticipants") &&
             !/^\d*$/.test(value)
         ) {
-            return;     // 숫자가 아닌 값이 들어오면 아무 일도 안 하고 종료 (숫자 입력 제한)
+            errorMsg = "숫자만 입력 가능합니다.";
+        } else {
+            // 참가자 수 관련 유효성 검사(현재 입력값을 반영해서 min/max 값 계산)
+            const min = name === "productMinParticipants" ? Number(value) : Number(formInput.productMinParticipants);
+            const max = name === "productMaxParticipants" ? Number(value) : Number(formInput.productMaxParticipants);
+
+            if (name === "productMinParticipants" || name === "productMaxParticipants") {
+                if (min && max && min > max)
+                    errorMsg = "최소 출발 인원은 최대 출발 인원을 초과할 수 없습니다.";
+            }
+        }
+        // 필수 입력값에 대한 유효성 검사
+        if (!value.trim()) {
+            errorMsg = "필수 입력값입니다.";
         }
 
-        // 참가자 수 관련 유효성 검사(현재 입력값을 반영해서 min/max 값 계산)
-        let errorMsg = "";
-        const min = name === "productMinParticipants" ? Number(value) : Number(formInput.productMinParticipants);
-        const max = name === "productMaxParticipants" ? Number(value) : Number(formInput.productMaxParticipants);
-
-        if (name === "productMinParticipants" || name === "productMaxParticipants") {
-            if (min && max && min > max)
-                errorMsg = "최소 출발 인원은 최대 출발 인원을 초과할 수 없습니다.";
-        }
-
-        dispatch({ type: "SET_FORM_INPUT", payload: { [name]: value } });
         dispatch({ type: "SET_PARTI_ERROR", payload: { participants: errorMsg } });
     };
 
@@ -171,12 +177,38 @@ function ProductRegCon() {
         dispatch({ type: "SET_FILE", payload : file});
         dispatch({ type: "SET_FORM_INPUT", payload: { productThumbnail: file.name } });
         }
-        console.log("업로드 파일 확인 : ", file);
     };
 
 
     const onSubmit = async (e) => {
         e.preventDefault();
+
+        // 모든 필드에 대해 필수 입력값 존재 여부 체크
+        const errors = {};
+        const requiredFields = [
+            "productTitle", "productContent", "regionType", "regionCode", "themeCode", "countryId", "cityId",
+            "productAdult", "productChild", "productStartDate", "productEndDate",
+            "productMinParticipants", "productMaxParticipants", "productStatus", "productType", "productThumbnail"
+        ];
+
+        requiredFields.forEach((field) => {
+            if (!formInput[field] || formInput[field].toString().trim() === "") {
+                errors[field] = "필수 입력값입니다.";
+            }
+        });
+
+        if (Object.keys(errors).length > 0) {
+            dispatch({ type: "SET_FORM_ERRORS", payload: errors });
+            return;
+        }
+
+
+        // 확인창 표시
+        const confirmSubmit = window.confirm("등록하시겠습니까?");
+        if (!confirmSubmit) {
+            return;
+        }
+
 
         // '최소 출발 인원 > 최대 출발 인원'일 경우 폼 전송 방지
         const min = Number(formInput.productMinParticipants);

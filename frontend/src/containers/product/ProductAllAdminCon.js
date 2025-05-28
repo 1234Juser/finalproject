@@ -70,7 +70,6 @@ function ProductAllAdminCon() {
     const fetchProducts = (currentPage) => {
         getProductsList(currentPage)
             .then((data) => {
-                console.log("data 확인:", data);
                 setProducts(data.productList || []);
                 setCurrentPage(data.currentPage || 1);
                 setTotalPages(data.totalPages || 0);

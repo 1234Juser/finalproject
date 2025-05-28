@@ -1,9 +1,51 @@
 import {containerStyle, mainStyle, sidebarStyle} from "../../style/member/MyPageStyle";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
-import {StyledTable, TableContainer, PaginationContainer, NavButton} from "../../style/product/StyledProductAllAdmin";
+import {
+    StyledTable,
+    TableContainer,
+    PaginationContainer,
+    NavButton, ImageButton, DivContainer
+} from "../../style/product/StyledProductAllAdmin";
 import {Link} from "react-router-dom";
+import {StyledDivider, StyledTitle} from "../../style/product/StyleProductReg";
 
 function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons, pageRange, totalPages, onDelete}) {
+
+    const handleImagePopup = (imageUrl) => {
+        // 팝업 창 옵션 설정
+        const popupWidth = 800;
+        const popupHeight = 600;
+        const left = (window.screen.width / 2) - (popupWidth / 2);
+        const top = (window.screen.height / 2) - (popupHeight / 2);
+
+        // 새 팝업 창 열기
+        // 두 번째 인자는 창 이름, 세 번째 인자는 창 옵션
+        const newWindow = window.open('', '_blank',
+            `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+
+        if (newWindow) {
+            // 새 창에 HTML 콘텐츠 추가
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>상품 이미지</title>
+                    <style>
+                        body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f0f0f0; }
+                        img { max-width: 95%; max-height: 95vh; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+                    </style>
+                </head>
+                <body>
+                    <img src="${imageUrl}" alt="Product Image" />
+                </body>
+                </html>
+            `);
+            newWindow.document.close(); // 문서 작성을 완료합니다.
+        } else {
+            alert('팝업 차단 기능 때문에 창을 열 수 없습니다. 팝업 차단을 해제해주세요.');
+        }
+    };
+
 
     return (
         <div style={containerStyle}>
@@ -11,8 +53,7 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
                 <AdminSideBarPage />
             </aside>
             <main style={mainStyle}>
-                <h1>전체 상품 목록</h1>
-                <hr />
+                <StyledTitle>전체 상품 목록</StyledTitle>
                 <PaginationContainer>
                     <NavButton onClick={handlePrev} disabled={pageRange.start === 1}>
                         &lt;&lt;
@@ -22,12 +63,17 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
                         &gt;&gt;
                     </NavButton>
                 </PaginationContainer>
-                <div>
-                    <ul>
-                        <li>제목을 클릭하면 상품을 수정할 수 있습니다.</li>
-                        <li>★ 신규 국가/도시 투어 등록은 개발팀에게 문의하세요 ★</li>
-                    </ul>
-                </div>
+                <DivContainer>
+                    <div>
+                        <ul>
+                            <li>제목을 클릭하면 상품을 수정할 수 있습니다.</li>
+                            <li>★ 신규 국가/도시 투어 등록은 개발팀에게 문의하세요 ★</li>
+                        </ul>
+                    </div>
+                    <ImageButton onClick={() => handleImagePopup('/img/product/table.png')}>
+                        국가/도시 코드
+                    </ImageButton>
+                </DivContainer>
                 <TableContainer>
                     <StyledTable>
                         <thead>
@@ -45,7 +91,6 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
                             <th>Min</th>
                             <th>Max</th>
                             <th>Status</th>
-                            <th>Type</th>
                             <th>Review</th>
                             <th></th>
                         </tr>
@@ -72,7 +117,6 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
                                 <td>{p.productMinParticipants}</td>
                                 <td>{p.productMaxParticipants}</td>
                                 <td>{p.productStatus}</td>
-                                <td>{p.productType}</td>
                                 <td>{p.reviewCount}</td>
                                 <td>
                                 <span

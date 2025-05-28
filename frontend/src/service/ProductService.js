@@ -45,7 +45,6 @@ const getCityById = async (cityId) => {
 
 // 국가별 도시 데이터 가져오는 함수 (해외여행용)
 const getCitiesByCountry = async (countryId) => {
-    console.log("여기서 countryId 확인----->", countryId);
     const response = await fetch(`${path}/cities/${countryId}`, {
         method : "GET"
     })
@@ -77,7 +76,6 @@ const getCitiesByRegion = async (regionCode) => {
 // 국가별 투어 상품 데이터 가져오는 함수
 const getProductsByCountry = async (countryId) => {
     try {
-        console.log("요청 받은 countryId : ", countryId);
         const response = await fetch(`${path}/products/country?country_id=${countryId}`, {
             method : "GET"
         });
@@ -96,7 +94,6 @@ const getProductsByCountry = async (countryId) => {
 // 도시별 투어 상품 데이터 가져오는 함수
 const getProductsByCity = async (cityId) => {
     try {
-        console.log("요청 받은 cityId : ", cityId);
         const response = await fetch(`${path}/products/city?city_id=${cityId}`, {
             method : "GET"
         });
@@ -116,8 +113,6 @@ const getProductsByCity = async (cityId) => {
 // 상품 상세 데이터 가져오는 함수
 const getProductDetail = async (productUid, accessToken) => {
     try {
-        console.log("productUid : ", productUid);
-        // 토큰이 있는 경우 Authorization 헤더 추가
         const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
         const response = await fetch(`${path}/products/${productUid}`, {
             method : "GET",
@@ -139,7 +134,6 @@ const getProductDetail = async (productUid, accessToken) => {
 // 권역 데이터 불러오기
 const getRegions = async (regionType) => {
     try {
-        console.log("regionType : ", regionType);
         const response = await fetch(`${path}/region/${regionType}`, {
             method : "GET"
         });
@@ -166,7 +160,6 @@ const getThemes = async () => {
 
 // 상품 등록 함수
 const ProductRegist = async (formData) => {
-    console.log("받은 formData 확인-------->", formData);
     try {
         const response = await fetch(`${path}/products/register`, {
             method : "POST",
@@ -175,7 +168,6 @@ const ProductRegist = async (formData) => {
 
         if( response.ok) {
             const result = await response.text();
-            console.log("전송 결과 확인 : ", result);
             return { ok: true, message: result };
         } else {
             const errorData = await response.json();  // 실패시 JSON 응답 처리
