@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 import ProductCom from "../../components/product/ProductCom";
-import {getProductsByCity, getProductsByCountry, getCityById} from "../../service/ProductService";
+import {getProductsByCity, getProductsByCountry} from "../../service/ProductService";
 import { useSearchParams } from "react-router-dom";
 
 function ProductCon(){
@@ -10,7 +10,7 @@ function ProductCon(){
     const [sortBy, setSortBy] = useState("default");
     const [originalData, setOriginalData] = useState([]);   // 원본 데이터 백업해서 정렬하기 위함
 
-    const [searchParams] = useSearchParams(); // 이전 페이지에서 전달된 쿼리 파라미터 읽기
+    const [searchParams] = useSearchParams();
     const countryId = searchParams.get("country_id");
     const cityId = searchParams.get("city_id");
 
