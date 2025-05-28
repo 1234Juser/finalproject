@@ -44,10 +44,10 @@ function MyPageCom({ memberData, followingList, followerList, onEditProfileImage
     const [focus, setFocus] = useState("");
     const fileInputRef = useRef(null);
 
-    useEffect(() => {
-        setForm(memberData); // memberData 변경시 폼도 갱신
-        console.log(memberData); // socialType 존재여부/값 확인
-    }, [memberData]);
+    // useEffect(() => {
+    //     setForm(memberData); // memberData 변경시 폼도 갱신
+    //     console.log(memberData); // socialType 존재여부/값 확인
+    // }, [memberData]);
 
     useEffect(() => {
         if (editMode) {
