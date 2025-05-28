@@ -4,8 +4,6 @@ import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.order.domain.OptionEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
-import com.hello.travelogic.order.domain.OrderStatus;
-import com.hello.travelogic.order.dto.OrderDTO;
 import com.hello.travelogic.order.repo.OptionRepo;
 import com.hello.travelogic.order.repo.OrderRepo;
 import com.hello.travelogic.product.domain.ProductEntity;
@@ -34,7 +32,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,7 +90,9 @@ public class ReviewService {
                     dto.setReviewStatus(review.getReviewStatus().name());
 
                     // 임시 필드 설정
+                    dto.setMemberName(review.getMember().getMemberName());
                     dto.setProductTitle(review.getProduct().getProductTitle());
+                    dto.setProductUid(review.getProduct().getProductUid());
                     dto.setReservationDate(review.getOption().getReservationDate());
 
                     return dto;
@@ -253,6 +252,7 @@ public class ReviewService {
 
     public ReviewDTO findReviewByCodeAndMember(Long reviewCode, Long memberCode) {
         ReviewEntity review = reviewRepo.findById(reviewCode)
+//        ReviewEntity review = reviewRepo.findWithProductByReviewCode(reviewCode)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
         if (!review.getMember().getMemberCode().equals(memberCode)) {
             throw new IllegalArgumentException("리뷰를 조회할 권한이 없습니다.");

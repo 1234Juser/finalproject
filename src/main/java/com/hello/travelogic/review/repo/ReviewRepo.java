@@ -83,4 +83,19 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
     // 찜 리스트에서 productCode로 리뷰 개수
     @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.product.productCode = :productCode")
     Long countByProductProductCode(@Param("productCode") Long productCode);
+
+    // 내 리뷰 조회할 때 productUid도 가져오기
+    @Query("SELECT r FROM ReviewEntity r " +
+            "JOIN FETCH r.product " +
+            "JOIN FETCH r.order " +
+            "JOIN FETCH r.member " +
+            "LEFT JOIN FETCH r.option " +
+            "WHERE r.order.orderCode = :orderCode")
+    Optional<ReviewEntity> findByOrderCodeWithDetails(@Param("orderCode") Long orderCode);
+
+    @Query("SELECT r FROM ReviewEntity r JOIN FETCH r.product WHERE r.reviewCode = :reviewCode")
+    Optional<ReviewEntity> findByReviewCodeWithProduct(@Param("reviewCode") Long reviewCode);
+
+    @Query("SELECT r FROM ReviewEntity r JOIN FETCH r.product WHERE r.order.orderCode = :orderCode")
+    Optional<ReviewEntity> findByOrderCodeWithProduct(@Param("orderCode") Long orderCode);
 }
