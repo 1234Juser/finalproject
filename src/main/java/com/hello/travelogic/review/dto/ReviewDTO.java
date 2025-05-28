@@ -44,6 +44,7 @@ public class ReviewDTO {
     private String memberName;
     private String productTitle;
     private LocalDate reservationDate;
+    private String productUid;
 
     public void setOptionEntity(OptionEntity optionEntity) {
         if (optionEntity != null) {
@@ -73,6 +74,7 @@ public class ReviewDTO {
         this.reviewPic = entity.getReviewPic();
         this.reviewStatus = entity.getReviewStatus() != null ? entity.getReviewStatus().name() : "ACTIVE";
         this.optionCode = 0L;
+        this.productUid = entity.getProduct() != null ? entity.getProduct().getProductUid() : null;
 
         // 필드 직접 참조 방지
         if (entity.getOrder() != null) {
@@ -88,7 +90,9 @@ public class ReviewDTO {
         if (entity.getProduct() != null) {
             this.productCode = entity.getProduct().getProductCode();
             this.productTitle = entity.getProduct().getProductTitle();
-            log.debug("🟡 ProductEntity 로드 완료 - productCode: {}, productTitle: {}", this.productCode, this.productTitle);
+            this.productUid = entity.getProduct().getProductUid();
+            log.debug("🟡 ProductEntity: code={}, title={}, uid={}",
+                    this.productCode, this.productTitle, this.productUid);
         }
         if (entity.getOption() != null) {
             this.optionCode = entity.getOption().getOptionCode();

@@ -37,7 +37,7 @@ function CompanionRegisterCom({
                                   onImageChange, // 이미지 변경 핸들러 추가
                                   imagePreviews, // 이미지 미리보기 URL 목록 추가
                                   contentTextareaRef, // ref 추가
-                                  existingImages, // 기존 이미지 목록 추가
+                                  existingImages = [], // 기존 이미지 목록 추가 (기본값을 빈 배열로 설정)
                                   onRemoveExistingImage, // 기존 이미지 삭제 핸들러 추가
                                   onRemoveNewImage, // 새로 추가된 이미지 삭제 핸들러 추가
                               }) {
@@ -99,13 +99,13 @@ function CompanionRegisterCom({
                             {existingImages?.map((image, index) => (
                                 <ImagePreviewWrapper key={`existing-${image.id}`}>
                                     <ImagePreview src={image.imageUrl} alt={`Existing image ${index + 1}`} />
-                                    <RemoveImageButton onClick={() => onRemoveExistingImage(image.imageUrl)}>
+                                    <RemoveImageButton onClick={() => onRemoveExistingImage(image.id)}>
                                         X
                                     </RemoveImageButton>
                                 </ImagePreviewWrapper>
                             ))}
                             {/* 새로 추가된 이미지 미리보기 */}
-                            {imagePreviews.filter((preview, index) => index >= existingImages.length).map((preview, index) => (
+                            {imagePreviews.filter((preview, index) => index >= (existingImages?.length ?? 0)).map((preview, index) => (
                                 <ImagePreviewWrapper key={`new-${index}`}>
                                     <ImagePreview src={preview} alt={`New image preview ${index + 1}`} />
                                     <RemoveImageButton type="button" onClick={() => onRemoveNewImage(index)}>

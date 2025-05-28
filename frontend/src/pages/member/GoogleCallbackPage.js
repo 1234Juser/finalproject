@@ -34,11 +34,15 @@ function GoogleCallbackPage() {
                 localStorage.setItem("memberName", res.data.memberName);
                 localStorage.setItem("memberProfileImageUrl", res.data.memberProfileImageUrl);
                 localStorage.setItem("loginType", "google");
-                localStorage.setItem("memberCode", res.data.memberCode); // memberCode 저장
+                localStorage.setItem("memberCode", res.data.memberCode);
+                localStorage.setItem("roles", JSON.stringify(res.data.roles));
 
-                if(res.data.memberCode){
-                    console.log("멤버코드 왔나", res.data.memberCode);
-                }
+
+                // if(res.data.memberCode){
+                //     console.log("멤버코드 왔나", res.data.memberCode);
+                // }
+
+                // console.log("구글 로그인 응답으로 받은 roles:", res.data.roles);
 
 
                 // 필요한 추가 정보 저장

@@ -116,7 +116,7 @@ function RealtimeRanking() {
                 const response = await axios.get('/city/ranking');
                 setRanking(response.data);
             } catch (err) {
-                console.error("실시간 랭킹 가져오기 실패:", err);
+                // console.error("실시간 랭킹 가져오기 실패:", err);
                 setError("실시간 랭킹 로딩 실패"); // 에러 메시지 설정
             }
         };
@@ -149,10 +149,10 @@ function RealtimeRanking() {
     // 클릭 시 해당 도시 검색 기능
     const handleCityClick = (cityId) => {
         if (cityId) { // cityId가 유효한 값일 경우에만 이동
-            console.log(`${cityId} 검색 기능 실행`);
+            // console.log(`${cityId} 검색 기능 실행`);
             navigate(`/products/city?city_id=${cityId}`); // 도시 상세 페이지로 이동
         } else {
-            console.log("유효하지 않은 cityId:", cityId);
+            // console.log("유효하지 않은 cityId:", cityId);
         }
     };
 

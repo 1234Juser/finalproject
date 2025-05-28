@@ -20,9 +20,9 @@ function LoginCon(){
     const [showFindPwByEmail, setShowFindPwByEmail] = useState(false);
 
     // 디버깅용: 비밀번호 입력될 때마다 출력
-    useEffect(() => {
-        console.log("현재 입력된 비밀번호:", memberPassword);
-    }, [memberPassword]);
+    // useEffect(() => {
+    //     console.log("현재 입력된 비밀번호:", memberPassword);
+    // }, [memberPassword]);
 
     //로그인 처리 핸들러
     const handleSubmit = async (e) =>{
@@ -30,9 +30,9 @@ function LoginCon(){
         setErrorMsg("");
 
         // 디버깅: 서버로 보낼 데이터 로그
-        console.log("로그인 시도");
-        console.log("입력된 ID:", memberId);
-        console.log("입력된 PW:", memberPassword);
+        // console.log("로그인 시도");
+        // console.log("입력된 ID:", memberId);
+        // console.log("입력된 PW:", memberPassword);
 
         try{
             const response = await axios.post("/member/login", {
@@ -40,7 +40,7 @@ function LoginCon(){
                 memberPassword
             });
 
-            console.log("로그인 응답:", response.data);
+            // console.log("로그인 응답:", response.data);
             const {accessToken, memberName, memberProfileImageUrl, roles, memberCode} = response.data;
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("memberName", memberName);

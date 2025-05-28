@@ -59,7 +59,7 @@ function CompanionMyPageCon() {
             });
         } catch (err) {
             setError(err.response?.data?.message || '게시글을 불러오는 중 오류가 발생했습니다.');
-            console.error("Error fetching posts:", err);
+            // console.error("Error fetching posts:", err);
         } finally {
             setLoading(false);
         }
@@ -86,7 +86,7 @@ function CompanionMyPageCon() {
             });
         } catch (err) {
             setError(err.response?.data?.message || '댓글을 불러오는 중 오류가 발생했습니다.');
-            console.error("Error fetching comments:", err);
+            // console.error("Error fetching comments:", err);
         } finally {
             setLoading(false);
         }
@@ -114,7 +114,7 @@ function CompanionMyPageCon() {
             });
         } catch (err) {
             setError(err.response?.data?.message || '좋아요한 게시글을 불러오는 중 오류가 발생했습니다.');
-            console.error("Error fetching liked posts:", err);
+            // console.error("Error fetching liked posts:", err);
         } finally {
             setLoading(false);
         }
@@ -142,7 +142,7 @@ function CompanionMyPageCon() {
             });
         } catch (err) {
             setError(err.response?.data?.message || '좋아요한 댓글을 불러오는 중 오류가 발생했습니다.');
-            console.error("Error fetching liked comments:", err);
+            // console.error("Error fetching liked comments:", err);
         } finally {
             setLoading(false);
         }

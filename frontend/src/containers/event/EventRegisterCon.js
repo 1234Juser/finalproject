@@ -1,4 +1,3 @@
-// containers/event/EventRegisterCon.js
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
