@@ -5,8 +5,8 @@ import {
     ModalOverlay,
     RoomItem,
     RoomList, Button, ErrorMessage
-} from "../../../style/community/chat/StyleChatRoomList";
-import FormatDate from "../../../utils/FormatDate";
+} from "../../style/community/chat/StyleChatRoomList";
+import FormatDate from "../../utils/FormatDate";
 
 function ChatRoomListCom({
                              rooms,
@@ -33,15 +33,23 @@ function ChatRoomListCom({
                 ) : (
                     rooms?.map((room, idx) => (
                     <RoomItem key={room.chatRoomId}
-                              onClick={() => goToRoom(room)}>
+                              onClick={() => room.currentParticipants < room.chatRoomMaxParticipants && goToRoom(room)}
+                              style={{
+                                  pointerEvents: room.currentParticipants >= room.chatRoomMaxParticipants ? 'none' : 'auto',
+                                  opacity: room.currentParticipants >= room.chatRoomMaxParticipants ? 0.5 : 1,
+                              }}
+
+                    >
                             <div>
-                                <p>방 UID : {room.chatRoomUid}</p>
-                            <strong>{room.chatRoomTitle}</strong>
-                            <p>{room.chatRoomDescription}</p>
-                            <p>현재 참여 인원 | {room.currentParticipants}</p>
+                                <strong>{room.chatRoomTitle}</strong>
+                                <p>{room.chatRoomDescription}</p>
+                                <p>현재 참여 인원 | {room.currentParticipants}</p>
                                 <p>개설일자 | {FormatDate(room.chatRoomCreateAt)}</p>
                                 <small>최대 참여 인원 |  {room.chatRoomMaxParticipants}</small>
-                        </div>
+                                {room.currentParticipants >= room.chatRoomMaxParticipants && (
+                                    <p style={{ color: '#151515' }}>🔥 최대 인원이 초과되었습니다.</p>
+                                )}
+                            </div>
                     </RoomItem>
                     ))
                 )}

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-function RecentReviewRequestModalCom({ order, onClose, onDoNotShowToday }){
+function RecentReviewRequestModalCom({ order, onClose, onDoNotShowToday, onDoNotShowThisOrder }){
     return(
     <>
         <Overlay onClick={onClose}>
@@ -19,7 +19,7 @@ function RecentReviewRequestModalCom({ order, onClose, onDoNotShowToday }){
                         }}>
                             리뷰 작성하기
                         </WriteButton>
-                        <CancelButton onClick={onClose}>나중에 할게요</CancelButton>
+                        <CancelButton onClick={onDoNotShowThisOrder}>다신 안보기</CancelButton>
                     </ButtonGroup>
                 </ModalBox>
             </ModalContainer>

@@ -7,6 +7,7 @@ export const initialState = {
     roomUid: '',
     isLoading: true,
     authError: null,
+    roomDetails : null,
 };
 
 export function chatReducer(state, action) {
@@ -29,6 +30,17 @@ export function chatReducer(state, action) {
             return { ...state, isLoading: action.payload };
         case 'SET_AUTH_ERROR':
             return { ...state, authError: action.payload };
+        case 'SET_ROOM_DETAILS':
+            return { ...state, roomDetails: action.payload };
+        case 'SET_PARTICIPANT_COUNT':
+            return {
+                ...state,
+                roomDetails: {
+                    ...state.roomDetails,
+                    currentParticipants: action.payload
+                }
+            };
+
         default:
             return state;
     }

@@ -36,10 +36,9 @@ import AdminBookingByProductPage from "./pages/reservation/AdminBookingByProduct
 import MyReviewFormPage from "./pages/review/MyReviewFormPage";
 import SearchProductPage from "./pages/search/SearchProductPage";
 import AdminRealTimePage from "./pages/realtime/AdminRealTimePage";
-import TripBuddyPage from "./pages/community/tripbuddy/TripBuddyPage";
-import ChatRoomPage from "./pages/community/chat/ChatRoomPage";
+import ChatRoomPage from "./pages/chat/ChatRoomPage";
 import CommunityLayout from "./style/community/CommunityLayout";
-import ChatRoomListPage from "./pages/community/chat/ChatRoomListPage";
+import ChatRoomListPage from "./pages/chat/ChatRoomListPage";
 import CompanionListPage from "./pages/companion/CompanionListPage";
 import CompanionRegisterPage from "./pages/companion/CompanionRegisterPage";
 import CompanionDetailPage from "./pages/companion/CompanionDetailPage";
@@ -141,10 +140,9 @@ function App() {
 
               {/*커뮤니티*/}
               <Route path="/community" element={<CommunityLayout />} >
-                  <Route index element={<TripBuddyPage />} />
-                  <Route path="tripbuddy" element={<TripBuddyPage/>}/>
+                  <Route index element={<CompanionListPage />} />
                   <Route path="chat" element={<ChatRoomListPage/>}/>
-                  <Route path="chat/:roomUid" element={<ChatRoomPage />} />  {/* 상세 경로 추가 */}
+                  <Route path="chat/:roomUid" element={<ChatRoomPage />} />
                   <Route path="companion" element={<CompanionListPage/>}/>
                   <Route path="companion/new" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]["ROLE_USER"]}><CompanionRegisterPage/>/></PrivateRoute>} />
                   <Route path="companion/:companionId" element={<CompanionDetailPage />}/>

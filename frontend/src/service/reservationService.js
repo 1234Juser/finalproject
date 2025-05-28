@@ -236,3 +236,18 @@ export async function fetchLatestUnreviewedOrder(accessToken) {
         }
     }
 }
+
+// 상태별 예약 조회
+export async function fetchOldReservationsByStatus(status, accessToken, startDate, endDate) {
+    const config = {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`
+        },
+        params: {
+            startDate,
+            endDate
+        }
+    };
+    const response = await axios.get(`${path}/my/reservations/old/${status}`, config);
+    return response.data;
+}

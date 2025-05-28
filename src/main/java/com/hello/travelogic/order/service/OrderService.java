@@ -121,6 +121,28 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<OrderDTO> getOldOrdersByStatus(Long memberCode, String status, String startDateStr, String endDateStr) {
+        MemberEntity member = memberRepo.findById(memberCode)
+                .orElseThrow(() -> new NoSuchElementException("회원 없음: " + memberCode));
+
+        OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase()); // 대소문자 허용
+
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+//        LocalDate cutoff = LocalDate.now().minusMonths(6);
+        List<OrderEntity> orders = orderRepo.findOldOrdersByStatusInRange(member, orderStatus, startDate, endDate);
+
+        return orders.stream()
+                .map(order -> {
+                    PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
+                    return new OrderDTO(order, payment);
+                })
+                .sorted((o1, o2) -> o2.getReservationDate().compareTo(o1.getReservationDate()))
+                .collect(Collectors.toList());
+    }
+
 //    @Transactional(readOnly = true)
 //    public List<OrderDTO> getOrdersByMemberCode(Long memberCode) {
 //

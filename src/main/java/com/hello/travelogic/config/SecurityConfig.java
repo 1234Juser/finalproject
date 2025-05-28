@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 // 추가적으로 특정 경로의 정적 리소스들도 무시하도록 설정합니다.
                 .requestMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/static/**",
-                        "/upload/**", "/events/**");
+                        "/upload/**", "/events/**", "/review/**");
     }
 
     @Bean
@@ -75,18 +75,31 @@ public class SecurityConfig {
                                         "/companions",  "/companions/{id}", "/likes/companion/{id}/count", "/likes/comment/{id}/count",
                                         "/cities/region/**", "/products/city", "/country/**", "/cities/**","/products/**",
                                         "/review/product/**",   "/payments/methods","/orders/cancel-pending", "/api/chatrooms",
+                                        "/review/*/image", "/review/product/*/average", "/review/product/*/count",
+                                        "/payments/methods", "/users/getToken", "/iamport/webhook", "/reservations/receipt/**",
+                                        "/products/*/option/create", "/products/*/reservation", "/products/*/option", "/products/*/reservation-date",
+                                        "/products/*/option/*", "/products/ads",
+                                        "/orders/cancel-pending", "/products/country/**", "/products/city/**", "/products/**",
+                                        "/country/{regionCode}", "/city/{cityId}", "/cities/{countryId}", "/cities/region/{regionCode}",
+                                        "/domestic", "/international", "/region/{regionType}", "/themes",
                                         "/oauth/google/**", "/oauth/kakao/**"
 
                                 ).permitAll()
                                 //  경로는 인증된 사용자만 접근을 허용합니다.
-                                .requestMatchers("/member/mypage","/wish/**").authenticated()
+                                .requestMatchers("/member/mypage","/wish/**",
+                                        "/review/view/**", "/review/write/info/**", "/review/write/**", "/review/edit/**", "/review/delete/**",
+                                        "/payments/create", "/payments/**", "/my/reservations/**", "/my/reservations/cancel/**",
+                                        "/order/create", "/order/*/complete","/order/*/delete", "/order/*", "/payments/**", "/payments/cancel/**"
+                                ).authenticated()
                                 // 경로는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
-                                .requestMatchers("/member/adminmypage").hasRole("ADMIN")
+                                .requestMatchers("/member/adminmypage", "/admin/**").hasRole("ADMIN")
                                 //  경로는 'ADMIN' 권한을 가진 사용자만 접근을 허용합니다. (hasRole은 'ROLE_' 접두사를 자동으로 붙여줌)
-                                .requestMatchers("/event/register", "/event/edit/**","/member/all").hasAnyAuthority("ROLE_ADMIN")
+                                .requestMatchers("/event/register", "/event/edit/**","/member/all",
+                                        "/admin/**", "/admin/booking/**").hasAnyAuthority("ROLE_ADMIN")
                                 //  경로는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/admin/**", "/admin/booking/**").hasRole("ADMIN")
                                 //  경로는 'USER' 또는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
+                                .requestMatchers(HttpMethod.PATCH, "/my/reservations/cancel/*").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
                                 // 웹소켓 핸드셰이크 경로('/ws/**')는 인증 없이(누구나) 접근을 허용합니다.
                                 .requestMatchers("/ws/**").permitAll()

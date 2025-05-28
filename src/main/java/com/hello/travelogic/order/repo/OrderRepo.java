@@ -73,4 +73,15 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
     // 가장 최신의 리뷰 미작성 주문 조회 (1건)
     Optional<OrderEntity> findFirstByMember_MemberCodeAndOrderStatusAndIsReviewedFalseOrderByOrderDateDesc(
             Long memberCode, OrderStatus orderStatus);
+
+    // 예약 상태별 조회
+    @Query("SELECT o FROM OrderEntity o JOIN FETCH o.option " +
+            "WHERE o.member = :member AND o.orderStatus = :status " +
+            "AND o.option.reservationDate BETWEEN :startDate AND :endDate " +
+            "ORDER BY o.orderDate DESC")
+    List<OrderEntity> findOldOrdersByStatusInRange(
+            @Param("member") MemberEntity member,
+            @Param("status") OrderStatus status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

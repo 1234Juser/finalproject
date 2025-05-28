@@ -36,15 +36,36 @@ public class ChatRoomService {
     @Transactional(readOnly = true)
     public List<ChatRoomCreateResponse> getAllChatRooms() {
         List<ChatRoomEntity> chatRooms = chatRoomRepo.findAllByOrderByChatRoomCreateAtDesc();
+
+        // 각 채팅방에 현재 참여자 수 포함하여 반환
         return chatRooms.stream()
                 .map(chatRoomEntity -> {
                     // 각 채팅방의 현재 참여자 수를 조회 (퇴장하지 않은 멤버만 카운트)
-                    // ChatRoomMemberEntity의 chatRoomId 필드가 ChatRoomEntity 타입이라고 가정합니다.
                     int currentParticipants = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(chatRoomEntity, false);
+
+                    log.debug("채팅방: {}, 현재 참여자 수: {}", chatRoomEntity.getChatRoomTitle(), currentParticipants);
+
                     return new ChatRoomCreateResponse(chatRoomEntity, currentParticipants);
                 })
                 .collect(Collectors.toList());
     }
+
+
+    // 채팅방 상세 조회
+    @Transactional(readOnly = true)
+    public ChatRoomCreateResponse getChatRoomDetails(String roomUid) {
+
+        ChatRoomEntity chatRoom = chatRoomRepo.findByChatRoomUid(roomUid)
+                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
+
+        // 현재 참여자 수
+        int currentParticipants = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(chatRoom, false);
+
+        // ChatRoomCreateResponse로 변환하여 반환
+        return new ChatRoomCreateResponse(chatRoom, currentParticipants);
+    }
+
+
 
 
     // 채팅방 생성
@@ -146,82 +167,89 @@ public class ChatRoomService {
     @Transactional
     public void addMemberToRoom(String roomId, String memberName) {
 
+        // 1. 채팅방 조회
         ChatRoomEntity room = chatRoomRepo.findByChatRoomUid(roomId)
                 .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
         log.debug("room = {}", room.getChatRoomId());
+
+        // 2. 멤버 조회
         MemberEntity member = memberRepository.findByMemberName(memberName)
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
         log.debug("member = {}", member.getMemberName());
 
-        // 1. 해당 채팅방에서 해당 멤버의 *가장 최근* 참여 기록을 찾습니다.
-        // 퇴장했든 안 했든 일단 기록이 있는지 확인하는 것이 목적입니다.
+        // 3. 현재 해당 채팅방의 멤버 수 확인 (퇴장하지 않은 멤버만 카운트)
+        long currentCount = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(room, false);
+        if (currentCount >= room.getChatRoomMaxParticipants()) {
+            // 최대 인원 초과 시 예외 처리 및 로그 출력
+            log.warn(">>>>>> 채팅방 {} 최대 인원 초과. 현재 {}명, 최대 {}명", roomId, currentCount, room.getChatRoomMaxParticipants());
+            throw new IllegalStateException("채팅방 최대 인원을 초과했습니다.");
+        }
+
+        // 4. 멤버가 이미 참여 중인지 확인 (해당 멤버의 *가장 최근* 참여 기록 찾기. 퇴장했든 안 했든 일단 기록이 있는지 확인)
         Optional<ChatRoomMemberEntity> latestMembership = chatRoomMemberRepo.findTopByChatRoomIdAndMemberCodeOrderByCrmJoinedAtDesc(room, member);
 
         if (latestMembership.isPresent()) {
-            // 기록이 존재하는 경우 (처음 참여하든, 나갔다가 다시 들어왔든)
-            ChatRoomMemberEntity existingEntry = latestMembership.get();
+            ChatRoomMemberEntity existingEntry = latestMembership.get();        // 기록이 존재하는 경우 (처음 참여하든, 나갔다가 다시 들어왔든)
 
             // 이미 참여 중인 상태라면 (중복 참여 시도)
             if (!existingEntry.getCrmIsExited()) {
                 log.debug(">>>>>> 이미 참여 중인 멤버 {} 가 채팅방 {}에 있습니다", memberName, roomId);
-                // 여기서는 추가적인 처리가 필요 없으므로 return 합니다.
-                // (프론트엔드에서 이미 참여 중인 방에는 진입 시도를 막는 것이 일반적입니다.)
-                return;
+                return;     // 추가 처리 없이 종료
+
             } else {
-                // 퇴장했던 기록이 있는 경우 (재진입)
+                // 5. 이전에 퇴장했던 기록이 있는 경우 재참여 확인
                 log.debug(">>>>>> 퇴장했던 멤버 {} 가 채팅방 {}에 재진입 시도합니다.", memberName, roomId);
 
                 // 최대 인원 확인 (재진입 시에도 체크 필요)
-                long currentCount = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(room, false);
                 if (currentCount >= room.getChatRoomMaxParticipants()) {
                     log.warn(">>>>>> 재진입 실패: 채팅방 {} 최대 인원 초과. 현재 {}명, 최대 {}명", roomId, currentCount, room.getChatRoomMaxParticipants());
                     throw new IllegalStateException("채팅방 최대 인원을 초과했습니다.");
                 }
 
-                // 기존 퇴장 기록 업데이트하여 다시 참여 상태로 변경
-                existingEntry.setCrmIsExited(false);      // 퇴장 상태 해제
-                existingEntry.setCrmJoinedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 참여 시간 업데이트 (혹은 기존 시간 유지 정책에 따라 변경)
-                existingEntry.setCrmExitedAt(null);       // 퇴장 시간 초기화
+                // 퇴장 상태를 해제하고 참여 상태로 변경
+                existingEntry.setCrmIsExited(false);
+                existingEntry.setCrmJoinedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                existingEntry.setCrmExitedAt(null);
 
-                chatRoomMemberRepo.save(existingEntry); // 변경된 엔티티 저장 (Transactional에 의해 자동 저장될 수도 있습니다.)
+                chatRoomMemberRepo.save(existingEntry);
 
                 log.debug(">>>>>> 퇴장했던 멤버 {}가 채팅방 {}에 재참가 처리되었습니다. 현재 참여 인원: {}", memberName, roomId, currentCount + 1);
+                return;
             }
-
-        } else {
-            // 기록이 없는 경우 (최초 참여)
+        }
+            // 6. 멤버가 처음 참여하는 경우 (기록 없음)
             log.debug(">>>>>> 새로운 멤버 {} 가 채팅방 {}에 최초 진입 시도합니다.", memberName, roomId);
 
-            // 최대 인원 확인 (퇴장하지 않은 멤버)
-            long currentCount = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(room, false);
+            // 현재 멤버 수 확인하여 최대 인원 제한 점검 (최초 진입 상황에서도 적용)
             if (currentCount >= room.getChatRoomMaxParticipants()) {
                 log.warn(">>>>>> 최초 진입 실패: 채팅방 {} 최대 인원 초과. 현재 {}명, 최대 {}명", roomId, currentCount, room.getChatRoomMaxParticipants());
                 throw new IllegalStateException("채팅방 최대 인원을 초과했습니다.");
                 // 이 예외는 ChatController에서 잡아서 클라이언트에게 적절한 메시지를 보내야 합니다.
             }
 
-/* 이 메소드가 문제
-        // 중복 참여 확인 (채팅방-회원 조합)
-        if (chatRoomMemberRepo.existsByChatRoomIdAndMemberCode(room, member)) {
-            log.debug(">>>>>> 이미 참여 중인 멤버 {} 가 채팅방 {}에 있습니다", memberName, roomId);
-            // 결과가 true면 이미 참여중이란 뜻. (또 넣으면 안되니까 return)
-            return;
-        }*/
-
-
-            // 중간 테이블에 멤버 저장
+            // 7. 새로운 멤버 엔티티를 생성하고 중간 테이블에 저장
             ChatRoomMemberEntity newEntry = new ChatRoomMemberEntity();
             newEntry.setChatRoomId(room);    // ChatRoomMemberEntity가 ChatRoomEntity 객체 전체를 참조하게 만듦. (ChatRoomId는 내부적으로 @ManyToOne 관계에 있는 필드이기 때문에, ChatRoomId로 가져온 엔티티 객체를 넣어줌)
             newEntry.setMemberCode(member);     // 마찬가지로, memberName 같은 문자열이 아니라 memberEntity 객체 전체를 참조하게 만듦.
-            newEntry.setCrmJoinedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 참여 시간 설정
-            newEntry.setCrmIsExited(false);      // 퇴장 여부 초기값 설정
-            newEntry.setMemberName(memberName);  // memberName String 값 저장 (부가 정보)
-            newEntry.setCreator(false); // isCreator 필드가 있다면 필요에 따라 설정
+            newEntry.setCrmJoinedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+            newEntry.setCrmIsExited(false);
+            newEntry.setMemberName(memberName);
+            newEntry.setCreator(false);
 
             chatRoomMemberRepo.save(newEntry);
             log.debug(">>>>>> 새로운 멤버 {}가 채팅방 {}에 추가되었습니다. 현재 참여 인원: {}", memberName, roomId, currentCount + 1);
         }
-    }
+
+
+//    // 현재 채팅방의 참여 인원을 반환하는 메서드
+//    @Transactional(readOnly = true)
+//    public long getCurrentParticipantsCount(String roomId) {
+//        ChatRoomEntity room = chatRoomRepo.findByChatRoomUid(roomId)
+//                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
+//        log.debug("현재 채팅방의 참여 인원을 반환하는 메서드 실행------- room = {}", room.getChatRoomId());
+//        return chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(room, false);
+//    }
+
 
 
     // 퇴장 처리 및 DB 업데이트
@@ -244,14 +272,22 @@ public class ChatRoomService {
 
         log.debug("---퇴장처리하는 메소드(exitChatRoom)---- chatRoomMember = {}", chatRoomMember);
 
-//        if (chatRoomMember.getCrmIsExited()) {
-//            log.warn("이미 퇴장한 사용자: {}", memberName);
-//        }
-            chatRoomMember.setCrmIsExited(true);
-            chatRoomMember.setCrmExitedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 퇴장 시간 기록
-            // chatRoomMemberRepo.save(chatRoomMember);    // @Transactional 덕분에 변경 감지 (Dirty Checking)로 자동 저장될 가능성 높음
-            log.debug(">>>>>> 멤버 {} (memberCode: {})가 채팅방 {}에서 퇴장 처리되었습니다.", member.getMemberName(), roomId);
-            log.info("채팅방 [{}]에서 {} 퇴장 처리 완료", roomId, memberName);
+        // 멤버 퇴장 처리
+        chatRoomMember.setCrmIsExited(true);
+        chatRoomMember.setCrmExitedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul"))); // 퇴장 시간 기록
+        // chatRoomMemberRepo.save(chatRoomMember);    // @Transactional 덕분에 변경 감지 (Dirty Checking)로 자동 저장될 가능성 높음
+        log.debug(">>>>>> 멤버 {} (memberCode: {})가 채팅방 {}에서 퇴장 처리되었습니다.", member.getMemberName(), roomId);
+        log.info("채팅방 [{}]에서 {} 퇴장 처리 완료", roomId, memberName);
+
+        // 현재 남아 있는 참여자 수 확인
+        long currentParticipants = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(room, false);
+
+        // 참여자가 0명이면 채팅방 삭제
+        if (currentParticipants == 0) {
+            log.info("채팅방 {}에 더 이상 참여자가 없습니다. 채팅방을 삭제합니다.", room.getChatRoomUid());
+            chatRoomRepo.delete(room); // 채팅방 삭제
+        }
+
     }
 
 

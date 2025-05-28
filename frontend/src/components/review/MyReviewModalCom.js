@@ -168,7 +168,7 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                 <Content>
                     <ThumbnailTitleWrap>
                         {/*<Thumbnail src={review.reviewPic ? `${path}/review/${encodeURIComponent(review.reviewPic)}` : "/img/default-review.jpg"} alt="리뷰 이미지" />*/}
-                        <Thumbnail src={`${path}/review/${encodeURIComponent(review.reviewPic)}`}
+                        <Thumbnail src={`/review/${encodeURIComponent(review.reviewPic)}`}
                                    alt="리뷰 이미지"
                                    onError={(e) => {
                                        e.target.style.display = 'none';
