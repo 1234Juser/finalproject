@@ -48,7 +48,7 @@ function CompanionEditCon() {
             setError(null);
             try {
                 const response = await axios.get(`/companions/${companionId}`);
-                console.log('응답확인:', response.data);
+                // console.log('응답확인:', response.data);
                 setTitle(response.data.companionTitle);
                 setContent(response.data.companionContent);
                 setIsNotice(response.data.companionNotice || false);
@@ -83,7 +83,7 @@ function CompanionEditCon() {
                         }
 
                     } catch (decodeError) {
-                        console.error("토큰 디코딩 실패:", decodeError);
+                        // console.error("토큰 디코딩 실패:", decodeError);
                         alert("인증 정보가 유효하지 않습니다. 다시 로그인해주세요.");
                         navigate('/login'); // 로그인 페이지로 이동
                     }
@@ -93,7 +93,7 @@ function CompanionEditCon() {
                 }
 
             } catch (err) {
-                console.error("게시글 상세 정보를 불러오는데 실패 했습니다.", err);
+                // console.error("게시글 상세 정보를 불러오는데 실패 했습니다.", err);
                 setError("게시글 상세 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.");
             } finally {
                 setLoading(false);
@@ -298,6 +298,8 @@ function CompanionEditCon() {
         }
 
     };
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
