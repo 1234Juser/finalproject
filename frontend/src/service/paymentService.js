@@ -6,12 +6,9 @@ const path = "http://localhost:8080";
 
 // 주문 정보 조회
 export const getOrderByOrderCode = async (orderCode, accessToken) => {
-    // const accessToken = req.cookies.accessToken;
     if (!accessToken) {
-        console.error("accessToken 없음");
         throw new Error("Access Token이 필요합니다.");
     }
-    console.log("🔍 [getOrderByOrderCode] orderCode =", orderCode);
     const config = {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -21,11 +18,6 @@ export const getOrderByOrderCode = async (orderCode, accessToken) => {
         const response = await axios.get(`${path}/order/${orderCode}`, config);
         return response.data;
     } catch (error) {
-        console.error("주문 정보 조회 실패:", error);
-        console.error("❌ 주문 정보 조회 실패:");
-        console.error("🔹 status:", error.response?.status);
-        console.error("🔹 data:", error.response?.data);
-        console.error("🔹 orderCode:", orderCode);
         throw error;
     }
 };
@@ -34,22 +26,33 @@ export const getOrderByOrderCode = async (orderCode, accessToken) => {
 export const fetchPaymentMethods = async () => {
     try {
         const response = await axios.get(`${path}/payments/methods`);
-        return response.data; // ["CARD", "KAKAO_PAY", "BANK_TRANSFER", ...]
+        return response.data;
     } catch (error) {
-        console.error("🔴 결제 수단 불러오기 실패:", error);
         throw error;
     }
 };
 
+// 주문명세서에서 출력
 export const fetchPaymentByBookingUid = async (bookingUid, accessToken) => {
     try {
         const config = {
             headers: { Authorization: `Bearer ${accessToken}` }
         };
-        const response = await axios.get(`/payments/${bookingUid}`, config);
+        const response = await axios.get(`/payments/booking/${bookingUid}`, config);
         return response.data;
     } catch (err) {
-        console.error("결제 정보 조회 실패:", err);
+        throw err;
+    }
+};
+
+export const fetchPaymentByImpUid = async (impUid, accessToken) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        };
+        const response = await axios.get(`/payments/imp/${impUid}`, config);
+        return response.data;
+    } catch (err) {
         throw err;
     }
 };
@@ -69,7 +72,6 @@ export const requestPayment = async (paymentData, accessToken) => {
         );
         return response.data;
     } catch (error) {
-        console.error("결제 요청 실패:", error);
         throw error;
     }
 };

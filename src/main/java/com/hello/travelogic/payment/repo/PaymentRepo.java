@@ -15,7 +15,6 @@ public interface PaymentRepo extends JpaRepository<PaymentEntity, Long> {
 
     // impUid로 결제 취소/완료/실패 등 상태 업데이트
     PaymentEntity findByImpUid(String impUid);
-//    Optional<PaymentEntity> findByImpUid(String impUid);
 
     // 내 여행 페이지에서 orderCode에 해당하는 결제 정보 조회
     List<PaymentEntity> findByOrder_OrderCode(Long orderCode);
@@ -27,4 +26,6 @@ public interface PaymentRepo extends JpaRepository<PaymentEntity, Long> {
     Optional<PaymentEntity> findTopByOrder_OrderCode(Long orderCode);
 
     List<PaymentEntity> findAllByPaymentMethodAndPaymentStatus(PaymentMethod paymentMethod, PaymentStatus paymentStatus);
+
+    Optional<PaymentEntity> findByOrder_BookingUid(String bookingUid);
 }
