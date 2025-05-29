@@ -96,9 +96,8 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
                 <Route path="/oauth/google/callback" element={<GoogleCallbackPage />} />
-                {/*<Route path="/my/review" element={<MyReviewPage />} />*/}
-                <Route path="/wish/groups" element={<WishGroupPage />} />
-                <Route path="/wish/groups/:groupCode/items" element={<WishListPage />} />
+                <Route path="/wish/groups" element={<UserOnlyRoute><WishGroupPage /></UserOnlyRoute>} />
+                <Route path="/wish/groups/:groupCode/items" element={<UserOnlyRoute><WishListPage /></UserOnlyRoute>} />
 
                 {/*  회원마이페이지*/}
                 <Route path="/mypage">
@@ -136,9 +135,9 @@ function App() {
                     <Route path=":productUid" element={<ProductDetailPage/>} />
                 </Route>
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
-                <Route path="/products/:productUid/order/create/:optionCode" element={<OrderCheckoutPage/>} />>
-                <Route path="/payments/create/:orderCode" element={<PaymentPage />} />
-                <Route path="/payments/complete" element={<PaymentCompletePage />} />
+                <Route path="/products/:productUid/order/create/:optionCode" element={<UserOnlyRoute><OrderCheckoutPage/></UserOnlyRoute>} />
+                <Route path="/payments/create/:orderCode" element={<UserOnlyRoute><PaymentPage /></UserOnlyRoute>} />
+                <Route path="/payments/complete" element={<UserOnlyRoute><PaymentCompletePage /></UserOnlyRoute>} />
 
               {/*커뮤니티*/}
               <Route path="/community" element={<CommunityLayout />} >
