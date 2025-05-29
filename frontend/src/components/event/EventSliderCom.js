@@ -8,7 +8,7 @@ import {
     SlideImage,
     SlideOverlay,
     SlideText,
-    EventSlidePeriodText
+    EventSlidePeriodText, MainTitle
 } from "../../style/MainStyle";
 import { useNavigate } from "react-router-dom";
 
