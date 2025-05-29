@@ -55,7 +55,11 @@ dependencies {
     // 채팅 WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     // WebSocket 메시징 보안을 위한 의존성 추가
-    implementation 'org.springframework.security:spring-security-messaging' // <<< 이 줄을 추가해주세요
+    implementation 'org.springframework.security:spring-security-messaging'
+    //aws s3의존성
+    implementation 'software.amazon.awssdk:s3:2.x.x' // 최신 버전 확인 필요
+    implementation 'software.amazon.awssdk:auth:2.x.x'
+
 }
 
 tasks.named('test') {
