@@ -24,6 +24,10 @@ function MyReceiptCon({orderCode, optionCode, accessToken}){
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!accessToken) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
         const loadData = async () => {
             if (!bookingUid || !accessToken) return;
             dispatch({ type: "LOADING" });
@@ -40,34 +44,17 @@ function MyReceiptCon({orderCode, optionCode, accessToken}){
                 dispatch({ type: "SET_PRODUCT", payload: product });
 
             } catch (error) {
-                dispatch({ type: "FETCH_ERROR", payload: error.message });
+                if (error.response && error.response.status === 403) {
+                    alert("접근 권한이 없습니다.");
+                    navigate("/");
+                } else {
+                    console.error("예약 조회 중 에러:", error);
+                    dispatch({ type: "FETCH_ERROR", payload: error.message });
+                }
             }
         };
         loadData();
     }, [bookingUid, productUid, optionCode, impUid, accessToken]);
-
-    useEffect(() => {
-        if (!accessToken) {
-            alert("로그인이 필요합니다.");
-            return;
-        }
-        if (accessToken) {
-            try {
-                dispatch({ type: "LOADING" });
-                fetchReservationByBookingUid(bookingUid, accessToken)
-                    .then(data => {
-                        dispatch({ type: "FETCH_SUCCESS", payload: data });
-                    })
-                    .catch((err) => {
-                        dispatch({ type: "FETCH_ERROR", payload: err.message });
-                    });
-            } catch (e) {
-                alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
-            }
-        } else {
-            alert("로그인이 필요합니다.");
-        }
-    }, [bookingUid, accessToken]);
 
     useEffect(() => {
         getProductDetail(productUid, accessToken)
@@ -113,17 +100,17 @@ function MyReceiptCon({orderCode, optionCode, accessToken}){
     }
 
     return(
-    <>
-        <MyReceiptCom
-            order={state.order}
-            option={state.option}
-            payment={state.payment}
-            product={state.product}
-            bookingUid={bookingUid}
-            adProducts={productState.adProducts}
-            onCancelReservation={handleCancel}
-            onBack={() => navigate("/my/reservations")}
-        />
-    </>)
+        <>
+            <MyReceiptCom
+                order={state.order}
+                option={state.option}
+                payment={state.payment}
+                product={state.product}
+                bookingUid={bookingUid}
+                adProducts={productState.adProducts}
+                onCancelReservation={handleCancel}
+                onBack={() => navigate("/my/reservations")}
+            />
+        </>)
 }
 export default MyReceiptCon;
