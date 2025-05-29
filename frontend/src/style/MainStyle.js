@@ -265,8 +265,6 @@ export const MainVideoWrapper = styled.div`
     top: 0; left: 0; width: 100vw; height: 62vh; min-height: 400px;
     z-index: 0;
     overflow: hidden;
-    border-bottom-left-radius: 46px;
-    border-bottom-right-radius: 46px;
     video {
         width: 100vw; height: 100%; object-fit: cover;
         filter: brightness(0.85) blur(2px);

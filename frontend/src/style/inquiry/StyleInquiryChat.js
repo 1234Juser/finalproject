@@ -11,8 +11,7 @@ const fadeInOut = keyframes`
 export const ChatWrapper = styled.div`
   width: 400px;
   height: 500px;
-  border: 1px solid #ddd;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;

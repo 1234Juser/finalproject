@@ -126,11 +126,28 @@ export const MyPageWrapper = styled.div`
 
 // 채팅 창을 담는 컨테이너 스타일 (절대 위치를 사용하여 MdChat 바로 아래에 위치)
 export const ChatFloatingWrapper = styled.div`
-        position: absolute;
-        top: 80%;
-        right: 100px;
-        width: 400px;
-        z-index: 1000;
+    position: fixed;
+    bottom: 150px;
+    right: 80px;
+    width: 400px;
+    max-height: 600px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+
+    /* 애니메이션 효과 */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.3s ease forwards;
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 `;
 
 

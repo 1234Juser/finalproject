@@ -30,10 +30,9 @@ const InquiryChatCom = ({
     return (
         <ChatWrapper>
             <Header>
-                <Title>1:1 문의</Title>
-                <Description style={{ color: isConnected ? 'lightgreen' : 'orange' }}>
+                <Title>실시간 채팅 상담</Title>
+                <Description style={{ color: isConnected ? '#108c54' : '#515351' }}>
                     {isUserLoggedIn ? ( isConnected ? '연결됨' : '연결 끊김') : ''}
-                    {isUserLoggedIn ? ( icId !== null ? ` (ID: ${icId})` : '') : ''}
                 </Description>
                 {isUserLoggedIn ? <CloseButton onClick={handleCloseChat}>종료</CloseButton> : ''}
             </Header>
@@ -41,7 +40,7 @@ const InquiryChatCom = ({
                 {error && <ErrorMessageUI>{error}</ErrorMessageUI>}
                 {messages && messages.length === 0 && !error && (
                     <Message $isSystemInfo>
-                        <strong>Whats's up?, Hello, Travelogic!</strong><br />
+                        <strong>Hello, traveler! Welcome to Travelogic 👋</strong><br />
                         <span>안녕하세요! 무엇을 도와드릴까요?</span><br /><br />
                         <span>💬 채팅상담 연중무휴 24시간</span><br />
                         <span>📞 유선상담 평일 09:00~18:00</span><br /><br />

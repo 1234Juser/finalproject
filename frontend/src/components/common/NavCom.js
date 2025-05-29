@@ -22,11 +22,44 @@ const NavContentWrapper = styled.div`
     align-items: center;
 `;
 
+// 브라우저 우측 하단에 고정될 스타일 정의
+const FloatingChatButton = styled(RiChatSmile2Line)`
+    position: fixed;
+    bottom: 80px;
+    right: 80px;
+    width: 60px;
+    height: 60px;
+    padding: 12px;
+    box-sizing: border-box;
+
+    color: #409cff;
+    background: #ffffff;
+    border-radius: 50%; /* 원형 버튼 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 그림자 */
+
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: #409cff;
+        color: #fff;
+        transform: translateY(-4px); /* 살짝 뜨는 애니메이션 */
+        box-shadow: 0 8px 16px rgba(64, 156, 255, 0.4); /* 더 강한 그림자 */
+    }
+
+    &:active {
+        transform: scale(0.95); /* 클릭 시 눌리는 효과 */
+    }
+`;
+
+
+
 function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, notificationIconRef}) {
     const isAdmin = Array.isArray(roles) && roles.includes("ROLE_ADMIN");
 
     return (
-
+        <>
         <StyledNav style={{position: 'relative'}}>
 
 
@@ -94,17 +127,26 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                                             </a>
                                         </MyPageWrapper>
                                     </li>
-                                    <li>
-                                        <RiChatSmile2Line ref={chatAnchorRef}
-                                                          style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}
-                                                          title="1:1 문의 채팅"
-                                                          onClick={toggleChat}/>
-                                    </li>
+                                    {/*<li>*/}
+                                    {/*    <RiChatSmile2Line ref={chatAnchorRef}*/}
+                                    {/*                      style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}*/}
+                                    {/*                      title="1:1 문의 채팅"*/}
+                                    {/*                      onClick={toggleChat}/>*/}
+                                    {/*</li>*/}
                                 </>)
                         }
                 </NavRight>
             </NavContentWrapper>
         </StyledNav>
-    );
+            {isAdmin ? '' : <>
+                {/* 우측 하단에 고정된 채팅 아이콘 */}
+                <FloatingChatButton
+                    title="1:1 문의 채팅"
+                    onClick={toggleChat}
+                />
+            </>
+            }
+        </>
+);
 }
 export default NavCom;

@@ -142,7 +142,7 @@ export default function MainCom({accessToken, state, dispatch}) {
                 <TimedifferenceCom style={{ flex: 1 }} /> {/* flex: 1 추가 */}
             </ExchangeTimeContainer>
 
-            <MainSectionWrapper>
+            <MainSectionWrapper style={{ marginTop: "70px"}}>
                     <TitleSection>
                         <MainTitle>
                             <span>📌MD가 찜한<HighlightText> "그 도시"</HighlightText>, 대신 다녀와주세요</span>
