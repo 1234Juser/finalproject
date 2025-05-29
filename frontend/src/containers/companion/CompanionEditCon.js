@@ -54,17 +54,25 @@ function CompanionEditCon() {
                 setIsNotice(response.data.companionNotice || false);
                 setInitialDataLoaded(true); // 데이터 로드 완료 표시
 
-                // 기존 이미지 정보 설정
                 if (response.data.images) {
+                    console.log("기존 이미지 데이터 수신:", response.data.images);
                     // 기존 이미지 정보에 'isExisting: true' 플래그 추가
-                    const existingImageData = response.data.images.map(img => ({ ...img, isExisting: true }));
-                    setExistingImages(existingImageData);
+                    const existingImageData = response.data.images.map(img => ({
+                        ...img,
+                        isExisting: true,
+                        imageUrl: img.imageUrl // DTO에서 이미 완전한 URL이 넘어온다고 가정
+                    }));
 
+                    setExistingImages(existingImageData);
                     // 초기 로드 시 기존 이미지 미리보기를 설정
                     setImagePreviews(existingImageData.map(img => img.imageUrl));
+                    console.log("existingImages 설정 완료:", existingImageData); // 추가된 로그
+                    console.log("imagePreviews 초기 설정 완료 (기존 이미지):", existingImageData.map(img => img.imageUrl)); // 추가된 로그
                 } else {
                     setExistingImages([]);
                     setImagePreviews([]);
+                    console.log("수신된 기존 이미지 없음."); // 추가된 로그
+
                 }
                 setInitialDataLoaded(true); // 데이터 로드 완료 표시
 
@@ -265,7 +273,6 @@ function CompanionEditCon() {
 
         // 전체 이미지(기존 + 새로 추가)의 현재 순서를 기준으로 삭제할 태그를 찾습니다.
         const allCurrentImages = [...existingImages.map(img => img.imageUrl), ...newImages.map(img => URL.createObjectURL(img))];
-        let tagToDelete = null;
 
         // 삭제하려는 이미지의 실제 인덱스 (전체 이미지 배열 기준)
         const realIndexToRemove = existingImages.length + indexToRemove;
