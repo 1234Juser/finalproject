@@ -69,8 +69,6 @@ public class PaymentDTO {
 
         // 필드 직접 참조 방지
         if (entity.getOrder() != null && entity.getOrder().getProduct() != null) {
-//            this.orderCode = entity.getOrder().getOrderCode();
-//            this.productThumbnail = entity.getOrder().getProduct().getProductThumbnail();
             String productPic = entity.getOrder().getProduct().getProductThumbnail();
 
             if (productPic == null || productPic.isBlank()) {

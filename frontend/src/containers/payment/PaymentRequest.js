@@ -1,11 +1,10 @@
 import {useEffect, useState} from "react";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {getOrderByOrderCode, requestPayment} from "../../service/paymentService";
+import {useLocation, useNavigate} from "react-router-dom";
+import {getOrderByOrderCode, requestPayment, updatePaymentStatus} from "../../service/paymentService";
 import {requestIamportPayment} from "../../components/payment/IamportPayment";
 import {completeOrder} from "../../service/orderService";
 
 function PaymentRequest({orderCode, accessToken}) {
-    // const { orderCode } = useParams();
     const location = useLocation();
     const { selectedPaymentMethod } = location.state || {};
 
@@ -19,7 +18,6 @@ function PaymentRequest({orderCode, accessToken}) {
                 const data = await getOrderByOrderCode(orderCode, accessToken);
                 setOrderData(data);
             } catch (error) {
-                console.error("주문 정보 불러오기 실패:", error);
                 alert("주문 정보를 불러올 수 없습니다.");
                 setErrorMessage("주문 정보를 불러오는 데 실패했습니다.");
             }
@@ -30,21 +28,14 @@ function PaymentRequest({orderCode, accessToken}) {
         }
     }, [orderCode, accessToken]);
 
-    // useEffect(() => {
-    //     if (orderData) {
-    //         requestIamportPayment(orderData);
-    //     }
-    // }, [orderData]);
     useEffect(() => {
         const executePayment = async () => {
             if (!selectedPaymentMethod) {
-                alert("❗ 결제수단이 선택되지 않았습니다.");
+                alert("결제수단이 선택되지 않았습니다.");
                 return;
             }
-            console.log("⚙️ 결제 실행 시작");
             try {
                 const result = await requestIamportPayment(orderData, selectedPaymentMethod);
-                console.log("💬 아임포트 결제 응답:", result);
 
                 const paymentData = {
                     impUid: result.impUid,
@@ -53,6 +44,7 @@ function PaymentRequest({orderCode, accessToken}) {
                     paymentMethod: selectedPaymentMethod,
                     paymentBrand: result.paymentBrand,
                     paymentAmount: result.paymentAmount,
+                    productThumbnail: orderData.productThumbnail,
                     orderCode: result.orderCode,
                     memberCode: orderData.memberCode,
                     vbankNum: result.vbankNum,
@@ -61,25 +53,21 @@ function PaymentRequest({orderCode, accessToken}) {
                     vbankDue: result.vbankDue,
                 };
 
-                console.log("📤 결제 저장 요청 데이터:", paymentData);
-                console.log("💬 result:", result);
                 try {
                     await requestPayment(paymentData, accessToken);
-                    // await completeOrder(orderCode, selectedPaymentMethod, paymentData.paymentAmount, accessToken);
+                    await updatePaymentStatus(result.impUid, accessToken);
                     await completeOrder(result.orderCode, selectedPaymentMethod, result.paymentAmount, accessToken);
-                    console.log("🟢 PaymentEntity 저장 성공:", paymentData);
-                    console.log("💬 result:", result);
                 } catch (err) {
-                    console.error("❌ PaymentEntity 저장 실패:", err);
+                    alert("결제 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
                 }
                 navigate("/payments/complete", {
-                    // state: result // result: { bookingUid, orderDate, productTitle, ... }
                     // state: paymentData
                     state: {
                         bookingUid: result.bookingUid,
                         orderDate: result.orderDate,
                         productTitle: result.productTitle,
-                        productThumbnail: result.productThumbnail,
+                        // productThumbnail: result.productThumbnail,
+                        productThumbnail: orderData.productThumbnail || "/img/empty/empty-list.jpeg",
                         totalPrice: result.totalPrice,
                         vbankNum: result.vbankNum,
                         vbankName: result.vbankName,
@@ -88,7 +76,6 @@ function PaymentRequest({orderCode, accessToken}) {
                     }
                 });
             } catch (msg) {
-                console.error("❌ 결제 실패 메시지:", msg);
                 alert("결제 실패: " + msg);
             }
         };
