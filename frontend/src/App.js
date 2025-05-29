@@ -114,7 +114,7 @@ function App() {
 
               {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
-                <Route path="/admin" element={<NotFoundPage />}>
+                <Route path="/admin" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><div /></PrivateRoute>} >
                     <Route path="memberSearch" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminMemberListPage /></PrivateRoute>} />
                     <Route path="productAll" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><ProductAllAdminPage/></PrivateRoute>} />
                     <Route path="productReg" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><ProductRegPage/></PrivateRoute>} />

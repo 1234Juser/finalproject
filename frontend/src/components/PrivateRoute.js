@@ -1,14 +1,15 @@
 // 관리자전용권한
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation} from 'react-router-dom';
 
 const PrivateRoute = ({ children, requiredRoles }) => {
     const isAuthenticated = localStorage.getItem("accessToken");
     const userRoles = JSON.parse(localStorage.getItem("roles") || "[]");
+    const location = useLocation();
 
     if (!isAuthenticated) {
         // 로그인되어 있지 않으면 로그인 페이지로 리다이렉트
-        return <Navigate to="/login" />;
+        return <Navigate to="/login" replace state={{ from: location }} />;
     }
 
 
@@ -19,6 +20,11 @@ const PrivateRoute = ({ children, requiredRoles }) => {
             alert("접근 권한이 없습니다.");
             return <Navigate to="/" />;
         }
+    }
+
+    // 여기서 /admin 경로를 감지해서 /adminmypage로 리다이렉트 처리
+    if (location.pathname === "/admin") {
+        return <Navigate to="/adminmypage" replace />;
     }
 
     return children;
