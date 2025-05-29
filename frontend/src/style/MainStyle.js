@@ -203,3 +203,25 @@ export const EventSlidePeriodText = styled.div`
     text-shadow: 1px 2px 8px rgba(30, 16, 2, 0.28);
     letter-spacing: -0.5px; /* 자간 조정 */
 `;
+
+// 새로 추가된 스타일드 컴포넌트들
+export const PageWrapper = styled.div`
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+`;
+
+// BannerSectionStyledWrapper의 margin-top과 margin-bottom을 조정
+export const BannerSectionStyledWrapper = styled(MainSectionWrapper)`
+    margin-top: calc(62vh + 20px); /* MainVideoWrapper 높이 + 20px */
+    margin-bottom: 20px; /* 하단 여백 20px 추가 */
+    z-index: 2;
+`;
+
+export const ExchangeTimeContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top : 50px;
+    width: 100%;
+    `;

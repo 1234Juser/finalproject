@@ -60,6 +60,7 @@ import CeoPage from "./pages/common/CeoPage";
 import PrivateRoute from "./components/PrivateRoute";
 import UserOnlyRoute from "./components/UserOnlyRoute";
 import ScrollToTop from "./utils/ScrollToTop";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
     return (
@@ -113,7 +114,7 @@ function App() {
 
               {/*관리자마이페이지*/}
                 <Route path="/adminmypage" element={<AdminMyPagePage />} />
-                <Route path="/admin">
+                <Route path="/admin" element={<NotFoundPage />}>
                     <Route path="memberSearch" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminMemberListPage /></PrivateRoute>} />
                     <Route path="productAll" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><ProductAllAdminPage/></PrivateRoute>} />
                     <Route path="productReg" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><ProductRegPage/></PrivateRoute>} />
@@ -129,7 +130,7 @@ function App() {
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>
                 <Route path="/international" element={<InternationalPage />} />
-                <Route path="/products">
+                <Route path="/products" element={<NotFoundPage />} >
                     <Route path="country" element={<ProductPage />} />
                     <Route path="city" element={<ProductPage />} />
                     <Route path=":productUid" element={<ProductDetailPage/>} />
@@ -150,6 +151,7 @@ function App() {
                   <Route path="companion/edit/:companionId" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]["ROLE_USER"]}><CompanionEditPage /></PrivateRoute>} />
               </Route>
 
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <FooterCom/>
             {/* 토스트 창 : 찜하기 완료 후 사용 */}
