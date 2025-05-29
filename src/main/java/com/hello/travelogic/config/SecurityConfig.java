@@ -89,20 +89,19 @@ public class SecurityConfig {
                                 //  경로는 인증된 사용자만 접근을 허용합니다.
                                 .requestMatchers("/member/mypage","/wish/**",
                                         "/review/view/**", "/review/write/info/**", "/review/write/**", "/review/edit/**", "/review/delete/**",
-                                        "/payments/create", "/payments/**", "/my/reservations/**", "/my/reservations/cancel/**", "reservations/receipt/**",
+                                        "/payments/create", "/payments/**", "/my/reservations/**","/reservations/receipt/**",
                                         "/order/create", "/order/*/complete","/order/*/delete", "/order/*", "/payments/cancel/**",
                                         "/products/*/order/create/**"
                                 ).authenticated()
                                 // 경로는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
                                 .requestMatchers("/member/adminmypage", "/admin/**").hasRole("ADMIN")
                                 //  경로는 'ADMIN' 권한을 가진 사용자만 접근을 허용합니다. (hasRole은 'ROLE_' 접두사를 자동으로 붙여줌)
-                                .requestMatchers("/event/register", "/event/edit/**","/member/all",
-                                        "/admin/**", "/admin/booking/**", "/admin/review/**").hasAnyAuthority("ROLE_ADMIN")
+                                .requestMatchers("/event/register", "/event/edit/**","/member/all").hasAnyAuthority("ROLE_ADMIN")
                                 //  경로는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
-                                .requestMatchers("/admin/**", "/admin/booking/**", "/admin/review/**").hasRole("ADMIN")
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 //  경로는 'USER' 또는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
-                                .requestMatchers(HttpMethod.PATCH, "/my/reservations/cancel/*").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
+//                                .requestMatchers(HttpMethod.PATCH, "/my/reservations/cancel/*").hasAnyRole("USER", "ADMIN")
+//                                .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
                                 // 웹소켓 핸드셰이크 경로('/ws/**')는 인증 없이(누구나) 접근을 허용합니다.
                                 .requestMatchers("/ws/**").permitAll()
                                 // 위에서 명시적으로 허용한 경로를 제외한 모든 나머지 요청은 인증된 사용자만 접근을 허용합니다.

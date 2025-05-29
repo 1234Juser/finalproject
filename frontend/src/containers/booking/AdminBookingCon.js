@@ -117,12 +117,15 @@ function AdminBookingCon({accessToken}){
             const newData = await fetchAllReservations(accessToken, start);
             dispatch({ type: "FETCH_SUCCESS", payload: newData });
         } catch (err) {
-            if (err.response?.status === 403) {
-                alert("예약 취소 권한이 없습니다. 관리자만 수행할 수 있습니다.");
+            const status = err.response?.status;
+            const message = err.response?.data || err.message;
+            if (status === 403) {
+                alert("접근 권한이 없습니다. 관리자만 수행할 수 있습니다.");
+            } else if (typeof message === "string" && message.includes("결제 완료") || message.includes("무통장")) {
+                alert(message); // "결제 완료 또는 무통장 입금 대기 상태만 취소할 수 있습니다."
             } else {
-                alert("예약 취소에 실패했습니다.");
+                alert("예약 취소 중 오류 발생: " + message);
             }
-            console.error("예약 취소 실패:", err.response?.data || err.message);
         }
     };
 
