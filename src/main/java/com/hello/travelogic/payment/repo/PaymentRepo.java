@@ -4,6 +4,8 @@ import com.hello.travelogic.payment.domain.PaymentEntity;
 import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +24,14 @@ public interface PaymentRepo extends JpaRepository<PaymentEntity, Long> {
     // orderStatus를 기본값 PENDING에서 SCHEDULED로 변경
     Optional<PaymentEntity> findOptionalByImpUid(String impUid);
 
-    // 결제 상태 변경을 위해서 바꾼버전
+    // paymentService에서 결제 상태 변경을 위해서 바꾼버전
     Optional<PaymentEntity> findTopByOrder_OrderCode(Long orderCode);
 
     List<PaymentEntity> findAllByPaymentMethodAndPaymentStatus(PaymentMethod paymentMethod, PaymentStatus paymentStatus);
 
-    Optional<PaymentEntity> findByOrder_BookingUid(String bookingUid);
+    @Query("SELECT p FROM PaymentEntity p " +
+            "JOIN FETCH p.order o " +
+            "JOIN FETCH o.product " +
+            "WHERE o.bookingUid = :bookingUid")
+    Optional<PaymentEntity> findByOrder_BookingUidWithProduct(@Param("bookingUid") String bookingUid);
 }

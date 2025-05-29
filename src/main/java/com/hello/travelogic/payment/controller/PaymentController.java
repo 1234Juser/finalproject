@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -43,7 +44,9 @@ public class PaymentController {
 
     // impUid로 결제 상태 변경
     @PatchMapping("/payments/{impUid}/status")
-    public ResponseEntity<String> updatePaymentStatus(@PathVariable String impUid, @RequestParam PaymentStatus status) {
+    public ResponseEntity<String> updatePaymentStatus(@PathVariable String impUid,
+                                                    @RequestParam PaymentStatus status,
+                                                    Authentication authentication) {
         try {
             paymentService.updatePaymentStatus(impUid, status);
             return ResponseEntity.ok("결제 상태가 성공적으로 업데이트되었습니다.");
@@ -54,6 +57,17 @@ public class PaymentController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 상태 업데이트 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 주문번호로 결제 취소
+    @PatchMapping("/payments/cancel/{orderCode}")
+    public ResponseEntity<?> cancelPayment(@PathVariable Long orderCode) {
+        try {
+            paymentService.cancelPaymentByOrderCode(orderCode);
+            return ResponseEntity.ok("결제 취소 요청 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("결제 취소 실패: " + e.getMessage());
         }
     }
 
@@ -82,7 +96,7 @@ public class PaymentController {
         return ResponseEntity.ok(payment);
     }
 
-    // 내 여행 페이지에서 결재내역 보기 버튼
+    // 내 여행 페이지에서 결제내역 보기
     @GetMapping("/payments/order/{orderCode}")
     public ResponseEntity<List<PaymentDTO>> getPaymentsByOrderCode(@PathVariable Long orderCode) {
         try {
@@ -143,6 +157,7 @@ public class PaymentController {
         return ResponseEntity.ok("OK");
     }
 
+    // 주문 명세서에 결제 정보 넣기
     @GetMapping("/payments/booking/{bookingUid}")
     public ResponseEntity<PaymentDTO> getPaymentByBookingUid(@PathVariable String bookingUid) {
         PaymentDTO payment = paymentService.getPaymentByBookingUid(bookingUid);

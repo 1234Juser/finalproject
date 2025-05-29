@@ -4,19 +4,6 @@ import {useLocation} from "react-router-dom";
 function PaymentCompletePage() {
     const location = useLocation();
     const state = location.state || {};
-    console.log("📦 location.state in PaymentCompletePage:", location.state);
-    console.log("📦 location.state in PaymentCompletePage:", state);
-    // const {
-    //     bookingUid,
-    //     orderDate,
-    //     productTitle,
-    //     productThumbnail,
-    //     totalPrice,
-    //     vbankNum,
-    //     vbankName,
-    //     vbankHolder,
-    //     vbankDue,
-    // } = location.state || {};
     const {
         bookingUid,
         orderDate,

@@ -51,7 +51,6 @@ public class OrderService {
     private final PaymentService paymentService;
 
     // 관리자의 주문조회
-    // 관리자 상품별 추가하면서 수정됐음
     @Transactional
     public Map<String, Object> getAllMemberBookingList(int start) {
 
@@ -72,7 +71,6 @@ public class OrderService {
         }
 
         List<OrderDTO> reservationList = page.getContent().stream()
-//                .map(OrderDTO::new)
                 .map(order -> {
                     PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
                     return new OrderDTO(order, payment);
@@ -94,8 +92,6 @@ public class OrderService {
         LocalDate cutoff = LocalDate.now().minusMonths(6);
 
         List<OrderEntity> orders = orderRepo.findRecentOrders(member, cutoff);
-//        return orderRepo.findRecentOrders(member, cutoff).stream()
-//                .map(OrderDTO::new)
         return orders.stream()
                 .map(order -> {
                     PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
@@ -111,8 +107,6 @@ public class OrderService {
         LocalDate cutoff = LocalDate.now().minusMonths(6);
 
         List<OrderEntity> orders = orderRepo.findOldOrders(member, cutoff);
-//        return orderRepo.findOldOrders(member, cutoff).stream()
-//                .map(OrderDTO::new)
         return orders.stream()
                 .map(order -> {
                     PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
@@ -132,7 +126,6 @@ public class OrderService {
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
 
-//        LocalDate cutoff = LocalDate.now().minusMonths(6);
         List<OrderEntity> orders = orderRepo.findOldOrdersByStatusInRange(member, orderStatus, startDate, endDate);
 
         return orders.stream()
@@ -144,24 +137,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-//    @Transactional
-//    public int updateOrderStatusIfCompleted(Long orderCode) {
-//
-//        OrderEntity order = orderRepo.findById(orderCode)
-//                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-//
-//        LocalDate resDate = order.getOption().getReservationDate();
-//        LocalDate today = LocalDate.now();
-    ////        if (resDate != null && resDate.isBefore(LocalDate.now())) {
-//        if (resDate != null && resDate.isBefore(today)) {
-//            order.setOrderStatus(OrderStatus.COMPLETED);
-//            orderRepo.save(order);
-//            log.info("🟢 상태 업데이트 완료: " + orderCode);
-//            return 1; // 상태가 바뀐 경우
-//        }
-//        log.info("🔴 상태 변경 조건 불충족: " + orderCode);
-//        return 0;
-//    }
     @Transactional
     public List<OrderEntity> findAllWithAutoUpdate() {
         List<OrderEntity> orders = orderRepo.findAll();
@@ -178,10 +153,8 @@ public class OrderService {
             if (resDate != null && resDate.isBefore(today) && order.getOrderStatus() == OrderStatus.SCHEDULED) {
                 order.setOrderStatus(OrderStatus.COMPLETED);
                 orderRepo.save(order);
-                System.out.println("상태 업데이트 완료: " + order.getOrderCode());
             }
         }
-
         return orders;
     }
 
@@ -203,9 +176,7 @@ public class OrderService {
 
             PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
                     .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
-//            if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
-//                throw new IllegalStateException("결제 완료 상태만 취소할 수 있습니다.");
-//            }
+
             if (payment.getPaymentStatus() != PaymentStatus.COMPLETED
                     && payment.getPaymentStatus() != PaymentStatus.WAITING_BANK_TRANSFER) {
                 throw new IllegalStateException("결제 완료 또는 무통장 입금 대기 상태에서만 취소할 수 있습니다.");
@@ -259,7 +230,6 @@ public class OrderService {
         Page<OrderEntity> pageResult = orderRepo.findByProduct_ProductCode(productCode, pageable);
 
         List<OrderDTO> dtoList = pageResult.getContent().stream()
-//                .map(OrderDTO::new)
                 .map(order -> {
                     PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
                     return new OrderDTO(order, payment);
@@ -275,16 +245,6 @@ public class OrderService {
     }
 
     // 필터링 해서 상품별 조회
-//    public List<Map<String, Object>> getProductListForFilter() {
-//        return productRepo.findAll().stream()
-//                .map(product -> {
-//                    Map<String, Object> map = new HashMap<>();
-//                    map.put("productCode", product.getProductCode());
-//                    map.put("productTitle", product.getProductTitle());
-//                    return map;
-//                })
-//                .collect(Collectors.toList());
-//    }
     public List<ProductDTO> getProductListForFilter() {
         return productRepo.findAll().stream()
                 .sorted(Comparator.comparing(ProductEntity::getProductTitle))
@@ -295,33 +255,6 @@ public class OrderService {
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
     }
-
-//    @Transactional
-//    public void createOrder(Long memberCode, String productUid, String reservationDate, int adultCount, int childCount, int totalPrice) {
-//        ProductEntity product = productRepo.findByProductUid(productUid)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
-//
-//        MemberEntity member = memberRepo.findById(memberCode)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
-//
-//        LocalDate date = LocalDate.parse(reservationDate);
-//
-//        // 중복 예약 체크
-//        boolean exists = orderRepo.existsByMemberAndOption_ProductAndReservationDate(member, product, date);
-//        if (exists) {
-//            throw new IllegalStateException("이미 같은 날짜에 동일한 상품에 대한 예약이 존재합니다.");
-//        }
-//
-//        // 실제 예약 생성
-//        OrderEntity order = new OrderEntity();
-//        OptionEntity option = new OptionEntity();
-//        order.setMember(member);
-//        option.setReservationDate(date);
-//        order.setTotalPrice(totalPrice);
-//        option.setAdultCount(adultCount);
-//        option.setChildCount(childCount);
-//        orderRepo.save(order);
-//    }
 
     @Transactional
     public Map<String, Object> createOrder(OrderDTO orderDTO) {
@@ -335,11 +268,8 @@ public class OrderService {
         MemberEntity member = memberRepo.findById(orderDTO.getMemberCode())
                 .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
 
-//        String bookingUid = UUID.randomUUID().toString();
         String bookingUid = BookingUidUtil.generateBookingUid();
 
-//        OrderEntity order = new OrderEntity(orderDTO, product, option, member);
-//        order = orderRepo.save(order);
         OrderEntity order = new OrderEntity();
         order.setProduct(product);
         order.setOption(option);
@@ -352,11 +282,6 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.PENDING); // 기본 상태는 결제 대기
 
         orderRepo.save(order);
-        log.info("✅ 주문 생성됨: orderCode = {}, bookingUid = {}, member = {}, product = {}",
-                order.getOrderCode(),
-                bookingUid,
-                member.getMemberCode(),
-                product.getProductTitle());
 
         Map<String, Object> result = new HashMap<>();
         result.put("orderCode", order.getOrderCode());
@@ -370,9 +295,6 @@ public class OrderService {
     public OrderDTO getOrder(Long orderCode) {
         OrderEntity order = orderRepo.findById(orderCode)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-//        OptionEntity option = optionRepo.findById(dto.getOptionCode())
-//                .orElseThrow(() -> new IllegalArgumentException("옵션이 존재하지 않습니다."));
-//        return new OrderDTO(order);
         PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode).orElse(null);
         return new OrderDTO(order, payment);
     }
@@ -394,32 +316,24 @@ public class OrderService {
         } else {
             order.setOrderStatus(OrderStatus.SCHEDULED);
         }
-//        order.setOrderStatus(OrderStatus.SCHEDULED); // 결제 완료 후 예약 확정
         order.setTotalPrice(totalPrice);
         orderRepo.save(order);
-
-        log.info("🟢 주문 완료: orderCode = {}, paymentMethod = {}", orderCode, paymentMethod);
     }
 
     // PENDING 상태의 주문 삭제 (결제 실패 or 취소)
     @Transactional
     public void deletePendingOrder(Long orderCode) {
-//        OrderEntity order = orderRepo.findById(orderCode)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
         // 중복요청 방지 버전
         try {
             Optional<OrderEntity> optionalOrder = orderRepo.findById(orderCode);
 
             if (optionalOrder.isEmpty()) {
-                log.warn("🟠 삭제 요청 시 이미 주문이 없음 (중복 요청 추정): orderCode = {}", orderCode);
                 return;
             }
             OrderEntity order = optionalOrder.get();
 
             // PENDING 상태가 아닌 경우 삭제 불가
             if (order.getOrderStatus() != OrderStatus.PENDING) {
-                //            throw new IllegalStateException("PENDING 상태의 주문만 삭제할 수 있습니다.");
-                log.warn("🟠 주문 상태가 PENDING이 아님. 삭제 생략: orderCode = {}, status = {}", orderCode, order.getOrderStatus());
                 return;
             }
 
@@ -428,13 +342,12 @@ public class OrderService {
                 // 삭제 처리
                 orderRepo.delete(order);
                 optionRepo.deleteById(optionCode);
-                log.info("🟢 PENDING 주문 및 옵션 삭제 완료: orderCode = {}, optionCode = {}", orderCode, optionCode);
             } catch (ObjectOptimisticLockingFailureException e) {
-                log.warn("🟡 중복 삭제 요청 감지 (Hibernate 에러): orderCode = {}", orderCode);
+                log.warn("중복 삭제 요청 감지");
             }
 
         } catch (Exception e) {
-            log.error("🔴 주문 삭제 중 예기치 않은 오류 발생: orderCode = {}", orderCode, e);
+            System.err.println("주문 삭제 중 오류 발생: orderCode = " + orderCode);
         }
     }
 
@@ -448,7 +361,6 @@ public class OrderService {
 
         for (OrderEntity order : pendingOrders) {
             orderRepo.delete(order);
-            log.info("오래된 PENDING 주문 삭제: {}", order.getOrderCode());
         }
     }
 
@@ -460,7 +372,6 @@ public class OrderService {
         if (!order.getMember().getMemberCode().equals(memberCode)) {
             throw new AccessDeniedException("해당 예약에 대한 접근 권한이 없습니다.");
         }
-//        return new OrderDTO(order); // → orderCode, product, member, payment 다 포함 가능
         PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
         return new OrderDTO(order, payment);
     }
@@ -471,7 +382,6 @@ public class OrderService {
         return orderRepo
                 .findFirstByMember_MemberCodeAndOrderStatusAndIsReviewedFalseOrderByOrderDateDesc(
                         memberCode, OrderStatus.COMPLETED)
-//                .map(OrderDTO::new);  // 필요 시 DTO 변환
                 .map(order -> {
                     PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
                     return new OrderDTO(order, payment);

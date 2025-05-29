@@ -75,3 +75,47 @@ export const requestPayment = async (paymentData, accessToken) => {
         throw error;
     }
 };
+
+// paymentStatus를 변경하기 위해 호출
+export const updatePaymentStatus = async (impUid, accessToken) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        };
+        const response = await axios.patch(
+            `${path}/payments/${impUid}/status`,
+            null,
+            {
+                params: { status: "COMPLETED" },
+                ...config,
+            }
+        );
+        console.log("🟢 결제 상태 변경 응답:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("❌ 결제 상태 업데이트 실패:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+// 결제 수동 취소
+export async function cancelPaymentByOrderCode(orderCode, accessToken) {
+    try {
+        const response = await axios.patch(
+            `${path}/payments/cancel/${orderCode}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            }
+        );
+        console.log("✅ 결제 취소 성공:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("❌ 결제 취소 실패:", error.response?.data || error.message);
+        throw error;
+    }
+}

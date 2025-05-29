@@ -2,6 +2,7 @@ const orderInitialState = {
     order: [],
     orderDetails: null,
     productTitle: "",
+    productThumbnail: "",
     bookingUid: null,
     adultCount: 0,
     childCount: 0,
@@ -28,6 +29,7 @@ const orderReducer = (state, action) => {
                 memberName: action.data.memberName || "",
                 memberEmail: action.data.memberEmail || "",
                 memberPhone: action.data.memberPhone || "",
+                productThumbnail: action.data.productThumbnail || "",
                 loading: false,
                 error: null,
             };
