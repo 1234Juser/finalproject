@@ -130,11 +130,10 @@ function App() {
                 {/*네비게이션*/}
                 <Route path="/domestic" element={<DomesticPage/>}/>
                 <Route path="/international" element={<InternationalPage />} />
-                <Route path="/products" element={<NotFoundPage />} >
-                    <Route path="country" element={<ProductPage />} />
-                    <Route path="city" element={<ProductPage />} />
-                    <Route path=":productUid" element={<ProductDetailPage/>} />
-                </Route>
+                <Route path="/products/country" element={<ProductPage />} />
+                <Route path="/products/city" element={<ProductPage />} />
+                <Route path="/products/:productUid" element={<ProductDetailPage/>} />
+                <Route path="/products" element={<NotFoundPage />}/>
                 <Route path="/products/:productUid/option/create" element={<OptionFormPage/>} />
                 <Route path="/products/:productUid/order/create/:optionCode" element={<UserOnlyRoute><OrderCheckoutPage/></UserOnlyRoute>} />
                 <Route path="/payments/create/:orderCode" element={<UserOnlyRoute><PaymentPage /></UserOnlyRoute>} />
