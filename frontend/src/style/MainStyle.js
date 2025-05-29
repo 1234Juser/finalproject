@@ -52,7 +52,7 @@ export const BannerContainer = styled.div`
     overflow: visible;
     position: relative;
     border-radius: 32px;
-    /*background: linear-gradient(to bottom right, #fffdf6 80%, #feeabf 100%);*/
+    /*background: linear-gradient(to bottom right, #fffdf6 80%, #feeabf 100%);*/    
 `;
 
 export const BestBannerContainer = styled.div`

@@ -69,7 +69,7 @@ function CompanionListCom({
                 <PagingButton
                     key={i}
                     onClick={() => onPageChange(i)}
-                    active={currentPage === i}
+                    $active={currentPage === i} // active -> $active 로 변경
                 >
                     {i + 1}
                 </PagingButton>
@@ -87,6 +87,7 @@ function CompanionListCom({
             </PagingWrapper>
         );
     };
+
 
     if (loading) return <Container><p>로딩 중...</p></Container>;
     if (error) return <Container><p>{error}</p></Container>;

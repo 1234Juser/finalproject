@@ -76,7 +76,7 @@ public class CompanionController {
             @RequestParam String companionContent,
             @RequestParam(required = false) Boolean isNotice, // 공지사항 여부 파라미터 추가
             @RequestPart(value = "images", required = false) List<MultipartFile> images, // 이미지 파일 목록 추가
-            @RequestParam(value = "deletedImageIds", required = false) List<Long> deletedImageIds, // 삭제된 이미지 ID 목록 추가
+            @RequestParam(value = "deletedImageIds", required = false) List<String> deletedImageIds, // 삭제된 이미지 ID 목록 추가
             Authentication authentication
     ) {
         String token = (String) authentication.getCredentials();
