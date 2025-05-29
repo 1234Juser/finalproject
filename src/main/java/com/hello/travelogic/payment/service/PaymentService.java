@@ -91,8 +91,7 @@ public class PaymentService {
         // 응답 처리
         int responseCode = connection.getResponseCode();
         if (responseCode != 200) {
-            log.error("Access Token 발급 실패 - HTTP 코드: {}", responseCode);
-            throw new IOException("Access Token 발급 실패 - HTTP 코드: " + responseCode);
+            throw new IOException("Access Token 발급 실패 - Iamport 응답코드: " + responseCode);
         }
 
         // JSON 파싱
@@ -100,11 +99,9 @@ public class PaymentService {
         String accessToken = responseNode.path("response").path("access_token").asText();
 
         if (accessToken == null || accessToken.isEmpty()) {
-            log.error("Access Token 발급 실패 - 응답 데이터 없음");
             throw new IOException("Access Token 발급 실패 - 응답 데이터 없음");
         }
 
-        log.info("Access Token 발급 성공 - {}", accessToken);
         return accessToken;
     }
 
@@ -125,21 +122,20 @@ public class PaymentService {
                 .orElseThrow(() -> new IllegalArgumentException("주문 정보가 존재하지 않습니다."));
 
         // merchantUid 생성이었는데 프론트에서 생성해준 값 받기로 변경
-//        String merchantUid = generateMerchantUid(order.getOrderCode());
-//        paymentDTO.setMerchantUid(merchantUid);
 
         // 결제 엔티티 생성 및 저장
         PaymentEntity payment = new PaymentEntity(paymentDTO, member, order);
-//        payment.setPaymentStatus(PaymentStatus.PENDING); // 기본 결제 상태 설정
-        if (paymentDTO.getPaymentMethod() == PaymentMethod.BANK_TRANSFER) {
+        PaymentMethod method = paymentDTO.getPaymentMethod();
+        if (method == PaymentMethod.BANK_TRANSFER) {
             payment.setPaymentStatus(PaymentStatus.WAITING_BANK_TRANSFER);
+        } else if (paymentDTO.getImpUid() != null && !paymentDTO.getImpUid().isBlank()) {
+            payment.setPaymentStatus(PaymentStatus.COMPLETED);  // 기본 결제 상태 설정
         } else {
-            payment.setPaymentStatus(PaymentStatus.PENDING);
+            payment.setPaymentStatus(PaymentStatus.PENDING); // 예외적인 경우만
         }
         payment.setPaymentTime(LocalDateTime.now());
 
         PaymentEntity savedPayment = paymentRepo.save(payment);
-        log.info("🟢 paymentCode={} 생성됨. 결제 정보가 DB에 저장되었습니다.", savedPayment.getPaymentCode());
         return new PaymentDTO(savedPayment);
     }
 
@@ -162,11 +158,8 @@ public class PaymentService {
                 throw new IllegalArgumentException("해당 결제 정보를 찾을 수 없습니다.");
             }
 
-            // 현재 상태와의 일관성 체크
-            PaymentEntity paymentEntity = paymentRepo.findByImpUid(impUid);
-            if (paymentEntity == null) {
-                throw new IllegalArgumentException("해당 결제 정보가 DB에 존재하지 않습니다.");
-            }
+            PaymentEntity paymentEntity = paymentRepo.findOptionalByImpUid(impUid)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 결제 정보가 DB에 존재하지 않습니다."));
 
             // 현재 상태 확인
             PaymentStatus currentStatus = paymentEntity.getPaymentStatus();
@@ -174,63 +167,21 @@ public class PaymentService {
             if (!isValidStatusTransition(currentStatus, status)) {
                 throw new IllegalStateException("잘못된 상태 전환입니다: " + currentStatus + " -> " + status);
             }
-
-            // 상태 전환 규칙
-//        switch (status) {
-//            case COMPLETED -> {
-//                if (currentStatus != PaymentStatus.PENDING) {
-//                    throw new IllegalStateException("결제가 PENDING 상태가 아니면 COMPLETED로 변경할 수 없습니다.");
-//                }
-//                payment.setPaymentStatus(PaymentStatus.COMPLETED);
-//            }
-//            case FAILED -> {
-//                if (currentStatus != PaymentStatus.PENDING && currentStatus != PaymentStatus.COMPLETED) {
-//                    throw new IllegalStateException("PENDING 또는 COMPLETED 상태에서만 FAILED로 변경할 수 있습니다.");
-//                }
-//                payment.setPaymentStatus(PaymentStatus.FAILED);
-//            }
-//            case EXPIRED -> {
-//                if (currentStatus != PaymentStatus.PENDING) {
-//                    throw new IllegalStateException("PENDING 상태에서만 EXPIRED로 변경할 수 있습니다.");
-//                }
-//                payment.setPaymentStatus(EXPIRED);
-//            }
-//            case REFUNDED -> {
-//                if (currentStatus != PaymentStatus.COMPLETED) {
-//                    throw new IllegalStateException("COMPLETED 상태에서만 REFUNDED로 변경할 수 있습니다.");
-//                }
-//                payment.setPaymentStatus(REFUNDED);
-//            }
-//            case CANCELED -> {
-//                if (currentStatus != PaymentStatus.COMPLETED) {
-//                    throw new IllegalStateException("COMPLETED 상태에서만 CANCELED로 변경할 수 있습니다.");
-//                }
-//                payment.setPaymentStatus(CANCELED);
-//            }
-//            default -> {
-//                throw new IllegalArgumentException("허용되지 않은 결제 상태 전환입니다.");
-//            }
-//        }
-
-//        payment.setPaymentStatus(status);
-//        paymentRepo.save(payment);
-//        return new PaymentDTO(payment);
             // 상태 변경 후 저장
-//        PaymentEntity updatedPayment = paymentRepo.save(payment);
-//        return new PaymentDTO(updatedPayment);
             paymentEntity.setPaymentStatus(status);
             paymentRepo.save(paymentEntity);
+            paymentRepo.flush();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            throw new RuntimeException("결제 상태 변경 중 문제가 발생했습니다.", e);
         }
     }
 
     // 상태 전환 규칙 검사
     private boolean isValidStatusTransition(PaymentStatus currentStatus, PaymentStatus Status) {
         return switch (Status) {
-            case COMPLETED -> currentStatus == PaymentStatus.PENDING;
+            case COMPLETED -> currentStatus == PaymentStatus.PENDING || currentStatus == PaymentStatus.WAITING_BANK_TRANSFER;
             case FAILED -> currentStatus == PaymentStatus.PENDING || currentStatus == PaymentStatus.COMPLETED;
             case EXPIRED -> currentStatus == PaymentStatus.PENDING;
             case REFUNDED -> currentStatus == PaymentStatus.COMPLETED;
@@ -248,10 +199,6 @@ public class PaymentService {
 
         PaymentStatus status = payment.getPaymentStatus();
 
-//        if (payment.getPaymentStatus() != PaymentStatus.COMPLETED) {
-//            throw new IllegalStateException("결제 완료 상태만 취소할 수 있습니다.");
-//        }
-
         if (status == PaymentStatus.COMPLETED) {
             // 카드/카카오페이 등의 결제 완료 → 아임포트 서버에 취소 요청
         CancelData cancelData = new CancelData(payment.getImpUid(), false);
@@ -268,14 +215,13 @@ public class PaymentService {
 
     } else if (status == PaymentStatus.WAITING_BANK_TRANSFER) {
         // 무통장 입금은 입금이 안 된 상태이므로 아임포트에 취소 요청 불필요
-        log.info("무통장 입금 대기 상태로, 아임포트 취소 API는 호출하지 않습니다.");
     } else {
         throw new IllegalStateException("결제 완료 또는 무통장 입금 대기 상태만 취소할 수 있습니다.");
     }
-
         payment.setPaymentStatus(PaymentStatus.CANCELED);
         paymentRepo.save(payment);
     }
+
     @Transactional
     public boolean cancelPayment(String impUid) {
         try {
@@ -284,8 +230,7 @@ public class PaymentService {
 
             IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
             if (response.getResponse() == null) {
-                log.warn("❌ 결제 취소 실패: {}", response.getMessage());
-                return false;
+                throw new IllegalStateException("아임포트 결제 취소 실패: " + response.getMessage());
             }
 
             PaymentEntity payment = paymentRepo.findOptionalByImpUid(impUid)
@@ -294,41 +239,9 @@ public class PaymentService {
             return true;
 
         } catch (Exception e) {
-            log.error("❌ 결제 취소 중 예외 발생: {}", e.getMessage());
             return false;
         }
     }
-//    public boolean cancelPayment(String impUid) {
-//        try {
-//            // 결제 취소 데이터 생성
-//            CancelData cancelData = new CancelData(impUid, false);
-//            cancelData.setReason("고객 요청에 따른 결제 취소");
-//
-//            IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
-//            Payment canceledPayment = response.getResponse();
-//
-//            // 결제 취소 실패
-//            if (canceledPayment == null) {
-//                System.out.println("결제 취소 실패: " + response.getMessage());
-//                return false;
-//            }
-//            // DB의 결제 상태도 변경
-//            PaymentEntity payment = paymentRepo.findByImpUid(impUid);
-//            if (payment == null) {
-//                throw new IllegalArgumentException("해당 결제 정보를 찾을 수 없습니다.");
-//            }
-//            if (payment != null) {
-//                payment.setPaymentStatus(PaymentStatus.CANCELED);
-//                paymentRepo.save(payment);
-//            }
-//            // 결제 취소 성공
-//            System.out.println("결제 취소 성공: " + canceledPayment.getMerchantUid());
-//            return true;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
 
     // 결제 상태 조회
     public PaymentDTO getPaymentByImpUid(String impUid) {
@@ -400,11 +313,9 @@ public class PaymentService {
         // 응답 처리
         int responseCode = connection.getResponseCode();
         if (responseCode != 200) {
-            log.error("환불 실패 - HTTP 코드: {}", responseCode);
             return false;
         }
 
-        log.info("환불 성공 - impUid: {}", impUid);
         return true;
     }
 
@@ -418,7 +329,6 @@ public class PaymentService {
         // 응답 처리
         int responseCode = connection.getResponseCode();
         if (responseCode != 200) {
-            log.error("영수증 발급 실패 - HTTP 코드: {}", responseCode);
             throw new IOException("영수증 발급 실패 - HTTP 코드: " + responseCode);
         }
 
@@ -428,11 +338,8 @@ public class PaymentService {
         String receiptUrl = responseNode.path("response").path("receipt_url").asText();
 
         if (receiptUrl == null || receiptUrl.isEmpty()) {
-            log.error("영수증 URL 없음 - impUid: {}", impUid);
             throw new IOException("영수증 URL 없음");
         }
-
-        log.info("영수증 발급 성공 - {}", receiptUrl);
         return receiptUrl;
     }
 
@@ -459,7 +366,6 @@ public class PaymentService {
                 order.setOrderStatus(OrderStatus.SCHEDULED);
             }
             orderRepo.save(order);
-            log.info("🟢 결제 성공 처리 - 주문 상태를 SCHEDULED로 변경: orderCode = {}", orderCode);
 
 
 /*            // 댓글 알림
@@ -483,7 +389,6 @@ public class PaymentService {
             sendDelayedNotification(order);
 
         } else {
-            log.warn("🟠 결제 성공 처리 중단 - 이미 상태가 변경된 주문: orderCode = {}, status = {}", orderCode, order.getOrderStatus());
         }
     }
 
@@ -504,24 +409,19 @@ public class PaymentService {
                     .build();
 
             notificationService.createNotification(notificationRequest);
-            log.info("🟢 결제 완료 알림 전송 (5초 지연): memberCode = {}, message = {}", memberCode, message);
         } catch (InterruptedException e) {
-            log.error("알림 전송 지연 중 오류 발생: {}", e.getMessage());
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            log.error("알림 전송 중 오류 발생: {}", e.getMessage());
         }
     }
 
     @Transactional
     public void processPaymentWebhook(String impUid) {
         // 아임포트에서 impUid 기반 결제정보 확인
-        log.info("📨 Webhook 수신 - impUid: {}", impUid);
         try {
             IamportResponse<Payment> response = iamportClient.paymentByImpUid(impUid);
             Payment iamportPayment = response.getResponse();
             if (iamportPayment == null) {
-                log.warn("🟠 아임포트 응답이 null입니다. impUid = {}", impUid);
                 return; // 또는 예외 throw
             }
 
@@ -541,14 +441,12 @@ public class PaymentService {
                     order.setOrderStatus(OrderStatus.SCHEDULED);
                     orderRepo.save(order);
                 }
-
-                log.info("🟢 Webhook 처리 완료 - 결제 및 주문 상태 업데이트: impUid = {}", impUid);
             } else {
-                log.warn("❌ 결제 상태가 paid가 아님: {}", iamportPayment.getStatus());
+                System.out.println("Webhook 수신: 결제 상태가 paid가 아닙니다. 현재 상태 = " + iamportPayment.getStatus());
             }
-
         } catch (Exception e) {
-            log.error("❌ 아임포트 서버 통신 실패:", e);
+            System.err.println("Webhook 처리 중 예외 발생: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -570,14 +468,13 @@ public class PaymentService {
                 if (order.getOrderStatus() == OrderStatus.WAITING_BANK_TRANSFER) {
                     order.setOrderStatus(OrderStatus.CANCELED);
                     orderRepo.save(order);
-                    log.info("🔴 무통장입금 미입금으로 자동 취소: orderCode = {}", order.getOrderCode());
                 }
             }
         }
     }
 
     public PaymentDTO getPaymentByBookingUid(String bookingUid) {
-        PaymentEntity payment = paymentRepo.findByOrder_BookingUid(bookingUid)
+        PaymentEntity payment = paymentRepo.findByOrder_BookingUidWithProduct(bookingUid)
                 .orElseThrow(() -> new RuntimeException("해당 bookingUid의 결제 정보를 찾을 수 없습니다."));
         return new PaymentDTO(payment);
     }
