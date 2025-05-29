@@ -90,8 +90,8 @@ public class SecurityConfig {
                                 .requestMatchers("/member/mypage","/wish/**",
                                         "/review/view/**", "/review/write/info/**", "/review/write/**", "/review/edit/**", "/review/delete/**",
                                         "/payments/create", "/payments/**", "/my/reservations/**", "/my/reservations/cancel/**", "reservations/receipt/**",
-                                        "/order/create", "/order/*/complete","/order/*/delete", "/order/*", "/payments/**", "/payments/cancel/**",
-                                        "/products/{productUid}/order/create/**"
+                                        "/order/create", "/order/*/complete","/order/*/delete", "/order/*", "/payments/cancel/**",
+                                        "/products/*/order/create/**"
                                 ).authenticated()
                                 // 경로는 'ADMIN' 역할을 가진 사용자만 접근을 허용합니다.
                                 .requestMatchers("/member/adminmypage", "/admin/**").hasRole("ADMIN")
