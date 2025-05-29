@@ -43,8 +43,7 @@ export const BannerContainer = styled.div`
     overflow: visible;
     position: relative;
     border-radius: 32px;
-    /*background: linear-gradient(to bottom right, #fffdf6 80%, #feeabf 100%);*/
-    
+    /*background: linear-gradient(to bottom right, #fffdf6 80%, #feeabf 100%);*/    
 `;
 
 // 이벤트 슬라이더를 위한 컨테이너 (새로 추가)

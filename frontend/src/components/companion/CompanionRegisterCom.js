@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
     FormWrapper,
@@ -33,18 +34,23 @@ function CompanionRegisterCom({
                                   isNotice, // 공지사항 상태
                                   onIsNoticeChange, // 공지사항 변경 핸들러
                                   isAdmin, // 관리자 여부
-                                  images, // 이미지 파일 목록 추가
+                                  //   images, // 이 prop은 직접 사용되지 않음
                                   onImageChange, // 이미지 변경 핸들러 추가
                                   imagePreviews, // 이미지 미리보기 URL 목록 추가
                                   contentTextareaRef, // ref 추가
                                   existingImages = [], // 기존 이미지 목록 추가 (기본값을 빈 배열로 설정)
                                   onRemoveExistingImage, // 기존 이미지 삭제 핸들러 추가
                                   onRemoveNewImage, // 새로 추가된 이미지 삭제 핸들러 추가
+                                  isEditMode = false // 수정 모드 여부 (기본값 false)
                               }) {
+
+    // 새로 추가된 이미지에 대한 미리보기만 필터링
+    // existingImages의 길이를 기준으로 imagePreviews 배열을 슬라이스합니다.
+    const newImagePreviews = imagePreviews.slice(existingImages?.length ?? 0);
 
     return (
         <FormWrapper>
-            <Title>새 게시글 작성</Title>
+            <Title>{isEditMode ? '게시글 수정' : '새 게시글 작성'}</Title>
             {formError && <ErrorMessage>{formError}</ErrorMessage>}
             <StyledForm onSubmit={onSubmit} autoComplete="off">
                 <FormRow>
@@ -92,22 +98,26 @@ function CompanionRegisterCom({
                     </FileInputLabel>
                 </FormRow>
                 {/* 이미지 미리보기 */}
-                {(existingImages?.length > 0 || imagePreviews?.length > 0) && (
+                {(existingImages?.length > 0 || newImagePreviews?.length > 0) && (
                     <FormRow>
                         <ImagePreviewContainer>
                             {/* 기존 이미지 미리보기 */}
-                            {existingImages?.map((image, index) => (
-                                <ImagePreviewWrapper key={`existing-${image.id}`}>
-                                    <ImagePreview src={image.imageUrl} alt={`Existing image ${index + 1}`} />
-                                    <RemoveImageButton onClick={() => onRemoveExistingImage(image.id)}>
+                            {existingImages?.map((image) => ( // image 객체 전체를 받음
+                                <ImagePreviewWrapper key={`existing-${image.id}`}> {/* image.id는 파일명 등 고유값 */}
+                                    <ImagePreview src={image.imageUrl} alt={`Existing image ${image.id}`} />
+                                    <RemoveImageButton type="button" onClick={() => onRemoveExistingImage(image.imageUrl)}> {/* image.imageUrl 전달 */}
                                         X
                                     </RemoveImageButton>
                                 </ImagePreviewWrapper>
                             ))}
                             {/* 새로 추가된 이미지 미리보기 */}
-                            {imagePreviews.filter((preview, index) => index >= (existingImages?.length ?? 0)).map((preview, index) => (
-                                <ImagePreviewWrapper key={`new-${index}`}>
-                                    <ImagePreview src={preview} alt={`New image preview ${index + 1}`} />
+                            {newImagePreviews.map((previewUrl, index) => (
+                                <ImagePreviewWrapper key={`new-preview-${index}`}>
+                                    <ImagePreview src={previewUrl} alt={`New image preview ${index + 1}`} />
+                                    {/*
+                                        새로 추가된 이미지를 삭제할 때는 'newImages' FileList에서의 인덱스가 필요.
+                                        현재 onRemoveNewImage는 해당 인덱스를 받고 있음.
+                                    */}
                                     <RemoveImageButton type="button" onClick={() => onRemoveNewImage(index)}>
                                         X
                                     </RemoveImageButton>
@@ -134,7 +144,7 @@ function CompanionRegisterCom({
 
                 <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
                     <SubmitButton type="submit" style={{ marginTop: 0, width: "50%" }}>
-                        등록하기
+                        {isEditMode ? '수정하기' : '등록하기'}
                     </SubmitButton>
                     <CancelButton type="button" style={{ width: "50%" }} onClick={onCancel}>
                         취소하기
