@@ -125,29 +125,7 @@ public class ChatService {
         messagingTemplate.convertAndSend("/topic/chat/" + roomId, exitMessage);
 
         log.info("[퇴장 메시지] {}: {}", roomId, exitMsg);
+         chatLogger.info("[LEAVE] User: {} left room {}", memberName, roomId);
     }
 
-// -------------------------------------
-
-    /*public void sendExitMessage(String roomId, String memberName, String profileImageUrl) {
-
-        log.debug("sendExitMessage roomId: {}, memberName: {}", roomId, memberName);
-
-        String exitMsg = memberName + "님이 채팅방을 퇴장하였습니다.";
-
-        ChatMessageDTO exitMessage = ChatMessageDTO.builder()
-                .type(ChatMessageDTO.MessageType.LEAVE) // LEAVE 타입 사용
-                .roomId(roomId)
-                .sender("System") // 시스템 메시지로 처리 (또는 memberName 사용 가능)
-                .message(exitMsg)
-                .sentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul"))) // ★ sentAt()으로 수정 ★
-                .profileImageUrl(profileImageUrl) // 프로필 이미지 URL 포함 (선택 사항)
-                .build();
-
-        // 다른 사용자에게 퇴장 메시지 전송
-        // ★ 토픽 경로 수정: /topic/chat/{roomId} ★
-        messagingTemplate.convertAndSend("/topic/chat/" + roomId, exitMessage);
-
-        log.info("[퇴장 메시지 발행] {}: {}", roomId, exitMsg);
-    }*/
 }

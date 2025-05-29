@@ -40,9 +40,7 @@
 
     <!-- root 로거는 기존처럼 사용 -->
     <!-- ChatLog 로거에서 처리되지 않은 다른 모든 로그(additivity가 true인 경우 포함)는 이 root 로거의 설정을 따릅니다. -->
-    <!-- 여기서는 콘솔과 CHAT_LOG에 INFO 레벨 이상을 출력하도록 함. -->
     <root level="INFO">
-        <appender-ref ref="CHAT_LOG"/>
         <appender-ref ref="CONSOLE"/>
     </root>
 
