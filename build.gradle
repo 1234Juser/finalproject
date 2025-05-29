@@ -56,9 +56,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     // WebSocket 메시징 보안을 위한 의존성 추가
     implementation 'org.springframework.security:spring-security-messaging'
-    //aws s3의존성
-    implementation 'software.amazon.awssdk:s3:2.x.x' // 최신 버전 확인 필요
-    implementation 'software.amazon.awssdk:auth:2.x.x'
+    //aws s3의존성 // AWS SDK for Java v2 - BOM (Bill of Materials)
+    //    // BOM을 사용하면 개별 AWS SDK 모듈의 버전을 명시할 필요 없이 호환되는 버전으로 관리됩니다.
+    //    // Maven Central (search.maven.org)에서 'software.amazon.awssdk bom'을 검색하여 최신 안정화된 버전을 확인하세요.
+        implementation platform('software.amazon.awssdk:bom:2.26.15')
+    //    // S3 클라이언트 (버전은 위 BOM에 의해 관리됨)
+        implementation 'software.amazon.awssdk:s3'
 
 }
 
