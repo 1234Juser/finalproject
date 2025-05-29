@@ -68,9 +68,15 @@ const EventSliderCom = () => {
     }
     return (
         <MainSectionWrapper style={{marginTop: "40px", zIndex: 2}}> {/* 위치 조정 */}
-            <MainTitle>
-                🎉<span style={{color: "#567eff"}}>진행 중</span>인 이벤트
-            </MainTitle>
+            <h2 style={{
+                fontSize: "1.8rem",
+                fontWeight: "bold",
+                color: "#273a69",
+                marginBottom: "20px",
+                textAlign: "center"
+            }}>
+                <span style={{color: "#567eff"}}>진행 중</span>인 이벤트
+            </h2>
             <EventSliderContainer>
                 {/* --slide-count 변수를 사용하여 동적으로 width를 계산하도록 합니다. */}
                 <SlideWrapper style={{ transform: `translateX(-${index * 100}%)`, '--slide-count': events.length }}>

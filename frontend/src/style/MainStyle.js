@@ -10,7 +10,6 @@ export const MainSectionWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin : 70px auto;
 `;
 
 // 상단 "월간 Best 여행이지!" 제목
@@ -44,6 +43,19 @@ export const BannerSectionStyledWrapper = styled.div` // MainSectionWrapper를 s
 
 // 배너(슬라이드 영역) 컨테이너
 export const BannerContainer = styled.div`
+    width: 66%;
+    height: 340px;
+    margin-top: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    position: relative;
+    border-radius: 32px;
+    /*background: linear-gradient(to bottom right, #fffdf6 80%, #feeabf 100%);*/
+`;
+
+export const BestBannerContainer = styled.div`
     width: 100%; /* 고정 너비 (상위 요소에 따라 조절 필요) */
     //max-width: 1200px; /* 최대 너비 제한 (선택 사항) */
     height: 340px;
@@ -66,6 +78,8 @@ export const BannerContainer = styled.div`
         border-radius: 20px;
     }
 `;
+
+
 
 // 애니메이션 정의
 const infiniteScroll = keyframes`
@@ -92,6 +106,13 @@ export const EventSliderContainer = styled(BannerContainer)`
 // 슬라이드 전체를 감싸는 래퍼
 export const SlideWrapper = styled.div`
     display: flex;
+    width: calc(100% * 5);
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(.25,.79,.63,.97);
+`;
+
+export const BestSlideWrapper = styled.div`
+    display: flex;
     height: 100%;
     animation: ${infiniteScroll} 50s linear infinite; /* 속도를 2배로 느리게 (10s -> 20s) */
 
@@ -100,8 +121,24 @@ export const SlideWrapper = styled.div`
     }
 `;
 
+
 // 슬라이드 개별 카드
 export const SlideCard = styled.div`
+    width: 100%;
+    min-width: 100%;
+    height: 100%;
+    border-radius: 26px;
+    box-shadow: 0 7px 20px rgba(180,140,60,0.16);
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+    margin: 0 14px 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+`;
+
+export const BestSlideCard = styled.div`
     min-width: 380px; /* 각 슬라이드 카드 최소 너비 설정 (이 값을 조정하여 한 화면에 보이는 슬라이드 수 조절) */
     width: 25%; /* min-width에 따라 자동으로 조절 */
     height: 100%;
@@ -123,6 +160,8 @@ export const SlideCard = styled.div`
         margin: 0 8px 0 0;
     }
 `;
+
+
 
 // BEST 라벨
 export const BestLabel = styled.div`
@@ -149,7 +188,16 @@ export const SlideImage = styled.img`
     height: 100%;
     object-fit: cover;
     transition: transform .7s cubic-bezier(.22,1,.36,1);
+    border-radius: 26px 26px 0 0;
 `;
+
+export const BestSlideImage = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .7s cubic-bezier(.22,1,.36,1);
+`;
+
 
 // 이미지 하단 그라데이션 오버레이
 export const SlideOverlay = styled.div`
@@ -163,8 +211,32 @@ export const SlideOverlay = styled.div`
     z-index: 3;
 `;
 
+export const BestSlideOverlay = styled.div`
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 42%;
+    background: linear-gradient(0deg,rgba(0,0,0,0.41)0%,rgba(0,0,0,0.18)58%,transparent 100%);
+    border-radius: 0 0 26px 26px;
+    z-index: 3;
+`;
+
+
 // 오버레이 위에 올라가는 텍스트
 export const SlideText = styled.div`
+    position: absolute;
+    left: 24px;
+    bottom: 22px;
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    z-index: 4;
+    text-shadow: 1px 2px 8px rgba(30, 16, 2, 0.28);
+    letter-spacing: -1px;
+`;
+
+export const BestSlideText = styled.div`
     position: absolute;
     left: 24px;
     bottom: 22px;

@@ -22,7 +22,14 @@ import {
     ImageGallery,
     ImageLinkWrapper,
     CityImage,
-    CityName, CityLabel,
+    CityName,
+    CityLabel,
+    BestSlideWrapper,
+    BestSlideCard,
+    BestSlideImage,
+    BestSlideOverlay,
+    BestSlideText,
+    BestBannerContainer,
 } from "../style/MainStyle";
 import React, {useEffect, useState} from "react";
 import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
@@ -112,21 +119,21 @@ export default function MainCom({accessToken, state, dispatch}) {
 
             {/* 3. 슬라이드 배너 */}
             <BannerSectionStyledWrapper>
-                <BannerContainer>
-                    <SlideWrapper>
+                <BestBannerContainer>
+                    <BestSlideWrapper>
                         {[...images, ...images].map((src, idx) => (
-                            <SlideCard key={idx}>
+                            <BestSlideCard key={idx}>
                                 <BestLabel>BEST {(idx % images.length) + 1}</BestLabel>
-                                <SlideImage
+                                <BestSlideImage
                                     src={`http://localhost:8080${src}`}
                                     alt={`banner-${idx}`}
                                 />
-                                <SlideOverlay />
-                                <SlideText>{slideTexts[idx % slideTexts.length]}</SlideText>
-                            </SlideCard>
+                                <BestSlideOverlay />
+                                <BestSlideText>{slideTexts[idx % slideTexts.length]}</BestSlideText>
+                            </BestSlideCard>
                         ))}
-                    </SlideWrapper>
-                </BannerContainer>
+                    </BestSlideWrapper>
+                </BestBannerContainer>
             </BannerSectionStyledWrapper>
 
             {/* === 환율 박스 여기에 넣기 === */}
