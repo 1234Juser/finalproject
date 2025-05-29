@@ -27,8 +27,10 @@ public class SseEmitters {
     public void remove(Long memberCode) {
         SseEmitter emitter = emitters.remove(memberCode);
         if (emitter != null) {
-//            emitter.complete();
-            emitters.remove(memberCode);
+            emitter.complete();
+            log.debug("SseEmitter for memberCode {} removed and completed.", memberCode);
+        } else {
+            log.warn("SseEmitter for memberCode {} not found to remove.", memberCode);
         }
     }
 

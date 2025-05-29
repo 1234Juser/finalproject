@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
 import com.hello.travelogic.notification.dto.NotificationRequestDTO;
+import com.hello.travelogic.notification.service.NotificationAsyncService;
 import com.hello.travelogic.notification.service.NotificationService;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
@@ -56,7 +57,7 @@ public class PaymentService {
     private final PaymentRepo paymentRepo;
     private final OrderRepo orderRepo;
     private final MemberRepository memberRepository;
-    private final NotificationService notificationService;
+    private final NotificationAsyncService notificationAsyncService;
 
     private static final String IAMPORT_TOKEN_URL = "https://api.iamport.kr/users/getToken";
     private static final String IAMPORT_PAYMENT_URL = "https://api.iamport.kr/payments";
@@ -130,6 +131,9 @@ public class PaymentService {
             payment.setPaymentStatus(PaymentStatus.WAITING_BANK_TRANSFER);
         } else if (paymentDTO.getImpUid() != null && !paymentDTO.getImpUid().isBlank()) {
             payment.setPaymentStatus(PaymentStatus.COMPLETED);  // 기본 결제 상태 설정
+
+            // 3초 후에 결제 알림 전송
+            notificationAsyncService.sendDelayedNotification(order);
         } else {
             payment.setPaymentStatus(PaymentStatus.PENDING); // 예외적인 경우만
         }
@@ -374,53 +378,11 @@ public class PaymentService {
             }
             orderRepo.save(order);
 
-
-/*            // 댓글 알림
-            if (order.getOrderStatus().equals(OrderStatus.SCHEDULED)) {
-
-                Long memberCode = order.getMember().getMemberCode();
-                String message = "주문 번호 " + orderCode + "의 결제가 완료되었습니다.";
-
-                NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
-                        .memberCode(memberCode)
-                        .notiMessage(message)
-                        .notiOrderId(orderCode)
-                        .build();
-
-                notificationService.createNotification(notificationRequest);
-                log.debug("결제 알림  요청 DTO 확인 : {}", notificationRequest);
-                log.info("🟢 결제 완료 알림 전송: memberCode = {}, message = {}", memberCode, message);
-            }*/
-
-            // 5초 후에 알림 생성 및 전송
-            sendDelayedNotification(order);
-
         } else {
         }
     }
 
-    // 비동기적으로 5초 지연 후 알림 생성 및 전송
-    @Async
-    public void sendDelayedNotification(OrderEntity order) {
-        try {
-            // 5초 지연
-            TimeUnit.SECONDS.sleep(5);
 
-            Long memberCode = order.getMember().getMemberCode();
-            String message = "주문 번호 " + order.getOrderCode() + "의 결제가 완료되었습니다.";
-
-            NotificationRequestDTO notificationRequest = NotificationRequestDTO.builder()
-                    .memberCode(memberCode)
-                    .notiMessage(message)
-                    .notiOrderId(order.getOrderCode())
-                    .build();
-
-            notificationService.createNotification(notificationRequest);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (Exception e) {
-        }
-    }
 
     @Transactional
     public void processPaymentWebhook(String impUid) {

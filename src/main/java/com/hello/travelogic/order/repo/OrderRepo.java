@@ -4,6 +4,7 @@ import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.dto.OrderDTO;
+import com.hello.travelogic.payment.domain.PaymentStatus;
 import com.hello.travelogic.product.domain.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,6 +70,14 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
 
     // 예약일자와 주문상태 조회
     List<OrderEntity> findByOrderStatusAndOptionReservationDate (OrderStatus orderStatus, LocalDate tomorrow);
+
+    // 주문상태, 옵션 예약일자, 결제 상태를 기준으로 orderEntity 목록 조회
+    @Query("SELECT o FROM OrderEntity o JOIN o.option opt JOIN PaymentEntity p ON o.orderCode = p.order.orderCode WHERE o.orderStatus = :orderStatus AND opt.reservationDate = :optionReservationDate AND p.paymentStatus = :paymentStatus")
+    List<OrderEntity> findOrdersByOrderStatusAndOptionReservationDateAndPaymentStatus(
+            @Param("orderStatus") OrderStatus orderStatus,
+            @Param("optionReservationDate") LocalDate optionReservationDate,
+            @Param("paymentStatus") PaymentStatus paymentStatus
+    );
 
     // 가장 최신의 리뷰 미작성 주문 조회 (1건)
     Optional<OrderEntity> findFirstByMember_MemberCodeAndOrderStatusAndIsReviewedFalseOrderByOrderDateDesc(

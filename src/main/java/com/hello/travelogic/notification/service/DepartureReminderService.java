@@ -4,6 +4,9 @@ import com.hello.travelogic.notification.dto.NotificationRequestDTO;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.repo.OrderRepo;
+import com.hello.travelogic.payment.domain.PaymentEntity;
+import com.hello.travelogic.payment.domain.PaymentStatus;
+import com.hello.travelogic.payment.repo.PaymentRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -26,16 +29,30 @@ public class DepartureReminderService {
     private final NotificationService notificationService;
 
 
+    // 옵션 예약일(출발일), 결제 완료, 예약 확정인 주문 목록 조회
+    public List<OrderEntity> getOrdersForDepartureReminders(LocalDate departureDate) {
 
-//     @Scheduled(cron = "0 * * * * ?")      // 매분 0초에 실행 (테스트용)
-    @Scheduled(cron = "0 0 0 * * ?")        // 매일 자정에 실행
+        List<OrderEntity> orders = orderRepo.findOrdersByOrderStatusAndOptionReservationDateAndPaymentStatus(
+                OrderStatus.SCHEDULED,
+                departureDate,
+                PaymentStatus.COMPLETED
+        );
+
+        return orders;
+    }
+
+
+    // 출발 알림 보내는 메서드
+     @Scheduled(cron = "0 * * * * ?")      // 매분 0초에 실행 (테스트용)
+//    @Scheduled(cron = "0 0 0 * * ?")        // 매일 자정에 실행
     @Transactional
     public void sendDepartureReminders() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         log.info("🚀 출발 하루 전 알림 작업 시작. 대상 날짜: {}", tomorrow);
 
-        List<OrderEntity> ordersToRemind = orderRepo.findByOrderStatusAndOptionReservationDate (OrderStatus.SCHEDULED, tomorrow);
-        log.debug("ordersToRemind: {}", ordersToRemind);
+
+         List<OrderEntity> ordersToRemind = getOrdersForDepartureReminders(tomorrow);
+         log.debug("ordersToRemind: {}", ordersToRemind);
 
         if (ordersToRemind.isEmpty()) {
             log.info("ℹ️ 출발 하루 전 알림 대상 주문이 없습니다 (날짜: {}).", tomorrow);
@@ -54,7 +71,6 @@ public class DepartureReminderService {
                         .memberCode(memberCode)
                         .notiMessage(message)
                         .notiOrderId(order.getOrderCode())
-                        // .notiType("DEPARTURE_REMINDER") // 알림 타입 구분 필요 시 추가
                         .build();
 
                 notificationService.createNotification(notificationRequest);
