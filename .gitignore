@@ -45,6 +45,8 @@ logs/application.log
 # ⚛React 관련 (frontend 폴더 안에 있는 것들)
 frontend/node_modules/        # 의존성 (용량 큼)
 frontend/build/               # yarn build 결과물
+application-dev.properties
+application-prod.properties
 
 #  운영체제 임시 파일
 .DS_Store
