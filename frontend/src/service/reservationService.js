@@ -113,7 +113,8 @@ export async function cancelMyReservation(orderCode, accessToken) {
         const response = await axios.patch(`${path}/my/reservations/cancel/${orderCode}`, {}, config);
         return response.data;
     } catch (error) {
-        throw error;
+        const message = error?.response?.data || "예약 취소 중 오류가 발생했습니다.";
+        throw new Error(message);
     }
 }
 

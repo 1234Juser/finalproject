@@ -46,7 +46,6 @@ public class ReservationController {
             result = orderService.getAllMemberBookingList(start);
         }
         return ResponseEntity.ok(result);
-        // return ResponseEntity.status(HttpStatus.OK).body(orderService.getAllMemberBookingList(start));
     }
 
     // 로그인 회원의 예약 조회
@@ -56,7 +55,6 @@ public class ReservationController {
         Long memberCode = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
                 .getMemberCode();
-        log.debug("회원 {}의 예약 조회 요청", memberCode);
         return ResponseEntity.ok(orderService.getRecentOrders(memberCode));
     }
 
@@ -70,11 +68,6 @@ public class ReservationController {
     }
 
     // 예약 상태 실시간 반영(reservationDate이 지난날이 되면 orderStatus가 SCHEDULED에서 COMPLETED로)
-//    @PatchMapping("/reservation/update-status/completed/{orderCode}")
-//    public ResponseEntity<String> updateCompletedStatus(@PathVariable Long orderCode) {
-//        int updated = orderService.updateOrderStatusIfCompleted(orderCode);
-//        return ResponseEntity.ok(updated == 1 ? "COMPLETED로 상태 변경됨" : "변경 사항 없음");
-//    }
     @GetMapping("/reservations")
     public ResponseEntity<List<OrderEntity>> getAllReservations() {
         List<OrderEntity> updatedOrders = orderService.findAllWithAutoUpdate();
@@ -101,6 +94,9 @@ public class ReservationController {
     @PatchMapping("/my/reservations/cancel/{orderCode}")
     public ResponseEntity cancelMyReservation(@PathVariable Long orderCode,
                                               Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("인증 정보가 없습니다.");
+        }
         String memberId = authentication.getPrincipal().toString();
         Long memberCode = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
@@ -140,7 +136,6 @@ public class ReservationController {
         }
         List<ProductDTO> productList = orderService.getProductListForFilter();
         return ResponseEntity.ok(productList);
-//        return ResponseEntity.ok(orderService.getProductListForFilter());
     }
 
     // bookingUid로 예약 명세서 페이지 출력

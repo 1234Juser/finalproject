@@ -197,27 +197,34 @@ public class PaymentService {
         PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
                 .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
 
+        Optional<PaymentEntity> paymentOpt = paymentRepo.findTopByOrder_OrderCode(orderCode);
+
+        if (paymentOpt.isEmpty()) {
+            log.warn("결제 정보 없음: orderCode = {}", orderCode);
+            return; // 실제 결제가 없는 더미 데이터
+        }
         PaymentStatus status = payment.getPaymentStatus();
 
-        if (status == PaymentStatus.COMPLETED) {
-            // 카드/카카오페이 등의 결제 완료 → 아임포트 서버에 취소 요청
-        CancelData cancelData = new CancelData(payment.getImpUid(), false);
-        cancelData.setReason("예약 취소로 인한 환불");
-
-        try {
-            IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
-            if (response.getResponse() == null) {
-                throw new IllegalStateException("아임포트 결제 취소 실패: " + response.getMessage());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("결제 취소 중 오류 발생", e);
-        }
-
-    } else if (status == PaymentStatus.WAITING_BANK_TRANSFER) {
-        // 무통장 입금은 입금이 안 된 상태이므로 아임포트에 취소 요청 불필요
-    } else {
-        throw new IllegalStateException("결제 완료 또는 무통장 입금 대기 상태만 취소할 수 있습니다.");
-    }
+        // 시연용 더미 예약 취소를 위해 주석처리
+//        if (status == PaymentStatus.COMPLETED) {
+//            // 카드/카카오페이 등의 결제 완료 → 아임포트 서버에 취소 요청
+//        CancelData cancelData = new CancelData(payment.getImpUid(), false);
+//        cancelData.setReason("예약 취소로 인한 환불");
+//
+//        try {
+//            IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
+//            if (response.getResponse() == null) {
+//                throw new IllegalStateException("아임포트 결제 취소 실패: " + response.getMessage());
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException("결제 취소 중 오류 발생", e);
+//        }
+//
+//    } else if (status == PaymentStatus.WAITING_BANK_TRANSFER) {
+//        // 무통장 입금은 입금이 안 된 상태이므로 아임포트에 취소 요청 불필요
+//    } else {
+//        throw new IllegalStateException("결제 완료 또는 무통장 입금 대기 상태만 취소할 수 있습니다.");
+//    }
         payment.setPaymentStatus(PaymentStatus.CANCELED);
         paymentRepo.save(payment);
     }

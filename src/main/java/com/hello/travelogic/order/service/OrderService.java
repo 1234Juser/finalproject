@@ -208,18 +208,21 @@ public class OrderService {
         if (order.getOrderStatus() == OrderStatus.COMPLETED) {
             throw new IllegalStateException("완료된 주문은 취소할 수 없습니다.");
         }
-        if (order.getOrderStatus() == OrderStatus.SCHEDULED) {
-            throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
-        }
-        PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
-                .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
-        if (payment.getPaymentStatus() != PaymentStatus.COMPLETED
-                && payment.getPaymentStatus() != PaymentStatus.WAITING_BANK_TRANSFER) {
-            throw new IllegalStateException("결제 완료 또는 무통장 입금 대기 상태에서만 취소할 수 있습니다.");
-        }
+//        if (order.getOrderStatus() == OrderStatus.SCHEDULED) {
+//            throw new IllegalStateException("예약된 상태(SCHEDULED)만 취소할 수 있습니다.");
+//        }
+        // 시연용 더미 예약 취소를 위해 주석처리
+//        PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(orderCode)
+//                .orElseThrow(() -> new IllegalArgumentException("결제 정보 없음"));
+//        if (payment.getPaymentStatus() != PaymentStatus.COMPLETED
+//                && payment.getPaymentStatus() != PaymentStatus.WAITING_BANK_TRANSFER) {
+//            throw new IllegalStateException("결제 완료 또는 무통장 입금 대기 상태에서만 취소할 수 있습니다.");
+//        }
         order.setOrderStatus(OrderStatus.CANCELED);
-        paymentService.cancelPaymentByOrderCode(orderCode);
+//        paymentService.cancelPaymentByOrderCode(orderCode);
         orderRepo.save(order);
+        // 결제 상태도 같이 취소 처리 (더미 처리)
+        paymentService.cancelPaymentByOrderCode(orderCode);
     }
 
     // 필터링
