@@ -242,16 +242,16 @@ export const PagingWrapper = styled.div`
 `;
 
 export const PagingButton = styled.button`
-    background: ${({active}) => (active ? Palette.mainGradient : "#f2f6f9")};
-    color: ${({active}) => (active ? "#fff" : Palette.blue)};
-    font-weight: ${({active}) => (active ? 600 : 500)};
+    background: ${({$active}) => ($active ? Palette.mainGradient : "#f2f6f9")};
+    color: ${({$active}) => ($active ? "#fff" : Palette.blue)};
+    font-weight: ${({$active}) => ($active ? 600 : 500)};
     font-size: 1.01rem;
     border: none;
     border-radius: 8px;
     padding: 8px 20px;
     cursor: pointer;
     transition: background 0.18s, color 0.18s;
-    box-shadow: ${({active}) => (active ? Palette.tabShadow : "none")};
+    box-shadow: ${({$active}) => ($active ? Palette.tabShadow : "none")};
     letter-spacing: -0.5px;
     &:hover {
         background: ${Palette.mainGradient};
@@ -262,3 +262,4 @@ export const PagingButton = styled.button`
         cursor: not-allowed;
     }
 `;
+

@@ -133,19 +133,19 @@ function CompanionRegisterCon() {
     // images 배열이 변경될 때마다 이미지 미리보기 URL을 재생성하고 이전 URL을 해제합니다.
     useEffect(() => {
         // 현재 imagePreviews에 있는 URL들을 모두 해제합니다.
-        imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
-
-        // 새로운 images 배열을 기반으로 새로운 미리보기 URL을 생성합니다.
-        const newImagePreviews = images.map(image => URL.createObjectURL(image));
-
-        // imagePreviews 상태를 새로운 URL 목록으로 업데이트합니다.
-        setImagePreviews(newImagePreviews);
-
-        // 컴포넌트 언마운트 시 또는 images가 다시 변경될 때 cleanup 함수가 실행되어 현재 URL들을 해제합니다.
+        // 이펙트가 다시 실행될 때마다 이전 미리보기 URL을 해제하여 메모리 누수를 방지합니다.
         return () => {
-            newImagePreviews.forEach(preview => URL.revokeObjectURL(preview));
+            imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
         };
-    }, [images]); // images 배열이 변경될 때마다 이 useEffect 훅이 실행됩니다.
+    }, [imagePreviews]); // imagePreviews가 변경될 때마다 cleanup 함수가 실행됩니다.
+
+    // images 배열이 변경될 때마다 이미지 미리보기 URL을 재생성합니다.
+    useEffect(() => {
+        const newImagePreviews = images.map(image => URL.createObjectURL(image));
+        setImagePreviews(newImagePreviews);
+    }, [images]); // images 배열이 변경될 때마다 이
+
+
 
 
     const handleSubmit = async (e) => {
@@ -268,5 +268,4 @@ function CompanionRegisterCon() {
         />
     );
 }
-
 export default CompanionRegisterCon;

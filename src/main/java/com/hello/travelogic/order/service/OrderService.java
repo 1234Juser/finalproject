@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,20 +143,6 @@ public class OrderService {
                 .sorted((o1, o2) -> o2.getReservationDate().compareTo(o1.getReservationDate()))
                 .collect(Collectors.toList());
     }
-
-//    @Transactional(readOnly = true)
-//    public List<OrderDTO> getOrdersByMemberCode(Long memberCode) {
-//
-//        MemberEntity member = memberRepo.findById(memberCode)
-//                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
-//
-//        Pageable pageable = PageRequest.of(0, 4); // 예: 첫 페이지, 100개씩
-//        Page<OrderEntity> orderPage = orderRepo.findByMember(member, pageable);
-//
-//        return orderPage.getContent().stream()
-//                .map(OrderDTO::new)
-//                .collect(Collectors.toList());
-//    }
 
 //    @Transactional
 //    public int updateOrderStatusIfCompleted(Long orderCode) {
@@ -466,14 +453,19 @@ public class OrderService {
     }
 
     // bookingUid로 예약 명세서페이지 출력
-    public OrderDTO getOrderByBookingUid(String bookingUid) {
+    @Transactional(readOnly = true)
+    public OrderDTO getOrderByBookingUid(String bookingUid, Long memberCode) {
         OrderEntity order = orderRepo.findByBookingUid(bookingUid)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        if (!order.getMember().getMemberCode().equals(memberCode)) {
+            throw new AccessDeniedException("해당 예약에 대한 접근 권한이 없습니다.");
+        }
 //        return new OrderDTO(order); // → orderCode, product, member, payment 다 포함 가능
         PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
         return new OrderDTO(order, payment);
     }
 
+    // 메인페이지 리뷰 작성 요청에 사용
     @Transactional(readOnly = true)
     public Optional<OrderDTO> getLatestUnreviewedCompletedOrder(Long memberCode) {
         return orderRepo

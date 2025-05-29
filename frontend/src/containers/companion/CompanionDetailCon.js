@@ -23,7 +23,6 @@ function CompanionDetailCon() {
     const [commentLikeCounts, setCommentLikeCounts] = useState({}); // 각 댓글의 좋아요 수 (commentId -> int)
 
 
-
     // 게시글 상세 정보를 불러오는 함수를 useCallback으로 감싸서 메모이제이션
     const fetchCompanionDetail = useCallback(async () => {
         setLoading(true);

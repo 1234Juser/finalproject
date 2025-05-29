@@ -143,99 +143,109 @@ public class CompanionService {
     }
 
     // 게시글 수정 (작성자 본인만 가능, 공지사항 변경은 관리자만)
+    // 게시글 수정 (작성자 본인만 가능, 공지사항 변경은 관리자만)
     @Transactional
-    public CompanionEntity updateCompanion(Integer companionId, String companionTitle, String companionContent, String token, Boolean isNoticeRequest, List<MultipartFile> images, List<Long> deletedImageIds) {
+    public CompanionEntity updateCompanion(Integer companionId,
+                                           String companionTitle,
+                                           String companionContent,
+                                           String token,
+                                           Boolean isNoticeRequest,
+                                           List<MultipartFile> newImages, // 새로 추가된 이미지 파일 목록
+                                           List<String> deletedImageUrls) { // 삭제 요청된 기존 이미지 URL 목록 (예: "upload/community/uuid.jpg")
+
         Long memberCode = jwtUtil.getMemberCodeFromToken(token);
-        List<String> roles = jwtUtil.getRolesFromToken(token); // 역할 정보 가져오기
+        MemberEntity member = memberRepository.findById(memberCode)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         CompanionEntity companion = companionRepository.findById(companionId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다. ID: " + companionId));
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-        // 작성자 본인 또는 관리자만 수정 가능하도록 변경 (공지사항 변경은 관리자만)
+        // 작성자 본인 또는 관리자만 수정 가능
+        List<String> roles = jwtUtil.getRolesFromToken(token);
         boolean isAdmin = roles.contains("ROLE_ADMIN");
-        boolean isAuthor = companion.getMember().getMemberCode().equals(memberCode);
 
-        if (!isAuthor && !isAdmin) { // 작성자도 아니고 관리자도 아니면 수정 불가
-            throw new SecurityException("게시글 수정 권한이 없습니다. 게시글 ID: " + companionId);
-        }
-
-        if (companionTitle == null || companionTitle.trim().isEmpty()) {
-            throw new IllegalArgumentException("게시글 제목이 비어있을 수 없습니다..");
-        }
-        if (companionContent == null || companionContent.trim().isEmpty()) {
-            throw new IllegalArgumentException("게시글 내용이 비어있을 수 없습니다.");
+        if (!isAdmin && !companion.getMember().getMemberCode().equals(memberCode)) {
+            throw new SecurityException("게시글 수정 권한이 없습니다.");
         }
 
         companion.setCompanionTitle(companionTitle);
         companion.setCompanionContent(companionContent);
         companion.setCompanionModifiedAt(LocalDateTime.now());
 
-        // 공지사항 여부 변경 로직
-        if (isNoticeRequest != null) {
-            if (isAdmin) { // 관리자만 공지사항 여부 변경 가능
-                companion.setCompanionNotice(isNoticeRequest);
-                log.info("관리자 권한으로 공지사항 여부를 {}로 변경합니다.", isNoticeRequest);
-            } else if (companion.isCompanionNotice() != isNoticeRequest) {
-                // 관리자가 아닌 사용자가 공지사항 상태를 변경하려고 할 때
-                log.warn("관리자 권한이 없어 공지사항 여부를 변경할 수 없습니다. 현재 상태 유지됩니다.");
-                // 여기서 예외를 발생시키거나, 요청을 무시하고 현재 상태를 유지할 수 있습니다.
-                // 현재는 로그만 남기고 기존 상태를 유지합니다.
-            }
+        // 공지사항 설정은 관리자만 가능
+        if (isAdmin && isNoticeRequest != null) {
+            companion.setCompanionNotice(isNoticeRequest);
+        } else if (!isAdmin && isNoticeRequest != null && isNoticeRequest != companion.isCompanionNotice()) {
+            // 관리자가 아닌 사용자가 공지사항 상태를 변경하려고 하면 무시하거나 예외 처리
+            log.warn("일반 사용자는 공지사항 상태를 변경할 수 없습니다. 게시글 ID: {}, 사용자 ID: {}", companionId, memberCode);
         }
 
-        // 이미지 파일 삭제 로직 (deletedImageIds 처리 - 이미지 URL의 인덱스로 간주)
-        if (deletedImageIds != null && !deletedImageIds.isEmpty()) {
-            List<String> currentImageUrls = new ArrayList<>();
-            if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
-                currentImageUrls.addAll(Arrays.asList(companion.getCompanionImageUrls().split(",")));
-            }
 
-            // 삭제할 이미지 URL 목록을 저장
-            List<String> urlsToDelete = new ArrayList<>();
-            List<String> updatedImageUrls = new ArrayList<>();
+        // 기존 이미지 URL 문자열을 리스트로 변환
+        List<String> currentImageUrls = new ArrayList<>();
+        if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
+            currentImageUrls.addAll(Arrays.asList(companion.getCompanionImageUrls().split(",")));
+        }
 
-            for (int i = 0; i < currentImageUrls.size(); i++) {
-                // deletedImageIds는 0부터 시작하는 인덱스라고 가정합니다.
-                if (deletedImageIds.contains((long) i)) {
-                    urlsToDelete.add(currentImageUrls.get(i).trim());
+        // 1. 삭제 요청된 기존 이미지 처리
+        if (deletedImageUrls != null && !deletedImageUrls.isEmpty()) {
+            List<String> urlsToRemoveFromFileSystem = new ArrayList<>();
+            for (String deletedUrl : deletedImageUrls) {
+                // DB에 저장된 URL 형식과 deletedUrl 형식이 일치해야 합니다.
+                // companionImageUrls 에는 "upload/community/filename.jpg" 형태로 저장되어 있다고 가정합니다.
+                // deletedUrl도 동일한 형식으로 넘어온다고 가정합니다. (프론트에서 그렇게 보내도록 수정했음)
+                if (currentImageUrls.contains(deletedUrl)) {
+                    currentImageUrls.remove(deletedUrl);
+                    urlsToRemoveFromFileSystem.add(deletedUrl);
+                    log.info("DB에서 이미지 URL 제거 예정: {}", deletedUrl);
                 } else {
-                    updatedImageUrls.add(currentImageUrls.get(i).trim());
+                    log.warn("삭제 요청된 이미지 URL '{}'이(가) 기존 이미지 목록에 없어 DB에서 제거하지 못했습니다.", deletedUrl);
                 }
             }
 
-            // 실제 파일 시스템에서 이미지 삭제
-            for (String url : urlsToDelete) {
-                log.info("이미지 파일 삭제: {}", url);
-                fileUtil.deleteFile(url);
+            // 파일 시스템에서 실제 파일 삭제
+            for (String filePathToDelete : urlsToRemoveFromFileSystem) {
+                // FileUtil.deleteFile은 실제 파일 시스템 경로를 받아야 합니다.
+                // filePathToDelete가 "upload/community/filename.jpg"와 같은 상대 경로라면,
+                // FileUtil.deleteFile 내부에서 이를 올바르게 처리하거나, 여기서 절대 경로로 만들어 전달해야 합니다.
+                // 현재 FileUtil.deleteFile은 Paths.get(filePath)를 사용하므로,
+                // 애플리케이션 실행 위치 기준으로 상대 경로가 올바르게 해석되어야 합니다.
+                // 만약 application.properties의 file.upload-dir이 절대경로가 아니라면,
+                // Paths.get(uploadDir, filename) 형태로 구성하는 것이 더 안전할 수 있습니다.
+                // 지금은 FileUtil이 제공된 경로로 잘 삭제한다고 가정합니다.
+                boolean deleted = fileUtil.deleteFile(filePathToDelete);
+                if (deleted) {
+                    log.info("파일 시스템에서 이미지 삭제 성공: {}", filePathToDelete);
+                } else {
+                    log.warn("파일 시스템에서 이미지 삭제 실패: {}", filePathToDelete);
+                }
             }
-
-            // CompanionEntity의 companionImageUrls 필드 업데이트
-            companion.setCompanionImageUrls(updatedImageUrls.isEmpty() ? null : String.join(",", updatedImageUrls));
         }
 
-        // 새로운 이미지 파일 추가 로직
-        if (images != null && !images.isEmpty()) {
+        // 2. 새로 추가된 이미지 처리
+        if (newImages != null && !newImages.isEmpty() && !newImages.stream().allMatch(MultipartFile::isEmpty)) {
             try {
-                List<String> newImageUrls = fileUtil.saveFiles(images);
-                // 기존 이미지 URL에 새로운 이미지 URL 추가
-                List<String> currentImageUrls = new ArrayList<>();
-                if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
-                    currentImageUrls.addAll(List.of(companion.getCompanionImageUrls().split(",")));
-                }
-                currentImageUrls.addAll(newImageUrls);
-                companion.setCompanionImageUrls(String.join(",", currentImageUrls)); // 업데이트된 이미지 URL 목록 저장
+                List<String> savedNewImagePaths = fileUtil.saveFiles(newImages); // "upload/community/new_filename.jpg" 형태의 경로 반환
+                currentImageUrls.addAll(savedNewImagePaths); // DB에 저장될 전체 URL 리스트에 추가
+                log.info("새 이미지 추가 완료, 경로: {}", savedNewImagePaths);
             } catch (IOException e) {
-                log.error("이미지 파일 저장 중 오류 발생", e);
-                throw new RuntimeException("이미지 파일 저장에 실패했습니다.", e);
+                log.error("새 이미지 파일 저장 중 오류 발생", e);
+                // 필요시 사용자에게 알릴 수 있는 예외 처리 추가
+                throw new RuntimeException("이미지 저장에 실패했습니다.", e);
             }
-        } else if (images != null && images.isEmpty() && (deletedImageIds == null || deletedImageIds.isEmpty())) {
-            // 새로 추가된 이미지 없이, 삭제된 이미지도 없을 경우 기존 이미지 유지 (필요에 따라)
-            // 현재 로직에서는 images가 null이거나 비어있으면 이미지를 추가하지 않습니다.
-            // deletedImageIds가 처리되므로 이 else-if 블록은 필요 없을 수 있습니다.
+        }
+
+        // 업데이트된 이미지 URL 리스트를 다시 쉼표로 구분된 문자열로 변환하여 엔티티에 저장
+        if (currentImageUrls.isEmpty()) {
+            companion.setCompanionImageUrls(null);
+        } else {
+            companion.setCompanionImageUrls(String.join(",", currentImageUrls));
         }
 
         return companionRepository.save(companion);
     }
+
+
 
     // 게시글 삭제 (작성자 본인 또는 ROLE_ADMIN만 가능)
     @Transactional

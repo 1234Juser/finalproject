@@ -145,8 +145,13 @@ public class ReservationController {
 
     // bookingUid로 예약 명세서 페이지 출력
     @GetMapping("/reservations/receipt/{bookingUid}")
-    public ResponseEntity<OrderDTO> getOrderByBookingUid(@PathVariable String bookingUid) {
-        OrderDTO orderDTO = orderService.getOrderByBookingUid(bookingUid);
+    public ResponseEntity<OrderDTO> getOrderByBookingUid(@PathVariable String bookingUid,
+                                                         Authentication authentication) {
+        String memberId = authentication.getPrincipal().toString();
+        Long memberCode = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
+                .getMemberCode();
+        OrderDTO orderDTO = orderService.getOrderByBookingUid(bookingUid, memberCode);
         return ResponseEntity.ok(orderDTO);
     }
 
