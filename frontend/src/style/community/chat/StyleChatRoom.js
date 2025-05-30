@@ -6,7 +6,7 @@ export const Container = styled.div`
     margin: 40px auto;
     background-color: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.12);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 `;
 
@@ -83,7 +83,6 @@ export const ChatButton = styled.button`
     font-weight: 600;
     border: none;
     border-radius: 24px;
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.6);
     cursor: pointer;
     transition: background-color 0.25s ease;
 
@@ -175,3 +174,43 @@ export const senderInfoStyle = {
     color: '#6b7280',
     marginBottom: '4px',
 };
+
+
+export const BaseButton = styled.button`
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+
+    &:active {
+        transform: translateY(1px);
+    }
+`;
+
+export const DangerButton = styled(BaseButton)`
+    background-color: #395680;
+    color: white;
+    margin: 0 20px 20px 0;
+    width: 130px;
+
+    &:hover {
+        background-color: #5f74a2;
+    }
+`;
+
+export const OutlineButton = styled(BaseButton)`
+    background-color: transparent; /* 배경 채우기 없음 */
+    color: #6c757d; /* 차분한 글자색 */
+    border: 1px solid #6c757d; /* 아웃라인 테두리 */
+    margin-bottom: 10px;
+    width: 130px;
+
+    &:hover {
+        background-color: #e2e6ea; /* 호버 시 밝은 배경 */
+        color: #495057;
+        border-color: #495057;
+    }
+`;

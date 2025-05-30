@@ -8,7 +8,7 @@ import {
     JoinMsg,
     LeaveMsg,
     messageContentStyle,
-    MessageRow, messageTextStyle, profileImageStyle, senderInfoStyle
+    MessageRow, messageTextStyle, profileImageStyle, senderInfoStyle, DangerButton, OutlineButton
 } from '../../style/community/chat/StyleChatRoom'
 import FormatDate from '../../utils/FormatDate';
 import {useState} from "react";
@@ -94,13 +94,14 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
             </h2>
             <p>사용자: {username}</p>
             {/*<p>현재 참여 인원 : {currentParticipants}</p>*/}
-            <button 
-                onClick={() => {onDeleteChatRoom(roomUid)}}
-                style={{backgroundColor:'red', color:'white', marginBottom:'10px'}}
-            >
+            {/* 삭제는 DangerButton 사용 */}
+            <DangerButton onClick={() => onDeleteChatRoom(roomUid)}>
                 채팅방 삭제
-            </button>
-            <button onClick={onHandleLeaveChatRoom}>채팅방 나가기</button>
+            </DangerButton>
+            {/* 나가기는 PrimaryButton 사용 */}
+            <OutlineButton onClick={onHandleLeaveChatRoom}>
+                채팅방 나가기
+            </OutlineButton>
 
             <ChatBox>
                 {messages.map((msg, index) => (
