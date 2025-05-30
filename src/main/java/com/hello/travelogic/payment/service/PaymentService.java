@@ -58,6 +58,7 @@ public class PaymentService {
     private final OrderRepo orderRepo;
     private final MemberRepository memberRepository;
     private final NotificationAsyncService notificationAsyncService;
+    private final NotificationService notificationService;
 
     private static final String IAMPORT_TOKEN_URL = "https://api.iamport.kr/users/getToken";
     private static final String IAMPORT_PAYMENT_URL = "https://api.iamport.kr/payments";
@@ -438,6 +439,20 @@ public class PaymentService {
                 if (order.getOrderStatus() == OrderStatus.WAITING_BANK_TRANSFER) {
                     order.setOrderStatus(OrderStatus.CANCELED);
                     orderRepo.save(order);
+
+                    // 🔔 결제 취소 알림 전송
+                    String productName = order.getProduct().getProductTitle();
+                    String message = "⏰ 무통장입금 기한이 지나 [" + productName + "] 상품이 자동 취소되었습니다.";
+
+                    NotificationRequestDTO notiRequest = NotificationRequestDTO.builder()
+                            .memberCode(order.getMember().getMemberCode()) // 사용자 코드
+                            .notiMessage(message) // 알림 내용
+                            .notiOrderId(order.getOrderCode()) // 연관 주문코드
+                            .build();
+
+                    notificationService.createNotification(notiRequest); // 알림 생성 및 SSE 전송
+                    log.debug("notiRequest = {}", notiRequest);
+
                     log.info("🔴 무통장입금 미입금으로 자동 취소: orderCode = {}", order.getOrderCode());
                 }
             }
