@@ -1,4 +1,4 @@
-const path = "http://localhost:8080"
+const path = "http://localhost:8080";
 
 // tbl_product 전체 데이터 가져오는 함수
 const getProductsList = async (currentPage) => {
@@ -160,6 +160,7 @@ const getThemes = async () => {
 
 // 상품 등록 함수
 const ProductRegist = async (formData) => {
+    console.log("ProductRegist 함수 호출됨"); // <-- 함수 호출 확인 로그
     try {
         const response = await fetch(`${path}/products/register`, {
             method : "POST",
@@ -168,6 +169,7 @@ const ProductRegist = async (formData) => {
 
         if( response.ok) {
             const result = await response.text();
+            console.log('result')
             return { ok: true, message: result };
         } else {
             const errorData = await response.json();  // 실패시 JSON 응답 처리

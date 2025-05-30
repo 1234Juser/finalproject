@@ -49,9 +49,9 @@ function ProductCom({ cityName, handleFilterReset, handleSort, products, filtere
                     return (
                         <TourCard key={p.productUid}>
                                 <CardImageWrapper>
-                                    <CardImage src={p.productThumbnail?.startsWith('/static/')
+                                    <CardImage src={p.productThumbnail      // p.productThumbnail에는 이미 완전한 S3 URL이 저장되어 있습니다.
                                                         ? p.productThumbnail
-                                                        : `/upload/product/${p.productThumbnail}`}
+                                                        : '/static/img/earth.jpg'}      // productThumbnail이 없거나 비어있을 때 표시할 대체 이미지
                                                 alt="상품 이미지"
                                                 onError={(e) => {
                                                     e.target.onerror = null; // 무한 루프 방지

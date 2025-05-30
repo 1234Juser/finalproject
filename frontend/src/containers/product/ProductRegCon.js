@@ -182,6 +182,7 @@ function ProductRegCon() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        console.log("handleSubmit 함수 호출됨"); // <-- 이 로그가 찍히는지 확인!
 
         // 모든 필드에 대해 필수 입력값 존재 여부 체크
         const errors = {};
@@ -246,6 +247,7 @@ function ProductRegCon() {
             } else {
                 // 등록
                 const res = await ProductRegist(formData)
+                console.log("ProductRegist 호출 후 결과:", res);
                 alert(res.message);
                 navigate("/adminmypage");
             }
