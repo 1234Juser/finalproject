@@ -1,106 +1,9 @@
-import styled from "styled-components";
-import {useParams} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
-import {getInfoForWriteReview} from "../../service/reviewService";
-import SimpleModal from "../common/SimpleModal";
-
-const ReviewFormWrap = styled.div`
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 2rem;
-    box-sizing: border-box;
-    background-color: #fff;
-`;
-
-const Title = styled.h2`
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-`;
-
-const StarRating = styled.div`
-    display: flex;
-    gap: 0.5rem;
-    font-size: 2rem;
-    color: #ccc;
-    margin-bottom: 1rem;
-    .star {
-    cursor: pointer;
-    transition: color 0.2s;
-    }
-    .star.active {
-    color: #ffd700;
-    }
-`;
-
-const TextArea = styled.textarea`
-    width: 100%;
-    height: 120px;
-    resize: none;
-    padding: 1rem;
-    font-size: 1rem;
-    margin-top: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-`;
-
-const PhotoUpload = styled.div`
-    margin-top: 2rem;
-`;
-
-const PhotoBox = styled.div`
-    width: 100%;
-    height: 160px;
-    background: #f8f8f8;
-    border: 1px dashed #ccc;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #888;
-    font-size: 0.95rem;
-    cursor: pointer; 
-    &:hover {
-        background-color: #f0f0f0;
-        border-color: #999;
-        color: #555;
-    }
-`;
-
-const SubmitButton = styled.button`
-    margin-top: 2rem;
-    width: 100%;
-    padding: 0.8rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #3399ff;  //dodgerblue
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #267acc;
-    }
-`;
-
-const RemoveButton = styled.button`
-    margin-top: 0.5rem;
-    background-color: #ff6666;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    &:hover {
-        background-color: #cc4444;
-    }
-`;
-
-const HiddenFileInput = styled.input`
-    display: none;
-`;
+import {
+    CenteredContainer,
+    HiddenFileInput, PhotoBox, PhotoUpload,
+    RemoveButton, ReviewFormWrap,
+    StarRating, SubmitButton, TextArea, Title
+} from "../../style/review/StyleReviewForm";
 
 function ReviewFormCom({
                            productTitle,
@@ -116,6 +19,7 @@ function ReviewFormCom({
 
     return (
         <>
+            <CenteredContainer>
             <ReviewFormWrap>
                 <Title>{productTitle ? `[${productTitle}] 어떠셨나요?` : "로딩 중..."}</Title>
 
@@ -125,7 +29,6 @@ function ReviewFormCom({
                             key={num}
                             className={`star ${selectedRating >= num ? "active" : ""}`}
                             onClick={() => setSelectedRating(num)}
-                            // onChange={(e) => setReviewContent(e.target.value)}
                         >★</span>
                     ))}
                 </StarRating>
@@ -138,7 +41,6 @@ function ReviewFormCom({
                         onChange={(e) => setReviewContent(e.target.value)}
                     />
                 </label>
-
                 <PhotoUpload>
                     <p>사진을 공유해주세요. <span style={{ color: "#888" }}>(선택)</span></p>
                     <PhotoBox onClick={() => fileInputRef.current.click()}>
@@ -167,7 +69,6 @@ function ReviewFormCom({
                         onChange={handleFileChange}
                     />
                 </PhotoUpload>
-
                 <SubmitButton onClick={handleSubmit}
                               style={{ marginTop: "2rem",
                                   width: "100%", padding: "0.8rem",
@@ -176,6 +77,7 @@ function ReviewFormCom({
                                   border: "none", borderRadius: "6px",
                                   cursor: "pointer" }}>등록</SubmitButton>
             </ReviewFormWrap>
+            </CenteredContainer>
         </>
     );
 }

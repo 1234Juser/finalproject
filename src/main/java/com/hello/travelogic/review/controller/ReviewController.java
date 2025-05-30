@@ -232,7 +232,7 @@ public class ReviewController {
                 reviewDTO.setReviewContent(reviewContent);
             }
 
-            String result = reviewService.modifyReview(reviewCode, reviewDTO, reviewPic);
+            String result = reviewService.modifyReview(reviewCode, memberCode, reviewDTO, reviewPic);
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
