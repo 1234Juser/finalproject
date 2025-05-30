@@ -51,7 +51,7 @@ public class PaymentService {
     @Value("${imp.key}")
     private String apiKey;
 
-    @Value("${imp.secret_key}")
+    @Value("${imp.secret}")
     private String secretKey;
 
     private final PaymentRepo paymentRepo;
@@ -80,8 +80,8 @@ public class PaymentService {
 
         // 요청 데이터 설정
         Map<String, String> requestData = new HashMap<>();
-        requestData.put("imp.key", apiKey);
-        requestData.put("imp.secret_key", secretKey);
+        requestData.put("imp_key", apiKey);
+        requestData.put("imp_secret", secretKey);
 
         // JSON 변환
         ObjectMapper objectMapper = new ObjectMapper();
@@ -105,6 +105,22 @@ public class PaymentService {
         }
 
         return accessToken;
+    }
+
+    public JsonNode getPaymentInfo(String accessToken, String impUid) throws IOException {
+        URL url = new URL(IAMPORT_PAYMENT_URL + "/" + impUid);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", accessToken);
+        connection.setRequestProperty("Accept", "application/json");
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode != 200) {
+            throw new IOException("결제 정보 조회 실패 - 응답 코드: " + responseCode);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readTree(connection.getInputStream());
     }
 
     // 결제 생성(결제 대기 상태로 생성)
@@ -384,6 +400,7 @@ public class PaymentService {
 
     @Transactional
     public void processPaymentWebhook(String impUid) {
+        log.info("✅ Webhook 메서드 진입: impUid = {}", impUid);
         // 아임포트에서 impUid 기반 결제정보 확인
         try {
             IamportResponse<Payment> response = iamportClient.paymentByImpUid(impUid);
@@ -395,21 +412,31 @@ public class PaymentService {
             // DB 조회
             PaymentEntity payment = paymentRepo.findByImpUid(impUid);
             if (payment == null) {
+                log.error("❌ DB에 해당 impUid 결제 정보 없음: impUid = {}", impUid);
                 throw new IllegalArgumentException("DB 결제 정보 없음");
             }
 
             if (iamportPayment.getStatus().equals("paid")) {
+                log.info("💰 결제 상태가 'paid'입니다. 상태 업데이트 진행...");
                 payment.setPaymentStatus(PaymentStatus.COMPLETED);
                 payment.setPaymentTime(LocalDateTime.now());
                 paymentRepo.save(payment);
+                paymentRepo.flush();
+                log.info("✅ 결제 상태 DB 저장 완료: paymentStatus = {}, time = {}",
+                        payment.getPaymentStatus(), payment.getPaymentTime());
 
                 OrderEntity order = payment.getOrder();
-                if (order.getOrderStatus() == OrderStatus.PENDING) {
+//                if (order.getOrderStatus() == OrderStatus.PENDING) {
+                OrderStatus oStatus = order.getOrderStatus();
+                log.info("📝 현재 주문 상태: {}", oStatus);
+                if (oStatus == OrderStatus.PENDING || oStatus == OrderStatus.WAITING_BANK_TRANSFER) {
                     order.setOrderStatus(OrderStatus.SCHEDULED);
                     orderRepo.save(order);
+                    orderRepo.flush();
+                    log.info("✅ 주문 상태 업데이트 완료: orderCode = {}, orderStatus = {}",
+                            order.getOrderCode(), order.getOrderStatus());
                 }
             } else {
-                System.out.println("Webhook 수신: 결제 상태가 paid가 아닙니다. 현재 상태 = " + iamportPayment.getStatus());
             }
         } catch (Exception e) {
             System.err.println("Webhook 처리 중 예외 발생: " + e.getMessage());
