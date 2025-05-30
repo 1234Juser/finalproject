@@ -5,7 +5,9 @@ export const ReviewContainer = styled.div`
     background-color: #f8f9fa;
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    margin-bottom: 40px;
+    //margin-bottom: 40px;
+    //height: 408px; /* 고정 높이 지정 */
+    overflow-y: auto;
 `;
 
 export const HeaderWrapper = styled.div`
@@ -38,6 +40,26 @@ export const ReviewItem = styled.div`
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.05);
     transition: transform 0.2s, box-shadow 0.2s;
+    //min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+`;
+
+export const ModalReviewItem = styled.div`
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    //justify-content: space-between;
 
     &:hover {
         transform: translateY(-4px);
@@ -51,7 +73,7 @@ export const RatingAndReviewerRow = styled.div`
     //justify-content: flex-start;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 10px;
+    //margin-bottom: 10px;
 `;
 
 export const LeftSide = styled.div`
@@ -80,7 +102,27 @@ export const ReviewDate = styled.div`
     margin-bottom: 15px;
 `;
 
+export const ReviewBodyRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+`;
+
+// 상위3개 간략히 보기
 export const ReviewContent = styled.p`
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    //white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+`;
+
+// 리뷰 모달에서 전체보기
+export const ModalReviewContent = styled.p`
     font-size: 14px;
     color: #333;
     line-height: 1.5;
@@ -91,6 +133,9 @@ export const NoReviewMessage = styled.p`
     color: #888;
     text-align: center;
     grid-column: span 2;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `;
 
 export const ShowMoreButton = styled.button`
@@ -115,6 +160,7 @@ export const Thumbnail = styled.img`
     margin-right: 16px;
     object-fit: cover;
     flex-shrink: 0;
+    margin-left: 16px;
 `;
 
 export const FullImageOverlay = styled.div`

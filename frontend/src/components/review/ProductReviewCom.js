@@ -5,29 +5,26 @@ import {
     FullImage,
     FullImageOverlay,
     HeaderWrapper, LeftSide, NoReviewMessage, Rating, RatingAndReviewerRow,
-    ReviewContainer, ReviewContent, ReviewDate, Reviewer,
-    ReviewItem,
+    ReviewContainer, ReviewContent, ModalReviewContent, ReviewDate, Reviewer,
+    ReviewItem, ModalReviewItem,
     ReviewList, ShowMoreButton,
-    SortWrapper, Thumbnail
+    SortWrapper, Thumbnail, ReviewBodyRow
 } from "../../style/review/StyleProductReview";
 
-function ProductReviewCom({ reviews = [], loading, error,
-                            sortOption = "date",
-                            onSortChange,
+function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPreviewSortChange = () => {},
+                            reviews = [], modalSortOption = "date", onModalSortChange = () => {},
+                            loading, error,
                             averageRating = 0,
                             reviewCount = 0 }) {
     const [isModalOpen, setModalOpen] = useState(false);
-    const top3Reviews = reviews.slice(0, 3);
     const [showFullImage, setShowFullImage] = useState(false);
     const [fullImageSrc, setFullImageSrc] = useState(null);
     const handleModalToggle = () => {
+        if (!isModalOpen) {
+            onModalSortChange("date"); // 열릴 때 정렬 초기화
+        }
         setModalOpen(!isModalOpen);
     };
-
-    if (typeof onSortChange !== "function") {
-        console.error("onSortChange는 함수여야 합니다.");
-        return null;
-    }
 
     const handleImageClick = (review) => {
         if (review.reviewPic) {
@@ -37,14 +34,14 @@ function ProductReviewCom({ reviews = [], loading, error,
         }
     };
 
-    return(
+    return (
         <>
             <ReviewContainer>
                 <HeaderWrapper>
                     <SubTitle>💬 리뷰 {averageRating.toFixed(1)} / 5.0 ({reviewCount}개)</SubTitle>
                     <SortWrapper>
                         <label>정렬: </label>
-                        <select value={sortOption} onChange={(e) => onSortChange(e.target.value)}>
+                        <select value={previewSortOption} onChange={(e) => onPreviewSortChange(e.target.value)}>
                             <option value="date">작성일 순</option>
                             <option value="rating">평점 순</option>
                         </select>
@@ -55,7 +52,8 @@ function ProductReviewCom({ reviews = [], loading, error,
                 <ReviewList>
                     {top3Reviews.length > 0 ? (
                         top3Reviews && top3Reviews.map((review) => (
-                            <ReviewItem key={review.reviewCode} onClick={() => setModalOpen(true)}>
+                            <ReviewItem key={review.reviewCode}
+                                        onClick={() => setModalOpen(true)}>
                                 <RatingAndReviewerRow>
                                     <LeftSide>
                                         <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
@@ -63,21 +61,22 @@ function ProductReviewCom({ reviews = [], loading, error,
                                     </LeftSide>
                                     <ReviewDate>{review.reviewDate}</ReviewDate>
                                 </RatingAndReviewerRow>
-                                {/*<Thumbnail src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"} alt="리뷰 이미지"/>*/}
-                                {review.reviewPic && (
-                                <Thumbnail src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
-                                            alt="리뷰 이미지"
-                                            onClick={() => {
-                                                setFullImageSrc(`/upload/review/${encodeURIComponent(review.reviewPic)}`);
-                                                setShowFullImage(true);
-                                            }}
-                                            onError={(e) => {
-                                                e.target.style.display = 'none';
-                                            }}
-                                            style={{ cursor: 'pointer' }}
-                                />
-                                )}
-                                <ReviewContent>{review.reviewContent}</ReviewContent>
+                                <ReviewBodyRow>
+                                    <ReviewContent>{review.reviewContent}</ReviewContent>
+                                    {review.reviewPic && (
+                                        <Thumbnail src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                                                    alt="리뷰 이미지"
+                                                    onClick={() => {
+                                                    setFullImageSrc(`/upload/review/${encodeURIComponent(review.reviewPic)}`);
+                                                    setShowFullImage(true);
+                                                }}
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                }}
+                                                style={{cursor: 'pointer'}}
+                                        />
+                                    )}
+                                </ReviewBodyRow>
                             </ReviewItem>
                         ))
                     ) : (
@@ -94,7 +93,7 @@ function ProductReviewCom({ reviews = [], loading, error,
                         <SubTitle>📝 모든 리뷰 보기 {averageRating.toFixed(1)} / 5.0 ({reviewCount}개)</SubTitle>
                         <SortWrapper>
                             <label>정렬: </label>
-                            <select value={sortOption} onChange={(e) => onSortChange(e.target.value)}>
+                            <select value={modalSortOption} onChange={(e) => onModalSortChange(e.target.value)}>
                                 <option value="date">작성일 순</option>
                                 <option value="rating">평점 순</option>
                             </select>
@@ -103,28 +102,29 @@ function ProductReviewCom({ reviews = [], loading, error,
                     <ReviewList>
                         {reviews.length > 0 ? (
                             reviews && reviews.map((review) => (
-                                <ReviewItem key={review.reviewCode}>
+                                <ModalReviewItem key={review.reviewCode}>
                                     <RatingAndReviewerRow>
                                         <LeftSide>
-                                        <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
-                                        <Reviewer>{review.memberName}</Reviewer>
+                                            <Rating>⭐ {review.reviewRating.toFixed(1)}</Rating>
+                                            <Reviewer>{review.memberName}</Reviewer>
                                         </LeftSide>
-                                    <ReviewDate>{review.reviewDate}</ReviewDate>
+                                        <ReviewDate>{review.reviewDate}</ReviewDate>
                                     </RatingAndReviewerRow>
-                                    {review.reviewPic && (
-                                    <Thumbnail
-                                        // src={review.reviewPic ? `/review/${review.reviewPic}` : "/img/default-review.jpg"} alt="리뷰 이미지"
-                                        src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
-                                        alt="리뷰 이미지"
-                                        onClick={() => handleImageClick(review)}
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                        }}
-                                        style={{ cursor: 'pointer' }}
-                                    />
-                                    )}
-                                    <ReviewContent>{review.reviewContent}</ReviewContent>
-                                </ReviewItem>
+                                    <ReviewBodyRow>
+                                        <ModalReviewContent>{review.reviewContent}</ModalReviewContent>
+                                        {review.reviewPic && (
+                                            <Thumbnail
+                                                src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                                                alt="리뷰 이미지"
+                                                onClick={() => handleImageClick(review)}
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                }}
+                                                style={{cursor: 'pointer'}}
+                                            />
+                                        )}
+                                    </ReviewBodyRow>
+                                </ModalReviewItem>
                             ))
                         ) : (
                             <NoReviewMessage>아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해 주세요!</NoReviewMessage>
@@ -135,11 +135,11 @@ function ProductReviewCom({ reviews = [], loading, error,
                             e.stopPropagation();
                             setShowFullImage(false);
                         }}>
-                            <FullImage src={fullImageSrc} alt="원본 리뷰 이미지" />
+                            <FullImage src={fullImageSrc} alt="원본 리뷰 이미지"/>
                         </FullImageOverlay>
                     )}
                 </AllReviewModal>
             )}
-        </>)
+        </>);
 }
 export default ProductReviewCom;
