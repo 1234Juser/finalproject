@@ -187,7 +187,7 @@ public class PaymentService {
         return switch (Status) {
             case COMPLETED -> currentStatus == PaymentStatus.PENDING || currentStatus == PaymentStatus.WAITING_BANK_TRANSFER;
             case FAILED -> currentStatus == PaymentStatus.PENDING || currentStatus == PaymentStatus.COMPLETED;
-            case EXPIRED -> currentStatus == PaymentStatus.PENDING;
+            case EXPIRED -> currentStatus == PaymentStatus.PENDING || currentStatus == PaymentStatus.WAITING_BANK_TRANSFER;
             case REFUNDED -> currentStatus == PaymentStatus.COMPLETED;
             case CANCELED -> currentStatus == PaymentStatus.COMPLETED;
             default -> false;
@@ -377,12 +377,9 @@ public class PaymentService {
                 order.setOrderStatus(OrderStatus.SCHEDULED);
             }
             orderRepo.save(order);
-
-        } else {
+            log.info("🟢 결제 성공 처리 - 주문 상태를 SCHEDULED로 변경: orderCode = {}", orderCode);
         }
     }
-
-
 
     @Transactional
     public void processPaymentWebhook(String impUid) {
@@ -419,7 +416,8 @@ public class PaymentService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *") // 매 시 정각
+    @Scheduled(cron = "59 59 23 * * *") // 초 분 시 일 월 요일
+    @Transactional
     public void expireUnpaidBankTransfers() {
         LocalDateTime now = LocalDateTime.now();
         List<PaymentEntity> waitingList = paymentRepo.findAllByPaymentMethodAndPaymentStatus(
@@ -429,14 +427,18 @@ public class PaymentService {
 
         for (PaymentEntity payment : waitingList) {
             // 예: 결제 생성 후 24시간이 지났는지 확인
-            if (payment.getPaymentTime().isBefore(now.minusHours(24))) {
+//            if (payment.getPaymentTime().isBefore(now.minusHours(24))) {
+            // 아임포트가 발급해준 입금마감 기한 기준 버전
+            if (payment.getVbankDue() != null && payment.getVbankDue().isBefore(now)) {
                 payment.setPaymentStatus(PaymentStatus.EXPIRED);
                 paymentRepo.save(payment);
 
+                // 주문 상태도 CANCELED로 변경
                 OrderEntity order = payment.getOrder();
                 if (order.getOrderStatus() == OrderStatus.WAITING_BANK_TRANSFER) {
                     order.setOrderStatus(OrderStatus.CANCELED);
                     orderRepo.save(order);
+                    log.info("🔴 무통장입금 미입금으로 자동 취소: orderCode = {}", order.getOrderCode());
                 }
             }
         }
