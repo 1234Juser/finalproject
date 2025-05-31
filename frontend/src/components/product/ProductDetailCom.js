@@ -29,7 +29,7 @@ import ProductReviewCon from "../../containers/review/ProductReviewCon";
 import {useNavigate} from "react-router-dom";
 
 
-function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTabClick, activeSection, accessToken}) {
+function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTabClick, activeSection}) {
     const navigate = useNavigate();
 
     const handleOptionSelect = () => {
