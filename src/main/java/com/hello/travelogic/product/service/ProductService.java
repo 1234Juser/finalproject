@@ -36,21 +36,17 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProductService {
 
-    @Autowired
     private final ProductRepo productRepo;
-    @Autowired
     private final RegionRepo regionRepo;
-    @Autowired
     private final CityRepo cityRepo;
-    @Autowired
-    private CountryRepo countryRepo;
-    @Autowired
-    private ThemeRepo themeRepo;
+    private final CountryRepo countryRepo;
+    private final ThemeRepo themeRepo;
     private final ReviewRepo reviewRepo;
     private final WishRepo wishRepo;
+    private final FileUploadUtils fileUploadUtils;
+    private final ProductDetailRepo productDetailRepo;
     
-    final String baseDir = System.getProperty("user.dir") + File.separator + "upload" + File.separator + "product" + File.separator;
-    
+
 
     // 모든 Products 조회
     public Map<String, Object> getProducts(int start, int page) {
@@ -177,16 +173,17 @@ public class ProductService {
             Long count = productRepo.countByProductUidStartingWith(prefix);     // "SEOUL%" 로 시작하는 uid 몇 개인지 확인
             String newUid = prefix + String.format("%03d", count + 1);      // 새로운 UID 만들기
 
-/*
-            // 4. productCode 생성 로직 (숫자를 단순히 자동 증가되도록 설정)
-             Long newProductCode = productRepo.findMaxProductCode().orElse(0L) + 1; // 최대 product_code + 1
-            log.info("newProductCode : {}" , newProductCode);
-*/
 
             // 4. 썸네일 파일 저장 및 DTO에 파일명 생성
             if (productThumbnail != null && !productThumbnail.isEmpty()) {
-                String thumbnailfileName = FileUploadUtils.saveNewFile(productThumbnail);
-                productDTO.setProductThumbnail(thumbnailfileName);
+                try {
+                    // S3에 파일 업로드
+                    String s3Url = fileUploadUtils.uploadToS3(productThumbnail);
+                    log.debug("s3Url : {}", s3Url);
+                    productDTO.setProductThumbnail(s3Url);
+                } catch (IOException e) {
+                    log.error("파일 업로드 실패 : ", e);
+                }
             }
 
 
@@ -200,7 +197,52 @@ public class ProductService {
             productE.setProductEndDate(endDate);
             productE.setProductUid(newUid);
             productE.setProductThumbnail(productE.getProductThumbnail());     // ← DTO에 설정된 파일명 사용!!
-//            productE.setProductCode(newProductCode); // 생성된 product_code 설정
+
+            // --- 💡 새로운 로직 시작: cityId를 기반으로 해당 ProductDetailEntity 설정 💡 ---
+            if (city != null && city.getCityId() != null) {
+                Long citySpecificProductDetailCode = city.getCityId(); // city.cityId를 ProductDetail의 PK로 사용
+
+                log.info("City ID {}에 해당하는 ProductDetail 정보 조회를 시도합니다. (ProductDetail PK: {})", city.getCityId(), citySpecificProductDetailCode);
+
+                ProductDetailEntity citySpecificProductDetail = productDetailRepo.findById(citySpecificProductDetailCode)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "ID가 " + citySpecificProductDetailCode + "인 ProductDetail 정보를 찾을 수 없습니다. " +
+                                        "cityId (" + city.getCityId() + ")에 해당하는 ProductDetail 데이터가 DB에 있는지 확인해주세요."
+                        ));
+                productE.setProductDetail(citySpecificProductDetail); // 조회한 도시별 상세 정보를 ProductEntity에 연결
+                log.info("City ID {}에 ProductDetail ID {} (제목: {}) 연결 성공.", city.getCityId(), citySpecificProductDetail.getProductDetailCode(), citySpecificProductDetail.getProductInfo().substring(0, Math.min(citySpecificProductDetail.getProductInfo().length(), 30))+"..."); // productInfo 앞부분 로깅
+            } else {
+                // 이 경우는 CityEntity 조회 시 예외가 발생하지 않았으나 city 또는 cityId가 null인 극히 드문 케이스입니다.
+                // 또는, 모든 도시에 대해 ProductDetail을 필수로 연결하지 않을 경우에 대한 처리입니다.
+                log.warn("City 또는 CityId 정보가 없어 ProductDetail을 연결할 수 없습니다. productUid: {}", newUid);
+                // 필요하다면, 여기서 기본 ProductDetail(예: ID 1)을 연결하거나, productDetail 필드를 null로 둘 수 있습니다.
+                // 시연 목적상, 선택된 cityId에 해당하는 ProductDetail이 항상 있다고 가정하고 진행합니다.
+                // 만약 이 상황에서 오류를 발생시키고 싶다면 아래 주석을 해제하세요.
+                // throw new IllegalStateException("City 정보가 유효하지 않아 ProductDetail을 설정할 수 없습니다.");
+            }
+            // --- 💡 새로운 로직 끝 ---
+
+            // --- 💡 동적으로 cityName, countryName, fullLocation 설정 💡 ---
+            String effectiveCityName = "";
+            if (city != null && city.getCityName() != null) { // CityEntity에서 영문 도시명 사용
+                effectiveCityName = city.getCityName();
+            }
+            productE.setCityName(effectiveCityName); // ProductEntity의 cityName 필드에 설정
+
+            String effectiveCountryName = "";
+            if (country != null && country.getCountryName() != null) { // CountryEntity에서 영문 국가명 사용
+                effectiveCountryName = country.getCountryName();
+            }
+            productE.setCountryName(effectiveCountryName); // ProductEntity의 countryName 필드에 설정
+
+            // fullLocation 조합
+            if (!effectiveCityName.isEmpty() && !effectiveCountryName.isEmpty()) {
+                productE.setFullLocation(effectiveCityName + ", " + effectiveCountryName);
+            } else {
+                // 둘 중 하나라도 비어있으면 그냥 합침 (예: 도시명만 있거나, 국가명만 있는 경우 - 실제로는 둘 다 있어야겠지만)
+                productE.setFullLocation(effectiveCityName + effectiveCountryName);
+            }
+            // --- 💡 로직 끝 ---
 
 
             // 6. 데이터 저장
@@ -283,30 +325,23 @@ public class ProductService {
         try {
             if (productEOptional .isPresent()) {
                 ProductEntity productE = productEOptional .get();
+                String oldS3Url = productE.getProductThumbnail(); // DB에 저장된 기존 S3 URL
             
                 // 1. 파일을 재업로드한 경우 실행
                 if (productThumbnail != null && !productThumbnail.isEmpty()) {
                     
-                    // 1-1. 기존 파일이 존재한다면 삭제
-                    if (productEOptional.get ().getProductThumbnail () != null && !productEOptional.get ().getProductThumbnail ().isEmpty()) {
-                        String oldFileName = productEOptional.get ().getProductThumbnail ();
-                        
-                        try {
-                                Path path = Paths.get(baseDir + oldFileName);
-                                Files.deleteIfExists(path);
-                        } catch (IOException e) {
-                                log.debug ("파일 삭제 에러" + e.getMessage());
-                                e.printStackTrace();
-                                return -1;
-                        }
+                    // 1-1. 기존 파일이 존재한다면 S3에서 삭제
+                    if (oldS3Url != null && !oldS3Url.isEmpty()) {
+                        fileUploadUtils.deleteS3File(oldS3Url);
                     }
-                    
-                    // 1-2. 새 파일 저장
+
+                    // 1-2. 엔티티에 새 파일 S3에 저장
                     try {
-                            String thumbnailfileName = FileUploadUtils.saveNewFile(productThumbnail);
-                            productE.setProductThumbnail(thumbnailfileName);
+                        String newS3Url = fileUploadUtils.uploadToS3(productThumbnail);
+                        productE.setProductThumbnail(newS3Url);
                     } catch (IOException e) {
                             e.printStackTrace ();
+                            log.error("S3 파일 업로드 중 오류 발생: {}", e.getMessage(), e);
                             return -1;
                     }
                     
@@ -321,6 +356,7 @@ public class ProductService {
                     productE.setProductMinParticipants(productDTO.getProductMinParticipants());
                     productE.setProductMaxParticipants(productDTO.getProductMaxParticipants());
                     productE.setProductStatus(productDTO.getProductStatus());
+                    // 썸네일 파일이 변경되지 않았으므로 기존 S3 URL 유지
                     productE.setProductThumbnail(productDTO.getProductThumbnail());
                 }
             
@@ -344,10 +380,10 @@ public class ProductService {
     
     // 상품 삭제
     @Transactional
-    public int productDelete ( String productUid, MultipartFile productThumbnail ) {
-        
-        log.debug ("productThumbnail 확인 : {}", productThumbnail);
-        
+    public int productDelete ( String productUid ) {
+
+        log.debug ("상품 삭제 요청 productUid: {}", productUid);
+
         // 엔티티 먼저 조회
         ProductEntity productEntity = productRepo.findByProductUid (productUid)
                                       .orElseThrow(() -> new EntityNotFoundException(">>>>>일치하는 UID 없음. productUid 확인하세요: " + productUid));
@@ -358,16 +394,17 @@ public class ProductService {
         if (productEntity != null) {
             productRepo.delete(productEntity);
             try {
-                Path path = Paths.get(baseDir + productEntity.getProductThumbnail ());
-                log.debug ("path 확인,,,, : {}" , path);
-                if (path.toFile ().exists ()) {
-                    Files.deleteIfExists(path);  //파일이 존재하면 삭제
-                }
+                fileUploadUtils.deleteS3File(productEntity.getProductThumbnail()); // S3에서 파일 삭제 호출
+                log.debug("S3 파일 삭제 성공: {}", productEntity.getProductThumbnail());
                 
             } catch (Exception e) {
-                throw new RuntimeException (e);
+                // S3 파일 삭제 실패 시에도 상품 데이터는 삭제할지 여부는 비즈니스 로직에 따라 결정
+                // 여기서는 에러를 로깅하고 진행합니다.
+                log.error("S3 파일 삭제 중 오류 발생: {}", e.getMessage(), e);
+                 throw new RuntimeException("S3 파일 삭제 실패", e);
             }
-            
+
+            log.debug("DB에서 상품 레코드 삭제 성공: {}", productUid);
             return 1;
         }
         

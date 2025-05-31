@@ -9,7 +9,8 @@ import {
 import {Link} from "react-router-dom";
 import {StyledDivider, StyledTitle} from "../../style/product/StyleProductReg";
 
-function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons, pageRange, totalPages, onDelete}) {
+function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons, pageRange, totalPages, onDelete,
+                            handleFirst, handleLast, currentPage}) {
 
     const handleImagePopup = (imageUrl) => {
         // 팝업 창 옵션 설정
@@ -124,12 +125,18 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
                     </StyledTable>
                 </TableContainer>
                 <PaginationContainer>
+                    <NavButton onClick={handleFirst} disabled={currentPage === 1}>
+                        |&lt;
+                    </NavButton>
                     <NavButton onClick={handlePrev} disabled={pageRange.start === 1}>
                         &lt;&lt;
                     </NavButton>
                     {renderPageButtons()}
                     <NavButton onClick={handleNext} disabled={pageRange.end === totalPages}>
                         &gt;&gt;
+                    </NavButton>
+                    <NavButton onClick={handleLast} disabled={currentPage === totalPages}>
+                        &gt;|
                     </NavButton>
                 </PaginationContainer>
             </main>

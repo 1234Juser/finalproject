@@ -23,7 +23,6 @@ import java.util.Map;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
     private final ProductService productService;
     private final JwtUtil jwtUtil;
     private final CityViewCountService cityViewCountService;
@@ -83,6 +82,7 @@ public class ProductController {
     @PostMapping(value = "/register", consumes = "multipart/form-data")
     public ResponseEntity registerProduct(@RequestPart("productDTO") ProductDTO productDTO,
                                           @RequestPart("productThumbnail") MultipartFile productThumbnail) {
+        log.info("ProductController - registerProduct 호출됨. productDTO: {}, productThumbnail: {}", productDTO, productThumbnail.getOriginalFilename()); // (5) 컨트롤러 진입 로그
         try {
             log.debug("전달된 productThumbnail 객체: {}", productThumbnail); // MultipartFile 객체 전체 출력
 
@@ -136,11 +136,10 @@ public class ProductController {
 
     // 상품 삭제
     @DeleteMapping("/admin/{productUid}")
-    public ResponseEntity ProductDelete(@PathVariable("productUid") String productUid,
-                                                                @RequestPart(value = "productThumbnail", required = false) MultipartFile productThumbnail) {
+    public ResponseEntity ProductDelete(@PathVariable("productUid") String productUid) {
 
         log.debug ("productUid: {}", productUid);
-        int result = productService.productDelete(productUid, productThumbnail);
+        int result = productService.productDelete(productUid);
 
         if(result == 1) {
             log.debug ("product delete result : {}", result);

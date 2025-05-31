@@ -64,6 +64,24 @@ function ProductAllAdminCon() {
         return pages;
     };
 
+    const handleFirst = () => {
+        setPageRange({
+            start: 1,
+            end: Math.min(5, totalPages),
+        });
+        setCurrentPage(1);
+    };
+
+    const handleLast = () => {
+        const lastPageGroupStart = Math.floor((totalPages - 1) / 5) * 5 + 1;
+        setPageRange({
+            start: lastPageGroupStart,
+            end: totalPages,
+        });
+        setCurrentPage(totalPages);
+    };
+
+
 
 
 
@@ -110,7 +128,8 @@ function ProductAllAdminCon() {
     return (
         <>
             <ProductAllAdminCom products={products} handlePrev={handlePrev} handleNext={handleNext} renderPageButtons={renderPageButtons}
-                                pageRange={pageRange} onPageChange={handlePageChange} onDelete={onDelete} totalPages={totalPages}/>
+                                pageRange={pageRange} onPageChange={handlePageChange} onDelete={onDelete} totalPages={totalPages}
+                                handleFirst={handleFirst} handleLast={handleLast} currentPage={currentPage}/>
         </>
     )
 }

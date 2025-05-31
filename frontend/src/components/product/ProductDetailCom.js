@@ -72,7 +72,7 @@ function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTab
             <MainSectionWrapper>
             <ImageSection>
                 <img src={
-                    product.productThumbnail?.startsWith('/static/') 
+                    product.productThumbnail
                         ? product.productThumbnail
                         : `/upload/product/${product.productThumbnail}`
                 } 
@@ -123,6 +123,7 @@ function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTab
             <DetailContentWrapper>
                 <SectionWrapper id="basicInfo">
                     <DetailText>
+                        <h3>📮 기본 정보</h3>
                         <div dangerouslySetInnerHTML={{__html : product?.productDescription?.productInfo }} />
                     </DetailText>
                         <Divider />
