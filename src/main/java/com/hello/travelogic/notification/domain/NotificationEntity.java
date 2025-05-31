@@ -30,6 +30,7 @@ public class NotificationEntity {
     private String notiMessage;
 
     @Column(name = "noti_is_read")
+    @Builder.Default
     private boolean notiIsRead = false; // 기본값 false
 
     @CreationTimestamp // 엔티티가 처음 저장될 때 자동으로 현재 시간으로 설정
