@@ -9,7 +9,6 @@ import com.hello.travelogic.wish.repo.WishRepo;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -20,11 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -71,7 +66,7 @@ public class ProductService {
 
 
     // cityId를 기반으로 투어 상품 조회
-    public List<ProductDTO> getProductsByCity(Long cityId) {
+    public List<ProductDTO> getProductsByCity(Long cityId, Long memberCode) {
 
         // cityId에 해당하는 CityEntity 먼저 조회
         CityEntity cityEntity = cityRepo.findByCityId(cityId);
@@ -81,7 +76,16 @@ public class ProductService {
         List<ProductEntity> productEntityList = productRepo.findByCityId(cityEntity);
         List<ProductDTO> productList = null;
         if(productEntityList.size() != 0) {
-            productList = productEntityList.stream().map( product -> new ProductDTO(product)).toList();
+            productList = productEntityList.stream()
+                    .map( product -> {
+                        ProductDTO dto = new ProductDTO(product);
+                        boolean isWished = false;
+                        if (memberCode != null) {
+                            isWished = wishRepo.existsByMember_MemberCodeAndProduct_ProductCode(memberCode, product.getProductCode());
+                        }
+                        dto.setWished(isWished);
+                        return dto;
+                    }).toList();
         }
         log.info("productEntityList : {}", productEntityList);
         log.info("productList : {}", productList);

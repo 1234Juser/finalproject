@@ -173,5 +173,19 @@ export const SortBtn = styled.button`
   }
 `;
 
+export const WishOneButton = styled.button`
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #ff5e5e;
+    
+    &:hover {
+        transform: scale(1.1);
+    }
+`;
+
 
 

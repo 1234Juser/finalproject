@@ -1,4 +1,5 @@
 import {Link} from "react-router-dom";
+import {FaHeart, FaRegHeart} from "react-icons/fa6";
 import {
     TourPageContainer,
     TourHeader,
@@ -9,13 +10,13 @@ import {
     CardTitle,
     CardSubInfo,
     ViewDetailButton, ProductUid, CalendarTextContainer, CalendarText, CardPrice,
-    FilterSortBar, FilterSection, FilterLabel, FilterResetBtn, SortSection, SortBtn,
+    FilterSortBar, FilterSection, FilterLabel, FilterResetBtn, SortSection, SortBtn, WishOneButton,
 
 } from "../../style/product/StyleProductCon";
 import { GoCalendar, GoFilter  } from "react-icons/go";
 import {SaleStatus} from "../../style/product/StyleProductDetail";
 
-function ProductCom({ cityName, handleFilterReset, handleSort, products, filteredProducts}){
+function ProductCom({ cityName, handleFilterReset, handleSort, products, filteredProducts, onToggleWish}){
 
     const formatPrice = (price) => {
         if (typeof price !== "number") return price; // 숫자가 아닐 경우 그대로 반환
@@ -64,6 +65,9 @@ function ProductCom({ cityName, handleFilterReset, handleSort, products, filtere
                                             {displayStatusText}
                                         </SaleStatus>
                                         <ProductUid>상품번호 {p.productUid}</ProductUid>
+                                        <WishOneButton onClick={() => onToggleWish(p)} aria-label="찜 토글">
+                                            {p.isWished ? <FaHeart /> : <FaRegHeart />}
+                                        </WishOneButton>
                                     </CardSubInfo>
                                     <CardTitle>{p.productTitle}</CardTitle>
                                     <CalendarText>{p.productContent}</CalendarText>
