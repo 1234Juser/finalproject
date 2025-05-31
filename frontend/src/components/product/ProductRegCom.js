@@ -176,6 +176,7 @@ function ProductRegCom({
                         <StyledInput id="productAdult" name="productAdult" placeholder="성인 요금을 입력하세요"
                                      required
                                      type="number"
+                                     min="0"
                                      value={formInput.productAdult || ""}
                                      onChange={(e) => handleFormChange("productAdult", e.target.value)}
                         />
@@ -187,6 +188,7 @@ function ProductRegCom({
                         <StyledInput id="productChild" name="productChild" placeholder="아동 요금을 입력하세요"
                                      required
                                      type="number"
+                                     min="0"
                                      value={formInput.productChild || ""}
                                      onChange={(e) => handleFormChange("productChild", e.target.value)}
                         />
@@ -223,6 +225,7 @@ function ProductRegCom({
                                      value={formInput.productMinParticipants || ""}
                                      required
                                      type="number"
+                                     min="0"
                                      onChange={(e) => handleFormChange("productMinParticipants", e.target.value)}/>
                         {formErrors?.productMinParticipants && <StyledError>{formErrors.productMinParticipants}</StyledError>}
                     </InputWrapper>
@@ -233,6 +236,7 @@ function ProductRegCom({
                                      value={formInput.productMaxParticipants || ""}
                                      required
                                      type="number"
+                                     min="0"
                                      onChange={(e) => handleFormChange("productMaxParticipants", e.target.value)}/>
                         {formErrors?.productMaxParticipants && <StyledError>{formErrors.productMaxParticipants}</StyledError>}
                     </InputWrapper>

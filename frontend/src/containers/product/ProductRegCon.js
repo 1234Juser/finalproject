@@ -52,33 +52,57 @@ function ProductRegCon() {
 
     // formInput 상태 관리
     const handleFormChange = (name, value) => {
-        dispatch({ type: "SET_FORM_INPUT", payload: { [name]: value } });
+
+        // ----------------  숫자 입력 필드에 음수나 정수가 아닌 값이 입력되는 것을 방지
+        let valueToDispatch = value; // 실제로 formInput에 저장될 값
+
+        const numericIntegerFields = ["productAdult", "productChild", "productMinParticipants", "productMaxParticipants"];
+
+        if (numericIntegerFields.includes(name)) {
+            if (value === "" || value === null || value === undefined) {
+                valueToDispatch = ""; // 빈 문자열은 그대로 허용 (필수 입력 여부는 onSubmit에서 체크)
+            } else {
+                // 숫자 이외의 모든 문자(소수점, 음수 기호 포함)를 제거하여 오직 숫자(정수)만 남김
+                let processedValue = String(value).replace(/[^\d]/g, '');
+
+                // 만약 processedValue가 비어있다면 (예: 사용자가 "-"만 입력했거나 "abc" 등을 입력한 경우)
+                // valueToDispatch를 빈 문자열로 설정
+                if (processedValue === "") {
+                    valueToDispatch = "";
+                } else {
+                    // 남아있는 숫자 문자열을 실제 숫자로 변환했다가 다시 문자열로 변환
+                    valueToDispatch = String(Number(processedValue));       // 예 : "05" -> "5" 처리
+                }
+            }
+        }
+
+        // 1. 정제된 valueToDispatch 값을 fromInput 상태에 반영
+        dispatch({ type: "SET_FORM_INPUT", payload: { [name]: valueToDispatch } });
 
         let errorMsg = "";
 
-        // 숫자 입력이 필요한 필드에 대해 유효성 검사 (/^\d*$/ : "숫자(0~9)로만 이루어진 문자열"을 의미하는 정규식)
-        if (
-            (name === "productMinParticipants" || name === "productMaxParticipants") &&
-            !/^\d*$/.test(value)
-        ) {
-            errorMsg = "숫자만 입력 가능합니다.";
-        } else {
-            // 참가자 수 관련 유효성 검사(현재 입력값을 반영해서 min/max 값 계산)
-            const min = name === "productMinParticipants" ? Number(value) : Number(formInput.productMinParticipants);
-            const max = name === "productMaxParticipants" ? Number(value) : Number(formInput.productMaxParticipants);
+        // 2. productMinParticipants 또는 productMaxParticipants 필드가 변경되었을 때만 관련 오류 로직 실행
+        if (name === "productMinParticipants" || name === "productMaxParticipants") {
+            // currentValForLogic 대신 valueToDispatch (현재 필드의 정제된 값)를 사용합니다.
+            // 다른 참가자 필드 값은 state.formInput에서 가져옵니다 (이미 SET_FORM_INPUT으로 업데이트 시도됨).
 
-            if (name === "productMinParticipants" || name === "productMaxParticipants") {
-                if (min && max && min > max)
-                    errorMsg = "최소 출발 인원은 최대 출발 인원을 초과할 수 없습니다.";
+            // 참가자 수 관련 유효성 검사(현재 입력값을 반영해서 min/max 값 계산)
+            const minValString = name === "productMinParticipants" ? valueToDispatch : Number(formInput.productMinParticipants);
+            const maxValString = name === "productMaxParticipants" ? valueToDispatch : Number(formInput.productMaxParticipants);
+
+            const min = Number(minValString);
+            const max = Number(maxValString);
+
+            if (minValString !== "" && maxValString !== "" && min > 0 && max > 0 && min > max) {
+                // 두 필드 모두 값이 있고, 양수이며, 최소값이 최대값보다 클 때 오류
+                errorMsg = "최소 출발 인원은 최대 출발 인원을 초과할 수 없습니다.";
+            } else if (!valueToDispatch.trim()) { // 현재 변경된 참가자 필드가 비워졌다면
+                errorMsg = "필수 입력값입니다.";
             }
         }
-        // 필수 입력값에 대한 유효성 검사
-        if (!value.trim()) {
-            errorMsg = "필수 입력값입니다.";
-        }
-
-        dispatch({ type: "SET_PARTI_ERROR", payload: { participants: errorMsg } });
-    };
+            // 3. partiError 상태 업데이트
+            dispatch({ type: "SET_PARTI_ERROR", payload: { participants: errorMsg } });
+    }
 
 
     // 권역(국내/해외여행) 호출 함수
@@ -180,7 +204,7 @@ function ProductRegCon() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        console.log("handleSubmit 함수 호출됨"); // <-- 이 로그가 찍히는지 확인!
+        // console.log("handleSubmit 함수 호출됨"); // <-- 이 로그가 찍히는지 확인!
 
         // 모든 필드에 대해 필수 입력값 존재 여부 체크
         const errors = {};
