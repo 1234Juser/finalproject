@@ -45,6 +45,7 @@ public class CompanionEntity {
 
     @Column(name="companion_notice", nullable = false)
     @ColumnDefault("false") //데이터에비스 레벨 기본값
+    @Builder.Default
     private boolean companionNotice = false;
 
     // 이미지 파일 경로를 저장할 필드 추가 (여러 개일 경우 쉼표 등으로 구분하여 저장)

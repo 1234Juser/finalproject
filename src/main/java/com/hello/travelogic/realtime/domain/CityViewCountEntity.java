@@ -29,6 +29,7 @@ public class CityViewCountEntity {
     private CityEntity city; // tbl_city 테이블의 CityEntity와 관계 매핑
 
     @Column(name = "view_count", nullable = false, columnDefinition = "INT DEFAULT 0") // NOT NULL과 DEFAULT 값 설정
+    @Builder.Default
     private Integer viewCount = 0; // 초기값 설정
 
     @Column(name = "city_name_kr", nullable = false, length = 20) // city_name_kr 필드 추가

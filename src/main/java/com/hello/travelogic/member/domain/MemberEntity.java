@@ -50,9 +50,11 @@ public class MemberEntity {
     private LocalDateTime memberEnddate;
 
     @Column(name="member_endstatus", length = 20, nullable = false)
+    @Builder.Default
     private String memberEndstatus = "N";
 
     @Column(name="admin_active", length = 20)
+    @Builder.Default
     private String adminActive = "Y";
 
     @Column(name="social_type", length=255)
@@ -63,6 +65,7 @@ public class MemberEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @JsonIgnore     // 서버에서 클라이언트로 전송되는 JSON 응답의 순환 참조로 인한 무한 루프 방지
+    @Builder.Default
     private Set<MemberRoleEntity> roles = new HashSet<>();
 
 
