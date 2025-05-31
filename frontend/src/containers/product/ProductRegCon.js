@@ -44,12 +44,10 @@ function ProductRegCon() {
     }, [productUid]);
 
 
-/*
     // formInput 로그용
     useEffect(() => {
         console.log("-------formInput 변경 확인하기-------", formInput);
     }, [formInput]);
-*/
 
 
     // formInput 상태 관리
@@ -189,7 +187,7 @@ function ProductRegCon() {
         const requiredFields = [
             "productTitle", "productContent", "regionType", "regionCode", "themeCode", "countryId", "cityId",
             "productAdult", "productChild", "productStartDate", "productEndDate",
-            "productMinParticipants", "productMaxParticipants", "productStatus", "productType", "productThumbnail"
+            "productMinParticipants", "productMaxParticipants", "productStatus", "productThumbnail"
         ];
 
         requiredFields.forEach((field) => {
@@ -199,10 +197,10 @@ function ProductRegCon() {
         });
 
         if (Object.keys(errors).length > 0) {
+            // console.log("필수 입력값 오류 발생:", errors); // <-- 추가된 로그: 유효성 검사 에러 객체 확인
             dispatch({ type: "SET_FORM_ERRORS", payload: errors });
             return;
         }
-
 
         // 확인창 표시
         const confirmSubmit = window.confirm("등록하시겠습니까?");
@@ -239,20 +237,44 @@ function ProductRegCon() {
             formData.append("productThumbnail", formInput.productThumbnail);    // 기존 파일 이름만 전송
         }
 
+        console.log("formData 생성 완료. ProductRegist 또는 setProductModify 호출 직전입니다."); // <-- 추가된 로그
+        // FormData 내용 확인 (디버깅 시 유용)
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                console.log(`FormData Entry: ${key} = ${value.name} (File)`);
+            } else if (value instanceof Blob) {
+                // Blob의 내용을 직접 로깅하기는 어려우므로, 생성 시 사용된 원본 데이터를 로깅하는 것이 더 유용할 수 있습니다.
+                // 여기서는 Blob의 타입과 함께 어떤 DTO가 들어갔는지 간접적으로 알 수 있도록 합니다.
+                console.log(`FormData Entry: ${key} = Blob (type: ${value.type}), Original DTO:`, JSON.parse(JSON.stringify(formInput)));
+            } else {
+                console.log(`FormData Entry: ${key} = ${value}`);
+            }
+        }
+
         try {
             if (productUid) {
                 // 수정
+                // console.log("setProductModify 함수를 호출합니다. productUid:", productUid); // <-- 추가된 로그
                 await setProductModify(productUid, formData);
                 navigate("/admin/productAll");
             } else {
                 // 등록
                 const res = await ProductRegist(formData)
-                console.log("ProductRegist 호출 후 결과:", res);
-                alert(res.message);
+                // ProductRegist 함수 내부의 console.log('result') 또는 console.error("등록 에러 발생 !!!") 가 이 아래 로그보다 먼저 찍힐 수 있습니다.
+                // console.log("ProductRegist 함수 호출이 완료되었습니다. 반환된 값(res):", res); // <-- 추가된 로그
+                // console.log("ProductRegist 호출 후 결과:", res); // 이 로그가 안 찍히는 상황이었죠. 바로 위 로그는 찍히는지 확인해보세요.
+                if (res && res.message) { // res 객체와 message 속성이 있는지 확인 후 alert
+                    alert(res.message);
+                } else {
+                    console.error("ProductRegist 응답 객체 또는 message 속성이 유효하지 않습니다:", res);
+                    alert("응답 처리에 문제가 발생했습니다.");
+                }
                 navigate("/adminmypage");
             }
         } catch(err) {
+            console.error("onSubmit 함수 내 try-catch 블록에서 에러가 발생했습니다:", err); // <-- 추가된 로그 (에러 객체 전체 확인)
             console.error("상품 등록 실패:", err.message)
+            // alert("상품 처리 중 오류가 발생했습니다. 문제가 지속되면 관리자에게 문의하세요.");
         }
     };
 

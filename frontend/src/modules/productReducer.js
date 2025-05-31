@@ -17,7 +17,6 @@ export const initialState = {
         productMinParticipants: "",
         productMaxParticipants: "",
         productStatus: null,
-        productType: null,
         productThumbnail : null,
         regionCode : "",
         regionType : "",

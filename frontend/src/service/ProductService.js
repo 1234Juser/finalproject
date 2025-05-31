@@ -169,7 +169,7 @@ const ProductRegist = async (formData) => {
 
         if( response.ok) {
             const result = await response.text();
-            console.log('result')
+            console.log('상품 등록 함수 확인 result----->', result);
             return { ok: true, message: result };
         } else {
             const errorData = await response.json();  // 실패시 JSON 응답 처리

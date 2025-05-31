@@ -44,6 +44,7 @@ public class ProductService {
     private final ReviewRepo reviewRepo;
     private final WishRepo wishRepo;
     private final FileUploadUtils fileUploadUtils;
+    private final ProductDetailRepo productDetailRepo;
     
 
 
@@ -196,7 +197,52 @@ public class ProductService {
             productE.setProductEndDate(endDate);
             productE.setProductUid(newUid);
             productE.setProductThumbnail(productE.getProductThumbnail());     // ← DTO에 설정된 파일명 사용!!
-//            productE.setProductCode(newProductCode); // 생성된 product_code 설정
+
+            // --- 💡 새로운 로직 시작: cityId를 기반으로 해당 ProductDetailEntity 설정 💡 ---
+            if (city != null && city.getCityId() != null) {
+                Long citySpecificProductDetailCode = city.getCityId(); // city.cityId를 ProductDetail의 PK로 사용
+
+                log.info("City ID {}에 해당하는 ProductDetail 정보 조회를 시도합니다. (ProductDetail PK: {})", city.getCityId(), citySpecificProductDetailCode);
+
+                ProductDetailEntity citySpecificProductDetail = productDetailRepo.findById(citySpecificProductDetailCode)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "ID가 " + citySpecificProductDetailCode + "인 ProductDetail 정보를 찾을 수 없습니다. " +
+                                        "cityId (" + city.getCityId() + ")에 해당하는 ProductDetail 데이터가 DB에 있는지 확인해주세요."
+                        ));
+                productE.setProductDetail(citySpecificProductDetail); // 조회한 도시별 상세 정보를 ProductEntity에 연결
+                log.info("City ID {}에 ProductDetail ID {} (제목: {}) 연결 성공.", city.getCityId(), citySpecificProductDetail.getProductDetailCode(), citySpecificProductDetail.getProductInfo().substring(0, Math.min(citySpecificProductDetail.getProductInfo().length(), 30))+"..."); // productInfo 앞부분 로깅
+            } else {
+                // 이 경우는 CityEntity 조회 시 예외가 발생하지 않았으나 city 또는 cityId가 null인 극히 드문 케이스입니다.
+                // 또는, 모든 도시에 대해 ProductDetail을 필수로 연결하지 않을 경우에 대한 처리입니다.
+                log.warn("City 또는 CityId 정보가 없어 ProductDetail을 연결할 수 없습니다. productUid: {}", newUid);
+                // 필요하다면, 여기서 기본 ProductDetail(예: ID 1)을 연결하거나, productDetail 필드를 null로 둘 수 있습니다.
+                // 시연 목적상, 선택된 cityId에 해당하는 ProductDetail이 항상 있다고 가정하고 진행합니다.
+                // 만약 이 상황에서 오류를 발생시키고 싶다면 아래 주석을 해제하세요.
+                // throw new IllegalStateException("City 정보가 유효하지 않아 ProductDetail을 설정할 수 없습니다.");
+            }
+            // --- 💡 새로운 로직 끝 ---
+
+            // --- 💡 동적으로 cityName, countryName, fullLocation 설정 💡 ---
+            String effectiveCityName = "";
+            if (city != null && city.getCityName() != null) { // CityEntity에서 영문 도시명 사용
+                effectiveCityName = city.getCityName();
+            }
+            productE.setCityName(effectiveCityName); // ProductEntity의 cityName 필드에 설정
+
+            String effectiveCountryName = "";
+            if (country != null && country.getCountryName() != null) { // CountryEntity에서 영문 국가명 사용
+                effectiveCountryName = country.getCountryName();
+            }
+            productE.setCountryName(effectiveCountryName); // ProductEntity의 countryName 필드에 설정
+
+            // fullLocation 조합
+            if (!effectiveCityName.isEmpty() && !effectiveCountryName.isEmpty()) {
+                productE.setFullLocation(effectiveCityName + ", " + effectiveCountryName);
+            } else {
+                // 둘 중 하나라도 비어있으면 그냥 합침 (예: 도시명만 있거나, 국가명만 있는 경우 - 실제로는 둘 다 있어야겠지만)
+                productE.setFullLocation(effectiveCityName + effectiveCountryName);
+            }
+            // --- 💡 로직 끝 ---
 
 
             // 6. 데이터 저장
