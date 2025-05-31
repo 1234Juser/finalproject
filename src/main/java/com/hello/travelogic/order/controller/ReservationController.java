@@ -31,6 +31,7 @@ public class ReservationController {
     @GetMapping("/admin/booking")
     public ResponseEntity getAllMemberBookingList(@RequestParam(value="start", defaultValue="0")int start,
                                                   @RequestParam(value="productCode", required=false)Long productCode,
+                                                  @RequestParam(value="orderStatus", required = false) String orderStatus,
                                                   Authentication authentication) {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -40,8 +41,8 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
         }
         Map<String, Object> result;
-        if (productCode != null) {
-            result = orderService.getReservationsByProduct(productCode, start);
+        if (productCode != null || (orderStatus != null && !orderStatus.equalsIgnoreCase("all"))) {
+            result = orderService.getReservationsByProduct(productCode, orderStatus, start);
         } else {
             result = orderService.getAllMemberBookingList(start);
         }
@@ -65,13 +66,6 @@ public class ReservationController {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
                 .getMemberCode();
         return ResponseEntity.ok(orderService.getOldOrders(memberCode));
-    }
-
-    // 예약 상태 실시간 반영(reservationDate이 지난날이 되면 orderStatus가 SCHEDULED에서 COMPLETED로)
-    @GetMapping("/reservations")
-    public ResponseEntity<List<OrderEntity>> getAllReservations() {
-        List<OrderEntity> updatedOrders = orderService.findAllWithAutoUpdate();
-        return ResponseEntity.ok(updatedOrders);
     }
 
     // 한 주문건만 예약 취소가 아니라 관리자는 여러 건의 주문을 동시에 취소 할 수 있어야 하기에
@@ -109,6 +103,7 @@ public class ReservationController {
     @GetMapping("/admin/booking/filter")
     public ResponseEntity<?> getReservationsByProductCode(
             @RequestParam(value = "productCode", required = false) Long productCode,
+            @RequestParam(value = "orderStatus", required = false) String orderStatus,
             @RequestParam(value = "start", defaultValue = "0") int start,
             Authentication authentication) {
 
@@ -120,7 +115,7 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
         }
 
-        Map<String, Object> result = orderService.getReservationsByProduct(productCode, start);
+        Map<String, Object> result = orderService.getReservationsByProduct(productCode, orderStatus, start);
         return ResponseEntity.ok(result);
     }
 

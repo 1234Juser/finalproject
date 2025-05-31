@@ -1,15 +1,22 @@
 import AdminBookingCom from "../../components/booking/AdminBookingCom";
 import {useEffect, useReducer, useState} from "react";
-import {cancelReservations, fetchAllReservations, updateReservationStatus} from "../../service/reservationService";
+import {cancelReservations, fetchAllReservations} from "../../service/reservationService";
 import {initialState, reservationReducer} from "../../modules/reservationModule";
 
 function AdminBookingCon({accessToken}){
     const [state, dispatch] = useReducer(reservationReducer, initialState);
     const [selectedOrders, setSelectedOrders] = useState([]);
     const [start, setStart] = useState(1);
+    const [selectedStatus, setSelectedStatus] = useState("all");
+
     const onClick = (start) => {
         setStart(start);
     }
+
+    const handleStatusChange = (e) => {
+        setStart(1); // 필터 변경 시 1페이지로 초기화
+        setSelectedStatus(e.target.value);
+    };
 
     useEffect(() => {
         if (!accessToken) {
@@ -26,30 +33,10 @@ function AdminBookingCon({accessToken}){
                 return;
             }
             dispatch({ type: "LOADING" });
-            const fetchAndUpdateReservations = async () => {
+
+            const fetchReservations = async () => {
                 try {
-                    const data = await fetchAllReservations(accessToken, start);
-                    console.log("API 응답 확인:", data);
-
-                    // 예약 상태 자동 업데이트 함수
-                    if (data.reservations && data.reservations.length > 0) {
-                        const updatePromises = data.reservations.map((reservation) => {
-                            const reservationDate = new Date(reservation.reservationDate);
-                            const today = new Date();
-
-                            // 예약일이 지났는지 확인
-                            if (reservationDate < today && reservation.orderStatus === "SCHEDULED") {
-                                return updateReservationStatus(accessToken, reservation.orderCode)
-                                    .then(() => console.log(`예약 상태 업데이트 완료: ${reservation.orderCode}`))
-                                    .catch(err => console.error(`예약 상태 업데이트 실패: ${reservation.orderCode}`, err));
-                            }
-                            return Promise.resolve(); // 상태 변경이 필요하지 않은 경우
-                        });
-                        // 모든 상태 업데이트가 완료된 후 로그 출력
-                        await Promise.all(updatePromises);
-                        console.log("모든 예약 상태 업데이트 완료");
-                    }
-
+                    const data = await fetchAllReservations(accessToken, start, selectedStatus);
                     dispatch({type: "FETCH_SUCCESS", payload: data})
                 } catch (err) {
                     if (err.response?.status === 403) {
@@ -62,12 +49,12 @@ function AdminBookingCon({accessToken}){
                 }
             };
             // 비동기 함수
-            fetchAndUpdateReservations();
+            fetchReservations();
         } catch (e) {
             console.error("토큰 디코딩 오류:", e);
             alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
         }
-    }, [accessToken, start]);
+    }, [accessToken, start, selectedStatus]);
 
     const { reservations, loading, currentPage, totalPages } = state;
 
@@ -109,7 +96,6 @@ function AdminBookingCon({accessToken}){
             }
             // 예약 취소 요청
             await cancelReservations(selectedOrders, accessToken);
-            // const response = await cancelReservations(selectedOrders, accessToken);
             alert("예약이 성공적으로 취소되었습니다.");
             setSelectedOrders([]); // 선택 초기화
 
@@ -140,6 +126,8 @@ function AdminBookingCon({accessToken}){
                 onCheck={handleCheck}
                 onSubmit={handleSubmit}
                 onClick={onClick}
+                selectedStatus={selectedStatus}
+                onStatusChange={handleStatusChange}
             />
         </>
     )

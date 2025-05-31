@@ -42,7 +42,7 @@ export async function fetchOldReservations(accessToken) {
 }
 
 // 관리자의 예약 관리
-export async function fetchAllReservations(accessToken, start = 0) {
+export async function fetchAllReservations(accessToken, start = 0, status = "all") {
     if (!accessToken) {
         return;
     }
@@ -51,29 +51,16 @@ export async function fetchAllReservations(accessToken, start = 0) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
         },
+        params: {
+            start: start,
+        },
     };
+    if (status && status !== "all") {
+        config.params.orderStatus = status;
+    }
     try {
         const res = await axios.get(`${path}/admin/booking?start=${start}`, config);
         return res.data;
-    } catch (error) {
-        throw error;
-    }
-}
-
-// 예약일이 지나면 상태변경
-export async function updateReservationStatus(accessToken) {
-    if (!accessToken) {
-        return;
-    }
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-        },
-    };
-    try {
-        const response = await axios.get("/reservations", config);
-        return response.data;
     } catch (error) {
         throw error;
     }
@@ -146,7 +133,7 @@ export async function fetchProductListForFilter(accessToken) {
 
 // 상품별 예약 조회
 // 디폴트인 전체일 경우 /admin/booking으로 요청
-export async function fetchReservationsByProductCode(productCode, accessToken, start = 1) {
+export async function fetchReservationsByProductCode(productCode, accessToken, start = 1, status = "all") {
     if (!accessToken) {
         console.error("accessToken 없음");
         return;
@@ -158,6 +145,9 @@ export async function fetchReservationsByProductCode(productCode, accessToken, s
         },
         params: { start }
     };
+    if (status && status !== "all") {
+        config.params.orderStatus = status;
+    }
     try {
         if (productCode == null) {
             const res = await axios.get(`${path}/admin/booking`, config); // 전체 예약

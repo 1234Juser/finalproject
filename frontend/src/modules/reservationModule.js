@@ -70,14 +70,32 @@ function reservationReducer(state = initialState, action) {
                 ),
             };
         case "ADD_OLD_RESERVATIONS":
+            // return {
+            //     ...state,
+            //     reservations: [
+            //         ...state.reservations,
+            //         ...action.payload.filter(newRes =>
+            //             !state.reservations.some(existing => existing.orderCode === newRes.orderCode)
+            //         )
+            //     ]
+            // };
+            const targetStatus = action.meta?.status;
+            if (!targetStatus) {
+                console.warn("ADD_OLD_RESERVATIONS: meta.status 누락됨");
+                return state;
+            }
+            const normalizedTargetStatus = targetStatus.toUpperCase();
+            const existingOrderCodes = new Set(
+                state.reservations
+                    .filter(res => res.orderStatus?.toUpperCase() === normalizedTargetStatus)
+                    .map(res => res.orderCode)
+            );
+            const newItems = action.payload
+                .filter(r => r.orderStatus?.toUpperCase() === normalizedTargetStatus)
+                .filter(r => !existingOrderCodes.has(r.orderCode));
             return {
                 ...state,
-                reservations: [
-                    ...state.reservations,
-                    ...action.payload.filter(newRes =>
-                        !state.reservations.some(existing => existing.orderCode === newRes.orderCode)
-                    )
-                ]
+                reservations: [...state.reservations, ...newItems],
             };
         case 'CANCEL_RESERVATION_ERROR':
             return { ...state, error: action.payload };
