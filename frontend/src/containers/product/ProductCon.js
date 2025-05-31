@@ -1,9 +1,10 @@
 import {useEffect, useMemo, useState} from "react";
 import ProductCom from "../../components/product/ProductCom";
-import {getProductsByCity, getProductsByCountry} from "../../service/ProductService";
+import {getProductsByCity, getProductsByCountry, toggleWish} from "../../service/ProductService";
 import { useSearchParams } from "react-router-dom";
+import {toast} from "react-toastify";
 
-function ProductCon(){
+function ProductCon({ accessToken }){
 
     const [products, setProducts] = useState([]);
     const [cityName, setCityName] = useState("");
@@ -25,7 +26,7 @@ function ProductCon(){
                 .catch((err) => console.error("상품 조회 오류 (국가):", err));
         } else if (cityId) {
             // cityId가 있을 경우 도시 기반 상품 조회
-            getProductsByCity(cityId)
+            getProductsByCity(cityId, accessToken)
                 .then((data) => {
                     setProducts(data);
                     setOriginalData(data);
@@ -35,8 +36,6 @@ function ProductCon(){
         }
 
     }, [countryId, cityId])
-
-
 
     const handleSort = (type) => {
         setSortBy(type);
@@ -60,10 +59,31 @@ function ProductCon(){
         }
     }, [products, sortBy]);
 
+    const handleWishToggle = async (product) => {
+        try {
+            const result = await toggleWish(product, accessToken);
+            if (result === null) return;
+            const isLiked = result === "LIKED";
+            setProducts((prevProducts) =>
+                prevProducts.map((p) =>
+                    p.productCode === product.productCode
+                        ? { ...p, isWished: isLiked }
+                        : p
+                )
+            );
+
+            toast.success(isLiked ? "찜 등록되었습니다 💖" : "찜이 취소되었습니다 💔");
+        } catch (e) {
+            toast.error("찜 처리 중 오류가 발생했습니다.");
+        }
+    };
+
     return (
         <>
             <ProductCom products={products} cityName={cityName} handleSort={handleSort} handleFilterReset={handleFilterReset}
-                        filteredProducts={filteredProducts}/>
+                        filteredProducts={filteredProducts}
+                        onToggleWish={handleWishToggle}
+            />
         </>
     )
 }

@@ -46,7 +46,8 @@ public class ProductController {
 
     // cityId에 해당하는 투어 상품 조회
     @GetMapping("/city")
-    public ResponseEntity getProductsByCity(@RequestParam("city_id") Long cityId) {
+    public ResponseEntity getProductsByCity(@RequestParam("city_id") Long cityId,
+                                            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
         log.debug("get products by city ID : {}", cityId);
         // cityId에 해당하는 투어 상품 목록을 반환하기 전에 조회수 증가 API 호출
         try {
@@ -56,8 +57,14 @@ public class ProductController {
             log.error("도시 조회수 증가 실패 (cityId: {}): {}", cityId, e.getMessage());
             // 조회수 증가 실패 시에도 투어 상품 목록은 반환
         }
+        // 비로그인 상태를 대비해 memberCode는 null로 초기화
+        Long memberCode = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            memberCode = jwtUtil.getMemberCodeFromToken(authorizationHeader.replace("Bearer ", ""));
+            log.debug("memberCode : {}", memberCode);
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCity(cityId));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsByCity(cityId, memberCode));
     }
 
 

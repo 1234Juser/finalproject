@@ -6,6 +6,7 @@ const ProductCon = React.lazy(() => import("../../containers/product/ProductCon"
 
 function ProductPage() {
     const [minLoadingTimePassed, setMinLoadingTimePassed] = useState(false);
+    const accessToken = localStorage.getItem("accessToken");
 
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -30,7 +31,7 @@ function ProductPage() {
     return (
         <>
             <Suspense fallback={<Loading />}>
-                <ProductCon />
+                <ProductCon accessToken={accessToken} />
             </Suspense>
         </>
     );

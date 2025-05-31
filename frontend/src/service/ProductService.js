@@ -92,10 +92,14 @@ const getProductsByCountry = async (countryId) => {
 
 
 // 도시별 투어 상품 데이터 가져오는 함수
-const getProductsByCity = async (cityId) => {
+const getProductsByCity = async (cityId, accessToken) => {
     try {
+        const headers = accessToken
+            ? { Authorization: `Bearer ${accessToken}` }
+            : {};
         const response = await fetch(`${path}/products/city?city_id=${cityId}`, {
-            method : "GET"
+            method : "GET",
+            headers: headers,
         });
         if (!response.ok) {
             throw new Error(`Error! status: ${response.status}`);
