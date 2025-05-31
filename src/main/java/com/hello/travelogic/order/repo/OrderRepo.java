@@ -93,4 +93,8 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
             @Param("status") OrderStatus status,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    // 관리자의 상품별 예약조회에 상태별 추가
+    Page<OrderEntity> findByProduct_ProductCodeAndOrderStatus(Long productCode, OrderStatus orderStatus, Pageable pageable);
+    Page<OrderEntity> findByOrderStatus(OrderStatus orderStatus, Pageable pageable);
 }

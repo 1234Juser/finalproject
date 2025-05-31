@@ -1,10 +1,8 @@
 import MyBookingCom from "../../components/booking/MyBookingCom";
 import {useEffect, useReducer, useState} from "react";
 import {
-    cancelMyReservation,
-    fetchRecentReservations,
-    fetchOldReservations,
-    fetchOldReservationsByStatus
+    cancelMyReservation, fetchRecentReservations,
+    fetchOldReservations, fetchOldReservationsByStatus
 } from "../../service/reservationService";
 import {initialState, reservationReducer} from "../../modules/reservationModule";
 import {deleteMyReview} from "../../service/reviewService";
@@ -79,7 +77,6 @@ function MyBookingCon({accessToken}){
                         break;
                     }
                 } catch (err) {
-                    console.error("자동 로딩 실패:", err);
                     break;
                 }
             }
@@ -118,7 +115,6 @@ function MyBookingCon({accessToken}){
                         break;
                     }
                 } catch (err) {
-                    console.error("자동 로딩 실패:", err);
                     break;
                 }
             }
@@ -134,15 +130,25 @@ function MyBookingCon({accessToken}){
     const handleLoadOldForSchedule = async () => {
         try {
             const oldData = await fetchOldReservations(accessToken);
-            if (oldData.length > 0) {
-                dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
+            // if (oldData.length > 0) {
+                // dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
+            // 실제로 화면에 추가될 예약만 추출 (SCHEDULED or WAITING_BANK_TRANSFER)
+            const filtered = oldData.filter(r =>
+                ["SCHEDULED", "WAITING_BANK_TRANSFER"].includes(r.orderStatus?.toUpperCase())
+            );
+
+            if (filtered.length > 0) {
+                dispatch({
+                    type: "ADD_OLD_RESERVATIONS",
+                    payload: filtered,
+                    meta: { statusList: ["SCHEDULED", "WAITING_BANK_TRANSFER"] }
+                });
             } else {
                 alert("더 이상 불러올 예약이 없습니다.");
                 setShowMoreSchedule(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
-                // setShowMore(false);
             }
         } catch (err) {
-            console.error("6개월 이전 예약 불러오기 실패", err);
+            alert("6개월 이전 예약 불러오기 실패했습니다.");
         }
     };
     const handleLoadOldForComplete = async () => {
@@ -157,13 +163,17 @@ function MyBookingCon({accessToken}){
                 endDate.format("YYYY-MM-DD")
             );
             if (oldData.length > 0) {
-                dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
+                dispatch({
+                    type: "ADD_OLD_RESERVATIONS",
+                    payload: oldData,
+                    meta: { status: "COMPLETED" }
+                });
             } else {
                 alert("더 이상 불러올 예약이 없습니다.");
                 setShowMoreComplete(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
             }
         } catch (err) {
-            console.error("6개월 이전 예약 불러오기 실패", err);
+            alert("6개월 이전 예약 불러오기 실패했습니다.");
         }
     };
     const handleLoadOldForCancel = async () => {
@@ -178,13 +188,17 @@ function MyBookingCon({accessToken}){
                 endDate.format("YYYY-MM-DD")
             );
             if (oldData.length > 0) {
-                dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
+                dispatch({
+                    type: "ADD_OLD_RESERVATIONS",
+                    payload: oldData,
+                    meta: { status: "CANCELED" }
+                });
             } else {
                 alert("더 이상 불러올 예약이 없습니다.");
                 setShowMoreCancel(false);  // 이걸로 더 이상 버튼 안 뜨게 제어
             }
         } catch (err) {
-            console.error("6개월 이전 예약 불러오기 실패", err);
+            alert("6개월 이전 예약 불러오기 실패했습니다.");
         }
     };
 
@@ -202,18 +216,15 @@ function MyBookingCon({accessToken}){
                 })
                 .catch(err => {
                     alert("예약 취소 중 오류가 발생했습니다.");
-                    console.error(err);
                 });
         }
     }
 
     const openReviewModal = (orderCode) => {
-        console.log("openReviewModal 호출됨 - orderCode:", orderCode);
         setSelectedOrderCode(orderCode);
     };
 
     const closeReviewModal = () => {
-        console.log("closeReviewModal 호출됨");
         setSelectedOrderCode(null);
     };
 
@@ -231,7 +242,6 @@ function MyBookingCon({accessToken}){
             closeReviewModal();  // 모달 닫기
         } catch (error) {
             alert("리뷰 삭제에 실패했습니다.");
-            console.error("리뷰 삭제 오류:", error);
         }
     };
 

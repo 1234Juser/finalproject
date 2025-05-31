@@ -1,8 +1,6 @@
 import { useEffect, useReducer, useState } from "react";
-import {
-    cancelReservations,
-    fetchReservationsByProductCode,
-    fetchProductListForFilter, updateReservationStatus
+import {cancelReservations,
+    fetchReservationsByProductCode, fetchProductListForFilter
 } from "../../service/reservationService";
 import { initialState, reservationReducer } from "../../modules/reservationModule";
 import AdminBookingByProductCom from "../../components/booking/AdminBookingByProductCom";
@@ -13,9 +11,15 @@ function AdminBookingByProductCon({accessToken}) {
     const [start, setStart] = useState(1);
     const [selectedProductCode, setSelectedProductCode] = useState(null);
     const [products, setProducts] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState("all");
 
     const onClick = (page) => {
         setStart(page);
+    };
+
+    const handleStatusChange = (e) => {
+        setStart(1); // 필터 변경 시 1페이지로 초기화
+        setSelectedStatus(e.target.value);
     };
 
     // 상품 목록 불러오기
@@ -26,7 +30,6 @@ function AdminBookingByProductCon({accessToken}) {
         }
         fetchProductListForFilter(accessToken)
             .then((res) => {
-                console.log("상품 필터용 product 목록:", res);
                 setProducts(res);
             })
             .catch((e) => console.error("상품 목록 불러오기 실패", e));
@@ -47,7 +50,6 @@ function AdminBookingByProductCon({accessToken}) {
                     return;
                 }
             } catch (e) {
-                console.error("토큰 디코딩 오류:", e);
                 alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
                 return;
             }
@@ -56,42 +58,16 @@ function AdminBookingByProductCon({accessToken}) {
             return;
         }
 
-        console.log("선택된 productCode:", selectedProductCode);
-        console.log("페이지:", start);
-
         dispatch({ type: "LOADING" });
 
-        fetchReservationsByProductCode(selectedProductCode, accessToken, start)
+        fetchReservationsByProductCode(selectedProductCode, accessToken, start, selectedStatus)
             .then((data) => {
-                console.log("예약 데이터 응답:", data);
                 dispatch({ type: "FETCH_SUCCESS", payload: data });
-
-                // 예약 상태 자동 업데이트 함수
-                if (data.reservations && data.reservations.length > 0) {
-                    const updatePromises = data.reservations.map((reservation) => {
-                        const reservationDate = new Date(reservation.reservationDate);
-                        const today = new Date();
-
-                        // 예약일이 지났는지 확인
-                        if (reservationDate < today && reservation.orderStatus === "SCHEDULED") {
-                            return updateReservationStatus(accessToken, reservation.orderCode)
-                                .then(() => console.log(`예약 상태 업데이트 완료: ${reservation.orderCode}`))
-                                .catch(err => console.error(`예약 상태 업데이트 실패: ${reservation.orderCode}`, err));
-                        }
-
-                        return Promise.resolve(); // 상태 변경이 필요하지 않은 경우
-                    });
-
-                    // 모든 상태 업데이트가 완료된 후 로그 출력
-                    Promise.all(updatePromises).then(() => console.log("모든 예약 상태 업데이트 완료"));
-                }
-
             })
             .catch((err) => {
-                console.error("예약 조회 실패:", err.response?.data || err.message);
                 dispatch({ type: "FETCH_ERROR", payload: err.message });
             });
-    }, [selectedProductCode, accessToken, start]);      // 상품이 바뀔 때마다 조회
+    }, [selectedProductCode, accessToken, start, selectedStatus]);      // 상품이 바뀔 때마다 조회
 
     const { reservations, loading, currentPage, totalPages } = state;
 
@@ -138,7 +114,6 @@ function AdminBookingByProductCon({accessToken}) {
             const updated = await fetchReservationsByProductCode(selectedProductCode, accessToken, start);
             dispatch({ type: "FETCH_SUCCESS", payload: updated });
         } catch (err) {
-            console.error("예약 취소 실패:", err.response?.data || err.message);
             alert("예약 취소에 실패했습니다.");
         }
     };
@@ -162,6 +137,8 @@ function AdminBookingByProductCon({accessToken}) {
             onClick={onClick}
             selectedProductCode={selectedProductCode}
             onProductChange={handleProductChange}
+            selectedStatus={selectedStatus}
+            onStatusChange={handleStatusChange}
         />
     );
 }

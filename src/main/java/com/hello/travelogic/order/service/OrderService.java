@@ -138,27 +138,6 @@ public class OrderService {
     }
 
     @Transactional
-    public List<OrderEntity> findAllWithAutoUpdate() {
-        List<OrderEntity> orders = orderRepo.findAll();
-
-        for (OrderEntity order : orders) {
-
-            Hibernate.initialize(order.getOption());
-            Hibernate.initialize(order.getMember());
-
-            LocalDate resDate = order.getOption().getReservationDate();
-            LocalDate today = LocalDate.now();
-
-            // 예약일이 지났고 아직 상태가 SCHEDULED인 경우
-            if (resDate != null && resDate.isBefore(today) && order.getOrderStatus() == OrderStatus.SCHEDULED) {
-                order.setOrderStatus(OrderStatus.COMPLETED);
-                orderRepo.save(order);
-            }
-        }
-        return orders;
-    }
-
-    @Transactional
     public void cancelOrdersByAdmin(List<Long> orderCodeList) {
 
         for (Long orderCode : orderCodeList) {
@@ -225,12 +204,26 @@ public class OrderService {
         paymentService.cancelPaymentByOrderCode(orderCode);
     }
 
-    // 필터링
-    public Map<String, Object> getReservationsByProduct(Long productCode, int start) {
+    // 상품별 + 상태별 예약조회 필터링
+    public Map<String, Object> getReservationsByProduct(Long productCode, String orderStatus, int start) {
         int page = (start <= 0) ? 0 : start - 1;
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "orderDate"));
 
-        Page<OrderEntity> pageResult = orderRepo.findByProduct_ProductCode(productCode, pageable);
+        Page<OrderEntity> pageResult;
+
+        boolean hasProduct = (productCode != null);
+        boolean hasStatus = (orderStatus != null && !orderStatus.equalsIgnoreCase("all"));
+
+        if (hasProduct && hasStatus) {
+            pageResult = orderRepo.findByProduct_ProductCodeAndOrderStatus(
+                    productCode, OrderStatus.valueOf(orderStatus), pageable);
+        } else if (hasProduct) {
+            pageResult = orderRepo.findByProduct_ProductCode(productCode, pageable);
+        } else if (hasStatus) {
+            pageResult = orderRepo.findByOrderStatus(OrderStatus.valueOf(orderStatus), pageable);
+        } else {
+            pageResult = orderRepo.findAll(pageable);
+        }
 
         List<OrderDTO> dtoList = pageResult.getContent().stream()
                 .map(order -> {
@@ -251,10 +244,6 @@ public class OrderService {
     public List<ProductDTO> getProductListForFilter() {
         return productRepo.findAll().stream()
                 .sorted(Comparator.comparing(ProductEntity::getProductTitle))
-                // 대소문자 무시
-//                .sorted(Comparator.comparing(
-//                        product -> product.getProductTitle().toLowerCase(),
-//                        String.CASE_INSENSITIVE_ORDER))
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
     }
@@ -389,5 +378,27 @@ public class OrderService {
                     PaymentEntity payment = paymentRepo.findTopByOrder_OrderCode(order.getOrderCode()).orElse(null);
                     return new OrderDTO(order, payment);
                 });
+    }
+
+    // 예약상태 실시간 반영. 어차피 당일 취소 불가능이니까 자정으로 설정
+    @Scheduled(cron = "0 0 0 * * *") // 초 분 시 일 월 요일
+    @Transactional
+    public void updateReservationStatuses() {
+        List<OrderEntity> orders = orderRepo.findAll();
+        LocalDate today = LocalDate.now();
+
+        int updatedCount = 0;
+
+        for (OrderEntity order : orders) {
+            Hibernate.initialize(order.getOption());
+            if (order.getOrderStatus() == OrderStatus.SCHEDULED) {
+                LocalDate resDate = order.getOption().getReservationDate();
+                if (resDate != null && resDate.isBefore(today)) {
+                    order.setOrderStatus(OrderStatus.COMPLETED);
+                    updatedCount++;
+                }
+            }
+        }
+        log.info("🕛 스케줄러: {}건의 예약 상태를 COMPLETED로 자동 갱신함", updatedCount);
     }
 }
