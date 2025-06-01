@@ -31,7 +31,7 @@ function InquiryChatCon({ isVisible }) {
         currentUser,
         icId,
         isConnected,
-        isUserLoggedIn, error
+        isUserLoggedIn,
     } = state;
 
     const stompClientRef = useRef(null);
@@ -92,7 +92,7 @@ function InquiryChatCon({ isVisible }) {
                 // console.log("Initializing chat room...");
 
                 try {
-                    const data = await createInquiryChat();
+                    await createInquiryChat();
                 } catch (error) {
                     console.error("Error initializing chat room:", error);
                 }

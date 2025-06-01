@@ -27,7 +27,7 @@ function ProductDetailCon({productCode, initialWishState, accessToken}) {
                 dispatch({ type: "TOGGLE_WISH", payload: data.isWished });
             })
             .catch((err) => console.error("상품 조회 오류 (국가):", err));
-    }, [productUid])
+    }, [productUid, accessToken])
 
     // console.log("product----->", product);
 
