@@ -1,37 +1,44 @@
 import styled from 'styled-components';
 
 const HeaderWrapBlock = styled.div`
-    //top: 0;
-    // left: 400px;
-    // right: 400px;
-    position: relative;
+    position: relative; // 내부 absolute 요소들의 기준점 역할 유지 가능
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%; // 항상 전체 가로 너비를 차지하도록 설정
+    box-sizing: border-box; // padding과 border가 width 계산에 포함되도록 함
+
+    // 기본 데스크톱 패딩 (1440px 초과 시)
+    // 기존 padding: 0 100px; 을 사용하거나, 가장 큰 화면 기준으로 설정합니다.
+    // 여기서는 1440px 분기점 바로 위를 기준으로 설정하거나, 일관된 값을 사용합니다.
+    // 예시로, 가장 넓은 화면에서는 양쪽 100px 패딩을 기본으로 가정하겠습니다.
     padding: 0 100px;
-    //z-index : 1;    // 스크롤 내렸을 때 메인화면인 헤드 안으로 들어가게
-    background-color : white;   // 헤더에 색깔 넣으면 위로 올라간 메인화면은 색깔에 가려져 안보임
-    // width: calc(100% - 800px);
-    border-bottom : 1px solid rgba( 0, 0, 0, 0.1 );
+
+    // z-index: 1; // 필요에 따라 주석 해제하여 사용 (예: 스크롤 시 다른 요소와의 관계)
+
     @media (max-width: 1440px) {
-        left: 300px;  /* 화면이 1440px보다 작으면 좌측 공백을 300px로 줄임 */
-        right: 300px; /* 우측 공백을 300px로 줄임 */
-        width: calc(100% - 600px); /* 600px만큼 공백을 줄임 */
+        // 화면 너비 1440px 이하: 기존 left/right 300px은 매우 넓은 여백입니다.
+        // SearchContainer 등 내부 요소 패딩과 중복되지 않도록 적절히 조정합니다.
+        // 여기서는 기존 의도(양쪽 큰 여백)를 살리되, 과도하지 않게 설정합니다.
+        // 예: 양쪽 80px 패딩 (데스크톱 헤더/네비 패딩보다 넓게 설정)
+        padding: 0 80px;
     }
 
     @media (max-width: 1024px) {
-        left: 150px;  /* 화면이 1024px보다 작으면 좌측 공백을 150px로 줄임 */
-        right: 150px; /* 우측 공백을 150px로 줄임 */
-        width: calc(100% - 300px); /* 300px만큼 공백을 줄임 */
+        // 화면 너비 1024px 이하 (태블릿 및 작은 데스크톱): 기존 left/right 150px 참고
+        // 헤더/네비의 패딩(24px~32px)을 고려하여 일관성 있게 또는 약간 더 넓게 설정합니다.
+        padding: 0 40px;
     }
 
-    @media (max-width: 768px) {
-        left: 50px;   /* 화면이 768px보다 작으면 좌측 공백을 50px로 줄임 */
-        right: 50px;  /* 우측 공백을 50px로 줄임 */
-        width: calc(100% - 100px); /* 100px만큼 공백을 줄임 */
+    @media (max-width: 767px) { // 기존 768px 분기점과 거의 동일 (모바일)
+        // 화면 너비 767px 이하 (모바일): 기존 left/right 50px 참고
+        // 헤더/네비의 모바일 패딩(16px)과 유사하게 설정합니다.
+        padding: 0 20px;
     }
 
     @media (max-width: 480px) {
-        left: 0;      /* 화면이 480px보다 작으면 좌측 공백을 0으로 설정 */
-        right: 0;     /* 우측 공백을 0으로 설정 */
-        width: 100%;  /* 공백을 완전히 없애고, 너비를 100%로 설정 */
+        // 화면 너비 480px 이하 (작은 모바일): 기존 left/right 0, width 100% 참고
+        // 거의 화면 끝까지 콘텐츠가 오도록 패딩을 최소화합니다.
+        padding: 0 15px;
     }
 `;
 

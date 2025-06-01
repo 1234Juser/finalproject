@@ -5,76 +5,97 @@ import styled from 'styled-components';
 import {useNavigate} from "react-router-dom";
 
 const RankingContainer = styled.div`
-    margin-left: 20px; // 검색창과의 간격 조절
-    font-size: 0.9em;
+    /* margin-left: 20px; // 부모 SearchContainer에서 gap으로 간격 조절하므로 제거 */
+    font-size: 0.9em; // 기본 폰트 크기
     color: #555;
-    background-color: #fff; // 배경색 추가
-    padding: 10px 20px; // 패딩 추가
-    border-radius: 20px; // 둥근 모서리
-    width: 180px; /* 고정 너비 설정 (필요에 따라 값 조정) */
-    min-width: 180px; /* 최소 너비 설정 */
-    position: relative; /* 자식 요소의 absolute positioning 기준 */
-    z-index: 100; /* 다른 요소 위에 오도록 z-index 설정 */
+    background-color: #fff;
+    padding: 10px 15px; // 기본 패딩 (데스크톱)
+    border-radius: 20px;
+
+    width: auto; // 내용에 따라 너비 결정
+    min-width: 140px; // 최소 너비 (데스크톱에서 너무 작아지지 않도록)
+    max-width: 180px; // 최대 너비 (데스크톱)
+    box-sizing: border-box;
+
+    position: relative;
+    z-index: 100; // 드롭다운 목록이 다른 요소 위에 오도록
+
+    @media (max-width: 1024px) { // 1024px 이하 (태블릿 등)
+        font-size: 0.85em;
+        padding: 8px 12px;
+        min-width: 120px;
+        max-width: 160px;
+    }
+
+    @media (max-width: 767px) { // 모바일
+        font-size: 0.8em;
+        padding: 6px 10px;
+        min-width: 100px; // 모바일에서 최소 너비
+        max-width: 140px; // 모바일에서 최대 너비
+        // 모바일에서 공간이 부족할 경우, SearchContainer 설정에 따라 이 컴포넌트가 안보이거나 더 작아질 수 있습니다.
+        // 또는 여기서 display: none 처리를 할 수도 있습니다. 현재는 보이도록 유지.
+    }
 `;
 
 const RankingHeader = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-between; // 제목과 버튼 사이에 공간
-    cursor: pointer; // 헤더 클릭 가능하도록
-    padding-bottom: 5px;
-    border-bottom: 1px solid #eee; // 구분선 추가
-    /* 랭킹이 숨겨졌을 때 하단 보더 제거 */
+    justify-content: space-between;
+    cursor: pointer;
+    padding-bottom: 5px; // 기본값
+    border-bottom: 1px solid #eee;
+
     ${props => !props.$isVisible && `
         border-bottom: none;
-        padding-bottom: 0;
+        padding-bottom: 0; // isVisible이 false일 때 padding-bottom을 0으로 명확히 설정
     `}
 `;
 
 const RankingTitle = styled.strong`
-    color: #333; // 글자색 변경
+    color: #333;
+    white-space: nowrap; // 타이틀 줄바꿈 방지
+
+    @media (max-width: 767px) {
+        font-size: 0.95em; // RankingContainer의 font-size에 상대적
+    }
 `;
 
 const RankingList = styled.ul`
     list-style: none;
     padding: 0;
-    margin: 10px 0 0 0; /* 제목과 도시 이름 간격 조정 */
-    overflow: hidden; /* 숨겨진 항목 감추기 */
-    height: ${props => props.$isVisible ? 'auto' : 'auto'}; /* 숨김 상태일 때 높이 자동 */
+    margin: 0; // isVisible 상태에 따라 아래에서 margin-top 조절
+    overflow: hidden;
+    height: auto; // 항상 auto로 두고, display 여부로 제어하는 것이 더 간단할 수 있음
 
-
-    /* 랭킹이 보일 때만 absolute 스타일 적용 */
     ${props => props.$isVisible && `
-        position: absolute; /* 헤더 아래로 오버레이 */
-        top: 100%; /* 헤더 바로 아래에 위치 */
-        left: 0; /* 컨테이너의 왼쪽 정렬 */
-        background-color: #f8f9fa; /* 배경색 유지 */
-        border-radius: 0 0 20px 20px; /* 하단 모서리만 둥글게 */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-        width: 100%; /* 부모 컨테이너 너비에 맞춤 */
-        padding-top: 5px; /* 펼쳤을 때 상단 여백 */
+        position: absolute;
+        top: calc(100% - 1px); // border-bottom 두께 고려하여 살짝 올림
+        left: 0;
+        background-color: #f8f9fa;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%; // RankingContainer 너비에 맞춤
+        padding-top: 10px; // 펼쳤을 때 상단 목록과 헤더 사이 간격
+        margin-top: 1px; // border-bottom 위로 올라가도록
     `}
 
-        /* 랭킹이 숨겨졌을 때 스타일 */
     ${props => !props.$isVisible && `
-        margin-top: 0;
+        margin-top: 5px; // 기본 상태에서 헤더와 첫 아이템 간격 (펼쳐지지 않았을 때)
     `}
 `;
 
 
 const RankingItem = styled.li`
-    margin-bottom: 8px; // 세로 간격 조절
+    margin-bottom: 8px;
     &:last-child {
         margin-bottom: 0;
-        /* 랭킹이 보일 때만 하단 패딩 추가 */
         ${props => props.$isVisible && `
-            padding-bottom: 10px;
+            padding-bottom: 10px; // 펼쳐졌을 때 마지막 아이템 하단 여백
         `}
     }
-    cursor: pointer; // 클릭 가능한 항목임을 표시
-    transition: all 0.3s ease-in-out; // 모든 속성에 애니메이션 적용
-    padding: 0 20px; /* 좌우 패딩 추가 (컨테이너 패딩과 맞춤) */
-
+    cursor: pointer;
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out; // color 추가
+    padding: 0 15px; // RankingContainer의 좌우 패딩과 일치시킴 (데스크톱)
 
     display: flex;
     align-items: center;
@@ -82,23 +103,35 @@ const RankingItem = styled.li`
     .rank-number {
         font-weight: bold;
         margin-right: 5px;
-        color: #007bff; // 순위 숫자 색상
-        min-width: 20px; // 순위 숫자 최소 너비 설정 (정렬을 위해)
-        text-align: left; // 순위 숫자 왼쪽 정렬
+        color: #007bff;
+        min-width: 20px;
+        text-align: left;
     }
 
     .city-name {
-        flex-grow: 1; // 남은 공간 채우기
-        text-align: left; // 도시 이름 왼쪽 정렬
-        overflow: hidden; /* 내용 넘칠 경우 숨김 */
-        text-overflow: ellipsis; /* 넘치는 내용 ...으로 표시 */
-        white-space: nowrap; /* 줄바꿈 방지 */
+        flex-grow: 1;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
-
     &:hover {
-        color: #0056b3; // 호버 시 색상 변경
-        transform: translateX(5px); // 호버 시 살짝 오른쪽으로 이동
+        color: #0056b3;
+        transform: translateX(3px); // 호버 효과 약간 줄임
+    }
+
+    @media (max-width: 1024px) { // 1024px 이하
+        padding: 0 12px; // RankingContainer 패딩과 일치
+        margin-bottom: 7px;
+    }
+    @media (max-width: 767px) { // 모바일
+        padding: 0 10px; // RankingContainer 패딩과 일치
+        margin-bottom: 6px;
+        .rank-number {
+            min-width: 15px; // 폰트 크기 작아짐에 따라 조절
+            margin-right: 4px;
+        }
     }
 `;
 
