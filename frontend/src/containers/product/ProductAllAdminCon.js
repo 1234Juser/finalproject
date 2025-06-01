@@ -8,7 +8,6 @@ function ProductAllAdminCon() {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
-    const [totalItems, setTotalItems] = useState(0);
 
     // 현재 보여지는 페이지 범위 (=버튼 갯수 5개로 설정)
     const [pageRange, setPageRange] = useState({
@@ -91,7 +90,6 @@ function ProductAllAdminCon() {
                 setProducts(data.productList || []);
                 setCurrentPage(data.currentPage || 1);
                 setTotalPages(data.totalPages || 0);
-                setTotalItems(data.totalItems || 0);
             })
             .catch((err) => console.error("상품 조회 오류", err));
     };
@@ -112,6 +110,7 @@ function ProductAllAdminCon() {
             try {
                 const response = await ProductDelete(productUid);
                 if (response.ok) {
+                    // console.log('삭제 완료', response.ok);
                     alert("삭제가 완료되었습니다!");
                     // setTimeout(() => {
                     //     fetchProducts(currentPage);

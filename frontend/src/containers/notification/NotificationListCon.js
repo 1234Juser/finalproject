@@ -7,7 +7,6 @@ import {
     markAllNotificationsAsRead,
     markNotificationAsRead
 } from "../../service/notificationService";
-import {useNavigate} from "react-router-dom";
 
 
 const authInfo = () => {
@@ -27,7 +26,6 @@ const authInfo = () => {
 function NotificationListCon(){
     const [notifications, setNotifications] = useState([]);
 
-    const navigate = useNavigate();
 
 
 

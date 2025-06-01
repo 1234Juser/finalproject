@@ -1,12 +1,4 @@
-import styled, { keyframes, css } from 'styled-components'; // css 임포트 추가
-
-// Fade in and fade out 애니메이션 정의
-const fadeInOut = keyframes`
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-`;
+import styled from 'styled-components';
 
 export const ChatWrapper = styled.div`
   width: 400px;

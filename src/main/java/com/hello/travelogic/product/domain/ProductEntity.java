@@ -93,7 +93,7 @@ public class ProductEntity {
     @Column(name = "full_location", nullable = false, length = 100)
     private String fullLocation;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_detail_code")
     private ProductDetailEntity productDetail;      // 상품 N - 상품상세 1 관계
 

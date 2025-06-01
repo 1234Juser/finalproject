@@ -386,33 +386,31 @@ public class ProductService {
     @Transactional
     public int productDelete ( String productUid ) {
 
-        log.debug ("상품 삭제 요청 productUid: {}", productUid);
+//        log.debug ("상품 삭제 요청 productUid: {}", productUid);
 
         // 엔티티 먼저 조회
         ProductEntity productEntity = productRepo.findByProductUid (productUid)
                                       .orElseThrow(() -> new EntityNotFoundException(">>>>>일치하는 UID 없음. productUid 확인하세요: " + productUid));
         
-        log.debug ("productEntity 확인 : {}", productEntity);
+//        log.debug ("productEntity 확인 : {}", productEntity);
+        String s3ThumbnailUrl = productEntity.getProductThumbnail();
         
-        // 엔티티 삭제 & 관련 파일 삭제
-        if (productEntity != null) {
-            productRepo.delete(productEntity);
+        // 1. S3 파일 먼저 삭제 시도
+        if (s3ThumbnailUrl != null && !s3ThumbnailUrl.isEmpty()) {
             try {
-                fileUploadUtils.deleteS3File(productEntity.getProductThumbnail()); // S3에서 파일 삭제 호출
-                log.debug("S3 파일 삭제 성공: {}", productEntity.getProductThumbnail());
-                
+                fileUploadUtils.deleteS3File (s3ThumbnailUrl);
+                log.debug ("S3 파일 삭제 성공: {}", s3ThumbnailUrl);
             } catch (Exception e) {
-                // S3 파일 삭제 실패 시에도 상품 데이터는 삭제할지 여부는 비즈니스 로직에 따라 결정
-                // 여기서는 에러를 로깅하고 진행합니다.
-                log.error("S3 파일 삭제 중 오류 발생: {}", e.getMessage(), e);
-                 throw new RuntimeException("S3 파일 삭제 실패", e);
+                log.error ("S3 파일 삭제 중 오류 발생. DB 작업이 진행되지 않습니다.: {}", e.getMessage (), e);
+                throw new RuntimeException ("S3 파일 삭제 실패하여 상품 삭제를 중단합니다.", e);
             }
-
+            
+        }
+            // 2. S3 삭제 성공 또는 삭제할 파일이 없는 경우 DB 삭제 진행
+            productRepo.delete(productEntity);
             log.debug("DB에서 상품 레코드 삭제 성공: {}", productUid);
             return 1;
-        }
         
-        return 0;
     }
     
     // 명세서 페이지에 띄울 랜덤 상품 광고
