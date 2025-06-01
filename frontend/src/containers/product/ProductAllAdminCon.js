@@ -112,6 +112,7 @@ function ProductAllAdminCon() {
             try {
                 const response = await ProductDelete(productUid);
                 if (response.ok) {
+                    // console.log('삭제 완료', response.ok);
                     alert("삭제가 완료되었습니다!");
                     // setTimeout(() => {
                     //     fetchProducts(currentPage);

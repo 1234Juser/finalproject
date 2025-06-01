@@ -5,6 +5,15 @@ const getProductsList = async (currentPage) => {
     const response = await fetch(`${path}/products?start=${currentPage}`, {
         method : "GET"
     });
+
+/*    if (!response.ok) {
+        // 403 Forbidden과 같은 HTTP 에러 처리
+        // 서버에서 에러 메시지를 텍스트로 보냈을 수도 있습니다.
+        const errorText = await response.text();
+        console.error(`Error fetching products: ${response.status} - ${response.statusText}`, errorText);
+        throw new Error(`상품 목록을 가져오는 데 실패했습니다. 상태: ${response.status}, 메시지: ${errorText}`);
+    }*/
+
     return response.json();
 }
 

@@ -44,10 +44,12 @@ function ProductRegCon() {
     }, [productUid]);
 
 
+/*
     // formInput 로그용
     useEffect(() => {
         console.log("-------formInput 변경 확인하기-------", formInput);
     }, [formInput]);
+*/
 
 
     // formInput 상태 관리
