@@ -22,15 +22,20 @@ function EventDetailCom({ event, onBack, onEdit, onDelete }) {
     }
 
     // 이미지 경로 처리
-    let imgSrc = "/img/event/default_event.jpg";
-    if (event.eventImg) {
-        if (event.eventImg.startsWith("event/")) {
-            imgSrc = `/img/${event.eventImg}`;
-        } else {
-            imgSrc = `/events/${event.eventImg}`; // WebConfig.java의 /events/** 핸들러에 맞게 수정
-        }
-    }
+    // let imgSrc = "/img/event/default_event.jpg";
+    // if (event.eventImg) {
+    //     if (event.eventImg.startsWith("event/")) {
+    //         imgSrc = `/img/${event.eventImg}`;
+    //     } else {
+    //         imgSrc = `/events/${event.eventImg}`; // WebConfig.java의 /events/** 핸들러에 맞게 수정
+    //     }
+    // }
 
+    // 이미지 경로 처리
+        let imgSrc = "/img/event/default_event.jpg"; // 기본 이미지
+        if (event.eventImg) {
+            imgSrc = event.eventImg; // S3 URL을 그대로 사용
+        }
 
 
     // 상태 뱃지
