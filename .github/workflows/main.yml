@@ -44,8 +44,10 @@ jobs:
         run: echo "The CloudFront ID is ->'${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}'<-"
 
       - name: Invalidate CloudFront
+        env:
+          DIST_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: aws cloudfront create-invalidation \
-          --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
+          --distribution-id "$DIST_ID" \
           --paths "/*"
 
   # ================= BACKEND DEPLOYMENT =================
