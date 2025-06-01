@@ -43,7 +43,6 @@ import {
     LikeCount,
     OtherLikeButton,
     OtherLikeCount,
-    PostImage
 } from "../../style/companion/CompanionDetailStyle";
 import { useNavigate } from "react-router-dom";
 import FollowModal from "../companion/FollowModalCom";
@@ -309,11 +308,16 @@ function CompanionDetailCom({
             const imageNumber = parseInt(imageNumberStr, 10);
             const imageIndex = imageNumber - 1; // <이미지1>은 배열의 0번 인덱스에 해당
 
+            // if (companion.companionImageUrls[imageIndex]) {
+            //     const url = companion.companionImageUrls[imageIndex];
+            //     // PostImage 컴포넌트의 스타일과 유사하게 인라인 스타일을 적용합니다.
+            //     // 필요시 PostImage 컴포넌트의 실제 스타일을 확인하고 조정해주세요.
+            //     return `<img src="/${url}" alt="게시물 이미지 ${imageNumber}" style="width: 500px; height: 300px; object-fit: cover; display: block; margin-bottom: 20px; margin-left: auto; margin-right: auto;" />`;
+            // }
             if (companion.companionImageUrls[imageIndex]) {
                 const url = companion.companionImageUrls[imageIndex];
-                // PostImage 컴포넌트의 스타일과 유사하게 인라인 스타일을 적용합니다.
-                // 필요시 PostImage 컴포넌트의 실제 스타일을 확인하고 조정해주세요.
-                return `<img src="/${url}" alt="게시물 이미지 ${imageNumber}" style="width: 500px; height: 300px; object-fit: cover; display: block; margin-bottom: 20px; margin-left: auto; margin-right: auto;" />`;
+                // src에서 맨 앞의 '/' 를 제거하여 완전한 S3 URL을 그대로 사용합니다.
+                return `<img src="${url}" alt="게시물 이미지 ${imageNumber}" style="width: 500px; height: 300px; object-fit: cover; display: block; margin-bottom: 20px; margin-left: auto; margin-right: auto;" />`;
             }
             return match; // 해당 번호의 이미지가 없으면 플레이스홀더 텍스트를 그대로 반환
         });

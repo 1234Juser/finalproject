@@ -8,8 +8,8 @@ import com.hello.travelogic.companion.repository.CompanionCommentRepository;
 import com.hello.travelogic.companion.repository.CompanionRepository;
 import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.member.repository.MemberRepository;
-import com.hello.travelogic.utils.FileUtil;
 import com.hello.travelogic.utils.JwtUtil;
+import com.hello.travelogic.utils.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,7 +38,8 @@ public class CompanionService {
     private final CompanionCommentRepository companionCommentRepository;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
-    private final FileUtil fileUtil; // FileUtil 주입
+//    private final FileUtil fileUtil; // FileUtil 주입
+    private final S3Util s3Util;
 
     // 게시글 목록 조회 (누구나 가능, 공지사항 상단, 최신순)
     public Page<CompanionListDTO> getAllCompanions(String searchKeyword, String searchType, Pageable pageable) {
@@ -118,13 +119,23 @@ public class CompanionService {
             }
         }
         //이미지로직
+//        List<String> imageUrls = null;
+//        if (images != null && !images.isEmpty()) {
+//            try {
+//                imageUrls = fileUtil.saveFiles(images);
+//            } catch (IOException e) {
+//                log.error("이미지 파일 저장 중 오류 발생", e);
+//                // 에러 처리 로직 추가 (예: 예외 발생시키거나, 파일 저장 실패를 알림)
+//                throw new RuntimeException("이미지 파일 저장에 실패했습니다.", e);
+//            }
+//        }
         List<String> imageUrls = null;
-        if (images != null && !images.isEmpty()) {
+        if (images != null && !images.stream().allMatch(MultipartFile::isEmpty)) {
             try {
-                imageUrls = fileUtil.saveFiles(images);
+                // s3Util이 S3에 파일을 저장하고 전체 URL 목록을 반환합니다.
+                imageUrls = s3Util.saveFiles(images);
             } catch (IOException e) {
-                log.error("이미지 파일 저장 중 오류 발생", e);
-                // 에러 처리 로직 추가 (예: 예외 발생시키거나, 파일 저장 실패를 알림)
+                log.error("S3 이미지 파일 저장 중 오류 발생", e);
                 throw new RuntimeException("이미지 파일 저장에 실패했습니다.", e);
             }
         }
@@ -187,50 +198,74 @@ public class CompanionService {
             currentImageUrls.addAll(Arrays.asList(companion.getCompanionImageUrls().split(",")));
         }
 
-        // 1. 삭제 요청된 기존 이미지 처리
-        if (deletedImageUrls != null && !deletedImageUrls.isEmpty()) {
-            List<String> urlsToRemoveFromFileSystem = new ArrayList<>();
-            for (String deletedUrl : deletedImageUrls) {
-                // DB에 저장된 URL 형식과 deletedUrl 형식이 일치해야 합니다.
-                // companionImageUrls 에는 "upload/community/filename.jpg" 형태로 저장되어 있다고 가정합니다.
-                // deletedUrl도 동일한 형식으로 넘어온다고 가정합니다. (프론트에서 그렇게 보내도록 수정했음)
-                if (currentImageUrls.contains(deletedUrl)) {
-                    currentImageUrls.remove(deletedUrl);
-                    urlsToRemoveFromFileSystem.add(deletedUrl);
-                    log.info("DB에서 이미지 URL 제거 예정: {}", deletedUrl);
-                } else {
-                    log.warn("삭제 요청된 이미지 URL '{}'이(가) 기존 이미지 목록에 없어 DB에서 제거하지 못했습니다.", deletedUrl);
-                }
-            }
+//        // 1. 삭제 요청된 기존 이미지 처리
+//        if (deletedImageUrls != null && !deletedImageUrls.isEmpty()) {
+//            List<String> urlsToRemoveFromFileSystem = new ArrayList<>();
+//            for (String deletedUrl : deletedImageUrls) {
+//                // DB에 저장된 URL 형식과 deletedUrl 형식이 일치해야 합니다.
+//                // companionImageUrls 에는 "upload/community/filename.jpg" 형태로 저장되어 있다고 가정합니다.
+//                // deletedUrl도 동일한 형식으로 넘어온다고 가정합니다. (프론트에서 그렇게 보내도록 수정했음)
+//                if (currentImageUrls.contains(deletedUrl)) {
+//                    currentImageUrls.remove(deletedUrl);
+//                    urlsToRemoveFromFileSystem.add(deletedUrl);
+//                    log.info("DB에서 이미지 URL 제거 예정: {}", deletedUrl);
+//                } else {
+//                    log.warn("삭제 요청된 이미지 URL '{}'이(가) 기존 이미지 목록에 없어 DB에서 제거하지 못했습니다.", deletedUrl);
+//                }
+//            }
+//
+//            // 파일 시스템에서 실제 파일 삭제
+//            for (String filePathToDelete : urlsToRemoveFromFileSystem) {
+//                // FileUtil.deleteFile은 실제 파일 시스템 경로를 받아야 합니다.
+//                // filePathToDelete가 "upload/community/filename.jpg"와 같은 상대 경로라면,
+//                // FileUtil.deleteFile 내부에서 이를 올바르게 처리하거나, 여기서 절대 경로로 만들어 전달해야 합니다.
+//                // 현재 FileUtil.deleteFile은 Paths.get(filePath)를 사용하므로,
+//                // 애플리케이션 실행 위치 기준으로 상대 경로가 올바르게 해석되어야 합니다.
+//                // 만약 application.properties의 file.upload-dir이 절대경로가 아니라면,
+//                // Paths.get(uploadDir, filename) 형태로 구성하는 것이 더 안전할 수 있습니다.
+//                // 지금은 FileUtil이 제공된 경로로 잘 삭제한다고 가정합니다.
+//                boolean deleted = fileUtil.deleteFile(filePathToDelete);
+//                if (deleted) {
+//                    log.info("파일 시스템에서 이미지 삭제 성공: {}", filePathToDelete);
+//                } else {
+//                    log.warn("파일 시스템에서 이미지 삭제 실패: {}", filePathToDelete);
+//                }
+//            }
+//        }
 
-            // 파일 시스템에서 실제 파일 삭제
-            for (String filePathToDelete : urlsToRemoveFromFileSystem) {
-                // FileUtil.deleteFile은 실제 파일 시스템 경로를 받아야 합니다.
-                // filePathToDelete가 "upload/community/filename.jpg"와 같은 상대 경로라면,
-                // FileUtil.deleteFile 내부에서 이를 올바르게 처리하거나, 여기서 절대 경로로 만들어 전달해야 합니다.
-                // 현재 FileUtil.deleteFile은 Paths.get(filePath)를 사용하므로,
-                // 애플리케이션 실행 위치 기준으로 상대 경로가 올바르게 해석되어야 합니다.
-                // 만약 application.properties의 file.upload-dir이 절대경로가 아니라면,
-                // Paths.get(uploadDir, filename) 형태로 구성하는 것이 더 안전할 수 있습니다.
-                // 지금은 FileUtil이 제공된 경로로 잘 삭제한다고 가정합니다.
-                boolean deleted = fileUtil.deleteFile(filePathToDelete);
-                if (deleted) {
-                    log.info("파일 시스템에서 이미지 삭제 성공: {}", filePathToDelete);
-                } else {
-                    log.warn("파일 시스템에서 이미지 삭제 실패: {}", filePathToDelete);
+//        // 2. 새로 추가된 이미지 처리
+//        if (newImages != null && !newImages.isEmpty() && !newImages.stream().allMatch(MultipartFile::isEmpty)) {
+//            try {
+//                List<String> savedNewImagePaths = fileUtil.saveFiles(newImages); // "upload/community/new_filename.jpg" 형태의 경로 반환
+//                currentImageUrls.addAll(savedNewImagePaths); // DB에 저장될 전체 URL 리스트에 추가
+//                log.info("새 이미지 추가 완료, 경로: {}", savedNewImagePaths);
+//            } catch (IOException e) {
+//                log.error("새 이미지 파일 저장 중 오류 발생", e);
+//                // 필요시 사용자에게 알릴 수 있는 예외 처리 추가
+//                throw new RuntimeException("이미지 저장에 실패했습니다.", e);
+//            }
+//        }
+
+        // 1. 삭제 요청된 기존 이미지 처리 (S3)
+        if (deletedImageUrls != null && !deletedImageUrls.isEmpty()) {
+            for (String deletedUrl : deletedImageUrls) {
+                if (currentImageUrls.remove(deletedUrl)) {
+                    // s3Util을 사용하여 S3에서 실제 파일 삭제
+                    s3Util.deleteFile(deletedUrl);
+                    log.info("S3에서 이미지 삭제: {}", deletedUrl);
                 }
             }
         }
 
-        // 2. 새로 추가된 이미지 처리
-        if (newImages != null && !newImages.isEmpty() && !newImages.stream().allMatch(MultipartFile::isEmpty)) {
+        // 2. 새로 추가된 이미지 처리 (S3)
+        if (newImages != null && !newImages.stream().allMatch(MultipartFile::isEmpty)) {
             try {
-                List<String> savedNewImagePaths = fileUtil.saveFiles(newImages); // "upload/community/new_filename.jpg" 형태의 경로 반환
-                currentImageUrls.addAll(savedNewImagePaths); // DB에 저장될 전체 URL 리스트에 추가
-                log.info("새 이미지 추가 완료, 경로: {}", savedNewImagePaths);
+                // s3Util을 사용하여 새 이미지를 S3에 저장하고 URL 목록을 받음
+                List<String> savedNewImageUrls = s3Util.saveFiles(newImages);
+                currentImageUrls.addAll(savedNewImageUrls);
+                log.info("새 이미지 S3에 추가 완료, URL: {}", savedNewImageUrls);
             } catch (IOException e) {
-                log.error("새 이미지 파일 저장 중 오류 발생", e);
-                // 필요시 사용자에게 알릴 수 있는 예외 처리 추가
+                log.error("새 이미지 S3 저장 중 오류 발생", e);
                 throw new RuntimeException("이미지 저장에 실패했습니다.", e);
             }
         }
@@ -263,11 +298,20 @@ public class CompanionService {
             throw new SecurityException("게시글 삭제 권한이 없습니다. 게시글 ID: " + companionId);
         }
 
-        // 게시글 삭제 시 연결된 이미지 파일도 삭제
+//        // 게시글 삭제 시 연결된 이미지 파일도 삭제
+//        if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
+//            String[] imageUrls = companion.getCompanionImageUrls().split(",");
+//            for (String imageUrl : imageUrls) {
+//                fileUtil.deleteFile(imageUrl.trim());
+//            }
+//        }
+
+        // 게시글 삭제 시 연결된 S3 이미지 파일도 삭제
         if (companion.getCompanionImageUrls() != null && !companion.getCompanionImageUrls().isEmpty()) {
             String[] imageUrls = companion.getCompanionImageUrls().split(",");
             for (String imageUrl : imageUrls) {
-                fileUtil.deleteFile(imageUrl.trim());
+                // s3Util을 사용하여 S3에서 파일 삭제
+                s3Util.deleteFile(imageUrl.trim());
             }
         }
 

@@ -54,16 +54,26 @@ function CompanionEditCon() {
 
                 if (response.data.companionImageUrls && Array.isArray(response.data.companionImageUrls) && response.data.companionImageUrls.length > 0) {
                     // console.log("기존 이미지 데이터 수신:", response.data.companionImageUrls);
+                    // const existingImageData = response.data.companionImageUrls.map((url) => {
+                    //     // url 예시: "upload/community/filename.jpg" 또는 "/upload/community/filename.jpg"
+                    //     const imageUrl = url.startsWith('/') ? url : `/${url}`;
+                    //     return {
+                    //         // id를 URL 자체로 사용하거나, URL에서 파일명만 추출하여 ID로 사용할 수 있습니다.
+                    //         // 여기서는 백엔드에서 삭제 시 URL 전체가 필요하므로 URL을 그대로 사용하거나,
+                    //         // 백엔드가 식별할 수 있는 형태로 저장합니다.
+                    //         // 편의상 URL의 마지막 부분을 ID로 활용하고, 전체 URL도 유지합니다.
+                    //         id: imageUrl.substring(imageUrl.lastIndexOf('/') + 1), // 예: "filename.jpg"
+                    //         imageUrl: imageUrl, // 예: "/upload/community/filename.jpg"
+                    //         isExisting: true
+                    //     };
+                    // });
+
                     const existingImageData = response.data.companionImageUrls.map((url) => {
-                        // url 예시: "upload/community/filename.jpg" 또는 "/upload/community/filename.jpg"
-                        const imageUrl = url.startsWith('/') ? url : `/${url}`;
+                        const imageUrl = url;
                         return {
-                            // id를 URL 자체로 사용하거나, URL에서 파일명만 추출하여 ID로 사용할 수 있습니다.
-                            // 여기서는 백엔드에서 삭제 시 URL 전체가 필요하므로 URL을 그대로 사용하거나,
-                            // 백엔드가 식별할 수 있는 형태로 저장합니다.
-                            // 편의상 URL의 마지막 부분을 ID로 활용하고, 전체 URL도 유지합니다.
-                            id: imageUrl.substring(imageUrl.lastIndexOf('/') + 1), // 예: "filename.jpg"
-                            imageUrl: imageUrl, // 예: "/upload/community/filename.jpg"
+                            // id는 파일명으로, imageUrl은 전체 URL로 사용합니다.
+                            id: imageUrl.substring(imageUrl.lastIndexOf('/') + 1),
+                            imageUrl: imageUrl, // 정상적인 S3 전체 URL이 저장됩니다.
                             isExisting: true
                         };
                     });
@@ -219,7 +229,8 @@ function CompanionEditCon() {
 
     // 기존 이미지 삭제 핸들러: imageUrl을 받아서 처리
     const handleRemoveExistingImage = (imageUrlToRemove) => {
-        const urlForBackend = imageUrlToRemove.startsWith('/') ? imageUrlToRemove.substring(1) : imageUrlToRemove;
+        // const urlForBackend = imageUrlToRemove.startsWith('/') ? imageUrlToRemove.substring(1) : imageUrlToRemove;
+        const urlForBackend = imageUrlToRemove;
         setDeletedImageUrls(prevUrls => [...new Set([...prevUrls, urlForBackend])]);
 
         // 삭제될 이미지의 원래 인덱스를 imagePreviews에서 찾습니다.
