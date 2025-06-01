@@ -27,12 +27,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install and Build
         run: |
-          npm install
-          npm run build
+          yarn install
+          yarn run build
         env:
           # React 앱에서 사용할 백엔드 API 주소를 설정합니다.
           REACT_APP_API_URL: https://api.hellotravelogic.link
