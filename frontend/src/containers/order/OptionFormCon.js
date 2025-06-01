@@ -1,12 +1,6 @@
 import OptionFormCom from "../../components/order/OptionFormCom";
-import {useEffect, useReducer, useState} from "react";
-import {
-    calculateTotalPrice,
-    createOrder,
-    fetchOptionForm,
-    fetchOptionsByDate,
-    fetchProduct, saveReservation, selectReservationDate
-} from "../../service/orderService";
+import {useEffect, useReducer} from "react";
+import {fetchOptionForm, saveReservation, selectReservationDate} from "../../service/orderService";
 import {useNavigate, useParams} from "react-router-dom";
 import {initialState, reducer} from "../../modules/optionModule";
 
@@ -21,9 +15,6 @@ function OptionFormCon({ accessToken }){
         const fetchData = async () => {
             try {
                 const optionData = await fetchOptionForm(productUid);
-                console.log("🟢 옵션 데이터:", optionData);
-
-                // dispatch({ type: "SET_PRODUCT_INFO", data: formattedData });
                 dispatch({
                     type: "SET_PRODUCT_INFO",
                     data: {
@@ -35,7 +26,6 @@ function OptionFormCon({ accessToken }){
                         availableEndDate: optionData.availableEndDate,
                     },
                 });
-
                 const formattedData = {
                     optionCode: optionData.optionCode || undefined,
                     productTitle: optionData.productTitle || "",
@@ -45,10 +35,8 @@ function OptionFormCon({ accessToken }){
                     childPrice: optionData.productChild || 0,
                     price: (optionData.productAdult || 0) * 0 + (optionData.productChild || 0) * 0,
                 };
-                // dispatch({ type: "SET_OPTIONS", data: [formattedData] });
                 dispatch({ type: "SET_OPTION_DATA", data: formattedData });
             } catch (error) {
-                console.error("옵션 데이터를 불러오는 데 실패했습니다:", error);
                 alert("옵션 데이터를 불러오는 데 실패했습니다.");
                 dispatch({ type: "SET_ERROR", data: error.message });
             } finally {
@@ -70,8 +58,6 @@ function OptionFormCon({ accessToken }){
             !isNaN(availableEnd.getTime())
         ) {
             const initDate = today < availableStart ? availableStart : today > availableEnd ? availableStart : today;
-        // if (state.reservationDate === null && availableStart && availableEnd) {
-        //     const initDate = today < availableStart ? availableStart : today > availableEnd ? availableStart : today;
             const formattedInitDate = initDate.toISOString().split("T")[0];
             dispatch({ type: "SET_RESERVATION_DATE", data: formattedInitDate });
         }
@@ -104,13 +90,10 @@ function OptionFormCon({ accessToken }){
                 ? date.toISOString().split("T")[0]
                 : date;
 
-            console.log("🟢 선택된 날짜:", formattedDate);
             await selectReservationDate(productUid, formattedDate);
-            // dispatch({ type: "SET_RESERVATION_DATE", data: date });
             dispatch({ type: "SET_RESERVATION_DATE", data: formattedDate });
             alert("예약 날짜가 성공적으로 선택되었습니다.");
         } catch (error) {
-            console.error("🔴 예약 날짜 선택 실패:", error);
             alert("예약 날짜 선택에 실패했습니다.");
             dispatch({ type: "SET_ERROR", data: error.message });
         }
@@ -129,20 +112,15 @@ function OptionFormCon({ accessToken }){
         }
 
         try {
-            // const selectedOption = state.options[0];
             const optionData = {
                 optionCode: state.options[0].optionCode || undefined,
                 productTitle: state.productTitle,
                 reservationDate: state.reservationDate,
-                // adultCount: state.adultCount,
-                // childCount: state.childCount,
                 adultCount: state.options[0].adultCount || 0,
                 childCount: state.options[0].childCount || 0,
-                // totalPrice: state.totalPrice
                 totalPrice: state.options[0].price || 0,
             };
             // 서버에서 생성된 optionCode 가져오기
-            // const optionCode = await saveReservation(productUid, state.reservationDate, accessToken);
             const optionCode = await saveReservation(
                 productUid,
                 optionData.reservationDate,
@@ -154,15 +132,14 @@ function OptionFormCon({ accessToken }){
             optionData.optionCode = optionCode;
             localStorage.setItem("optionCode", optionCode);
             localStorage.setItem("optionData", JSON.stringify(optionData));
-            alert("옵션이 성공적으로 저장되었습니다.");
+            alert("옵션을 성공적으로 생성했습니다.");
             navigate(`/products/${productUid}/order/create/${optionCode}`);
         } catch (error) {
-            console.error("🔴 옵션 저장 실패:", error);
-            // alert("옵션 저장에 실패했습니다.");
+            alert("옵션 생성에 실패했습니다.");
 
             // 백엔드 에러 메시지 그대로 사용자에게 전달
-            const backendMessage = error?.response?.data || "옵션 저장에 실패했습니다.";
-            alert(backendMessage);
+            // const backendMessage = error?.response?.data || "옵션 생성에 실패했습니다.";
+            // alert(backendMessage);
         }
     };
 
@@ -176,10 +153,8 @@ function OptionFormCon({ accessToken }){
                 options={state.options || []}
                 reservationDate={state.reservationDate}
                 onOptionChange={handleOptionChange}
-                // onOptionChange={(key, value) => dispatch({ type: "SET_OPTION_COUNT", key, value })}
                 onAdultCountChange={handleAdultCountChange}
                 onChildCountChange={handleChildCountChange}
-                // onReserve={() => {}}
                 onDateSelect={handleDateSelect}
                 onReserve={handleSaveReservation}
                 totalPrice={state.totalPrice}

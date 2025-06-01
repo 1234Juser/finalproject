@@ -1,5 +1,4 @@
 import CalendarDisplay from "./CalendarDisplay";
-import {useNavigate} from "react-router-dom";
 import {
     CalendarWrapper, CounterButton, CounterValue,
     FormWrapper, OptionCounter,
