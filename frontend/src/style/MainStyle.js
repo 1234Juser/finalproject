@@ -11,10 +11,15 @@ export const MainSectionWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 0 15px; // 모바일 좌우 여백 추가
+
+    @media (max-width: 1023px) {
+        width: fit-content;
+    }
     
     @media (max-width: 767px) {
         min-height: auto; // 모바일에서 컨텐츠에 맞게 높이 조절
         padding: 0 10px;
+        width: fit-content;
     }
 `;
 
@@ -535,7 +540,7 @@ export const ImageGallery = styled.div`
   justify-content: center;
   gap: 1.5rem; /* gap-6 */
 
-    max-width: 1200px; // 최대 너비 제한
+    max-width: 90%; // 최대 너비 제한
     margin: 0 auto; // 가운데 정렬
 
     @media (max-width: 1023px) { // 태블릿
