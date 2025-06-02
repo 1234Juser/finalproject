@@ -12,9 +12,7 @@ function MyReviewModalCon({ orderCode, onClose, accessToken }) {
 
         const fetchReview = async () => {
             try {
-                console.log("Fetching review for orderCode:", orderCode);
                 const data = await getReviewByOrderCode(orderCode, accessToken);
-                console.log("리뷰 데이터:", data);
                 setReview(data);
             } catch (error) {
                 console.error("리뷰 불러오기 실패:", error);
@@ -36,13 +34,9 @@ function MyReviewModalCon({ orderCode, onClose, accessToken }) {
                     window.location.reload();
                 }, 100);
             } catch (error) {
-                console.error("리뷰 삭제 오류:", error.message || error);
                 alert(error.message || "리뷰 삭제에 실패했습니다.");
             }
         }
-        // if (review) {
-        //     onDeleteReview(review.reviewCode, review.orderCode);
-        // }
     };
 
     if (!review) return null;

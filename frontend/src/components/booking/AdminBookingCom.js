@@ -68,7 +68,6 @@ function AdminBookingCom({ reservations, loading, currentPage, totalPages,
                                 </LeftBox>
 
                                 <RightBox>
-                                    {/*<StyledActionButton type="submit">선택한 예약 취소</StyledActionButton>*/}
                                     <div style={{ textAlign: "right", marginBottom: "10px" }}>
                                         <StyledActionButton type="submit">선택한 예약 취소</StyledActionButton>
                                     </div>
@@ -103,8 +102,6 @@ function AdminBookingCom({ reservations, loading, currentPage, totalPages,
                                             <td>
                                                 <input
                                                     type="checkbox"
-                                                    // checked={Array.isArray(selectedOrders) && selectedOrders.includes(res.orderCode)}
-                                                    // null 방지 버전
                                                     checked={selectedOrders?.includes(res.orderCode)}
                                                     onChange={() => {console.log("체크 이벤트 발생:", res.orderCode);
                                                         onCheck(res.orderCode)}}
@@ -119,9 +116,6 @@ function AdminBookingCom({ reservations, loading, currentPage, totalPages,
                                             <td>{res.totalPrice?.toLocaleString()}원</td>
                                             <td>
                                                 <StyledStatusBadge status={res.orderStatus}>
-                                                    {/*{res.orderStatus === "SCHEDULED" && "예약확정"}*/}
-                                                    {/*{res.orderStatus === "COMPLETED" && "여행완료"}*/}
-                                                    {/*{res.orderStatus === "CANCELED" && "예약취소"}*/}
                                                     {statusLabel[res.orderStatus] || res.orderStatus}
                                                 </StyledStatusBadge>
                                             </td>

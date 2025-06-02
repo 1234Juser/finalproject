@@ -82,7 +82,6 @@ function MyReceiptCon({orderCode, optionCode, accessToken}){
     const { productTitle, productThumbnail, productCity, productDescription, orderDate } = state;
 
     const handleCancel = (orderCode) => {
-        console.log("취소 요청 들어온 orderCode:", orderCode);
         if (!orderCode) {
             alert("취소할 예약이 없습니다.");
             return;

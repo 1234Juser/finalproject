@@ -42,7 +42,6 @@ function MyBookingCon({accessToken}){
                 const data = await fetchRecentReservations(accessToken);
                 dispatch({ type: "FETCH_SUCCESS", payload: data });
             } catch (err) {
-                console.error("예약 조회 실패:", err.message);
                 dispatch({ type: "FETCH_ERROR", payload: err.message });
             } finally {
                 setAutoLoadingDone(true);
@@ -130,8 +129,6 @@ function MyBookingCon({accessToken}){
     const handleLoadOldForSchedule = async () => {
         try {
             const oldData = await fetchOldReservations(accessToken);
-            // if (oldData.length > 0) {
-                // dispatch({ type: "ADD_OLD_RESERVATIONS", payload: oldData });
             // 실제로 화면에 추가될 예약만 추출 (SCHEDULED or WAITING_BANK_TRANSFER)
             const filtered = oldData.filter(r =>
                 ["SCHEDULED", "WAITING_BANK_TRANSFER"].includes(r.orderStatus?.toUpperCase())

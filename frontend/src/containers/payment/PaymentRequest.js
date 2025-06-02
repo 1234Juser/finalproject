@@ -61,12 +61,10 @@ function PaymentRequest({orderCode, accessToken}) {
                     alert("결제 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
                 }
                 navigate("/payments/complete", {
-                    // state: paymentData
                     state: {
                         bookingUid: result.bookingUid,
                         orderDate: result.orderDate,
                         productTitle: result.productTitle,
-                        // productThumbnail: result.productThumbnail,
                         productThumbnail: orderData.productThumbnail || "/img/empty/empty-list.jpeg",
                         totalPrice: result.totalPrice,
                         vbankNum: result.vbankNum,

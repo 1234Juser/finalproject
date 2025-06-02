@@ -1,6 +1,5 @@
 const initialState = {
     options: [],
-    // selectedDate: null,
     reservationDate: null,
     productTitle: "",
     productAdult: 0,
@@ -49,24 +48,17 @@ const reducer = (state, action) => {
                 error: null,
             };
         case "SET_OPTIONS":
-            console.log("🟡 SET_OPTIONS 호출됨:", action.data);
             return {
                 ...state,
                 options: action.data || [],
                 totalPrice: state.options.reduce((sum, opt) => sum + opt.price, 0),
             };
-        // case "SET_SELECTED_DATE":
-        //     return {
-        //         ...state,
-        //         selectedDate: action.data,
-        //     };
         case "SET_FROM_DATE":
             return {
                 ...state,
                 fromDate: action.data,
             };
         case 'SET_RESERVATION_DATE':
-            console.log("🟢 예약 날짜 설정:", action.data);
             return {
                 ...state,
                 reservationDate: action.data,
@@ -74,15 +66,6 @@ const reducer = (state, action) => {
             };
         case "UPDATE_ADULT_COUNT":
             const updatedAdultOptions = state.options.map((opt, index) => {
-            //     index === action.data.index
-            //         ? {
-            //             ...opt,
-            //             adultCount: Math.max(opt.adultCount + action.data.delta, 0),
-            //             price: (Math.max(opt.adultCount + action.data.delta, 0) * opt.adultPrice) +
-            //                 (opt.childCount * opt.childPrice),
-            //         }
-            //         : opt
-            // );
             if (index === action.data.index) {
                 const newAdultCount = Math.max(opt.adultCount + action.data.delta, 0);
                 const totalParticipants = newAdultCount + opt.childCount;
@@ -108,15 +91,6 @@ const reducer = (state, action) => {
 
         case "UPDATE_CHILD_COUNT":
             const updatedChildOptions = state.options.map((opt, index) => {
-            //     index === action.data.index
-            //         ? {
-            //             ...opt,
-            //             childCount: Math.max(opt.childCount + action.data.delta, 0),
-            //             price: (opt.adultCount * opt.adultPrice) +
-            //                 (Math.max(opt.childCount + action.data.delta, 0) * opt.childPrice),
-            //         }
-            //         : opt
-            // );
             if (index === action.data.index) {
                 const newChildCount = Math.max(opt.childCount + action.data.delta, 0);
                 const totalParticipants = opt.adultCount + newChildCount;

@@ -1,10 +1,9 @@
 import RecentReviewRequestModalCom from "../../components/review/RecentReviewRequestModalCom";
 import {fetchLatestUnreviewedOrder} from "../../service/reservationService";
-import {useEffect, useReducer} from "react";
-import {initialState, reducer} from "../../modules/reviewModule";
+import {useEffect} from "react";
+
 
 function RecentReviewRequestModalCon({accessToken, state, dispatch}) {
-    // const [state, dispatch] = useReducer(reducer, initialState);
     const { reviewRequest, showReviewRequestModal } = state;
     const memberCode = localStorage.getItem("memberCode");
 
@@ -16,10 +15,6 @@ function RecentReviewRequestModalCon({accessToken, state, dispatch}) {
         const hideUntilRaw = sessionStorage.getItem(`reviewHideUntil_${memberCode}`);
         const hideUntil = hideUntilRaw ? Number(hideUntilRaw) : null;
         const now = Date.now();
-
-        console.log("hideUntil:", hideUntil);
-        console.log("now:", now);
-        console.log("hideUntil > now ?", hideUntil > now);
 
         if (hideUntil && hideUntil > now) {
             console.log("모달 숨김 유지 중 (자정까지)");
@@ -36,7 +31,7 @@ function RecentReviewRequestModalCon({accessToken, state, dispatch}) {
                 if (!hiddenOrders.includes(Number(order.orderCode))) {
                     dispatch({ type: "SET_REVIEW_REQUEST", payload: order });
                 } else {
-                    console.log("해당 orderCode는 숨김 처리됨:", order.orderCode);
+                    console.log("해당 주문에 관한 리뷰 요청은 숨김 처리됨");
                 }
             } catch (err) {
                 console.error("리뷰 요청 조회 실패:", err);

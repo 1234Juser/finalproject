@@ -123,8 +123,6 @@ function AdminBookingByProductCom({
                                             <td>
                                                 <input
                                                     type="checkbox"
-                                                    // checked={Array.isArray(selectedOrders) && selectedOrders.includes(res.orderCode)}
-                                                    // null 방지 버전
                                                     checked={selectedOrders?.includes(res.orderCode)}
                                                     onChange={() => {console.log("체크 이벤트 발생:", res.orderCode);
                                                         onCheck(res.orderCode)}}
@@ -139,9 +137,6 @@ function AdminBookingByProductCom({
                                             <td>{res.totalPrice?.toLocaleString()}원</td>
                                             <td>
                                                 <StyledStatusBadge status={res.orderStatus}>
-                                                    {/*{res.orderStatus === "SCHEDULED" && "예약확정"}*/}
-                                                    {/*{res.orderStatus === "COMPLETED" && "여행완료"}*/}
-                                                    {/*{res.orderStatus === "CANCELED" && "예약취소"}*/}
                                                     {statusLabel[res.orderStatus] || res.orderStatus}
                                                 </StyledStatusBadge>
                                             </td>

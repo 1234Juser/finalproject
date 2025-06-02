@@ -18,7 +18,6 @@ function OptionFormCom({ productUid,
                         onReserve,
                         onOptionChange,
                         optionData}) {
-    console.log("🟡 렌더링된 옵션 데이터:", options);
 
     return (
         <FormWrapper>
