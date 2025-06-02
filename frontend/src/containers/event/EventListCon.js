@@ -15,6 +15,8 @@ const formatDate = (isoString) => {
     return isoString.substring(0, 10);
 };
 
+const API_BASE_URL = "https://api.hellotravelogic.link";
+
 function EventListCon() {
     // 탭 및 각 탭별 페이지 번호
     const [tab, setTab] = useState("진행중");
@@ -26,16 +28,17 @@ function EventListCon() {
 
     // 탭/페이지 변경 시 이벤트 목록 로딩
     useEffect(() => {
-        let api = "";
+        let apiPath = "";
         let page = 0;
         if (tab === "진행중") {
-            api = "/event";
+            apiPath = "/event";
             page = ongoingPage;
         } else {
-            api = "/event/finished";
+            apiPath = "/event/finished";
             page = finishedPage;
         }
-        axios.get(api, { params: { page, size: 10 }})
+        // API_BASE_URL을 사용하여 전체 URL을 만듭니다.
+        axios.get(`${API_BASE_URL}${apiPath}`, { params: { page, size: 10 }})
             .then(res => {
                 const data = res.data;
                 // 날짜 포매팅 처리
@@ -50,9 +53,10 @@ function EventListCon() {
             .catch(err => {
                 setEvents([]);
                 setTotalPages(0);
-                console.error(err);
+                console.error(err); // 이 부분이 EventListCon.js:53으로 추정됩니다.
             });
     }, [tab, ongoingPage, finishedPage]);
+
 
     // 탭 변경
     const handleTabChange = (newTab) => {
