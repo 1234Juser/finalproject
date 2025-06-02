@@ -23,8 +23,10 @@ export const StyledHeader = styled.header`
     }
 
     @media (max-width: 767px) { // 모바일
-        height: 60px;
-        padding: 0 16px;
+        flex-direction: column; // 자식 요소들을 세로로 쌓음
+        height: auto; // 내용에 따라 높이 자동 조절
+        padding: 20px 15px; // 모바일에서 상하 패딩 추가, 좌우 패딩 조정
+        gap: 20px; // 세로로 쌓인 요소들 간의 간격
     }
 `;
 
@@ -47,14 +49,19 @@ export const StyledTitle = styled.h1`
 
     white-space: nowrap; // 줄바꿈 방지
     @media (max-width: 1024px) { // 1024px 이하 화면에서 적용
-        font-size: 1.8rem; // 태블릿에서 사용했던 폰트 크기 적용
+        font-size: 1.5rem; // 태블릿에서 사용했던 폰트 크기 적용
         white-space: normal; // 텍스트 줄바꿈 허용
         line-height: 1.2; // 줄 간격 조절 (필요시)
+        max-width: 130px;  // 예시 값 (테스트 후 조절 필요)
+         text-align: left; // 또는 left, right 등 원하는 정렬로
     }
 
     @media (max-width: 767px) { // 모바일
-        font-size: 1.5rem; // "Hello, " 부분을 숨기거나 전체 텍스트를 줄여야 할 수 있음
-        // 여기서는 폰트 크기만 조정
+        font-size: 1.6rem; // 모바일에서 로고 폰트 크기 살짝 조정
+        text-align: center; // 로고 텍스트 중앙 정렬
+        white-space: normal; // 이미 상속됨
+        max-width : none;
+        line-height: normal;
     }
 `;
 
@@ -63,47 +70,52 @@ export const SearchContainer = styled.div`
     flex: 1; // StyledHeader 내에서 기본적으로 가능한 많은 공간을 차지하도록 함
     display: flex;
     align-items: center;
-    // justify-content: center; // 자식 요소의 flex-grow로 인해 재조정될 수 있으므로, 필요에 따라 flex-start 또는 space-between 등으로 변경
+     justify-content: center; // 자식 요소의 flex-grow로 인해 재조정될 수 있으므로, 필요에 따라 flex-start 또는 space-between 등으로 변경
     min-width: 0; // 컨테이너가 내용물보다 작아질 수 있도록 허용
     padding: 0 20px; // 데스크톱 기본 좌우 패딩
     gap: 12px; // SearchInputPage와 RealtimeRanking 사이의 간격 (데스크톱)
 
     // SearchInputPage (첫 번째 자식) 스타일링
     & > :first-child {
-        flex-grow: 1;   // SearchContainer 내에서 남는 공간을 모두 차지
-        flex-shrink: 1; // 공간이 부족할 때 줄어들도록 허용
-        min-width: 120px; // 검색창의 최소 너비 (예: 데스크톱에서는 최소 이 정도는 확보)
-        // 이 값은 실제 SearchInputPage 내부 input의 사용성을 고려하여 조절해주세요.
+        flex-grow: 0;   // 고정 너비를 가지므로 늘어나지 않음
+        flex-shrink: 0; // 고정 너비를 가지므로 줄어들지 않음
+        flex-basis: 350px; // 데스크톱에서 SearchInputCom의 너비와 동일하게 설정
     }
 
     // RealtimeRanking (두 번째 자식) 스타일링
     & > :last-child {
-        flex-grow: 0;   // 추가 공간을 차지하지 않음
-        flex-shrink: 0; // 공간이 부족해도 줄어들지 않고 자신의 컨텐츠 너비를 유지
+        flex-grow: 0;
+        flex-shrink: 0;
+        // RealtimeRanking.js 내부에서 너비가 제어됨 (예: max-width: 180px 등)
     }
 
-    @media (max-width: 1024px) { // 1024px 이하 화면 (작은 데스크톱 및 태블릿 시작점)
-        padding: 0 15px; // 내부 패딩 약간 줄임
-        gap: 10px; // 자식 요소 간 간격 약간 줄임
+    @media (max-width: 1024px) { // 태블릿
+        padding: 0 15px;
+        gap: 10px;
 
-        & > :first-child { // SearchInputPage
-            min-width: 100px; // 화면이 줄어듦에 따라 검색창 최소 너비도 약간 줄임
+        & > :first-child { // SearchInputPage (SearchInputCom의 태블릿 너비에 맞춤)
+            flex-basis: 220px; // SearchInputCom Wrapper의 태블릿 너비와 일치
         }
-        // RealtimeRanking은 숨기지 않고 계속 표시됩니다.
     }
 
     @media (max-width: 767px) { // 모바일
-        //flex-grow: 0.5; // SearchContainer 자체가 헤더 내에서 차지하는 비율을 줄일 수 있음
-        //justify-content: flex-start; // 모바일에서는 검색 관련 요소들을 왼쪽으로 정렬
-        padding: 0 10px; // 모바일 내부 패딩
-        gap: 8px; // 자식 요소 간 간격 더 줄임
+        //flex-direction: column; // 검색창과 실시간랭킹을 세로로 쌓음
+        width: 100%; // 부모(StyledHeader) 너비에 맞춤 (StyledHeader가 align-items:center 이므로 중앙에 위치)
+        max-width: 400px; // 너무 넓어지지 않도록 최대 너비 설정 (선택적)
+        padding: 0; // 내부 패딩은 각 자식 요소가 갖도록 하거나 여기서 0으로 초기화
+        gap: 15px; // 세로로 쌓인 검색창과 실시간랭킹 사이 간격
 
-        & > :first-child { // SearchInputPage
-            min-width: 80px; // 모바일에서 검색창 최소 너비
+        & > :first-child { // SearchInputCom (모바일)
+            //width: 100%; // SearchContainer 너비에 100%
+            flex-basis: auto; // flex-basis 초기화
+            min-width: 0; // min-width 초기화 (SearchInputCom.js에서 width:100%로 이미 유연함)
+            // SearchInputCom.js의 Wrapper에서 모바일 width: 100% 적용됨
         }
-        // 모바일에서도 RealtimeRanking은 일단 표시됩니다.
-        // 만약 모바일에서 공간이 너무 부족하다면, 이때 RealtimeRanking을 숨기는 것을 다시 고려할 수 있습니다.
-        // 예: & > :last-child { display: none; }
+
+        & > :last-child { // RealtimeRanking (모바일)
+            width: 100%; // SearchContainer 너비에 100% (내부적으로 max-width:140px 적용됨)
+            // RealtimeRanking.js의 RankingContainer에서 모바일 max-width: 140px; 적용됨
+        }
     }
 `;
 
@@ -112,8 +124,8 @@ export const SearchContainer = styled.div`
 export const HeaderRight = styled.div`
     display: flex;
     align-items: center;
-    gap: 16px;
-    font-size: 1.07rem;
+    gap: 16px; // 데스크톱 기본 간격
+    font-size: 1.07rem; // 데스크톱 기본 폰트 크기
 
     @media (max-width: 1023px) { // 태블릿
         gap: 12px;
@@ -121,11 +133,10 @@ export const HeaderRight = styled.div`
     }
 
     @media (max-width: 767px) { // 모바일
-        gap: 8px;
-        font-size: 0.9rem; // 전체적인 폰트 크기 줄임
-
-        // 모바일에서 사용자 이름 텍스트 숨기기 (옵션)
-        // & > span { display: none; }
+        gap: 10px; // 버튼 간 간격
+        font-size: 0.9rem;
+        width: 100%; // 전체 너비 사용 또는 auto
+        justify-content: center; // 버튼들을 중앙 정렬
     }
 `;
 
@@ -197,6 +208,6 @@ export const HeaderButton = styled.button`
     @media (max-width: 767px) { // 모바일
         padding: 5px 10px;
         font-size: 0.9rem;
-        font-weight: 500;
+        font-weight: 600;
     }
 `;

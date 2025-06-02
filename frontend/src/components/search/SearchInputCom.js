@@ -4,8 +4,8 @@ import { FaSearch } from "react-icons/fa";
 
 const Wrapper = styled.div`
     position: relative;
-    width: 100%; /* 고정 너비 350px에서 100%로 변경하여 부모 요소에 맞춤 */
-    /* margin-right: 10px; // 부모 SearchContainer에서 gap으로 간격 조절하므로 제거 */
+    width: 350px; /* 고정 너비 350px에서 100%로 변경하여 부모 요소에 맞춤 */
+     //margin-right: 10px; // 부모 SearchContainer에서 gap으로 간격 조절하므로 제거 
     display: flex;
     align-items: center;
     border: 2px solid #007bff;
@@ -19,9 +19,15 @@ const Wrapper = styled.div`
         box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
     }
 
+    @media (max-width: 1024px) { // 태블릿
+        width: 220px; /* 태블릿에서의 너비 (조절 가능) */
+    }
+
     @media (max-width: 767px) { // 모바일
-        padding: 0 0.75em; // 모바일에서 내부 패딩 약간 줄임
-        border-radius: 20px; // 모바일에서 모서리 둥글기 약간 줄임
+        width: 100%; /* 모바일에서는 부모가 주는 공간을 100% 사용 */
+        padding: 0 0.75em;
+        border-radius: 20px;
+        margin: 0 auto;
     }
 `;
 
