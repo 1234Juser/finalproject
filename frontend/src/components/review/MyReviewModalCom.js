@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import styled from "styled-components";
 import {getReviewImage} from "../../service/reviewService";
 import {useNavigate} from "react-router-dom";
 import {
@@ -28,7 +27,6 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     console.error("리뷰 이미지 로드 실패:", error);
                 });
         }
-    // }, [review.reviewPic]);
     }, [review]);
 
     useEffect(() => {
@@ -41,9 +39,7 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
         navigate(`/review/edit/${review.reviewCode}`);
     };
 
-    // const isDeletedByAdmin = review?.reviewStatus === "DELETE_BY_ADMIN";
     const isDeletedByAdmin = review && review.reviewStatus === "DELETE_BY_ADMIN";
-    console.log("🟡 리뷰 상태:", review?.reviewStatus);
 
     const handleImageClick = () => {
         if (review.reviewPic) {

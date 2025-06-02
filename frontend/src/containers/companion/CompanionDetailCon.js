@@ -28,7 +28,7 @@ function CompanionDetailCon() {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`/companions/${companionId}`);
+            const response = await axios.get(`https://api.hellotravelogic.link/companions/${companionId}`);
             setCompanion(response.data);
 
             // 현재 로그인된 사용자 정보 가져오기
@@ -61,7 +61,7 @@ function CompanionDetailCon() {
                     // console.log("현재 사용자 코드:", memberCode, "역할:", userRoles);
 
                     // 게시물 좋아요 상태 및 개수 가져오기 (로그인 상태일 경우)
-                    const likeStatusResponse = await axios.get(`/likes/companion/${companionId}/status`, {
+                    const likeStatusResponse = await axios.get(`https://api.hellotravelogic.link/likes/companion/${companionId}/status`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     setIsCompanionLiked(likeStatusResponse.data);
@@ -89,7 +89,7 @@ function CompanionDetailCon() {
                 // console.log("로그인 상태 설정: false (토큰 없음)");
             }
             // 게시물 좋아요 개수 가져오기 (로그인 상태와 무관)
-            const likeCountResponse = await axios.get(`/likes/companion/${companionId}/count`);
+            const likeCountResponse = await axios.get(`https://api.hellotravelogic.link/likes/companion/${companionId}/count`);
             setCompanionLikeCount(likeCountResponse.data);
 
             // 댓글 좋아요 상태 및 개수 가져오기
@@ -99,14 +99,14 @@ function CompanionDetailCon() {
 
             for (const comment of comments) {
                 // 댓글 좋아요 개수 가져오기
-                const commentCountResponse = await axios.get(`/likes/comment/${comment.companionCommentId}/count`);
+                const commentCountResponse = await axios.get(`https://api.hellotravelogic.link/likes/comment/${comment.companionCommentId}/count`);
                 commentCounts[comment.companionCommentId] = commentCountResponse.data;
 
                 // 로그인 상태일 경우 댓글 좋아요 상태 가져오기
                 if (isLoggedIn) {
                     try {
                         const token = localStorage.getItem("accessToken");
-                        const commentStatusResponse = await axios.get(`/likes/comment/${comment.companionCommentId}/status`, {
+                        const commentStatusResponse = await axios.get(`https://api.hellotravelogic.link/likes/comment/${comment.companionCommentId}/status`, {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
                         commentStatuses[comment.companionCommentId] = commentStatusResponse.data;
@@ -150,7 +150,7 @@ function CompanionDetailCon() {
         if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
             try {
                 const token = localStorage.getItem("accessToken");
-                await axios.delete(`/companions/${companionId}`, {
+                await axios.delete(`https://api.hellotravelogic.link/companions/${companionId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -174,7 +174,7 @@ function CompanionDetailCon() {
         try{
             const token = localStorage.getItem("accessToken");
             // content를 params 대신 요청 본문에 직접 전달
-            await axios.post(`/companions/${companionId}/comments`, null ,{ // null 또는 빈 객체 {}를 본문으로 사용
+            await axios.post(`https://api.hellotravelogic.link/companions/${companionId}/comments`, null ,{ // null 또는 빈 객체 {}를 본문으로 사용
                 params: { content: content },
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -200,7 +200,7 @@ function CompanionDetailCon() {
     const handleCommentUpdate = async(commentId, content)=>{
         try{
             const token = localStorage.getItem("accessToken");
-            await axios.put(`/companions/${companionId}/comments/${commentId}`, null, {
+            await axios.put(`https://api.hellotravelogic.link/companions/${companionId}/comments/${commentId}`, null, {
                 params: {content: content},
                 headers:{
                     'Authorization': `Bearer ${token}`
@@ -224,7 +224,7 @@ function CompanionDetailCon() {
         if (window.confirm("정말로 이 댓글을 삭제하시겠습니까?")) {
             try {
                 const token = localStorage.getItem("accessToken");
-                await axios.delete(`/companions/${companionId}/comments/${commentId}`, {
+                await axios.delete(`https://api.hellotravelogic.link/companions/${companionId}/comments/${commentId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -251,7 +251,7 @@ function CompanionDetailCon() {
         }
         try {
             const token = localStorage.getItem("accessToken");
-            const response = await axios.post(`/likes/companion/${companionId}`, null, {
+            const response = await axios.post(`https://api.hellotravelogic.link/likes/companion/${companionId}`, null, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -260,7 +260,7 @@ function CompanionDetailCon() {
 
             setIsCompanionLiked(liked);
             // 좋아요 수 업데이트 (API 호출하여 최신 상태 반영)
-            const likeCountResponse = await axios.get(`/likes/companion/${companionId}/count`);
+            const likeCountResponse = await axios.get(`https://api.hellotravelogic.link/likes/companion/${companionId}/count`);
             setCompanionLikeCount(likeCountResponse.data);
 
         } catch (err) {
@@ -281,7 +281,7 @@ function CompanionDetailCon() {
         }
         try {
             const token = localStorage.getItem("accessToken");
-            const response = await axios.post(`/likes/comment/${commentId}`, null, {
+            const response = await axios.post(`https://api.hellotravelogic.link/likes/comment/${commentId}`, null, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -295,7 +295,7 @@ function CompanionDetailCon() {
             }));
 
             // 해당 댓글의 좋아요 수 업데이트 (API 호출하여 최신 상태 반영)
-            const likeCountResponse = await axios.get(`/likes/comment/${commentId}/count`);
+            const likeCountResponse = await axios.get(`https://api.hellotravelogic.link/likes/comment/${commentId}/count`);
             setCommentLikeCounts(prevCounts => ({
                 ...prevCounts,
                 [commentId]: likeCountResponse.data

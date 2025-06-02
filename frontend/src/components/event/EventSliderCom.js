@@ -8,7 +8,7 @@ import {
     SlideImage,
     SlideOverlay,
     SlideText,
-    EventSlidePeriodText, MainTitle
+    EventSlidePeriodText
 } from "../../style/MainStyle";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,7 @@ const EventSliderCom = () => {
 
     useEffect(() => {
         // 진행 중인 이벤트 데이터를 가져옵니다.
-        axios.get("http://localhost:8080/event/ongoing-slider")
+        axios.get("http://api.hellotraveloginc.link/event/ongoing-slider")
             .then(response => {
                 // eventImg 경로를 조정
                 const formattedEvents = response.data.map(event => {

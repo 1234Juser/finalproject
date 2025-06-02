@@ -16,7 +16,6 @@ function AdminReviewByProductCon({ accessToken }) {
     const handleDeleteReview = async (reviewCode) => {
         try {
             if (!accessToken) {
-                console.error("accessToken 없음");
                 alert("로그인이 필요합니다.");
                 return;
             }
@@ -35,7 +34,6 @@ function AdminReviewByProductCon({ accessToken }) {
             dispatch({ type: "SET_REVIEWS", data: updatedReviews });
             alert("리뷰가 성공적으로 삭제되었습니다.");
         } catch (error) {
-            console.error("리뷰 삭제 실패:", error);
             alert("리뷰 삭제에 실패했습니다.");
         }
     };
@@ -46,7 +44,6 @@ function AdminReviewByProductCon({ accessToken }) {
         }
         fetchProductListForFilter(accessToken)
             .then((res) => {
-                console.log("상품 필터용 product 목록:", res);
                 setProducts(res);
             })
             .catch((e) => console.error("상품 목록 불러오기 실패", e));
@@ -62,29 +59,23 @@ function AdminReviewByProductCon({ accessToken }) {
             const roles = decoded.roles;
             if (!roles.includes("ROLE_ADMIN")) {
                 alert("접근 권한이 없습니다. 관리자만 접근할 수 있습니다.");
-                // 필요 시 아래처럼 리다이렉트도 가능
-                // navigate("/");
                 return;
             }
-            console.log("🟡 관리자 리뷰 목록 조회 시작");
             dispatch({ type: "SET_LOADING", data: true });
 
             getReviewsByProductForAdmin(selectedProductCode, accessToken, start)
                 .then(data => {
-                    console.log("API 응답 확인:", data);
                     dispatch({ type: "SET_REVIEWS", data });
                 })
                 .catch(err => {
                     if (err.response?.status === 403) {
                         alert("접근 권한이 없습니다. 관리자만 조회할 수 있습니다.");
                     } else {
-                        console.error("리뷰 조회 실패:", err.message);
                         alert("리뷰 목록 조회에 실패했습니다.");
                     }
                     dispatch({ type: "SET_ERROR", data: "리뷰 목록 조회 실패" });
                 })
         } catch (e) {
-            console.error("토큰 디코딩 오류:", e);
             alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
         }
     }, [selectedProductCode, accessToken, start]);

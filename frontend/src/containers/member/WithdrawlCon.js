@@ -13,7 +13,7 @@ function WithdrawlCon() {
         try {
             const token = localStorage.getItem("accessToken");
             await axios.put(
-                "/member/withdraw",
+                "https://api.hellotravelogic.link/member/withdraw",
                 { password },
                 { headers: token ? { Authorization: `Bearer ${token}` } : {} }
             );

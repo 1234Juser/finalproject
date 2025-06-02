@@ -19,7 +19,7 @@ function MyPageCon() {
 
         const fetchMemberData = async () => {
             try {
-                const res = await axios.get("/member/mypage", {
+                const res = await axios.get("https://api.hellotravelogic.link/member/mypage", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 // console.log('API Response - /member/mypage:', res.data);
@@ -45,10 +45,10 @@ function MyPageCon() {
         const fetchFollowData = async (memberCode, token) => {
             try {
                 const [followingRes, followersRes] = await Promise.all([
-                    axios.get(`/follow/${memberCode}/following`, {
+                    axios.get(`https://api.hellotravelogic.link/follow/${memberCode}/following`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`/follow/${memberCode}/followers`, {
+                    axios.get(`https://api.hellotravelogic.link/follow/${memberCode}/followers`, {
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
@@ -76,12 +76,12 @@ function MyPageCon() {
     const handleEditInfo = async (form) =>{
         try{
             const token = localStorage.getItem("accessToken");
-            await axios.put("/member/mypage/update", form,{
+            await axios.put("https://api.hellotravelogic.link/member/mypage/update", form,{
                 headers: token ? { Authorization: `Bearer ${token}` } : {}
             });
             alert("개인정보가 수정되었습니다.");
             //갱신
-            const res = await axios.get("/member/mypage",{
+            const res = await axios.get("https://api.hellotravelogic.link/member/mypage",{
                 headers: token ? { Authorization: `Bearer ${token}` } : {}
             });
             setMemberData(res.data);
@@ -101,7 +101,7 @@ function MyPageCon() {
             const formData = new FormData();
             formData.append("file", file);
 
-            const res = await axios.post("/member/mypage/profile-image", formData, {
+            const res = await axios.post("https://api.hellotravelogic.link/member/mypage/profile-image", formData, {
                 headers: {
                     ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     "Content-Type": "multipart/form-data"
@@ -126,7 +126,7 @@ function MyPageCon() {
         const kakaoToken = localStorage.getItem("kakaoAccessToken");
         // console.log("Unlink 시도. kakaoAccessToken=", kakaoToken);
         try{
-            await axios.post("/oauth/kakao/unlink",
+            await axios.post("https://api.hellotravelogic.link/oauth/kakao/unlink",
                 {accessToken: kakaoToken,}
                 ,{
                 headers: {Authorization: `Bearer ${token}`}
@@ -146,7 +146,7 @@ function MyPageCon() {
         const token = localStorage.getItem("accessToken");
         const googleToken = localStorage.getItem("googleAccessToken"); // 로그인시 저장해야 함
         try {
-            await axios.post("/oauth/google/unlink",
+            await axios.post("https://api.hellotravelogic.link/oauth/google/unlink",
                 { accessToken: googleToken },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

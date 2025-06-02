@@ -48,7 +48,7 @@ function CompanionMyPageCon() {
                 setLoading(false);
                 return;
             }
-            const response = await axios.get(`/mypage/community/posts?page=${page}&size=10`, {
+            const response = await axios.get(`https://api.hellotravelogic.link/mypage/community/posts?page=${page}&size=10`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setPosts(response.data.content);
@@ -75,7 +75,7 @@ function CompanionMyPageCon() {
                 setLoading(false);
                 return;
             }
-            const response = await axios.get(`/mypage/community/comments?page=${page}&size=10`, {
+            const response = await axios.get(`https://api.hellotravelogic.link/mypage/community/comments?page=${page}&size=10`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setComments(response.data.content);
@@ -103,7 +103,7 @@ function CompanionMyPageCon() {
                 setLoading(false);
                 return;
             }
-            const response = await axios.get(`/mypage/community/liked-posts?page=${page}&size=10`, {
+            const response = await axios.get(`https://api.hellotravelogic.link/mypage/community/liked-posts?page=${page}&size=10`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setLikedPosts(response.data.content);
@@ -131,7 +131,7 @@ function CompanionMyPageCon() {
                 setLoading(false);
                 return;
             }
-            const response = await axios.get(`/mypage/community/liked-comments?page=${page}&size=10`, {
+            const response = await axios.get(`https://api.hellotravelogic.link/mypage/community/liked-comments?page=${page}&size=10`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setLikedComments(response.data.content);

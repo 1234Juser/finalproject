@@ -10,7 +10,7 @@ function FaqEditCon() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`/faq/${faqCode}`)
+        axios.get(`https://api.hellotravelogic.link/faq/${faqCode}`)
             .then(res => {
                 setTitle(res.data.faqTitle);
                 setContent(res.data.faqContent);
@@ -24,7 +24,7 @@ function FaqEditCon() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`/faq/${faqCode}`, {
+            await axios.put(`https://api.hellotravelogic.link/faq/${faqCode}`, {
                 faqTitle: title,
                 faqContent: content,
             });

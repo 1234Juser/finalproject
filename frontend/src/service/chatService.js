@@ -1,4 +1,4 @@
-const path = "https://hellotravelogic.link";
+const path = "https://api.hellotravelogic.link";
 
 // 채팅방 전체 조회
 export const getAllChatRooms = async () => {

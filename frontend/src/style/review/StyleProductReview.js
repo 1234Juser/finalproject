@@ -10,6 +10,13 @@ export const ReviewContainer = styled.div`
     overflow-y: auto;
 `;
 
+export const SubTitle = styled.h3`
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+`;
+
 export const HeaderWrapper = styled.div`
     display: flex;
     justify-content: space-between;
@@ -177,4 +184,68 @@ export const FullImage = styled.img`
     max-width: 90vw;
     max-height: 90vh;
     border-radius: 10px;
+`;
+
+export const ModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    overflow-y: hidden;
+    padding: 20px;
+`;
+
+export const ModalContent = styled.div`
+    width: 600px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 20px 0 20px 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    max-height: 80vh;
+    position: relative;
+`;
+
+export const ScrollWrapper = styled.div`
+    overflow-y: auto;
+    max-height: 70vh;
+    padding-left: 10px;
+    padding-right: 10px;
+    
+    scrollbar-color: #ddd #f8f9fa;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #ddd;
+        border-radius: 16px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: #f8f9fa;
+        border-radius: 16px;
+    }
+`;
+
+export const CloseButton = styled.button`
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s;
+    align-self: flex-end;
+    margin-bottom: 10px;
+
+    &:hover {
+        color: #333;
+    }
 `;

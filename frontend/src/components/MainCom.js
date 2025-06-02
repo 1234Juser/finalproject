@@ -1,35 +1,29 @@
 import {
-    MainVideoWrapper,
-    MainVideoOverlay,
-    MainTitleOnVisual,
-    SubTextFx,
-    MainSectionWrapper,
-    BannerContainer,
-    SlideWrapper,
-    SlideCard,
-    SlideImage,
-    SlideOverlay,
-    SlideText,
-    BestLabel,
-    images,
-    PageWrapper,
     BannerSectionStyledWrapper,
-    ExchangeTimeContainer,
-    TitleSection,
-    MainTitle,
-    HighlightText,
-    Subtitle,
-    ImageGallery,
-    ImageLinkWrapper,
-    CityImage,
-    CityName,
-    CityLabel,
-    BestSlideWrapper,
+    BestBannerContainer,
+    BestLabel,
     BestSlideCard,
     BestSlideImage,
     BestSlideOverlay,
     BestSlideText,
-    BestBannerContainer,
+    BestSlideWrapper,
+    CityImage,
+    CityLabel,
+    CityName,
+    ExchangeTimeContainer,
+    HighlightText,
+    ImageGallery,
+    ImageLinkWrapper,
+    images,
+    MainSectionWrapper,
+    MainTitle,
+    MainTitleOnVisual,
+    MainVideoOverlay,
+    MainVideoWrapper,
+    PageWrapper,
+    SubTextFx,
+    Subtitle,
+    TitleSection,
 } from "../style/MainStyle";
 import React, {useEffect, useState} from "react";
 import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
@@ -125,7 +119,8 @@ export default function MainCom({accessToken, state, dispatch}) {
                             <BestSlideCard key={idx}>
                                 <BestLabel>BEST {(idx % images.length) + 1}</BestLabel>
                                 <BestSlideImage
-                                    src={`http://localhost:8080${src}`}
+                                    // src={`http://localhost:8080${src}`}
+                                    src={`https://api.hellotravelogic.link${src}`}
                                     alt={`banner-${idx}`}
                                 />
                                 <BestSlideOverlay />

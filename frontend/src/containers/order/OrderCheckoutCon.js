@@ -32,7 +32,6 @@ function OrderCheckoutCon({ accessToken }) {
             try {
                 const option = await fetchOptionDetails(productUid, optionCode, accessToken);
                 setOptionData(option);
-                console.log("🟢 옵션 데이터 로드 성공:", option);
 
                 const member = await fetchMemberInfo(accessToken);
                 setMemberInfo(member);
@@ -45,10 +44,7 @@ function OrderCheckoutCon({ accessToken }) {
 
                 if (!orderCode) throw new Error("주문 생성 실패");
                 setOrderCode(orderCode);
-                console.log("🟢 [useEffect] 생성된 orderCode:", orderCode);
-                console.log("🟢 bookingUid:", bookingUid);
             } catch (error) {
-                console.error("🔴 옵션 데이터 로드 실패:", error);
                 setError("옵션 데이터를 불러오는 데 실패했습니다.");
             } finally {
                 setLoading(false);
@@ -72,22 +68,18 @@ function OrderCheckoutCon({ accessToken }) {
         if (!orderCode) return; // orderCode 생성되기 전엔 아무 것도 하지 않음
 
         const sendCancelRequest = () => {
-            console.log("🟡 sendBeacon 시도 중"); // ✅ 반드시 이 로그 확인
             const data = JSON.stringify({ orderCode });
             const blob = new Blob([data], { type: "application/json" });
             const success = navigator.sendBeacon("/orders/cancel-pending", blob);
-            console.log("📤 sendBeacon 전송 여부:", success);
         };
 
         const handleVisibilityChange = () => {
-            console.log("🟠 visibilitychange 발생:", document.visibilityState);
             if (document.visibilityState === "hidden") {
                 sendCancelRequest();
             }
         };
 
         const handleBeforeUnload = () => {
-            console.log("🔵 beforeunload 발생");
             sendCancelRequest();
         };
 
@@ -98,10 +90,6 @@ function OrderCheckoutCon({ accessToken }) {
             document.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    }, [orderCode]);
-
-    useEffect(() => {
-        console.log("🔎 [DEBUG] orderCode 바뀜:", orderCode);
     }, [orderCode]);
 
     // 10분 후 자동삭제
@@ -116,25 +104,6 @@ function OrderCheckoutCon({ accessToken }) {
     }, [orderCode, accessToken]);
 
     // 페이지 이동시 삭제
-    // useEffect(() => {
-    //     const locationChangeHandler = () => {
-    //         if (!orderCode || !accessToken) return;
-    //
-    //         const data = { orderCode };
-    //         axios.post("/orders/cancel-pending", data, {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${accessToken}`,
-    //             },
-    //         })
-    //             .then(() => console.log("🟢 SPA 페이지 이동 중 주문 삭제 완료"))
-    //             .catch((err) => console.warn("🔴 SPA 주문 삭제 실패", err));
-    //     };
-    //
-    //     return () => {
-    //         locationChangeHandler();
-    //     };
-    // }, [orderCode, accessToken, useLocation().pathname]);
     useEffect(() => {
         const locationChangeHandler = () => {
             if (!orderCode || !accessToken) return;
@@ -158,43 +127,13 @@ function OrderCheckoutCon({ accessToken }) {
             alert("결제수단을 선택해주세요.");
             return;
         }
-        console.log("선택된 결제수단:", selectedPaymentMethod);
         const supportedMethods = ["CARD", "KAKAO_PAY", "BANK_TRANSFER"];
         if (!supportedMethods.includes(selectedPaymentMethod)) {
-            alert("카드와 카카오페이, 무통장입금 외 결제는 서비스 준비 중 입니다.");
+            alert("네이버페이와 토스페이는 서비스 준비 중 입니다.");
             return;
         }
 
         try {
-            // const orderData = {
-            //     productCode: optionData.productCode,
-            //     optionCode: optionData.optionCode,
-            //     memberCode: memberInfo.memberCode,
-            //     reservationDate: optionData.reservationDate,
-            //     adultCount: optionData.adultCount,
-            //     childCount: optionData.childCount,
-            //     totalPrice: optionData.totalPrice,
-            //     orderAdultPrice: optionData.productAdult,
-            //     orderChildPrice: optionData.productChild,
-            // };
-
-            // const {orderCode, bookingUid} = await createOrder(productUid, {
-            //         ...optionData,
-            //         memberCode: memberInfo.memberCode,
-            //         productCode: optionData.productCode,
-            //     },
-            //     accessToken);
-            // if (!orderCode) throw new Error("주문 생성 실패");
-
-            // const bookingUid = await createOrder(productUid, optionData, accessToken);
-            // console.log("🟢 주문 생성 성공:", bookingUid);
-            // alert("결제가 완료되었습니다. 예약 번호: " + bookingUid);
-            // navigate(`/order/complete/${bookingUid}`);
-
-            // console.log("🟢 주문 생성 성공:", orderCode);
-            // console.log("bookingUid:", bookingUid);
-            // alert("결제가 완료되었습니다. 예약 번호: " + orderCode);
-            // navigate(`/payments/create/${orderCode}`);
             const orderData = {
                 orderCode: orderCode,
                 productCode: optionData.productCode,
@@ -221,14 +160,6 @@ function OrderCheckoutCon({ accessToken }) {
                 return;
             }
 
-            // 주문 상태 변경
-            // await completeOrder(
-            //     orderData.orderCode,
-            //     "CARD", // 또는 "KAKAO_PAY" 등
-            //     orderData.totalPrice,
-            //     accessToken
-            // );
-
             // 결제 성공 후 결제 정보 저장
             const paymentData = {
                 impUid: result.impUid,
@@ -241,11 +172,8 @@ function OrderCheckoutCon({ accessToken }) {
                 memberCode: memberInfo.memberCode,
             };
             await requestPayment(result, accessToken);
-            console.log("🟢 PaymentEntity 저장 성공:", result);
 
-            // await completeOrder(orderCode, "CARD", orderData.totalPrice, accessToken);
             await completeOrder(orderCode, selectedPaymentMethod, orderData.totalPrice, accessToken);
-
 
             const resolvedThumbnail =
                 orderData.productThumbnail?.includes("upload/")
@@ -257,7 +185,6 @@ function OrderCheckoutCon({ accessToken }) {
                     bookingUid: result.bookingUid,
                     orderDate: new Date(),
                     productTitle: orderData.productTitle,
-                    // productThumbnail: orderData.productThumbnail,
                     productThumbnail: resolvedThumbnail,
                     totalPrice: orderData.totalPrice,
                     vbankNum: result.vbankNum,
@@ -267,7 +194,6 @@ function OrderCheckoutCon({ accessToken }) {
                 },
             });
         } catch (error) {
-            console.error("🔴 주문 생성 실패:", error);
             alert("주문 생성에 실패했습니다.");
         }
     };
@@ -279,7 +205,6 @@ function OrderCheckoutCon({ accessToken }) {
         <>
             <OrderCheckoutCom
                 optionData={optionData}
-                // optionData={loadedOptionData}
                 memberInfo={memberInfo}
                 orderCode={orderCode}
                 loading={loading}

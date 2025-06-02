@@ -13,7 +13,7 @@ function AdminRealTimeCon() {
     useEffect(() => {
         const fetchCityViewCounts = async () => {
             try {
-                const response = await axios.get("/city/all-view-counts");
+                const response = await axios.get("https://api.hellotravelogic.link/city/all-view-counts");
                 const sortedCities = response.data.sort((a, b) => b.viewCount - a.viewCount);
                 setCityViewCounts(sortedCities);
                 setLoading(false);

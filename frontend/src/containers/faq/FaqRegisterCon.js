@@ -11,7 +11,7 @@ function FaqRegisterCon() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("/faq", {
+            await axios.post("https://api.hellotravelogic.link/faq", {
                 faqTitle: title,
                 faqContent: content,
             });

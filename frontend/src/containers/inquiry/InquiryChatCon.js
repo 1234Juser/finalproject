@@ -115,7 +115,8 @@ function InquiryChatCon({ isVisible }) {
             // console.log("WebSocket 연결 헤더 (비회원): No Authorization header");
         }
 
-        const socket = new SockJS("http://localhost:8080/ws");
+        // const socket = new SockJS("http://localhost:8080/ws");
+        const socket = new SockJS("https://api.hellotravelogic.link/ws");
         const stompClient = Stomp.over(socket);
 
         stompClient.connect(

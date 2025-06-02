@@ -6,7 +6,6 @@ import {getGroups, getItemsInGroup, deleteWish, deleteGroup} from "../../service
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 
-// accessToken prop 추가
 function WishCon({accessToken}) {
     const { groupCode } = useParams();
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -14,7 +13,6 @@ function WishCon({accessToken}) {
     const isGroupView = !groupCode;
     const isListView = !!groupCode && !isNaN(parseInt(groupCode, 10));
     const selectedGroup = groups.find(group => group.groupCode === selectedGroupCode);
-    // const accessToken = localStorage.getItem("accessToken");
     const navigate = useNavigate();
 
     // <ThumbImg />클릭시 해당 그룹에 담긴 위시상품들 리스트 페이지로 이동한다.
@@ -32,7 +30,6 @@ function WishCon({accessToken}) {
 
         getGroups(accessToken)
             .then((data) => {
-                console.log("받은 그룹 목록:", data);
                 dispatch({ type: "SET_GROUPS", data });
             })
             .catch((err) => {
@@ -98,9 +95,7 @@ function WishCon({accessToken}) {
             });
 
             // 그룹 자동 생성됐을 수 있으니, 목록 다시 불러오기
-            // getGroups 호출 시 accessToken 전달
             const groups = await getGroups(accessToken);
-            console.log("getGroups 결과:", groups);
             dispatch({ type: "SET_GROUPS", data: groups });
 
             const status = response.data;

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const path = "http://localhost:8080";
+// const path = "http://localhost:8080"
+const path = "https://api.hellotravelogic.link";
 
 // 주문 정보 조회
 export const getOrderByOrderCode = async (orderCode, accessToken) => {

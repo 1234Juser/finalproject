@@ -9,7 +9,7 @@ function EventDetailCon() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`/event/${id}`)
+        axios.get(`https://api.hellotravelogic.link/event/${id}`)
             .then(res => setEvent(res.data))
             .catch(() => setEvent(null));
     }, [id]);
@@ -27,7 +27,7 @@ function EventDetailCon() {
     const handleDelete = async () => {
         if (window.confirm("이벤트를 정말 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`/event/${id}`);
+                await axios.delete(`https://api.hellotravelogic.link/event/${id}`);
                 alert("이벤트가 삭제되었습니다.");
                 navigate("/event"); // 목록 페이지 등으로 이동
             } catch (e) {

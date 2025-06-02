@@ -32,7 +32,7 @@ function ExchangeBoxCom() {
     ];
 
     useEffect(() => {
-        axios.get("/exchange/main").then(res => setRates(res.data));
+        axios.get("https://api.hellotravelogic.link/exchange/main").then(res => setRates(res.data));
     }, []);
 
     if (!rates) return <ExchangeBoxWrapper>환율 정보를 불러오는 중...</ExchangeBoxWrapper>;

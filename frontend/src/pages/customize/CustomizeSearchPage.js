@@ -38,7 +38,7 @@ function CustomizeSearchPage() {
     }, [products, sortBy]);
 
     // 검색 결과가 없을 경우 메시지 표시
-    console.log("현재 products 상태:", products); // products 상태 로그
+    // console.log("현재 products 상태:", products); // products 상태 로그
     if (!searchResults || searchResults.length === 0) {
         return (
             <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', textAlign: 'center' }}>

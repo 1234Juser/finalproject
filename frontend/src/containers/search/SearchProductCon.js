@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, {useEffect, useState} from "react";
 import SearchProductCom from "../../components/search/SearchProductCom";
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import axios from "axios";
 
 // 페이지당 상품 개수 설정
@@ -32,7 +32,7 @@ function SearchProductCon() {
 
         // 백엔드 API 호출 시 페이지 및 정렬 정보 추가
         // 백엔드에서 'page', 'size', 'sortBy' 파라미터를 받는다고 가정
-        axios.get(`/search?query=${encodeURIComponent(keyword)}&page=${currentPage - 1}&size=${PRODUCTS_PER_PAGE}&sortBy=${sortBy}`)
+        axios.get(`https://api.hellotravelogic.link/search?query=${encodeURIComponent(keyword)}&page=${currentPage - 1}&size=${PRODUCTS_PER_PAGE}&sortBy=${sortBy}`)
             .then((res) => {
                 // 백엔드 응답 구조에 따라 수정 필요 (예: { content: [...], totalElements: ... })
                 setProducts(res.data.content); // 백엔드에서 정렬되어 온 현재 페이지 데이터

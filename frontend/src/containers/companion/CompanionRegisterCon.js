@@ -193,7 +193,7 @@ function CompanionRegisterCon() {
 
         try {
             await axios.post(
-                '/companions',
+                'https://api.hellotravelogic.link/companions',
                 // params, // 수정된 데이터 형식
                 formData, // FormData 전송
                 {

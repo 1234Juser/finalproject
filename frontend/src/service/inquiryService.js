@@ -1,4 +1,4 @@
-const path = "https://hellotravelogic.link";
+const path = "https://api.hellotravelogic.link";
 
  // REST API로 채팅방 시작/조회 요청
 const getStartInquiry = async ({inquiryMessage, token}) => {

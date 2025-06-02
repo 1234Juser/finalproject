@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import LoginCom from "../../components/member/LoginCom";
 import Modal from "../../components/common/Modal";
 import FindIdCon from "../member/FindIdCon";
@@ -35,7 +35,7 @@ function LoginCon(){
         // console.log("입력된 PW:", memberPassword);
 
         try{
-            const response = await axios.post("/member/login", {
+            const response = await axios.post("https://api.hellotravelogic.link/member/login", {
                 memberId,
                 memberPassword
             });
@@ -65,13 +65,13 @@ function LoginCon(){
 
     // 카카오 로그인 핸들러 추가
     const handleKakaoLogin = () => {
-        window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=14194a0a23cf74ec0bc6c0b2ba676489&redirect_uri=http://localhost:3000/oauth/kakao/callback&prompt=login`
+        window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=14194a0a23cf74ec0bc6c0b2ba676489&redirect_uri=https://hellotravelogic.link/oauth/kakao/callback&prompt=login`
             .replace(/\s+/g, '');
     }
     // 구글 로그인 핸들러 추가
     const handleGoogleLogin = () => {
         const googleClientId = "981822033334-r6u3d855k6gds83h9dtd8p327m6bfcu3.apps.googleusercontent.com";
-        const redirectUri = "http://localhost:3000/oauth/google/callback";
+        const redirectUri = "https://hellotravelogic.link/oauth/google/callback";
         const scope = "profile email";
         const authUrl =
             `https://accounts.google.com/o/oauth2/v2/auth` +

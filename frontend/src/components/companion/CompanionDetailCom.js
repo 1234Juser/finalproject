@@ -104,7 +104,7 @@ function CompanionDetailCom({
 
                 for (const memberCode of membersToCheck) {
                     try {
-                        const response = await axios.get(`/follow/is-following/${memberCode}`, {
+                        const response = await axios.get(`https://api.hellotravelogic.link/follow/is-following/${memberCode}`, {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
                         followStatuses[memberCode] = response.data;
@@ -235,12 +235,12 @@ function CompanionDetailCom({
 
         try {
             if (isCurrentlyFollowing) {
-                await axios.delete(`/follow/${memberCodeToFollow}`, {
+                await axios.delete(`https://api.hellotravelogic.link/follow/${memberCodeToFollow}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 alert("언팔로우 되었습니다.");
             } else {
-                await axios.post(`/follow/${memberCodeToFollow}`, null, {
+                await axios.post(`https://api.hellotravelogic.link/follow/${memberCodeToFollow}`, null, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 alert("팔로우 되었습니다.");
@@ -270,11 +270,11 @@ function CompanionDetailCom({
         try {
             const token = localStorage.getItem("accessToken");
             // 팔로잉 목록 먼저 가져오기
-            const followingResponse = await axios.get(`/follow/${memberCode}/following`, {
+            const followingResponse = await axios.get(`https://api.hellotravelogic.link/follow/${memberCode}/following`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             // 팔로워 목록 가져오기
-            const followerResponse = await axios.get(`/follow/${memberCode}/followers`, {
+            const followerResponse = await axios.get(`https://api.hellotravelogic.link/follow/${memberCode}/followers`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 

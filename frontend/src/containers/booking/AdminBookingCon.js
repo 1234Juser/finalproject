@@ -28,8 +28,6 @@ function AdminBookingCon({accessToken}){
             const roles = decoded.roles;
             if (!roles.includes("ROLE_ADMIN")) {
                 alert("접근 권한이 없습니다. 관리자만 접근할 수 있습니다.");
-                // 필요 시 아래처럼 리다이렉트도 가능
-                // navigate("/");
                 return;
             }
             dispatch({ type: "LOADING" });
@@ -42,7 +40,6 @@ function AdminBookingCon({accessToken}){
                     if (err.response?.status === 403) {
                         alert("접근 권한이 없습니다. 관리자만 조회할 수 있습니다.");
                     } else {
-                        console.error("예약 조회 실패:", err.message);
                         alert("예약 목록 조회에 실패했습니다.");
                     }
                     dispatch({type: "FETCH_ERROR", payload: err.message});
@@ -51,7 +48,6 @@ function AdminBookingCon({accessToken}){
             // 비동기 함수
             fetchReservations();
         } catch (e) {
-            console.error("토큰 디코딩 오류:", e);
             alert("인증 정보가 잘못되었습니다. 다시 로그인 해주세요.");
         }
     }, [accessToken, start, selectedStatus]);
@@ -76,7 +72,6 @@ function AdminBookingCon({accessToken}){
         const confirmed = window.confirm("선택한 예약을 정말 취소하시겠습니까?");
         if (!confirmed) return;
         try {
-            console.log("선택된 예약코드 목록:", selectedOrders);
             // 선택된 예약 상태 체크
             const invalidOrders = reservations.filter(reservation =>
                 selectedOrders.includes(reservation.orderCode) &&

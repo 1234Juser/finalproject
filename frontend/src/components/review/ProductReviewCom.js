@@ -1,14 +1,11 @@
-import {SubTitle} from "../../style/product/StyleProductDetail";
 import React, {useState} from "react";
 import AllReviewModal from "./AllReviewModal";
 import {
-    FullImage,
-    FullImageOverlay,
+    FullImage, FullImageOverlay,
     HeaderWrapper, LeftSide, NoReviewMessage, Rating, RatingAndReviewerRow,
     ReviewContainer, ReviewContent, ModalReviewContent, ReviewDate, Reviewer,
-    ReviewItem, ModalReviewItem,
-    ReviewList, ShowMoreButton,
-    SortWrapper, Thumbnail, ReviewBodyRow
+    ReviewItem, ModalReviewItem, ReviewList, ShowMoreButton,
+    SortWrapper, Thumbnail, ReviewBodyRow, SubTitle
 } from "../../style/review/StyleProductReview";
 
 function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPreviewSortChange = () => {},

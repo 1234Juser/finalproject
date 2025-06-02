@@ -42,7 +42,6 @@ function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onCl
     }
 
     const handleReviewClick = (review) => {
-        console.log("🟢 선택된 리뷰:", review);
         setSelectedReview(review);
     };
 
@@ -80,7 +79,6 @@ function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onCl
                                 </tr>
                             ) : (
                                 reviews && reviews.map((review) => {
-                                    console.log("🟢 개별 리뷰 데이터:", review);
                                     // 예약일 처리
                                     const reservationDate = review.reservationDate
                                         ? new Date(review.reservationDate).toLocaleDateString()
