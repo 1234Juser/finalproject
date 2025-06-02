@@ -1,7 +1,7 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <property name="LOG_PATH" value="${logging.file.path:-logs}" />
+    <property name="LOG_PATH" value="${logging.file.path:-/home/ubuntu/app/logs}" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
