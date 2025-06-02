@@ -11,37 +11,27 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
     const isValidDate = (date) =>  date instanceof Date && !isNaN(date);
     const parseDateSafe = (str, fallback = new Date()) => {
         if (!str) {
-            console.warn("⛔ parseDateSafe: str이 비어 있음 → fallback 사용:", fallback);
             return fallback;
         }
         const parsed = new Date(str);
         if (isNaN(parsed.getTime())) {
-            console.warn("⛔ parseDateSafe: Invalid Date 발생 →", str, "→ fallback 사용:", fallback);
             return fallback;
         }
-        console.log("✅ parseDateSafe: 정상적으로 파싱됨 →", str, "→", parsed);
         return parsed;
     };
 
+    const stripTime = (date) =>
+        new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const today = new Date();
-    const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const startDate = useMemo(() => {
-        const result = parseDateSafe(optionData?.availableStartDate, todayOnly);
-        console.log("🟢 startDate 최종:", result);
-        return result;
-    }, [optionData]);
-    const endDate = useMemo(() => {
-        const result = parseDateSafe(optionData?.availableEndDate, todayOnly);
-        console.log("🟢 endDate 최종:", result);
-        return result;
-    }, [optionData]);
+    const todayOnly = stripTime(new Date());
+    const startDate = useMemo(() => stripTime(parseDateSafe(optionData?.availableStartDate, todayOnly)), [optionData]);
+    const endDate = useMemo(() => stripTime(parseDateSafe(optionData?.availableEndDate, todayOnly)), [optionData]);
     const defaultDate = useMemo(() => {
         const result = todayOnly < startDate
             ? startDate
             : todayOnly > endDate
                 ? startDate
                 : todayOnly;
-        console.log("🟡 defaultDate 계산 결과:", result);
         return result;
     }, [startDate, endDate]);
 
@@ -49,18 +39,14 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
         if (selectedDate) {
             const parsed = new Date(selectedDate);
             if (isNaN(parsed)) {
-                console.warn("⛔ selectedDate가 Invalid Date임 → defaultDate 사용:", defaultDate);
                 return defaultDate;
             } else {
-                console.log("✅ selectedDate 유효:", parsed);
                 return parsed;
             }
         }
-        console.log("🟢 selectedDate 없음 → defaultDate 사용:", defaultDate);
         return defaultDate;
     });
     const [state, dispatch] = useReducer(reducer, initialState);
-    const [priceData, setPriceData] = useState({});
     const [availableDates, setAvailableDates] = useState([]);
 
     useEffect(() => {
@@ -76,8 +62,7 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
                 : todayOnly > endDate
                     ? startDate
                     : todayOnly;
-            console.log("🛠 currentDate를 fallback에서 재설정:", correctedDefault);
-            setCurrentDate(correctedDefault);
+            setCurrentDate(correctedDefault);;
         }
     }, [startDate, endDate, selectedDate]);
 
@@ -94,7 +79,6 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
             const validStart = today < start ? start : today > end ? start : today;
             const formattedInitDate = validStart.toISOString().split("T")[0];
             dispatch({ type: "SET_RESERVATION_DATE", data: formattedInitDate });
-            console.log("🟢 예약 날짜 초기화:", formattedInitDate);
         }
     }, [state.availableStartDate, state.availableEndDate]);
 
@@ -110,27 +94,20 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
     useEffect(() => {
         if (!startDate || !endDate) return;
 
-        // const today = new Date(); // 기준 날짜가 필요한 경우
-
         fetchOptionsByDateRange(productUid, startDate, endDate)
             .then(data => {
-                const formattedPrices = {};
                 const available = [];
 
                 data.forEach(option => {
                     const dateKey = option.reservationDate;
                     if (dateKey) {
-                        formattedPrices[dateKey] = option.totalPrice?.toLocaleString() || "0";
                         available.push(new Date(dateKey));
                     }
                 });
-
-                setPriceData(formattedPrices);
-                setAvailableDates(available);
-                console.log("🟢 예약 가능 날짜들:", available);
+                setAvailableDates(data.map(option => stripTime(new Date(option.reservationDate))));
             })
             .catch(error => {
-                console.error("🔴 옵션 가격 데이터를 불러오는 데 실패했습니다:", error);
+                alert("예약 가능한 날짜 정보를 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.");
             });
     }, [productUid, startDate, endDate]);
 
@@ -147,14 +124,16 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
 
     const renderDay = (date) => {
         const key = format(date, 'yyyy-MM-dd');
-        const price = priceData[key] || null;
-        const isAvailable = availableDates.some(d => format(d, 'yyyy-MM-dd') === key);
+        const isOutside = date.getMonth() !== currentDate.getMonth();
+        const isBeforeToday = date < todayOnly;
+        const isBeforeStart = date < startDate;
+        const isAfterEnd = date > endDate;
+        const isAvailable = availableDates.some(d => d.getTime() === date.getTime());
+        const isDisabled = isBeforeToday || isBeforeStart || isAfterEnd;
 
         return (
-            <DayContent>
+            <DayContent isAvailable={isAvailable} isDisabled={isDisabled} isOutside={isOutside}>
                 <span>{date.getDate()}</span>
-                {price && <span className="price">{price}원</span>}
-                {price && <span className="dot"></span>}
                 {isAvailable && <span className="dot"></span>}
             </DayContent>
         );
@@ -172,20 +151,13 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
                         key={defaultMonth.toString()}
                         locale={ko}
                         mode="single"
-                        // dateFormat='yyyy.MM.dd'
-                        // minDate={yesterday}    // minDate 이전 날짜 선택 불가
                         selected={currentDate}
                         defaultMonth={defaultMonth}
-                        // month={currentDate}  // 초기에 보여줄 달. 월 이동이 불가능하게 고정된다
                         onSelect={handleDateSelect}
                         fromDate={startDate}
                         toDate={endDate}
                         fromMonth={startDate}
                         toMonth={endDate}
-                        // fromDate={today}
-                        // fromDate={new Date(today)}  // 시간 제거된 오늘 날짜.
-                        // fromDate={localToday}   // 오늘 이전의 날짜 선택 불가
-                        // fromDate={state.fromDate}
                         showOutsideDays={true}  // 현재 월에 포함되지 않은 날짜도 표시
                         onChange={(date) => setCurrentDate(date)}
                         components={{
@@ -204,9 +176,19 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
                             weekday: "flex flex-col w-full",
                         }}
                         modifiers={{
-                            disabled: [{ before: startDate, after: endDate }],
+                            disabled: (date) => {
+                                const d = stripTime(date);
+                                return d < todayOnly || d < startDate || d > endDate;
+                            },
+                            available: (date) =>
+                                availableDates.some(d => d.getTime() === date.getTime()),
+                            outsideAvailable: (date) =>
+                                availableDates.some(d => d.getTime() === date.getTime()) &&
+                                date.getMonth() !== currentDate.getMonth(),
                         }}
                         modifiersClassNames={{
+                            outsideAvailable: 'rdp-day_outsideAvailable',
+                            available: 'rdp-day_available',
                             disabled: 'rdp-day_disabled',
                             selected: 'rdp-day_selected',
                             today: 'rdp-day_today',
@@ -215,7 +197,6 @@ function CalendarDisplay({ productUid, selectedDate, onDateSelect, optionData })
                     />)}
                 {selectedDate && (
                     <SelectedDate>
-                        {/*선택된 날짜: {selectedDate.toLocaleDateString()}*/}
                         선택된 날짜: {new Date(selectedDate).toLocaleDateString("ko-KR")}
                     </SelectedDate>
                 )}

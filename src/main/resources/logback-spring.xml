@@ -1,51 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- 로그 저장 위치 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
     <property name="LOG_DIR" value="logs" />
 
-    <!-- 콘솔에 로그 출력 Appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level){ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=gray} [%thread] %cyan(%logger{36}) - %msg%n
-            </Pattern>
-        </layout>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level){ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=gray} [%thread] %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
     </appender>
 
-
-    <!-- 채팅 로그 전용 Appender -->
     <appender name="CHAT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/chat-message.log</file>
-
-        <!-- 로그 메시지 형식 정의 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%date [%thread] %-5level %logger - %msg%n</pattern>
-            <!--            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %msg%n</Pattern>-->
         </encoder>
-
-        <!-- 날짜별로 로그 파일 분리 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/chat-message.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory> <!-- 30일치 저장(오래된 파일은 자동으로 삭제) -->
-        </rollingPolicy>
-
+            <maxHistory>30</maxHistory> </rollingPolicy>
     </appender>
 
-    <!-- 채팅 로그를 남길 Logger 등록 -->
+
+    <logger name="software.amazon.awssdk" level="DEBUG"/>
+    <logger name="org.apache.http" level="TRACE"/>
+    <logger name="io.netty" level="TRACE"/>
+
+    <logger name="com.hello.travelogic" level="DEBUG"/>
+    <logger name="org.springframework.web" level="INFO"/>
+
     <logger name="ChatLog" level="INFO" additivity="false">
-        <appender-ref ref="CHAT_LOG"/>  <!-- 위의 CHAT_LOG 어펜더와 연결 -->
-        <appender-ref ref="CONSOLE"/>   <!-- 채팅 로그 콘솔에 출력 -->
+        <appender-ref ref="CHAT_LOG"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- root 로거는 기존처럼 사용 -->
-    <!-- ChatLog 로거에서 처리되지 않은 다른 모든 로그(additivity가 true인 경우 포함)는 이 root 로거의 설정을 따릅니다. -->
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
-
-    <logger name="org.springframework.web" level="INFO"/>
-    <!-- 애플리케이션의 로그 레벨을 DEBUG로 설정하여 개발 중에 더 자세한 로그를 볼 수 있도록 함. -->
-    <logger name="com.hello.travelogic" level="DEBUG"/>
 
 </configuration>

@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Slf4j
 public class MemberService {
 
@@ -44,6 +49,34 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final JavaMailSender mailSender;
+    private final S3Client s3Client; // S3Client 주입
+    private final String bucketName;
+    private final String awsRegion;
+
+    @Autowired
+    public MemberService(
+            MemberRepository memberRepository,
+            AuthorityRepository authorityRepository,
+            MemberRoleRepository memberRoleRepository,
+            PasswordResetAuthCodeRepository passwordResetAuthCodeRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            JavaMailSender mailSender,
+            S3Client s3Client,
+            @Value("${aws.s3.bucket-name}") String bucketName, // @Value를 파라미터에 직접 적용
+            @Value("${aws.s3.region}") String awsRegion) {      // @Value를 파라미터에 직접 적용
+        this.memberRepository = memberRepository;
+        this.authorityRepository = authorityRepository;
+        this.memberRoleRepository = memberRoleRepository;
+        this.passwordResetAuthCodeRepository = passwordResetAuthCodeRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.mailSender = mailSender;
+        this.s3Client = s3Client;
+        this.bucketName = bucketName;
+        this.awsRegion = awsRegion;
+    }
+
 
     @Transactional
     public void signup(MemberDTO memberDTO) {
@@ -225,29 +258,37 @@ public class MemberService {
         }
 
         // 실제 저장은 @Transactional로 처리됨
-
-
     }
+
     //프로필이미지변경
     @Transactional
     public String updateProfileImage(String memberId, MultipartFile file) {
         MemberEntity member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(()-> new IllegalArgumentException("회원정보가 존재하지않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지않습니다."));
 
-        //파일 실제 저장로직
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        String uploadDir = new File("upload/img/").getAbsolutePath() + File.separator;
-        File dir = new File(uploadDir);
-        if(!dir.exists()) dir.mkdirs();
+        // S3에 저장될 파일 이름 생성
+        String fileName = "profile-images/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-        File targetFile = new File(uploadDir + fileName);
         try {
-            file.transferTo(targetFile);
+            // S3에 파일을 업로드하기 위한 요청 객체 생성
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .contentType(file.getContentType())
+                    .contentLength(file.getSize())
+                    .build();
+
+            // S3에 파일 업로드
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+
         } catch (IOException e) {
-            throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("S3 파일 업로드 중 오류가 발생했습니다.", e);
         }
 
-        String imageUrl = "/img/" + fileName;
+        // 업로드된 파일의 S3 URL 가져오기
+        String imageUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(fileName)).toString();
+
+        // 회원 정보에 이미지 URL 업데이트
         member.setMemberProfileImageUrl(imageUrl);
 
         return imageUrl;

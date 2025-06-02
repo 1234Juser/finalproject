@@ -21,19 +21,29 @@ function EventListCom({
     const navigate = useNavigate();
 
     // 이미지 경로 처리 함수
+    // const getImgUrl = (imgPath) => {
+    //     if (!imgPath || imgPath === "event/default_event.jpg") {
+    //         // 기본이미지의 경우
+    //         return "/img/event/default_event.jpg";
+    //     }
+    //     // event/로 시작하는 경로의 경우 이미 event 폴더 내에 있는 이미지이므로 그대로 사용
+    //     // 그 외의 경우는 /upload/events/ 경로를 붙여줌 (UUID 파일명 처리)
+    //     if (imgPath.startsWith("event/")) {
+    //         return `/img/${imgPath}`;
+    //     }
+    //     return `/events/${imgPath}`;
+    //
+    // };
+
+    // 이미지 경로 처리 함수
     const getImgUrl = (imgPath) => {
-        if (!imgPath || imgPath === "event/default_event.jpg") {
-            // 기본이미지의 경우
+        if (!imgPath) { // 기본 이미지는 별도 경로로 처리 가능
             return "/img/event/default_event.jpg";
         }
-        // event/로 시작하는 경로의 경우 이미 event 폴더 내에 있는 이미지이므로 그대로 사용
-        // 그 외의 경우는 /upload/events/ 경로를 붙여줌 (UUID 파일명 처리)
-        if (imgPath.startsWith("event/")) {
-            return `/img/${imgPath}`;
-        }
-        return `/events/${imgPath}`;
-
+        // imgPath가 전체 S3 URL이라고 가정하고 그대로 반환
+        return imgPath;
     };
+
 
     return (
         <EventListWrapper>

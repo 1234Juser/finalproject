@@ -4,14 +4,9 @@ import {DayPicker} from "react-day-picker";
 export const CalendarWrapper = styled.div`
     height: 550px;
     width: 90%;
-    //max-width: 800px;
-    //margin: 20px;
     padding: 20px;
-    //padding: 1rem;
     background-color: #f8f9fa;
     border-radius: 10px;
-    //overflow: hidden;
-    //max-width: 100%;
     margin: 0 auto;
 `;
 
@@ -40,10 +35,8 @@ export const StyledDayPicker = styled(DayPicker)`
     .CalendarWrapper {
         width: 90%;
         max-width: 1200px;
-        //padding: 20px;
         background-color: #f8f9fa;
         border-radius: 12px;
-        //margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -56,26 +49,6 @@ export const StyledDayPicker = styled(DayPicker)`
         flex-direction: column !important;
         align-items: center !important;
         font-family: Arial, sans-serif;
-        //display: inline-block;
-        //--rdp-background-color: #ffffff;
-        //--rdp-accent-color: #000000;
-        //--rdp-accent-background-color: #f8f9fa;
-        //--rdp-today-color: #3399ff;
-        //--rdp-day-height: 60px;
-        //--rdp-day-width: 60px;
-        //--rdp-nav_button-disabled-opacity: 0.3;
-        //--rdp-nav_button-color: #000000;
-        //--rdp-nav_button-background: transparent;
-        //--rdp-nav_button-border-radius: 50%;
-        //--rdp-day-radius: 12px;
-        //--rdp-cell-radius: 12px;
-        //--rdp-selected-color: #ffffff;
-        //--rdp-selected-background-color: #000000;
-        //--rdp-selected-border-color: #000000;
-        //--rdp-disabled-opacity: 0.3;
-        //--rdp-weekday-text-align: center; /* 요일 중앙 정렬 */
-        //--rdp-weekday-padding: 0.5rem;
-        //--rdp-weekday-opacity: 1;
     }
 
     .rdp-caption {
@@ -92,17 +65,14 @@ export const StyledDayPicker = styled(DayPicker)`
         font-size: 1.2rem;
         color: #333;
         margin: 0 auto;
-        //flex-shrink: 0;
     }
 
     .rdp-nav {
         display: flex;
-        //position: relative;
         width: 100%;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 250px;
-        //padding: 0.5rem 1rem;
         color: #ffffff;
         font-weight: bold;
     }
@@ -117,7 +87,6 @@ export const StyledDayPicker = styled(DayPicker)`
         padding: 0.5rem 1rem;
         border-bottom: 1px solid #e5e5e5;
         border-radius: 8px 8px 0 0;
-        //border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
         transform: translateY(-50%);
@@ -127,14 +96,12 @@ export const StyledDayPicker = styled(DayPicker)`
     .rdp-nav_button_previous {
         position: absolute;
         left: 0;
-        //margin-right: auto;
     }
 
     /* 오른쪽 버튼 */
     .rdp-nav_button_next {
         position: absolute;
         right: 0;
-        //margin-left: auto;
     }
 
     .rdp-nav_button:hover {
@@ -147,32 +114,14 @@ export const StyledDayPicker = styled(DayPicker)`
         width: 100%;
     }
     .rdp-table {
-        //width: 100%;
-        //margin: 0 auto;
-        //border-collapse: collapse;
-        ////border-collapse: separate;
-        //border-spacing: 0;
-        ////margin-top: 1rem;
         width: 100% !important;
         table-layout: fixed !important; /* 셀 너비 고정 */
-        //margin: 0 auto !important;
         border-collapse: collapse !important;
         border-spacing: 0 !important;
     }
 
     /* 요일 행 스타일 */
     .rdp-weekdays {
-        //display: grid;
-        //grid-template-columns: repeat(7, 1fr);
-        ////display: flex;
-        //text-align: center;  /* 요일 중앙 정렬 */
-        //width: 100%;
-        //gap: 0;
-        ////padding: 10px;
-        //font-weight: bold;
-        //color: #333;
-        //background-color: #f8f9fa;
-        //border-radius: 8px;
         display: grid !important;
         grid-template-columns: repeat(7, 1fr) !important;
         width: 100% !important;
@@ -184,13 +133,6 @@ export const StyledDayPicker = styled(DayPicker)`
         border-radius: 8px !important;
     }
     .rdp-weekday {
-        //flex: 1;
-        //text-align: center;
-        //font-weight: bold;
-        //color: #333;
-        //padding: 0.5rem 0;
-        //background-color: #f8f9fa;
-        //border-radius: 8px;
         flex: 1 1 0 !important;
         text-align: center !important;
         padding: 0.5rem 0 !important;
@@ -217,7 +159,6 @@ export const StyledDayPicker = styled(DayPicker)`
     }
 
     .rdp-head_row {
-        //display: contents;
         display: grid;
         grid-template-columns: repeat(7, 1fr); /* 7개의 열로 균등 분할 */
         gap: 10px;
@@ -244,26 +185,13 @@ export const StyledDayPicker = styled(DayPicker)`
 
     // 날짜(숫자) 아이콘 낱개
     .rdp-day {
-        //width: 52px;
-        //height: 52px;
-        //display: flex;
-        ////display: inline-flex;
-        //flex-direction: column;
-        //justify-content: center;
-        //align-items: center;
-        //cursor: pointer;
-        //margin: 0.2rem;
-        ////border-radius: 50%;
-        //border-radius: 12px;
-        //transition: background-color 0.3s, color 0.3s;
-        //border: none; /* 테두리 제거 */
-        //font-size: 0.9rem;
-        //position: relative;
-        //background-color: #ffffff;
-        //color: #333333;
         width: 100% !important;
         height: 52px !important;
         display: flex !important;
+        flex-direction: column !important;
+        line-height: 1.2 !important;
+        font-size: 0.9rem !important;
+        overflow: visible !important;
         justify-content: center !important;
         align-items: center !important;
         margin: 0.2rem !important;
@@ -289,10 +217,29 @@ export const StyledDayPicker = styled(DayPicker)`
     }
 
     .rdp-day_outside {
-        color: #ddd;
-        cursor: not-allowed;
+        color: inherit !important;
+        cursor: auto !important;
+        opacity: 1 !important;
     }
 
+    .rdp-day_outsideAvailable {
+        color: #333 !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+    }
+
+    .rdp-day.rdp-day_outside.rdp-day_available {
+        color: #333 !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+    }
+
+    .rdp-day_available{
+        color: #333;
+    }
+    
     .rdp-day_disabled {
         color: #ccc !important;
         background-color: #f9f9f9 !important;
@@ -394,4 +341,19 @@ export const DayContent = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 4px; /* 날짜와 가격 사이 간격 */
+    color: ${({ isAvailable, isDisabled, isOutside }) => {
+    if (isDisabled) return "#ccc";
+    if (isAvailable) {
+        return "#000"; // 가용 날짜면 검정
+    }
+    return "#ddd"; // 불가 날짜면 회색
+}};
+  
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? "none" : "auto")};
+  cursor: ${({ isAvailable, isDisabled }) => {
+    if (isDisabled) return "default";
+    if (isAvailable) return "pointer";
+    return "default";
+}};
 `;
