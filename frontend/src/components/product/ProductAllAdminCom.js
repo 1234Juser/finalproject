@@ -7,7 +7,7 @@ import {
     NavButton, ImageButton, DivContainer
 } from "../../style/product/StyledProductAllAdmin";
 import {Link} from "react-router-dom";
-import {StyledDivider, StyledTitle} from "../../style/product/StyleProductReg";
+import {StyledTitle} from "../../style/product/StyleProductReg";
 
 function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons, pageRange, totalPages, onDelete,
                             handleFirst, handleLast, currentPage}) {

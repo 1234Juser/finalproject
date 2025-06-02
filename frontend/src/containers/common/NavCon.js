@@ -85,6 +85,10 @@ function NavCon() {
     };
 
 
+    const handleClose = () => {
+        setShowNotifications(false);
+    };
+
     // 알림창 외부 클릭 시 알림창 닫히게 하기
     const handleClickOutside = (event) => {
         if (
@@ -93,7 +97,7 @@ function NavCon() {
             notificationIconRef.current &&
             !notificationIconRef.current.contains(event.target)
         ) {
-            setShowNotifications(false);
+            handleClose();
         }
     };
 
@@ -131,9 +135,19 @@ function NavCon() {
                 />
             </ChatFloatingWrapper>
             {showNotifications && (
-                <NotificationWrapper ref={notificationRef}>
-                    <NotificationListCon />
-                </NotificationWrapper>
+                <>
+                    {/* 백드롭 (모바일에서만 보이도록 해도 좋음) */}
+                    <div onClick={handleClose} style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        zIndex: 999
+                    }} />
+
+                    <NotificationWrapper ref={notificationRef}>
+                        <NotificationListCon />
+                    </NotificationWrapper>
+                </>
             )}
         </>
     );

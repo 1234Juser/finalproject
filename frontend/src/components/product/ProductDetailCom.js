@@ -29,7 +29,7 @@ import ProductReviewCon from "../../containers/review/ProductReviewCon";
 import {useNavigate} from "react-router-dom";
 
 
-function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTabClick, activeSection}) {
+function ProductDetailCom({product, isWished, onToggleWish, onTabClick}) {
     const navigate = useNavigate();
 
     const handleOptionSelect = () => {
@@ -41,8 +41,6 @@ function ProductDetailCom({product, productStatus, isWished, onToggleWish, onTab
         }
         navigate(`/products/${product.productUid}/option/create`);
     };
-
-    const isClosed = product?.productStatus === "CLOSED";
 
     const formatPrice = (price) => {
         if (typeof price !== "number") return price; // 숫자가 아닐 경우 그대로 반환
