@@ -1,5 +1,4 @@
 import {useNavigate} from "react-router-dom";
-import styled from "styled-components";
 import { FaEarthAsia } from "react-icons/fa6";
 import {
     BoxTitle, ConfirmButton, Earth, InfoText, OrderInfo,

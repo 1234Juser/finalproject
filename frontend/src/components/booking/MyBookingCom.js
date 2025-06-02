@@ -3,7 +3,6 @@ import MyScheduleCom from "./MyScheduleCom";
 import MyCompleteCom from "./MyCompleteCom";
 import emptyImage from "../../style/empty/empty-list.jpeg";
 import {TabButton, TabWrapperStyle} from "../../style/booking/StyleMyBooking"
-import {useMemo} from "react";
 
 function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         onCancelReservation,
@@ -15,7 +14,6 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         autoLoadingDone}){
 
     const filtered = {
-        // 0: reservations.filter(r => r.orderStatus.toUpperCase() === "SCHEDULED"),
         0: reservations.filter(r =>
             ["SCHEDULED", "WAITING_BANK_TRANSFER"].includes(r.orderStatus?.toUpperCase())
         ),
@@ -28,30 +26,17 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
     const tabLabels = ["예정된 여행", "지난 여행", "취소된 여행"];
     const EmptyState = ({ message }) => (
         <div style={{ textAlign: "center", padding: "40px" }}>
-            {/*<img src={emptyImage} alt="비어 있음" style={{ width: "150px", opacity: 0.6 }} />*/}
             <img src={emptyImage} alt="비어 있음" style={{ width: "500px"}} />
             <p style={{ marginTop: "1rem", fontSize: "18px", color: "#555" }}>
                 {message}
             </p>
         </div>
     );
-    // 상태 나누면서 필요없어짐
-    // const shouldShowLoadOldButton = showMoreAvailable;
-    // reservations.some(res => res.orderStatus === "SCHEDULED")
-    console.log("예약 상태들:", reservations.map(r => r.orderStatus));
-    console.log("전달받은 reservations:", reservations);
-    console.log("탭별 분류:", {
-        SCHEDULED: filtered[0].length,
-        COMPLETED: filtered[1].length,
-        CANCELED: filtered[2].length
-    });
-
 
     return(
         <>
             {/* 탭 UI */}
             <TabWrapperStyle>
-                {/*{["예정된 여행", "지난 여행", "취소된 여행"].map((label, index) => (*/}
                 {tabLabels && tabLabels.map((label, index) => {
                     const isActive = selectedTab === index;
                     return (

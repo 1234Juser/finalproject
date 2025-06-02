@@ -24,8 +24,6 @@ export function requestIamportPayment( orderData, paymentMethod ) {
             CARD: "html5_inicis", // PG사
             KAKAO_PAY: "kakaopay.TC0ONETIME", // 카카오페이 PG사 설정
             BANK_TRANSFER: "html5_inicis",   // 무통장입금
-            // NAVER_PAY: "naverpay.TC0ONETIME",
-            // TOSS_PAY: "tosspay.tosstest"
         };
 
         if (!pgMap[paymentMethod]) {
@@ -43,6 +41,7 @@ export function requestIamportPayment( orderData, paymentMethod ) {
             buyer_email: memberEmail,
             buyer_tel: memberPhone,
             m_redirect_url: "http://localhost:3000/payments/complete"
+            // m_redirect_url: "http://https://hellotravelogic.link/payments/complete"
         };
 
         if (paymentMethod === "CARD") {

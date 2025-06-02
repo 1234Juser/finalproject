@@ -4,16 +4,13 @@ import MapSection from "../../containers/product/MapSection";
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {
-    AdSection, BackButton,
-    BookingNumber, CancelButton, CancelButtonWrapper, CancelPolicy, CancelSection, CancelTitle,
-    ContentCard, CopyButton,
-    CreatedDate, DetailWrapper,
+    AdSection, BackButton, BookingNumber,
+    CancelButton, CancelButtonWrapper, CancelPolicy, CancelSection, CancelTitle,
+    ContentCard, CopyButton, CreatedDate, DetailWrapper,
     Header, HeaderLeft, InfoCard, InfoLabel, InfoRow,
-    InfoValue, Inquiry,
-    Label, MapWrap, PaymentCard, PaymentHighlight,
+    InfoValue, Inquiry, Label, MapWrap, PaymentCard, PaymentHighlight,
     ProductImage, ProductInfo, ProductLocation, ProductSection,
-    ProductTitle, Section, SectionTitle,
-    StatusTag, Title, Value, Wrapper
+    ProductTitle, Section, SectionTitle, StatusTag, Title, Value, Wrapper
 } from "../../style/booking/StyleReceipt";
 
 function MyReceiptCom({order, option, payment, bookingUid,

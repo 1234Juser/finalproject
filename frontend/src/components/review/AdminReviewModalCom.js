@@ -1,6 +1,5 @@
 import {getReviewImage} from "../../service/reviewService";
 import React, {useEffect, useState} from "react";
-import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
 import {
     CloseButton,

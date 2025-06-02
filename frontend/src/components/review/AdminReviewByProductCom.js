@@ -31,7 +31,6 @@ function AdminReviewByProductCom({ products,
         return <p>{error}</p>;
     }
 
-    // const isEmpty = !reviews || reviews.length === 0;
     const isEmpty = !Array.isArray(reviews) || reviews.length === 0;
     const reviewList = reviews || []; // 빈 배열로 초기화
     let number = []
@@ -52,7 +51,6 @@ function AdminReviewByProductCom({ products,
     }
 
     const handleReviewClick = (review) => {
-        console.log("🟢 선택된 리뷰:", review);
         setSelectedReview(review);
     };
 
@@ -115,7 +113,6 @@ function AdminReviewByProductCom({ products,
                             </tr>
                         ) : (
                             reviews && reviews.map((review) => {
-                                console.log("🟢 개별 리뷰 데이터:", review);
                                 // 예약일 처리
                                 const reservationDate = review.reservationDate
                                     ? new Date(review.reservationDate).toLocaleDateString()
