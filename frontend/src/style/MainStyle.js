@@ -444,8 +444,7 @@ export const ExchangeTimeContainer = styled.div`
     gap: 10px;
     margin-top : 70px;
     width: 100%;
-
-    max-width: 1200px; // 최대 너비 제한
+    
     padding: 0 20px; // 좌우 여백
     box-sizing: border-box;
 
