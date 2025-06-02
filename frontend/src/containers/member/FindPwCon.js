@@ -19,7 +19,7 @@ function FindPwCon({ onClose }) {
         }
         setLoading(true);
         try {
-            const res = await axios.post("/member/find-password", {
+            const res = await axios.post("https://api.hellotravelogic.link/member/find-password", {
                 memberName: form.name,
                 memberId: form.id,
                 memberEmail: form.email,

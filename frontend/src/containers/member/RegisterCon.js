@@ -122,7 +122,7 @@ export default function RegisterCon() {
             return;
         }
         try{
-            const res = await fetch("http://localhost:8080/member/check-id",{
+            const res = await fetch("https://api.hellotravelogic.link/member/check-id",{
                 method:"POST",
                 headers:{"Content-Type":"application/json"},
                 body:JSON.stringify({memberId:form.memberId})
@@ -164,7 +164,7 @@ export default function RegisterCon() {
             return;
         }
             try {
-            const res = await fetch("http://localhost:8080/member/check-email", {
+            const res = await fetch("https://api.hellotravelogic.link/member/check-email", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ memberEmail: form.memberEmail })
@@ -214,7 +214,7 @@ export default function RegisterCon() {
 
         setIsSubmitting(true);
         try {
-            const res = await fetch("http://localhost:8080/member/signup", {
+            const res = await fetch("https://api.hellotravelogic.link/member/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(form)

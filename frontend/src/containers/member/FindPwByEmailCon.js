@@ -41,7 +41,7 @@ function FindPwByEmailCon({ onClose }) {
         }
         setSending(true);
         try {
-            await axios.post("/member/find-password/mail-auth", {
+            await axios.post("https://api.hellotravelogic.link/member/find-password/mail-auth", {
                 memberName: input.name,
                 memberId: input.id,
                 memberEmail: input.email,
@@ -71,7 +71,7 @@ function FindPwByEmailCon({ onClose }) {
         setVerifying(true);
         setVerifyError(""); setVerifySuccess("");
         try {
-            const res = await axios.post("/member/find-password/verify-code", {
+            const res = await axios.post("https://api.hellotravelogic.link/member/find-password/verify-code", {
                 memberEmail: input.email,
                 authCode: code
             });
@@ -118,7 +118,7 @@ function FindPwByEmailCon({ onClose }) {
         }
         setPwSubmitting(true);
         try {
-            const resp = await axios.post("/member/find-password/reset", {
+            const resp = await axios.post("https://api.hellotravelogic.link/member/find-password/reset", {
                 memberId: input.id,
                 memberEmail: input.email,
                 newPassword: pw

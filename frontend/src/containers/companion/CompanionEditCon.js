@@ -47,7 +47,7 @@ function CompanionEditCon() {
             setLoading(true);
             setError(null);
             try {
-                const response = await axios.get(`/companions/${companionId}`);
+                const response = await axios.get(`https://api.hellotravelogic.link/companions/${companionId}`);
                 setTitle(response.data.companionTitle);
                 setContent(response.data.companionContent);
                 setIsNotice(response.data.companionNotice || false);
@@ -297,7 +297,7 @@ function CompanionEditCon() {
 
 
         try {
-            await axios.put(`/companions/${companionId}`, formData, {
+            await axios.put(`https://api.hellotravelogic.link/companions/${companionId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`

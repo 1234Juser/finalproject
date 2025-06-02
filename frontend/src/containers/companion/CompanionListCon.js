@@ -35,7 +35,7 @@ function CompanionListCon() {
             }
             params.append("searchType", type || "title");
 
-            const response = await axios.get(`/companions?${params.toString()}`);
+            const response = await axios.get(`https://api.hellotravelogic.link/companions?${params.toString()}`);
             setCompanions(response.data.content);
             setCurrentPage(response.data.number);
             setTotalPages(response.data.totalPages);

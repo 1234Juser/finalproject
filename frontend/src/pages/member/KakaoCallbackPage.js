@@ -20,7 +20,7 @@ function KakaoCallbackPage() {
 
         // 1. 스프링 부트 백엔드로 인증 코드 전달
         axios
-            .get(`http://localhost:8080/oauth/kakao/callback?code=${code}`)
+            .get(`https://api.hellotravelogic.link/oauth/kakao/callback?code=${code}`)
             .then(res => {
                 // 2. JWT 토큰과 유저정보 반환받음
                 const {

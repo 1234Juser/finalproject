@@ -19,7 +19,7 @@ function AdminMyPageCon(){
 
         const fetchAdminMemberData = async () => {
             try {
-                const res = await axios.get("/member/adminmypage",{
+                const res = await axios.get("https://api.hellotravelogic.link/member/adminmypage",{
                     headers:{Authorization: `Bearer ${token}`}
                 });
                 setMemberData(res.data);
@@ -41,10 +41,10 @@ function AdminMyPageCon(){
         const fetchFollowData = async (memberCode, token) => {
             try {
                 const [followingRes, followersRes] = await Promise.all([
-                    axios.get(`/follow/${memberCode}/following`, { // 관리자용 엔드포인트가 별도로 있다면 수정 필요
+                    axios.get(`https://api.hellotravelogic.link/follow/${memberCode}/following`, { // 관리자용 엔드포인트가 별도로 있다면 수정 필요
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get(`/follow/${memberCode}/followers`, { // 관리자용 엔드포인트가 별도로 있다면 수정 필요
+                    axios.get(`https://api.hellotravelogic.link/follow/${memberCode}/followers`, { // 관리자용 엔드포인트가 별도로 있다면 수정 필요
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);

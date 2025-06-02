@@ -24,7 +24,7 @@ function FaqListCom({ faqs, page, setPage, totalPages }) {
     // FAQ 삭제
     const handleDelete = (faqCode) => {
         if (window.confirm("정말 삭제하시겠습니까?")) {
-            axios.delete(`/faq/${faqCode}`)
+            axios.delete(`https://api.hellotravelogic.link/faq/${faqCode}`)
                 .then(() => {
                     alert("삭제되었습니다.");
                     window.location.reload(); // 새로고침 또는 setPage(page) 호출하여 목록 갱신

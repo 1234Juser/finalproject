@@ -31,7 +31,7 @@ function EventRegisterCon() {
                 });
             } else {
                 // 새로고침 시 state가 사라져버릴 수 있으므로 다시 조회
-                axios.get(`/event/${id}`)
+                axios.get(`https://api.hellotravelogic.link/event/${id}`)
                     .then(res => {
                         const event = res.data;
                         setForm({
@@ -72,7 +72,7 @@ function EventRegisterCon() {
 
         if (isEdit) {
             // 수정(put): id 필요
-            axios.put(`/event/${id}`, data, {
+            axios.put(`https://api.hellotravelogic.link/event/${id}`, data, {
                 headers: { "Content-Type": "multipart/form-data" }
             })
                 .then(() => {
@@ -82,7 +82,7 @@ function EventRegisterCon() {
                 .catch(() => alert("수정 중 오류 발생"));
         } else {
             // 등록(post)
-            axios.post("/event", data, {
+            axios.post("https://api.hellotravelogic.link/event", data, {
                 headers: {"Content-Type": "multipart/form-data"}
             })
                 .then(() => {

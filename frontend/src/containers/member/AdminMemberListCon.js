@@ -11,7 +11,7 @@ function AdminMemberListCon() {
     useEffect(() => {
         // 백엔드 API가 page와 size 파라미터를 받도록 수정
         // 여기서는 size를 10으로 고정했습니다.
-        axios.get(`/member/all?page=${currentPage}&size=10`)
+        axios.get(`https://api.hellotravelogic.link/member/all?page=${currentPage}&size=10`)
             .then(res => {
                 setMemberList(res.data.content); // Page 객체에서 content 추출
                 setTotalPages(res.data.totalPages);
@@ -26,7 +26,7 @@ function AdminMemberListCon() {
     // 상태 토글 핸들러
     const handleToggleStatus = (memberId, currentStatus) => {
         const newStatus = currentStatus === "N" ? "Y" : "N";
-        axios.put(`/member/update-endstatus/${memberId}`, { memberEndstatus: newStatus })
+        axios.put(`https://api.hellotravelogic.link/member/update-endstatus/${memberId}`, { memberEndstatus: newStatus })
             .then(() => {
                 setMemberList(list =>
                     list.map(m =>

@@ -146,7 +146,7 @@ function RealtimeRanking() {
         const fetchRanking = async () => {
             try {
                 // 백엔드 API 엔드포인트 (필요에 따라 URL 수정)
-                const response = await axios.get('/city/ranking');
+                const response = await axios.get('https://api.hellotravelogic.link/city/ranking');
                 setRanking(response.data);
             } catch (err) {
                 // console.error("실시간 랭킹 가져오기 실패:", err);

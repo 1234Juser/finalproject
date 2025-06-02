@@ -147,13 +147,13 @@ function RegisterMethodSelectCom() {
 
     // 카카오 로그인 redirect
     const handleKakaoLogin = () => {
-        window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=14194a0a23cf74ec0bc6c0b2ba676489&redirect_uri=http://localhost:3000/oauth/kakao/callback&prompt=login`
+        window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=14194a0a23cf74ec0bc6c0b2ba676489&redirect_uri=https://hellotravelogic.link/oauth/kakao/callback&prompt=login`
             .replace(/\s+/g, '');
     }
     // 구글 로그인 redirect
     const handleGoogleLogin = () => {
         const GOOGLE_CLIENT_ID = "981822033334-r6u3d855k6gds83h9dtd8p327m6bfcu3.apps.googleusercontent.com";
-        const GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth/google/callback";
+        const GOOGLE_REDIRECT_URI = "https://hellotravelogic.link/oauth/google/callback";
 
         const oauthUrl =
             `https://accounts.google.com/o/oauth2/v2/auth?` +

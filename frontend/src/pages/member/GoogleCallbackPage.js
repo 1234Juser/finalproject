@@ -27,7 +27,7 @@ function GoogleCallbackPage() {
         localStorage.setItem(codeFlagKey, "processing");
 
         axios
-            .get(`http://localhost:8080/oauth/google/callback?code=${code}`)
+            .get(`https://api.hellotravelogic.link/oauth/google/callback?code=${code}`)
             .then(res => {
                 localStorage.setItem("accessToken", res.data.accessToken || res.data.token);
                 localStorage.setItem("googleAccessToken", res.data.googleAccessToken); // 백엔드에서 반환 받도록!

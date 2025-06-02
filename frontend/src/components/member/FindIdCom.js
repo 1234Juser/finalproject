@@ -33,7 +33,7 @@ function FindIdCom({ onClose }) {
         }
         setLoading(true);
         try {
-            const resp = await axios.post("/member/find-id", {
+            const resp = await axios.post("https://api.hellotravelogic.link/member/find-id", {
                 memberName: name,
                 memberEmail: email
             });

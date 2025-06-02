@@ -8,7 +8,7 @@ function FaqListCon() {
     const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        axios.get(`/faq?page=${page}`)
+        axios.get(`https://api.hellotravelogic.link/faq?page=${page}`)
             .then(res => {
                 setFaqs(res.data.content);
                 setTotalPages(res.data.totalPages);
