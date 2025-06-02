@@ -1,4 +1,5 @@
 import {
+    NavContentWrapper, FloatingChatButton,
     DropdownContainer,
     DropdownMenu,
     MyPageWrapper,
@@ -8,50 +9,9 @@ import {
 } from "../../style/common/NavStyle";
 import {FaComments, FaEllipsisH, FaFlag, FaGift, FaHeart, FaPlaneDeparture, FaStar, FaUserCircle} from "react-icons/fa";
 import React from "react";
-import styled from "styled-components";
 import {IoNotifications} from "react-icons/io5";
-import {RiChatSmile2Line} from "react-icons/ri";
 
-// 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
-const NavContentWrapper = styled.div`
-    position: relative;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-`;
 
-// 브라우저 우측 하단에 고정될 스타일 정의
-const FloatingChatButton = styled(RiChatSmile2Line)`
-    position: fixed;
-    bottom: 80px;
-    right: 80px;
-    width: 60px;
-    height: 60px;
-    padding: 12px;
-    box-sizing: border-box;
-
-    color: #409cff;
-    background: #ffffff;
-    border-radius: 50%; /* 원형 버튼 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 그림자 */
-
-    cursor: pointer;
-    z-index: 1000;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background: #409cff;
-        color: #fff;
-        transform: translateY(-4px); /* 살짝 뜨는 애니메이션 */
-        box-shadow: 0 8px 16px rgba(64, 156, 255, 0.4); /* 더 강한 그림자 */
-    }
-
-    &:active {
-        transform: scale(0.95); /* 클릭 시 눌리는 효과 */
-    }
-`;
 
 
 
@@ -127,12 +87,6 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                                             </a>
                                         </MyPageWrapper>
                                     </li>
-                                    {/*<li>*/}
-                                    {/*    <RiChatSmile2Line ref={chatAnchorRef}*/}
-                                    {/*                      style={{ marginLeft: 6, color: "#409cff", cursor: 'pointer', width:"50px", height:"50px" }}*/}
-                                    {/*                      title="1:1 문의 채팅"*/}
-                                    {/*                      onClick={toggleChat}/>*/}
-                                    {/*</li>*/}
                                 </>)
                         }
                 </NavRight>
@@ -141,6 +95,7 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
             {isAdmin ? '' : <>
                 {/* 우측 하단에 고정된 채팅 아이콘 */}
                 <FloatingChatButton
+                    ref={chatAnchorRef} // chatAnchorRef는 버튼 자체에 연결
                     title="1:1 문의 채팅"
                     onClick={toggleChat}
                 />
