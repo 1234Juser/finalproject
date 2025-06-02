@@ -86,6 +86,7 @@ public class SecurityConfig {
                                         "/oauth/google/**", "/oauth/kakao/**"
 
                                 ).permitAll()
+                                .requestMatchers("/actuator/health").permitAll()
                                 //  경로는 인증된 사용자만 접근을 허용합니다.
                                 .requestMatchers("/member/mypage","/wish/**",
                                         "/review/view/**", "/review/write/info/**", "/review/write/**", "/review/edit/**", "/review/delete/**",
