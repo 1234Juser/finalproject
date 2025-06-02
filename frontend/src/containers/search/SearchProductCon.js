@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, {useEffect, useState} from "react";
 import SearchProductCom from "../../components/search/SearchProductCom";
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import axios from "axios";
 
 // 페이지당 상품 개수 설정
