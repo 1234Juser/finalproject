@@ -47,6 +47,7 @@ public class ReviewService {
     private final ProductService productService;
     private final OptionRepo optionRepo;
     private final ProductRepo productRepo;
+    private final FileUploadUtils fileUploadUtils;
 
     private static final String REVIEW_DIR = "upload/review/";
 
@@ -162,8 +163,16 @@ public class ReviewService {
             reviewDTO.setReservationDate(optionEntity.getReservationDate());
 
             if (reviewPic != null && !reviewPic.isEmpty()) {
-                String savedFileName= FileUploadUtils.saveReviewFile(reviewPic);
-                reviewDTO.setReviewPic(savedFileName);
+//                String savedFileName= FileUploadUtils.saveReviewFile(reviewPic);
+//                reviewDTO.setReviewPic(savedFileName);
+                try {
+                    // S3에 파일 업로드
+                    String s3Url = fileUploadUtils.uploadToS3(reviewPic);
+                    log.debug("s3Url : {}", s3Url);
+                    reviewDTO.setReviewPic(s3Url);
+                } catch (IOException e) {
+                    log.error("파일 업로드 실패 : ", e);
+                }
             }
 
             // ReviewEntity 객체 생성
@@ -222,23 +231,40 @@ public class ReviewService {
             review.setReviewContent(reviewDTO.getReviewContent());
 
             // 파일 처리 로직 수정
+            // 새로운 이미지 파일이 있을 경우(교체)
+            String existingPic = review.getReviewPic();
             if (reviewPic != null && !reviewPic.isEmpty()) {
                 // 기존 파일 삭제
-                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
-                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+//                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+//                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+//                }
+                // 기존의 파일이 S3에 존재한다면 삭제한다
+                if (existingPic != null && !existingPic.isEmpty() && !existingPic.equals("nan")) {
+                    fileUploadUtils.deleteS3File(existingPic);
                 }
-                String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
-                review.setReviewPic(newFileName);
-            } else if (reviewPic == null) {
+                // 새 이미지 파일 저장
+                String newS3Url = fileUploadUtils.uploadToS3(reviewPic);
+                review.setReviewPic(newS3Url);
+//                String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
+//                review.setReviewPic(newFileName);
+            // 새 파일 없이 기존 파일만 삭제할 경우
+//            } else if (reviewPic == null) {
+            // S3 버전에선 빈 파일을 업로드해 기존이미지를 제거한다는 논리
+            } else if (reviewPic != null && reviewPic.isEmpty()) {
                 // 파일 삭제 요청 (빈 파일로 초기화)
-                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
-                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+//                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
+//                    deleteFile(review.getReviewPic(), REVIEW_DIR);
+                if (existingPic != null && !existingPic.isEmpty() && !existingPic.equals("nan")) {
+                    fileUploadUtils.deleteS3File(existingPic);
                 }
                 review.setReviewPic(null);
             }
             // 수정 후 저장
             reviewRepo.save(review);
             return "수정 성공";
+        } catch (IOException e) {
+            log.error("S3 파일 업로드 중 오류 발생: {}", e.getMessage(), e);
+            return "리뷰 이미지 파일 수정에 실패했습니다";
         } catch(Exception e){
             throw new RuntimeException("리뷰 수정 중 오류 발생", e);
         }
@@ -261,7 +287,19 @@ public class ReviewService {
                 orderRepo.save(order);
             }
 
-            deleteFile(review.getReviewPic(), REVIEW_DIR);
+//            deleteFile(review.getReviewPic(), REVIEW_DIR);
+            String s3ReviewPic = review.getReviewPic();
+
+            // S3 파일이 존재한다면 진행
+            if (s3ReviewPic != null && !s3ReviewPic.isEmpty()) {
+                try {
+                    fileUploadUtils.deleteS3File (s3ReviewPic);
+                    log.debug ("S3 파일 삭제 성공: {}", s3ReviewPic);
+                } catch (Exception e) {
+                    log.error ("S3 파일 삭제 중 오류 발생. DB 작업이 진행되지 않습니다.: {}", e.getMessage (), e);
+                    throw new RuntimeException ("S3 파일 삭제 실패하여 리뷰 삭제가 중단됩니다.", e);
+                }
+            }
             reviewRepo.delete(review);
 
             // 리뷰 카운트 갱신
@@ -284,12 +322,26 @@ public class ReviewService {
         review.setReviewStatus(ReviewStatus.DELETE_BY_ADMIN);
         review.setReviewContent("관리자에 의해 삭제된 리뷰입니다.");
 
-        String reviewPic = review.getReviewPic();
-        if (reviewPic != null && !reviewPic.equals("nan")) {
-            deleteFile(reviewPic, REVIEW_DIR);
-            review.setReviewPic("nan"); // 이미지 필드를 비워줌
+//        String reviewPic = review.getReviewPic();
+//        if (reviewPic != null && !reviewPic.equals("nan")) {
+//            deleteFile(reviewPic, REVIEW_DIR);
+//            review.setReviewPic("nan"); // 이미지 필드를 비워줌
+//        }
+        String s3ReviewPic = review.getReviewPic();
+        // S3 파일이 존재한다면 진행
+        if (s3ReviewPic != null && !s3ReviewPic.isEmpty()) {
+            try {
+                fileUploadUtils.deleteS3File (s3ReviewPic);
+                log.debug ("S3 파일 삭제 성공: {}", s3ReviewPic);
+            } catch (Exception e) {
+                log.error ("S3 파일 삭제 중 오류 발생. DB 작업이 진행되지 않습니다.: {}", e.getMessage (), e);
+                throw new RuntimeException ("S3 파일 삭제 실패하여 리뷰 삭제가 중단됩니다.", e);
+            }
         }
+        reviewRepo.delete(review);
+
         reviewRepo.save(review);
+        // 리뷰 카운트 갱신
         productService.updateReviewCount(review.getProduct().getProductCode());
     }
 
