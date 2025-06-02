@@ -20,7 +20,7 @@ export const NotificationItem = styled.div`
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-    //border-left: 5px solid transparent; /* 기본 왼쪽 테두리 (투명) */
+    box-sizing: border-box;
 
     ${({isRead}) =>
             isRead

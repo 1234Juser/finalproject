@@ -336,21 +336,25 @@ export const ChatFloatingWrapper = styled.div`
 
 
 export const NotificationWrapper = styled.div`
-    position: absolute;
-    //top: 80%;
-    top: 150px; /* 알림 아이콘 바로 아래에 위치하도록 조정 */
-    right: 25%;
-    width: 380px;
-    height: 350px;
+    position: fixed;
     background: white;
     overflow-y: auto;
     border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    border-radius: 8px; /* 모서리 라운딩 추가 */
-    padding: 10px; /* 내부 여백 추가 */
+    border-radius: 12px;
+    padding: 16px;
+    transition: transform 0.3s ease-in-out;
+    box-sizing: border-box;
+    overflow-x: hidden;
 
-    /* 스크롤바 스타일 (선택 사항) */
+    /* 기본 (PC) */
+    top: 150px;
+    right: 25%;
+    width: 380px;
+    height: 350px;
+
+    /* 스크롤바 스타일 */
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -366,13 +370,29 @@ export const NotificationWrapper = styled.div`
         background: #ccc;
     }
 
-    @media (max-width: 767px) { // 모바일
-        width: 90vw; // 화면 너비의 90%
-        max-width: 320px;
-        max-height: 300px;
-        // right: 50%; // 중앙으로 옮기려면 추가 조정 필요
-        // transform: translateX(50%);
-        top: calc(100% + 5px);
+    /* ✅ 모바일: Bottom Sheet 스타일 */
+    @media (max-width: 767px) {
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 60vh;
+        border-radius: 16px 16px 0 0;
+        padding: 16px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
     }
 
-`
+    /* ✅ 태블릿: 좀 더 넓은 중앙 정렬 스타일 */
+    @media (min-width: 768px) and (max-width: 1023px) {
+        top: 150px;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 480px;
+        height: 50vh;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+`;
