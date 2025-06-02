@@ -1,4 +1,4 @@
-const path = "https://hellotravelogic.link/";
+const path = "https://hellotravelogic.link";
 
 
 // 알림 목록 요청
