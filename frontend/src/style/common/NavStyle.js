@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { RiChatSmile2Line } from "react-icons/ri";
 
-
 // 전체 컨텐츠를 감싸는 래퍼(비디오 위에 올라옴)
 export const NavContentWrapper = styled.div`
     position: relative;
