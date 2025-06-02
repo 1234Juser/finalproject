@@ -98,7 +98,7 @@ function ChatRoomCon({roomUid}) {
 
         // console.log(`Connecting to WebSocket with roomId: ${roomUid}, username: ${username}, memberCode: ${memberCode}, token: ${token ? 'present' : 'absent'}...`);
         // const socket = new SockJS('http://localhost:8080/ws');
-        const socket = new SockJS('https://hellotravelogic.link/ws');
+        const socket = new SockJS('https://api.hellotravelogic.link/ws');
         const stompClient = Stomp.over(socket);
         stompClientRef.current = stompClient; // ref에 클라이언트 저장
 

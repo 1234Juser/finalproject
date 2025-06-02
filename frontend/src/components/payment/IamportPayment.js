@@ -40,8 +40,8 @@ export function requestIamportPayment( orderData, paymentMethod ) {
             buyer_name: memberName,
             buyer_email: memberEmail,
             buyer_tel: memberPhone,
-            m_redirect_url: "http://localhost:3000/payments/complete"
-            // m_redirect_url: "http://https://hellotravelogic.link/payments/complete"
+            // m_redirect_url: "http://localhost:3000/payments/complete"
+            m_redirect_url: "https://api.hellotravelogic.link/payments/complete"
         };
 
         if (paymentMethod === "CARD") {

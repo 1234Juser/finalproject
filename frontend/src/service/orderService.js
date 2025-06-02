@@ -2,7 +2,7 @@ import axios from "axios";
 import {format} from "date-fns";
 
 // const path = "http://localhost:8080"
-const path = "https://hellotravelogic.link";
+const path = "https://api.hellotravelogic.link";
 
 export const calculateTotalPrice = (adultCount, childCount, adultPrice, childPrice) => {
     return (adultCount * adultPrice) + (childCount * childPrice);

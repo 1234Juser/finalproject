@@ -131,7 +131,7 @@ function InquiryChatAdminAnswerCon({ inquiryChatId }) {
 
         const token = localStorage.getItem("accessToken");
         // const socket = new SockJS('http://localhost:8080/ws');
-        const socket = new SockJS('https://hellotravelogic.link/ws');
+        const socket = new SockJS('https://api.hellotravelogic.link/ws');
         const stompClient = Stomp.over(socket);
         stompClientRef.current = stompClient;
 

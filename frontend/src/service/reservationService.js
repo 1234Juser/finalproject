@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const path = "http://localhost:8080"
-const path = "https://hellotravelogic.link";
+const path = "https://api.hellotravelogic.link";
 
 // 최근 6개월 이내 본인예약 조회
 export async function fetchRecentReservations(accessToken) {

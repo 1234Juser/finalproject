@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const path = "http://localhost:8080"
-const path = "https://hellotravelogic.link";
+const path = "https://api.hellotravelogic.link";
 
 export const getReviewCountByProductUid = async (productUid) => {
     try {

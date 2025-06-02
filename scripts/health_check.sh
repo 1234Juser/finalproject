@@ -3,7 +3,7 @@
 
 # Actuator health check 엔드포인트를 사용합니다. (Spring Boot Actuator 의존성 필요)
 #HEALTH_CHECK_URL="http://localhost:8080/actuator/health"
-HEALTH_CHECK_URL="https://hellotravelogic.link/actuator/health"
+HEALTH_CHECK_URL="https://api.hellotravelogic.link/actuator/health"
 MAX_ATTEMPTS=10
 SLEEP_INTERVAL=5
 
