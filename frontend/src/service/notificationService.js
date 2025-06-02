@@ -1,4 +1,4 @@
-const path = "http://localhost:8080";
+const path = "https://hellotravelogic.link/";
 
 
 // 알림 목록 요청

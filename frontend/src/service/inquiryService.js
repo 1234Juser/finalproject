@@ -1,4 +1,4 @@
-const path = "http://localhost:8080";
+const path = "https://hellotravelogic.link/";
 
  // REST API로 채팅방 시작/조회 요청
 const getStartInquiry = async ({inquiryMessage, token}) => {
