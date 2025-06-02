@@ -125,7 +125,8 @@ export default function MainCom({accessToken, state, dispatch}) {
                             <BestSlideCard key={idx}>
                                 <BestLabel>BEST {(idx % images.length) + 1}</BestLabel>
                                 <BestSlideImage
-                                    src={`http://localhost:8080${src}`}
+                                    // src={`http://localhost:8080${src}`}
+                                    src={`https://hellotravelogic.link${src}`}
                                     alt={`banner-${idx}`}
                                 />
                                 <BestSlideOverlay />
