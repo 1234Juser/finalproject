@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import LoginCom from "../../components/member/LoginCom";
 import Modal from "../../components/common/Modal";
 import FindIdCon from "../member/FindIdCon";
