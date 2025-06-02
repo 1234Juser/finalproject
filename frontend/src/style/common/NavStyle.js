@@ -263,8 +263,15 @@ export const DropdownMenu = styled.ul`
         }
     }
 
+    @media (min-width: 768px) and (max-width: 1024px) { // 태블릿
+        right: 0%;
+        left: unset;
+    }
+    
     @media (max-width: 767px) { // 모바일
         min-width: 130px;
+        right: 0%;
+        left: unset;
         li a {
             font-size: 0.9rem;
             padding: 8px 15px;
@@ -334,7 +341,7 @@ export const ChatFloatingWrapper = styled.div`
     @media (min-width: 768px) and (max-width: 1024px) { // 태블릿
         width: 60%;
         max-width: 600px;
-        bottom: 15%;
+        bottom: 17%;
         right: 10%;
     }
 `;
