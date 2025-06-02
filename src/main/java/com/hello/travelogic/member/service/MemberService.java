@@ -160,7 +160,9 @@ public class MemberService {
         // 3. 프로필 이미지가 없으면 기본 이미지 사용
         String profileUrl = member.getMemberProfileImageUrl();
         if (profileUrl == null || profileUrl.isEmpty()) {
-            profileUrl = "/img/default-profile.jpg"; // static 폴더 기준 경로로 작성
+//            profileUrl = "/img/default-profile.jpg"; // static 폴더 기준 경로로 작성
+            profileUrl = "https://hellotravelogic.link/img/default-profile.jpg"; // 전체 URL로 변경
+
         }
         return new LoginResponseDTO(token, member.getMemberName(), profileUrl, roles, member.getMemberCode(), null, null);
 
@@ -192,7 +194,8 @@ public class MemberService {
         if (!isAdmin) {
             throw new SecurityException("관리자 권한이 없습니다.");
         }
-        String defaultProfileUrl = "/img/default-profile.jpg";
+//        String defaultProfileUrl = "/img/default-profile.jpg";
+        String defaultProfileUrl = "https://hellotravelogic.link/img/default-profile.jpg";
         String roleName = member.getRoles().stream()
                 .map(role -> role.getAuthority().getAuthorityName())
                 .filter("ROLE_ADMIN"::equals)

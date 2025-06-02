@@ -20,7 +20,7 @@ const EventSliderCom = () => {
 
     useEffect(() => {
         // 진행 중인 이벤트 데이터를 가져옵니다.
-        axios.get("https://api.hellotraveloginc.link/event/ongoing-slider")
+        axios.get("https://api.hellotravelogic.link/event/ongoing-slider")
             .then(response => {
                 // eventImg 경로를 조정
                 const formattedEvents = response.data.map(event => {
