@@ -7,7 +7,7 @@ ERROR_LOG_PATH="$APP_DIR/error.log"
 
 # 해당 위치의 모든 jar 파일을 찾습니다.
 # build/libs/ 에 jar가 하나만 있다는 가정 하에 동작합니다.
-JAR_PATH=$(ls $APP_DIR/*.jar | head -n 1)
+JAR_PATH=$(ls $APP_DIR/*.jar | grep -v 'plain' | head -n 1)
 JAR_NAME=$(basename $JAR_PATH)
 
 echo ">>> 새 애플리케이션 배포: $JAR_PATH" >> $LOG_PATH
