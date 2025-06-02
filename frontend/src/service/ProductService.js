@@ -1,4 +1,4 @@
-const path = "http://localhost:8080";
+const path = "https://hellotravelogic.link/";
 
 // tbl_product 전체 데이터 가져오는 함수
 const getProductsList = async (currentPage) => {
