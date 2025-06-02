@@ -2,8 +2,6 @@ import axios from 'axios';
 
 const path = "http://localhost:8080";
 
-// SSR방식
-
 // 주문 정보 조회
 export const getOrderByOrderCode = async (orderCode, accessToken) => {
     if (!accessToken) {
@@ -90,10 +88,8 @@ export const updatePaymentStatus = async (impUid, accessToken) => {
                 ...config,
             }
         );
-        console.log("🟢 결제 상태 변경 응답:", response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ 결제 상태 업데이트 실패:", error.response?.data || error.message);
         throw error;
     }
 };
@@ -112,10 +108,8 @@ export async function cancelPaymentByOrderCode(orderCode, accessToken) {
                 withCredentials: true
             }
         );
-        console.log("✅ 결제 취소 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("❌ 결제 취소 실패:", error.response?.data || error.message);
         throw error;
     }
 }

@@ -9,7 +9,6 @@ export const calculateTotalPrice = (adultCount, childCount, adultPrice, childPri
 
 export const fetchProduct = async (productUid, accessToken) => {
     if (!accessToken) {
-        console.error("accessToken 없음");
         return;
     }
     const config = {
@@ -21,7 +20,6 @@ export const fetchProduct = async (productUid, accessToken) => {
         const response = await axios.get(`${path}/products/${productUid}`, config);
         return response.data;
     } catch (error) {
-        console.error("상품 조회 실패:", error);
         throw error;
     }
 };
@@ -29,10 +27,8 @@ export const fetchProduct = async (productUid, accessToken) => {
 export const fetchOptionForm = async (productUid) => {
     try {
         const response = await axios.get(`${path}/products/${productUid}/option/create`);
-        console.log("🟢 옵션 폼 데이터 가져오기 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 옵션 폼 데이터 가져오기 실패:", error);
         throw error;
     }
 };
@@ -49,7 +45,6 @@ export const selectReservationDate = async (productUid, reservationDate) => {
         );
         return response.data;
     } catch (error) {
-        console.error("Error saving reservation date:", error);
         throw error;
     }
 };
@@ -70,10 +65,8 @@ export const saveReservation = async (productUid, reservationDate, adultCount, c
                 },
             }
         );
-        console.log("🟢 예약 저장 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("Error saving reservation:", error);
         throw error;
     }
 };
@@ -87,10 +80,8 @@ export const fetchOptionsByDate = async (productUid, reservationDate) => {
         const response = await axios.get(`${path}/products/${productUid}/option`, {
             params: { date: reservationDate },
         });
-        console.log("🟢 옵션 가격 데이터 가져오기 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 옵션 가격 데이터를 불러오는 데 실패했습니다:", error);
         throw error;
     }
 };
@@ -103,10 +94,8 @@ export const fetchOptionsByDateRange = async (productUid, startDate, endDate) =>
         const response = await axios.get(`${path}/products/${productUid}/option`, {
             params: { startDate: s, endDate: e },
         });
-        console.log("🟢 옵션 가격 데이터 가져오기 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 옵션 가격 데이터를 불러오는 데 실패했습니다:", error);
         throw error;
     }
 };
@@ -114,7 +103,6 @@ export const fetchOptionsByDateRange = async (productUid, startDate, endDate) =>
 // 주문 생성
 export const createOrder = async (productUid, optionData, memberInfo, accessToken) => {
     if (!accessToken) {
-        console.error("accessToken 없음");
         alert("로그인이 필요한 서비스 입니다.");
         return;
     }
@@ -135,7 +123,6 @@ export const createOrder = async (productUid, optionData, memberInfo, accessToke
             orderAdultPrice: optionData.productAdult,
             orderChildPrice: optionData.productChild,
         };
-        console.log("요청 보낸 orderData:", orderData);
         const response = await axios.post(`${path}/order/create`, orderData,
             {
                 headers: {
@@ -143,13 +130,11 @@ export const createOrder = async (productUid, optionData, memberInfo, accessToke
                 },
             }
         );
-        console.log("🟢 주문 생성 성공:", response.data);
         return {
             orderCode: response.data.orderCode,
             bookingUid: response.data.bookingUid,
         };
     } catch (error) {
-        console.error("🔴 주문 생성 실패:", error);
         alert("주문 생성 중 오류가 발생했습니다.");
         return null;
     }
@@ -158,7 +143,6 @@ export const createOrder = async (productUid, optionData, memberInfo, accessToke
 // 주문 상세 조회
 export const fetchOrderDetails = async (bookingUid, accessToken) => {
     if (!accessToken) {
-        console.error("🔴 accessToken 없음");
         return;
     }
     try {
@@ -167,10 +151,8 @@ export const fetchOrderDetails = async (bookingUid, accessToken) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        console.log("🟢 주문 상세 조회 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 주문 상세 조회 실패:", error);
         throw error;
     }
 };
@@ -183,10 +165,8 @@ export const fetchOptionDetails = async (productUid, optionCode, accessToken) =>
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        console.log("🟢 옵션 상세 조회 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 옵션 상세 조회 실패:", error);
         throw error;
     }
 };
@@ -199,10 +179,8 @@ export const fetchMemberInfo = async (accessToken) => {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        console.log("🟢 회원정보 조회 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 회원 정보 가져오기 실패:", error);
         throw error;
     }
 };
@@ -210,7 +188,6 @@ export const fetchMemberInfo = async (accessToken) => {
 // 결제 완료 시 orderStatus를 SCHEDULED로 변경
 export const completeOrder = async (orderCode, paymentMethod, totalPrice, accessToken) => {
     if (!accessToken) {
-        console.error("🔴 accessToken 없음");
         return;
     }
     try {
@@ -227,10 +204,8 @@ export const completeOrder = async (orderCode, paymentMethod, totalPrice, access
                 },
             }
         );
-        console.log("🟢 주문 상태 업데이트 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 주문 상태 업데이트 실패:", error);
         throw error;
     }
 };
@@ -243,10 +218,8 @@ export const deletePendingOrder = async (orderCode, accessToken) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        console.log("🟢 주문 삭제 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.error("🔴 주문 삭제 실패:", error);
         throw error;
     }
 };
@@ -261,10 +234,8 @@ export const cancelPendingOrder = async (orderCode, accessToken) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        console.log("🟢 SPA 페이지 이동 중 주문 삭제 완료");
         return response;
     } catch (error) {
-        console.warn("🔴 SPA 주문 삭제 실패", error);
         throw error;
     }
 };
