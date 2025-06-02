@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     // 요청을 허용할 오리진(도메인)을 설정합니다.
-                    config.setAllowedOrigins(List.of("http://localhost:3000", "https://api.hellotravelogic.link"));
+                    config.setAllowedOrigins(List.of("http://localhost:3000", "https://hellotravelogic.link"));
                     // 허용할 HTTP 메서드를 설정합니다.
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     // 허용할 헤더를 설정합니다. 모든 헤더를 허용합니다.
@@ -86,6 +86,7 @@ public class SecurityConfig {
                                         "/oauth/google/**", "/oauth/kakao/**"
 
                                 ).permitAll()
+                                .requestMatchers("/actuator/health").permitAll()
                                 //  경로는 인증된 사용자만 접근을 허용합니다.
                                 .requestMatchers("/member/mypage","/wish/**",
                                         "/review/view/**", "/review/write/info/**", "/review/write/**", "/review/edit/**", "/review/delete/**",
