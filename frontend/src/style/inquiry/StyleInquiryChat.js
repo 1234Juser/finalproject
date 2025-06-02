@@ -10,6 +10,16 @@ export const ChatWrapper = styled.div`
   font-family: 'Noto Sans KR', Arial, sans-serif; // 한글 폰트 추가
   background-color: #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+    @media (max-width: 767px) {
+        width: 100%;
+        height: 60vh;
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+        width: 100%;
+        height: 60vh;
+    }
 `;
 
 export const Header = styled.div`
@@ -21,12 +31,20 @@ export const Header = styled.div`
 export const Title = styled.div`
   font-weight: bold;
   font-size: 1.25em; // 약간 크게
+
+    @media (max-width: 767px) {
+        font-size: 1.1em;
+    }
 `;
 
 export const Description = styled.div`
   color: #888;
   font-size: 12px;
   margin-top: 4px;
+
+    @media (max-width: 767px) {
+        font-size: 11px;
+    }
 `;
 
 export const MessageBox = styled.div`
@@ -99,6 +117,10 @@ export const InputField = styled.textarea`
         border-color: #66afe9;
         box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
     }
+
+    @media (max-width: 767px) {
+        font-size: 13px;
+    }
 `;
 
 
@@ -114,6 +136,11 @@ export const SendButton = styled.button`
   &:hover {
     background-color: #008ecc;
   }
+
+    @media (max-width: 767px) {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
 `;
 
 
@@ -148,5 +175,10 @@ export const CloseButton = styled.button`
 
     &:focus {
         outline: none;
+    }
+
+    @media (max-width: 767px) {
+        font-size: 13px;
+        padding: 5px 10px;
     }
 `;

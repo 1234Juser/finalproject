@@ -317,19 +317,25 @@ export const ChatFloatingWrapper = styled.div`
     }
 
     @media (max-width: 767px) { // 모바일
-        width: 90%;
-        max-width: 360px; // 너무 커지지 않게
-        max-height: 80vh; // 화면 높이의 80%
-        // 위치는 NavCon.js에서 화면 중앙 하단 등으로 조정 필요
-        // bottom: 70px; // FloatingChatButton 위에 위치하도록 (예시)
-        // left: 50%;
-        // transform: translateX(-50%) translateY(20px); // 중앙 정렬
-        // @keyframes fadeInUp {
-        //     to {
-        //         opacity: 1;
-        //         transform: translateX(-50%) translateY(0);
-        //     }
-        // }
+    width: 90%;
+    max-width: 360px;
+    max-height: 80vh;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+}
+
+    @media (min-width: 768px) and (max-width: 1024px) { // 태블릿
+        width: 60%;
+        max-width: 600px;
+        bottom: 15%;
+        right: 10%;
     }
 `;
 

@@ -113,6 +113,7 @@ function NavCon() {
         };
     }, [showNotifications]);
 
+    const isMobile = window.innerWidth <= 768; // 모바일 기준 너비 (예: 768px 이하)
 
 
 
@@ -137,12 +138,14 @@ function NavCon() {
             {showNotifications && (
                 <>
                     {/* 백드롭 (모바일에서만 보이도록 해도 좋음) */}
-                    <div onClick={handleClose} style={{
-                        position: 'fixed',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.3)',
-                        zIndex: 999
-                    }} />
+                    {isMobile && (
+                        <div onClick={handleClose} style={{
+                            position: 'fixed',
+                            top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: 'rgba(0,0,0,0.3)',
+                            zIndex: 999
+                        }} />
+                    )}
 
                     <NotificationWrapper ref={notificationRef}>
                         <NotificationListCon />
