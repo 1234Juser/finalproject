@@ -25,8 +25,6 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
 
     const handleImageClick = (review) => {
         if (review.reviewPic) {
-            // const src = `/upload/review/${encodeURIComponent(review.reviewPic)}`;
-            // setFullImageSrc(src);
             setFullImageSrc(review.reviewPic);
             setShowFullImage(true);
         }
@@ -63,10 +61,8 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                                     <ReviewContent>{review.reviewContent}</ReviewContent>
                                     {review.reviewPic && (
                                         <Thumbnail src={review.reviewPic}
-                                                   // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                                     alt="리뷰 이미지"
                                                     onClick={() => {
-                                                    // setFullImageSrc(`/upload/review/${encodeURIComponent(review.reviewPic)}`);
                                                     setFullImageSrc(review.reviewPic);
                                                     setShowFullImage(true);
                                                 }}
@@ -114,7 +110,6 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                                         <ModalReviewContent>{review.reviewContent}</ModalReviewContent>
                                         {review.reviewPic && (
                                             <Thumbnail
-                                                // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                                 src={review.reviewPic}
                                                 alt="리뷰 이미지"
                                                 onClick={() => handleImageClick(review)}
@@ -137,8 +132,6 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                             setShowFullImage(false);
                         }}>
                             <FullImage src={fullImageSrc} />
-                            {/*<FullImage src={fullImageSrc} alt="원본 리뷰 이미지"/>*/}
-                            {/*<FullImage src={getImageSrc(review.reviewPic)} alt="원본 리뷰 이미지" />*/}
                         </FullImageOverlay>
                     )}
                 </AllReviewModal>

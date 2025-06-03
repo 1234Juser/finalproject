@@ -44,14 +44,6 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
         }
     };
 
-    // const getImageSrc = (pic) => {
-    //     if (!pic) return "/img/default-review.jpg";
-    //     // return pic.startsWith("http") ? pic : `/upload/review/${encodeURIComponent(pic)}`;
-    //     return pic.startsWith("http")
-    //         ? pic
-    //         : `https://hellotravelogic-img-s3.s3.amazonaws.com/review/${encodeURIComponent(pic)}`;
-    // };
-
     return (
         <Overlay onClick={onClose}>
             <Modal onClick={(e) => e.stopPropagation()}>
@@ -63,8 +55,6 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     <ThumbnailTitleWrap>
                         {review.reviewPic && (
                         <Thumbnail src={review.reviewPic}
-                                   // src={getImageSrc(review.reviewPic)}
-                                   // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                     alt="리뷰 이미지"
                                     onClick={handleImageClick}
                                     onError={(e) => {
@@ -99,8 +89,6 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     e.stopPropagation();
                     setShowFullImage(false);
                 }}>
-                    {/*<FullImage src={`/upload/review/${encodeURIComponent(review.reviewPic)}`} alt="원본 리뷰 이미지" />*/}
-                    {/*<FullImage src={getImageSrc(review.reviewPic)} alt="원본 리뷰 이미지" />*/}
                     <FullImage src={review.reviewPic} alt="원본 리뷰 이미지" />
                 </FullImageOverlay>
             )}
