@@ -15,7 +15,7 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                             reviewCount = 0 }) {
     const [isModalOpen, setModalOpen] = useState(false);
     const [showFullImage, setShowFullImage] = useState(false);
-    // const [fullImageSrc, setFullImageSrc] = useState(null);
+    const [fullImageSrc, setFullImageSrc] = useState(null);
     const handleModalToggle = () => {
         if (!isModalOpen) {
             onModalSortChange("date"); // 열릴 때 정렬 초기화
