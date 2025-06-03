@@ -2,8 +2,9 @@ import {getReviewImage} from "../../service/reviewService";
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {
-    CloseButton, Content, Footer, FooterButton, FullImage, FullImageOverlay, Header,
-    Modal, Overlay, ProductTitle, Rating, RatingDateRow, ReviewDate, ReviewInfo, ReviewText,
+    CloseButton, Content, Footer, FooterButton,
+    FullImage, FullImageOverlay, Header, Modal, Overlay,
+    ProductTitle, Rating, RatingDateRow, ReviewDate, ReviewInfo, ReviewText,
     Thumbnail, ThumbnailTitleWrap, Title
 } from "../../style/review/StyleReviewModal";
 
@@ -25,10 +26,10 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
         }
     }, [review.reviewPic]);
 
-    const getImageSrc = (pic) => {
-        if (!pic) return "/img/default-review.jpg";
-        return pic.startsWith("http") ? pic : `/upload/review/${encodeURIComponent(pic)}`;
-    };
+    // const getImageSrc = (pic) => {
+    //     if (!pic) return "/img/default-review.jpg";
+    //     return pic.startsWith("http") ? pic : `/upload/review/${encodeURIComponent(pic)}`;
+    // };
 
     return(
     <>
@@ -41,7 +42,8 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
                 <Content>
                     <ThumbnailTitleWrap>
                         {review.reviewPic && (
-                        <Thumbnail src={getImageSrc(review.reviewPic)}
+                        <Thumbnail src={review.reviewPic}
+                                   // src={getImageSrc(review.reviewPic)}
                                    // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                     alt="리뷰 이미지"
                                     onError={(e) => {
@@ -70,7 +72,9 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
                     e.stopPropagation();
                     setShowFullImage(false);
                 }}>
-                    <FullImage src={`/upload/review/${encodeURIComponent(review.reviewPic)}`} alt="원본 리뷰 이미지" />
+                    {/*<FullImage src={`/upload/review/${encodeURIComponent(review.reviewPic)}`} alt="원본 리뷰 이미지" />*/}
+                    {/*<FullImage src={getImageSrc(review.reviewPic)} alt="원본 리뷰 이미지" />*/}
+                    <FullImage src={review.reviewPic} alt="원본 리뷰 이미지" />
                 </FullImageOverlay>
             )}
         </Overlay>

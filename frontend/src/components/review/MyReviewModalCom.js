@@ -2,13 +2,10 @@ import React, {useEffect, useState} from "react";
 import {getReviewImage} from "../../service/reviewService";
 import {useNavigate} from "react-router-dom";
 import {
-    CloseButton,
-    Content, Footer, FooterButton, FullImage, FullImageOverlay,
-    Header,
-    Modal,
-    Overlay, ProductTitle, Rating, RatingDateRow, ReviewDate, ReviewInfo, ReviewText, Thumbnail,
-    ThumbnailTitleWrap,
-    Title
+    CloseButton, Content, Footer, FooterButton,
+    FullImage, FullImageOverlay, Header, Modal,
+    Overlay, ProductTitle, Rating, RatingDateRow, ReviewDate, ReviewInfo, ReviewText,
+    Thumbnail, ThumbnailTitleWrap, Title
 } from "../../style/review/StyleReviewModal";
 
 function MyReviewModalCom({ review, onClose, onDelete }) {
@@ -47,10 +44,13 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
         }
     };
 
-    const getImageSrc = (pic) => {
-        if (!pic) return "/img/default-review.jpg";
-        return pic.startsWith("http") ? pic : `/upload/review/${encodeURIComponent(pic)}`;
-    };
+    // const getImageSrc = (pic) => {
+    //     if (!pic) return "/img/default-review.jpg";
+    //     // return pic.startsWith("http") ? pic : `/upload/review/${encodeURIComponent(pic)}`;
+    //     return pic.startsWith("http")
+    //         ? pic
+    //         : `https://hellotravelogic-img-s3.s3.amazonaws.com/review/${encodeURIComponent(pic)}`;
+    // };
 
     return (
         <Overlay onClick={onClose}>
@@ -62,7 +62,8 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                 <Content>
                     <ThumbnailTitleWrap>
                         {review.reviewPic && (
-                        <Thumbnail src={getImageSrc(review.reviewPic)}
+                        <Thumbnail src={review.reviewPic}
+                                   // src={getImageSrc(review.reviewPic)}
                                    // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                     alt="리뷰 이미지"
                                     onClick={handleImageClick}
@@ -99,7 +100,8 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     setShowFullImage(false);
                 }}>
                     {/*<FullImage src={`/upload/review/${encodeURIComponent(review.reviewPic)}`} alt="원본 리뷰 이미지" />*/}
-                    <FullImage src={getImageSrc(review.reviewPic)} alt="원본 리뷰 이미지" />
+                    {/*<FullImage src={getImageSrc(review.reviewPic)} alt="원본 리뷰 이미지" />*/}
+                    <FullImage src={review.reviewPic} alt="원본 리뷰 이미지" />
                 </FullImageOverlay>
             )}
         </Overlay>
