@@ -15,7 +15,7 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                             reviewCount = 0 }) {
     const [isModalOpen, setModalOpen] = useState(false);
     const [showFullImage, setShowFullImage] = useState(false);
-    const [fullImageSrc, setFullImageSrc] = useState(null);
+    // const [fullImageSrc, setFullImageSrc] = useState(null);
     const handleModalToggle = () => {
         if (!isModalOpen) {
             onModalSortChange("date"); // 열릴 때 정렬 초기화
@@ -25,8 +25,9 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
 
     const handleImageClick = (review) => {
         if (review.reviewPic) {
-            const src = `/upload/review/${encodeURIComponent(review.reviewPic)}`;
-            setFullImageSrc(src);
+            // const src = `/upload/review/${encodeURIComponent(review.reviewPic)}`;
+            // setFullImageSrc(src);
+            setFullImageSrc(review.reviewPic);
             setShowFullImage(true);
         }
     };
@@ -65,7 +66,8 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                                                    // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                                     alt="리뷰 이미지"
                                                     onClick={() => {
-                                                    setFullImageSrc(`/upload/review/${encodeURIComponent(review.reviewPic)}`);
+                                                    // setFullImageSrc(`/upload/review/${encodeURIComponent(review.reviewPic)}`);
+                                                    setFullImageSrc(review.reviewPic);
                                                     setShowFullImage(true);
                                                 }}
                                                 onError={(e) => {
@@ -134,7 +136,9 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                             e.stopPropagation();
                             setShowFullImage(false);
                         }}>
-                            <FullImage src={fullImageSrc} alt="원본 리뷰 이미지"/>
+                            <FullImage src={fullImageSrc} />
+                            {/*<FullImage src={fullImageSrc} alt="원본 리뷰 이미지"/>*/}
+                            {/*<FullImage src={getImageSrc(review.reviewPic)} alt="원본 리뷰 이미지" />*/}
                         </FullImageOverlay>
                     )}
                 </AllReviewModal>
