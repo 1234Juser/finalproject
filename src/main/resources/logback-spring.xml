@@ -1,14 +1,16 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <property name="LOG_PATH" value="${logging.file.path:-/home/ubuntu/app/logs}" />
+    <property name="LOG_PATH" value="${logging.file.path:-./logs}" />
 
+    <!-- 콘솔 출력 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level){ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=gray} [%thread] %cyan(%logger{36}) - %msg%n</pattern>
         </encoder>
     </appender>
 
+    <!-- 채팅 로그 파일 appender -->
     <appender name="CHAT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/chat-message.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -20,6 +22,18 @@
         </rollingPolicy>
     </appender>
 
+    <!-- 일반 로그 파일 appender -->
+    <appender name="APPLICATION_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/application.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
     <logger name="software.amazon.awssdk" level="DEBUG"/>
     <logger name="org.apache.http" level="TRACE"/>
     <logger name="io.netty" level="TRACE"/>
@@ -27,12 +41,15 @@
     <logger name="com.hello.travelogic" level="DEBUG"/>
     <logger name="org.springframework.web" level="INFO"/>
 
+    <!-- chatLog 이름 가진 logger는 chat-message.log랑 콘솔에 찍기 -->
     <logger name="ChatLog" level="INFO" additivity="false">
         <appender-ref ref="CHAT_LOG"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <!-- root logger는 application.log와 콘솔에 찍기 -->
     <root level="INFO">
+        <appender-ref ref="APPLICATION_LOG"/>
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

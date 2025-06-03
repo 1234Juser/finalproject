@@ -164,14 +164,6 @@ export const ProfileImg = styled.img`
     }
 `;
 
-export const UserIcon = styled(FiUser)`
-    font-size: 2.1rem;
-    color: #9dc1ff;
-
-    @media (max-width: 767px) {
-        font-size: 1.8rem;
-    }
-`;
 
 export const HeaderButton = styled.button`
     background: #fff;
@@ -211,3 +203,196 @@ export const HeaderButton = styled.button`
         font-weight: 600;
     }
 `;
+
+// 모바일 전용 햄버거 버튼
+export const HamburgerButton = styled.button`
+    display: none;
+    border: 2px solid #383838; // 연두색 테두리로 포인트
+    border-radius: 8px; // 둥근 모서리
+    cursor: pointer;
+    padding: 8px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+
+    svg {
+        font-size: 24px;
+        color: #888888; // 아이콘 색상도 테두리와 맞춤
+        display: block;
+        transition: color 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        display: block;
+        position: absolute;
+        top: 20px;
+        left: 15px;
+        border: none; // 모바일에서 테두리 없애고 싶으면 여길 주석 처리해도 됨
+        background: transparent; // 모바일에서 배경 투명하게 변경 가능 (선택사항)
+        padding: 6px;
+    }
+`;
+
+// 백드롭 (모바일에서만 보임)
+export const Backdrop = styled.div`
+    display: none;
+
+    @media (max-width: 768px) {
+        display: ${({ isOpen }) => (isOpen ? "block" : "none")};
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, ${({ isOpen }) => (isOpen ? "0.4" : "0")});
+        z-index: 1000;
+        opacity: ${({ isOpen }) => (isOpen ? "1" : "0")};
+        visibility: ${({ isOpen }) => (isOpen ? "visible" : "hidden")};
+        pointer-events: ${({ isOpen }) => (isOpen ? "auto" : "none")};
+
+        transition: background-color 0.4s ease, opacity 0.4s ease, visibility 0.4s;
+    }
+`;
+
+// 사이드 메뉴 영역
+export const AsideMenu = styled.aside`
+    //display: none;
+
+    @media (max-width: 768px) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px;
+        background-color: #fff;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+        z-index: 1050;
+        transform: ${({ isOpen }) => (isOpen ? "translateX(0)" : "translateX(-20%)")};
+        opacity: ${({ isOpen }) => (isOpen ? "1" : "0")};
+        pointer-events: ${({ isOpen }) => (isOpen ? "auto" : "none")}; // 닫혔을 땐 클릭 못 하게
+        transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+`;
+
+// 프로필/로그인 버튼 영역 감싸는 래퍼 (기존 HeaderRight 내용 그대로 이 안에 넣기)
+export const AsideProfileWrap = styled.div`
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    align-items: flex-start; // 내부 요소들 왼쪽 정렬
+
+    // 프로필 이미지와 이름, 로그아웃 버튼을 포함하는 HeaderRight를 여기서 사용
+    // HeaderRight의 모바일 스타일이 여기에 적용되도록 조정 필요
+    ${HeaderRight} { // HeaderRight 컴포넌트에 직접 스타일 적용
+        //flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        width: 100%;
+        font-size: 1rem; // Aside 내부 폰트 크기 통일성 고려
+    }
+
+    ${ProfileImg} { // Aside 내부 프로필 이미지
+        width: 48px;
+        height: 48px;
+        margin-bottom: 8px; // 이름과의 간격
+    }
+
+    span { // 사용자 이름 스타일
+        font-weight: 600;
+        white-space: nowrap;
+        font-size: 1.1rem;
+    }
+
+    ${HeaderButton} { // Aside 내부 버튼들 (로그인, 회원가입, 로그아웃)
+        width: 100%; // 버튼 너비 100%
+        padding: 10px; // 버튼 패딩
+        font-size: 1rem;
+    }
+`;
+
+// NavPage 컴포넌트를 감싸는 스타일 (원래 NavPage 그대로 이 안에 넣기)
+export const AsideNavWrap = styled.div`
+    flex-grow: 1;
+    //overflow-y: auto;
+    padding: 15px 20px; // 네비게이션 영역 패딩
+
+    nav { // NavPage 내부의 nav 태그에 적용
+        display: flex;
+        flex-direction: column;
+        gap: 10px; // 네비게이션 아이템 간 간격
+
+        // NavPage 내부의 Link 또는 button 스타일 조정 (예시)
+        a, button {
+            padding: 12px 0; // 위아래 패딩으로 높이감 부여
+            font-size: 1rem;
+            text-decoration: none;
+            color: #333;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+
+            &:hover {
+                background-color: #f0f0f0;
+            }
+        }
+    }
+`;
+
+// 사이드 메뉴 닫기 버튼
+export const CloseButton = styled.button`
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: #333;
+    }
+
+    @media (min-width: 769px) {
+        display: none; // PC에선 닫기 버튼 안 보이게
+    }
+`;
+
+
+
+
+/*// 기존 HeaderRight는 데스크탑에서만 보이도록
+export const HeaderRight = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    @media (max-width: 767px) {
+        display: none;
+    }
+`;*/
+
+/*// 모바일에서도 재사용할 버튼 스타일
+export const HeaderButton = styled.button`
+    background-color: #409cff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+`;*/
+
+/*
+// 프로필 이미지
+export const ProfileImg = styled.img`
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+`;*/

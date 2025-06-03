@@ -22,6 +22,7 @@ public class ProductDTO {
     private Long cityId;
     private Long themeCode;
     private String themeName; // themeName으로 추가
+    private String themeCondition;
     private String productTitle;
     private String productContent;
     private Integer productAdult;
@@ -52,6 +53,7 @@ public class ProductDTO {
         this.cityId = productEntity.getCityId() != null ? productEntity.getCityId().getCityId() : null;
         this.themeCode = productEntity.getThemeCode() != null ? productEntity.getThemeCode().getThemeCode() : null;
         this.themeName = productEntity.getThemeCode() != null ? productEntity.getThemeCode().getThemeName() : null; // themeCode 대신 themeName 사용
+        this.themeCondition = productEntity.getThemeCode().getThemeCondition() != null ? productEntity.getThemeCode().getThemeCondition() : null;
 
         this.productTitle = productEntity.getProductTitle();
         this.productContent = productEntity.getProductContent();

@@ -1,5 +1,6 @@
 const path = "https://api.hellotravelogic.link";
 
+
 // tbl_product 전체 데이터 가져오는 함수
 const getProductsList = async (currentPage) => {
     const response = await fetch(`${path}/products?start=${currentPage}`, {

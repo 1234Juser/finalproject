@@ -286,6 +286,17 @@ public class ProductService {
         ProductEntity product = productRepo.findByProductUid(productUid)
                 .orElseThrow(() -> new NoSuchElementException("상품 없음"));
 
+        log.info("서비스 진입 확인 - productUid: {}, memberCode: {}", productUid, memberCode);
+
+        // === 로깅 추가 시작 ===
+        if (product.getThemeCode() != null) {
+            log.info("Fetched ThemeEntity for productUid {}: {}", productUid, product.getThemeCode().toString());
+            log.info("ThemeCondition for productUid {}: {}", productUid, product.getThemeCode().getThemeCondition());
+        } else {
+            log.warn("No ThemeEntity found for productUid {}", productUid);
+        }
+        // === 로깅 추가 끝 ===
+
         log.info("찜 여부 체크: memberCode={}, productCode={}", memberCode, product.getProductCode());
 
         // 비회원일 경우 isWished를 기본값 false로 초기화
@@ -296,6 +307,8 @@ public class ProductService {
         }
 
         ProductDTO dto = new ProductDTO(product);
+
+        log.debug("상품 상세 페이지 dto 확인 : {}", dto.toString()); // DTO 전체를 로그로 확인
 
         dto.setWished(isWished);
 

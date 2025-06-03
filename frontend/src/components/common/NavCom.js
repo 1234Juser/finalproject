@@ -57,7 +57,7 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                 <NavRight>
                     <li
                         onClick={toggleNotification}
-                        style={{ position: 'relative', cursor: 'pointer', fontWeight: 500 }}
+                        style={{ position: 'relative', cursor: 'pointer', fontWeight: 500, fontSize: '1rem' }}
                         ref={notificationIconRef}
                     >
                         <IoNotifications style={{marginRight:6, color:"#80d369"}} />
