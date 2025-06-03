@@ -37,7 +37,7 @@ function CustomizeSearchPage() {
 
         try {
             // toggleWish 함수 호출 (productUid만 전달, isWished는 백엔드에서 처리)
-            const result = await toggleWish(clickedProduct.productUid, token);
+            const result = await toggleWish(clickedProduct.productCode, token);
 
             // UI 상태 업데이트
             const updatedProducts = products.map(product =>
