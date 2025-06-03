@@ -25,6 +25,14 @@ function CustomizeSearchPage() {
         setSortBy("default");
     };
 
+    const handleToggleWish = (clickedProduct) => {
+        const updatedProducts = products.map(product =>
+            product.productUid === clickedProduct.productUid
+                ? { ...product, isWished: !product.isWished }
+                : product
+        );
+        setProducts(updatedProducts);
+    };
     const filteredProducts = useMemo(() => {
         const copied = [...products];
         switch (sortBy) {
@@ -54,10 +62,11 @@ function CustomizeSearchPage() {
 
     return (
         <ProductCom
-            products={filteredProducts} // ProductCom 내부에서 사용되지 않지만 props 구조 유지를 위해 전달
             cityName={cityName}
             handleSort={handleSort}
             handleFilterReset={handleFilterReset}
+            filteredProducts={filteredProducts}
+            onToggleWish={handleToggleWish}
         />
     );
 }
