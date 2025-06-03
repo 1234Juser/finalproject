@@ -5,7 +5,6 @@ const path = "https://api.hellotravelogic.link";
 
 export async function getGroups(accessToken) {
     if (!accessToken) {
-        console.error("Missing accessToken in getGroups");
         return;
     }
     const config = {
@@ -23,7 +22,6 @@ export async function getGroups(accessToken) {
 }
 export async function getItemsInGroup(groupCode, accessToken) {
     if (!accessToken) {
-        console.error("Missing accessToken in getItemsInGroup");
         return;
     }
     const config = {
@@ -42,7 +40,6 @@ export async function getItemsInGroup(groupCode, accessToken) {
 }
 export async function deleteWish(wishCode, accessToken) {
     if (!accessToken) {
-        console.error("Missing accessToken in getItemsInGroup");
         return;
     }
     const config = {
@@ -61,7 +58,6 @@ export async function deleteWish(wishCode, accessToken) {
 }
 export async function deleteGroup(groupCode, accessToken) {
     if (!accessToken) {
-        console.error("Missing accessToken in getItemsInGroup");
         return;
     }
     const config = {
