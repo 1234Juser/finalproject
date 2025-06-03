@@ -257,7 +257,7 @@ function CustomizeCon(){
 
         try {
             // console.log("서버로 전송될 검색 조건:", customizeConditions); // 서버로 보내는 데이터 로그
-            const response = await axios.post('https://api.hellotraveloginc.link/customize/search', customizeConditions); // Axios 요청 URL 수정
+            const response = await axios.post('https://api.hellotravelogic.link/customize/search', customizeConditions); // Axios 요청 URL 수정
             // console.log('검색 결과:', response.data);
             navigate('/search-results', { state: { searchResults: response.data } }); // 검색 결과 페이지로 이동
         } catch (error) {
