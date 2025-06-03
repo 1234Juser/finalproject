@@ -30,20 +30,20 @@ DELETE FROM tbl_event;
 INSERT INTO tbl_event (event_title, event_content, event_img, event_status, event_startdate, event_enddate)
 VALUES
     -- 진행중인 이벤트 (종료 날짜가 미래)
-    ('초특가! 도쿄 3박 4일 자유여행', '지금 예약하면 항공권 할인! 아사쿠사, 시부야, 신주쿠를 내맘대로 즐기는 도쿄 핵심투어.', 'event/event4.png', '진행중', NOW() - INTERVAL 7 DAY, DATE_ADD(NOW(), INTERVAL 20 DAY)),
-    ('낭만가득! 파리&스위스 7박 9일', '에펠탑 야경과 알프스 설산을 한번에! 유럽 베스트셀러 상품, 로맨틱 허니문으로도 강력 추천!', 'event/event11.png', '진행중', NOW() - INTERVAL 3 DAY, DATE_ADD(NOW(), INTERVAL 30 DAY)),
-    ('여름휴가 추천! 다낭 3박 5일 호캉스', '미케비치 해변과 5성급 리조트에서 즐기는 완벽한 휴식. 바나힐 투어 포함 특별 프로모션 진행중!', 'event/event6.png', '진행중', NOW(), DATE_ADD(NOW(), INTERVAL 45 DAY)),
-    ('제주도 완전정복! 렌터카+숙소 패키지', '푸른 제주 바다와 맛집 탐방! 항공권만 준비하세요. 가성비 최고의 제주 여행 상품.', 'event/event2.png', '진행중', NOW() - INTERVAL 1 DAY, DATE_ADD(NOW(), INTERVAL 30 DAY)),
-    ('지금 아니면 언제? 방콕 파타야 5일 특가', '활기 넘치는 방콕 시내와 아름다운 파타야 해변을 동시에! 알찬 일정과 쇼핑 찬스까지!', 'event/event5.png', '진행중', NOW(), DATE_ADD(NOW(), INTERVAL 25 DAY)),
-    ('온가족 해외여행! 싱가포르 4일 유니버셜', '유니버셜 스튜디오 입장권 포함! 멀라이언 파크, 가든스 바이더 베이 등 핵심 관광지와 함께 즐거운 가족여행!', 'event/event7.png', '진행중', NOW() - INTERVAL 5 DAY, DATE_ADD(NOW(), INTERVAL 25 DAY)),
+    ('초특가! 도쿄 3박 4일 자유여행', '지금 예약하면 항공권 할인! 아사쿠사, 시부야, 신주쿠를 내맘대로 즐기는 도쿄 핵심투어.', '/img/event/event4.png', '진행중', NOW() - INTERVAL 7 DAY, DATE_ADD(NOW(), INTERVAL 20 DAY)),
+    ('낭만가득! 파리&스위스 7박 9일', '에펠탑 야경과 알프스 설산을 한번에! 유럽 베스트셀러 상품, 로맨틱 허니문으로도 강력 추천!', '/img/event/event11.png', '진행중', NOW() - INTERVAL 3 DAY, DATE_ADD(NOW(), INTERVAL 30 DAY)),
+    ('여름휴가 추천! 다낭 3박 5일 호캉스', '미케비치 해변과 5성급 리조트에서 즐기는 완벽한 휴식. 바나힐 투어 포함 특별 프로모션 진행중!', '/img/event/event6.png', '진행중', NOW(), DATE_ADD(NOW(), INTERVAL 45 DAY)),
+    ('제주도 완전정복! 렌터카+숙소 패키지', '푸른 제주 바다와 맛집 탐방! 항공권만 준비하세요. 가성비 최고의 제주 여행 상품.', '/img/event/event2.png', '진행중', NOW() - INTERVAL 1 DAY, DATE_ADD(NOW(), INTERVAL 30 DAY)),
+    ('지금 아니면 언제? 방콕 파타야 5일 특가', '활기 넘치는 방콕 시내와 아름다운 파타야 해변을 동시에! 알찬 일정과 쇼핑 찬스까지!', '/img/event/event5.png', '진행중', NOW(), DATE_ADD(NOW(), INTERVAL 25 DAY)),
+    ('온가족 해외여행! 싱가포르 4일 유니버셜', '유니버셜 스튜디오 입장권 포함! 멀라이언 파크, 가든스 바이더 베이 등 핵심 관광지와 함께 즐거운 가족여행!', '/img/event/event7.png', '진행중', NOW() - INTERVAL 5 DAY, DATE_ADD(NOW(), INTERVAL 25 DAY)),
     -- 종료된 이벤트 (종료 날짜가 과거)
-    ('[종료] 봄맞이 경주 벚꽃여행 1박 2일', '아름다운 벚꽃과 함께한 천년고도 경주 여행, 많은 사랑 감사드립니다. 다음 시즌을 기대해주세요!', 'event/event1.png', '종료', NOW() - INTERVAL 60 DAY, NOW() - INTERVAL 45 DAY),
-    ('[종료] 겨울왕국 삿포로 눈꽃축제 4일', '환상적인 설경과 함께한 삿포로 눈꽃축제! 잊지 못할 추억을 선사해드렸기를 바랍니다.', 'event/event9.png', '종료', NOW() - INTERVAL 120 DAY, NOW() - INTERVAL 100 DAY),
-    ('[종료] 추석연휴 한정! 홍콩 마카오 3박4일', '황금연휴에 떠났던 미식과 쇼핑의 천국! 뜨거운 성원에 감사드립니다.', 'event/event3.png', '종료', NOW() - INTERVAL 90 DAY, NOW() - INTERVAL 80 DAY),
-    ('[종료] 부산 불꽃축제 명당 패키지', '화려한 불꽃과 함께한 가을밤의 추억! 내년에도 더 좋은 상품으로 찾아뵙겠습니다.', 'event/event4.png', '종료', NOW() - INTERVAL 75 DAY, NOW() - INTERVAL 70 DAY),
-    ('[종료] 이탈리아 완전일주 10일', '로마, 피렌체, 베네치아를 포함한 이탈리아 핵심 도시 완전 정복! 고객님의 만족이 저희의 기쁨입니다.', 'event/event12.png', '종료', NOW() - INTERVAL 150 DAY, NOW() - INTERVAL 140 DAY),
-    ('[종료] 코타키나발루 선셋투어 5일', '세계 3대 선셋을 감상했던 코타키나발루! 아름다운 추억과 함께해주셔서 감사합니다.', 'event/event10.png', '종료', NOW() - INTERVAL 80 DAY, NOW() - INTERVAL 75 DAY),
-    ('[종료] 괌 PIC 골드카드 특가', '가족여행의 성지, 괌 PIC 리조트에서의 즐거운 시간! 다음에도 특별한 혜택으로 만나요.', 'event/event8.png', '종료', NOW() - INTERVAL 100 DAY, NOW() - INTERVAL 90 DAY);
+    ('[종료] 봄맞이 경주 벚꽃여행 1박 2일', '아름다운 벚꽃과 함께한 천년고도 경주 여행, 많은 사랑 감사드립니다. 다음 시즌을 기대해주세요!', '/img/event/event1.png', '종료', NOW() - INTERVAL 60 DAY, NOW() - INTERVAL 45 DAY),
+    ('[종료] 겨울왕국 삿포로 눈꽃축제 4일', '환상적인 설경과 함께한 삿포로 눈꽃축제! 잊지 못할 추억을 선사해드렸기를 바랍니다.', '/img/event/event9.png', '종료', NOW() - INTERVAL 120 DAY, NOW() - INTERVAL 100 DAY),
+    ('[종료] 추석연휴 한정! 홍콩 마카오 3박4일', '황금연휴에 떠났던 미식과 쇼핑의 천국! 뜨거운 성원에 감사드립니다.', '/img/event/event3.png', '종료', NOW() - INTERVAL 90 DAY, NOW() - INTERVAL 80 DAY),
+    ('[종료] 부산 불꽃축제 명당 패키지', '화려한 불꽃과 함께한 가을밤의 추억! 내년에도 더 좋은 상품으로 찾아뵙겠습니다.', '/img/event/event4.png', '종료', NOW() - INTERVAL 75 DAY, NOW() - INTERVAL 70 DAY),
+    ('[종료] 이탈리아 완전일주 10일', '로마, 피렌체, 베네치아를 포함한 이탈리아 핵심 도시 완전 정복! 고객님의 만족이 저희의 기쁨입니다.', '/img/event/event12.png', '종료', NOW() - INTERVAL 150 DAY, NOW() - INTERVAL 140 DAY),
+    ('[종료] 코타키나발루 선셋투어 5일', '세계 3대 선셋을 감상했던 코타키나발루! 아름다운 추억과 함께해주셔서 감사합니다.', '/img/event/event10.png', '종료', NOW() - INTERVAL 80 DAY, NOW() - INTERVAL 75 DAY),
+    ('[종료] 괌 PIC 골드카드 특가', '가족여행의 성지, 괌 PIC 리조트에서의 즐거운 시간! 다음에도 특별한 혜택으로 만나요.', '/img/event/event8.png', '종료', NOW() - INTERVAL 100 DAY, NOW() - INTERVAL 90 DAY);
 
 -- faq테이블 중복삭제
 DELETE FROM tbl_faq;
