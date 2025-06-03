@@ -9,12 +9,17 @@ export const NavContentWrapper = styled.div`
     z-index: 1;
     display: flex;
     align-items: center;
+    //flex-direction: column;
 
     justify-content: space-between; // 로고(가상) - NavCenter - NavRight 간 정렬
 
+    @media (max-width: 1023px) { // 태블릿
+        flex-direction: column;
+    }
+    
     @media (max-width: 767px) { // 모바일
         flex-wrap: wrap; // NavCenter와 NavRight가 다음 줄로 넘어갈 수 있도록
-        //flex-direction: column;
+        flex-direction: column;
     }
 `;
 
@@ -145,6 +150,8 @@ export const NavCenter = styled.ul`
         gap: 8px 10px; // 모바일 세로, 가로 간격
         font-size: 0.9rem; // 모바일 폰트 크기
         margin-top: 10px; 
+        flex-direction: column;
+        align-items: flex-start;
         li {
             a, span {
                 padding: 5px 8px; // 모바일 패딩
@@ -183,13 +190,7 @@ export const NavRight = styled.ul`
             background: linear-gradient(90deg, #f2f8fb 0%, #e0edfe 100%);
             color: #409cff;
         }
-
-        // li 내부의 a 태그 (또는 MyPageWrapper 내부의 a 태그)에 대한 스타일
-        // MyPageWrapper는 div이므로, a 태그는 그 자식으로 들어감.
-        // 이를 위해 MyPageWrapper 내부의 a도 함께 스타일링하거나,
-        // MyPageWrapper 자체에 color, font-weight 등을 li와 유사하게 적용하고,
-        // MyPageWrapper 내부의 a는 display:flex, align-items:center만 갖도록 할 수 있음.
-        // 여기서는 li 내부에 있는 모든 a 태그 및 MyPageWrapper 내부의 a 태그를 포괄적으로 스타일링합니다.
+        
         a, MyPageWrapper > a { // MyPageWrapper 직계 자식 a도 포함
             display: flex;
             align-items: center; // 아이콘과 텍스트를 세로 중앙 정렬
@@ -198,8 +199,6 @@ export const NavRight = styled.ul`
             font-weight: inherit; // 부모 li의 폰트 굵기 상속
             white-space: nowrap; // a 태그 내부 텍스트 줄바꿈 방지
 
-            // 아이콘 스타일은 NavCom.js에서 인라인으로 marginRight이 적용되어 있음
-            // 예: svg { margin-right: 6px; }
         }
     }
     // position: relative; // 이전 주석 참고하여 필요시 사용
@@ -210,25 +209,31 @@ export const NavRight = styled.ul`
         li {
             padding: 6px 10px; // 패딩 줄임
         }
-        display: block;
+        //display: block;
     }
 
-    @media (max-width: 767px) { // 모바일
-        order: 2; // HeaderCom.js의 레이아웃 순서에 따라 조정 (필요시)
-        gap: 8px; // 간격 더 줄임
-        font-size: 0.9rem; // 폰트 크기 더 줄임
+    @media (max-width: 767px) {
+        order: 2;
+        gap: 8px;
+        font-size: 0.9rem;
+        flex-direction: row; // ✅ 세로 → 가로 정렬로 전환
+        padding-left: 8px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        display: flex;
+        justify-content: space-between;
 
         li {
-            padding: 5px 8px; // 패딩 더 줄임
+            all: unset; // ✅ li 태그의 기본 스타일 제거
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            white-space: nowrap;
+        }
 
-            // 모바일에서 텍스트 숨기기 (선택적 고급 기능)
-            // 예시: 아이콘만 남기고 싶을 때 (NavCom.js 구조 변경과 함께 사용)
-            // a > .nav-text-label { display: none; } 
-            // li > .nav-text-label { display: none; } // '알림' 텍스트용
-
-            // 아이콘만 표시할 경우, 아이콘의 오른쪽 마진 제거
-            // a > svg { margin-right: 0 !important; }
-            // li > svg { margin-right: 0 !important; } // '알림' 아이콘용
+        a,
+        MyPageWrapper > a {
+            padding: 5px 8px; // ✅ 클릭 영역 유지
         }
     }
 `;
@@ -271,7 +276,7 @@ export const DropdownMenu = styled.ul`
     @media (max-width: 767px) { // 모바일
         min-width: 130px;
         right: 0%;
-        left: unset;
+        //left: unset;
         li a {
             font-size: 0.9rem;
             padding: 8px 15px;
