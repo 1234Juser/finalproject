@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const StyleReviewBlock = styled.div`
-    display: flex;
+    //display: flex;
     justify-content: center;
 `;
 
@@ -145,7 +145,9 @@ export const StyledStatusBadge = styled.span`
 
 export const DivWrap = styled.div`
     margin: auto;
-    width: 70%;
+    width : 90%;
+    padding-bottom : 8rem;
+    min-height : 80vh;
 `;
 // 페이지 버튼들이 모인 구역
 export const DivPage = styled.div`

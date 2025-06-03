@@ -1,12 +1,7 @@
-import styled from 'styled-components';
 import {
-    ButtonGroup, CancelButton,
-    Content,
-    DoNotShow,
-    ModalBox,
-    ModalContainer,
-    Overlay,
-    Title, WriteButton
+    ButtonGroup, CancelButton, Content,
+    DoNotShow, ModalBox, ModalContainer,
+    Overlay, Title, WriteButton
 } from "../../style/review/StyleReviewRequest";
 
 function RecentReviewRequestModalCom({ order, onClose, onDoNotShowToday, onDoNotShowThisOrder }){

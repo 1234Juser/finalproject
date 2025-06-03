@@ -338,8 +338,6 @@ public class ReviewService {
                 throw new RuntimeException ("S3 파일 삭제 실패하여 리뷰 삭제가 중단됩니다.", e);
             }
         }
-        reviewRepo.delete(review);
-
         reviewRepo.save(review);
         // 리뷰 카운트 갱신
         productService.updateReviewCount(review.getProduct().getProductCode());

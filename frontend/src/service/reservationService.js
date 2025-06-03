@@ -187,7 +187,7 @@ export async function fetchLatestUnreviewedOrder(accessToken) {
         },
     };
     try {
-        const response = await axios.get("/my/reservations/review-request", config);
+        const response = await axios.get(`${path}/my/reservations/review-request`, config);
         return response.data; // 성공 시 OrderDTO 객체
     } catch (error) {
         if (error.response && error.response.status === 204) {

@@ -3,6 +3,8 @@ import styled from "styled-components";
 export const StyleLikeBlock = styled.div`
     display: flex;
     justify-content: center;
+    min-height : 80vh;
+    padding-bottom : 8rem;
 `;
 export const StyleContentWrap = styled.div`
     width: 70%;

@@ -2,14 +2,13 @@ import {useState} from "react";
 import AdminReviewModalCom from "./AdminReviewModalCom";
 import {useNavigate} from "react-router-dom";
 import {
-    DivPage,
-    DivWrap,
-    ListTitle, ProductTitleCell,
-    SpanPage,
+    DivPage, DivWrap,
+    ListTitle, ProductTitleCell, SpanPage,
     StyleContentWrap, StyledStatusBadge, StyledTable,
-    StyleReviewBlock,
-    TitleWrapper
+    StyleReviewBlock, TitleWrapper
 } from "../../style/review/StyleAdminReview";
+import {containerStyle, mainStyle, sidebarStyle} from "../../style/member/MyPageStyle";
+import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 
 function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onClick, onDelete }) {
     const [selectedReview, setSelectedReview] = useState(null);
@@ -54,6 +53,11 @@ function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onCl
 
     return(
         <>
+        <div style={containerStyle}>
+            <aside style={sidebarStyle}>
+                <AdminSideBarPage />
+            </aside>
+            <main style={mainStyle}>
             <StyleReviewBlock>
                 <StyleContentWrap>
                     <TitleWrapper>
@@ -132,6 +136,8 @@ function AdminReviewCom({ reviews, loading, error, currentPage, totalPages, onCl
                     )}
                 </StyleContentWrap>
             </StyleReviewBlock>
+            </main>
+        </div>
         </>)
 }
 export default AdminReviewCom;

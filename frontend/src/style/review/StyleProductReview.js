@@ -47,7 +47,7 @@ export const ReviewItem = styled.div`
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.05);
     transition: transform 0.2s, box-shadow 0.2s;
-    //min-height: 200px;
+    min-height: 130px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
