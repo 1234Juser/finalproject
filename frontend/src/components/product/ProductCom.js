@@ -16,7 +16,7 @@ import {
 import { GoCalendar, GoFilter  } from "react-icons/go";
 import {SaleStatus} from "../../style/product/StyleProductDetail";
 
-function ProductCom({ cityName, handleFilterReset, handleSort, products, filteredProducts, onToggleWish}){
+function ProductCom({ cityName, handleFilterReset, handleSort, filteredProducts = [], onToggleWish = () => {} }){
 
     const formatPrice = (price) => {
         if (typeof price !== "number") return price; // 숫자가 아닐 경우 그대로 반환
