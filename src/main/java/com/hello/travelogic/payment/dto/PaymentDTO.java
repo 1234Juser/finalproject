@@ -5,7 +5,6 @@ import com.hello.travelogic.payment.domain.PaymentEntity;
 import com.hello.travelogic.payment.domain.PaymentMethod;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -76,7 +75,7 @@ public class PaymentDTO {
             } else if (productPic.contains("/") && productPic.split("/").length >= 2) {
                 this.productThumbnail = "/upload/product/" + productPic;
             } else {
-                this.productThumbnail = "/static/img/product/" + productPic;
+                this.productThumbnail = "/frontend/public/img/product/" + productPic;
             }
         }
     }
