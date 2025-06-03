@@ -25,7 +25,7 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
     // /review/product/{productCode}
 //    List<ReviewEntity> findByOrder_Product_ProductCode(long productCode);
     // 상품 상세페이지에서 리뷰 정렬옵션 평점순
-    List<ReviewEntity> findByOrder_Product_ProductUidOrderByReviewRatingDesc(String productUid);
+    List<ReviewEntity> findByProduct_ProductUidOrderByReviewRatingDesc(String productUid);
     // // 상품 상세페이지에서 리뷰 정렬디폴트 최신순
     List<ReviewEntity> findByProduct_ProductUidOrderByReviewDateDesc(String productUid);
 
