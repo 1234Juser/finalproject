@@ -58,7 +58,7 @@ function LoginCon(){
             if(err.response && err.response.data){
                 setErrorMsg("아이디 또는 비밀번호가 올바르지 않습니다.");
             }else{
-                setErrorMsg("서버 오류가 발생했습니다.")
+                setErrorMsg("탈퇴한 계정이거나 정지된 계정입니다.")
             }
         }
     };
