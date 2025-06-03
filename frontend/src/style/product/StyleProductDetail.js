@@ -68,10 +68,28 @@ export const PriceWrapper = styled.div`
   }
 `;
 
+export const BadgeWrapper = styled.div`
+  display: flex;
+  gap: 8px;  // 배지 사이 간격 조절
+  align-items: center;  // 세로 중앙 정렬
+`;
+
+
 export const Badge = styled.div`
   display: inline-block;
   background-color: #ffeded;
   color: #ff5e5e;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  width: fit-content;
+`;
+
+export const ConditionBadge = styled.div`
+  display: inline-block;
+  background-color: #e0f7ff;
+  color: #007acc;
   font-size: 14px;
   padding: 6px 12px;
   border-radius: 20px;

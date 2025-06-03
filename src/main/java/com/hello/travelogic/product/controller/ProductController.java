@@ -72,6 +72,7 @@ public class ProductController {
     @GetMapping("/{productUid}")
     public ResponseEntity<ProductDTO> getProductDetail(@PathVariable("productUid") String productUid,
                                                        @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        log.info("컨트롤러 진입 확인 - productUid: {}", productUid);
         log.debug("get product detail : {}", productUid);
         // 비로그인 상태를 대비해 memberCode는 null로 초기화
         Long memberCode = null;

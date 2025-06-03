@@ -21,7 +21,7 @@ import {
     PaymentButton,
     SaleStatus,
     NoMarginDivider,
-    LeftAlignedSubTitle
+    LeftAlignedSubTitle, ConditionBadge, BadgeWrapper
 } from "../../style/product/StyleProductDetail";
 import MapSection from "../../containers/product/MapSection";
 import WeatherSection from "../../containers/product/WeatherSection";
@@ -92,7 +92,10 @@ function ProductDetailCom({product, isWished, onToggleWish, onTabClick}) {
             <PriceWrapper>
                 ￦ {formatPrice(product.productAdult)}원
             </PriceWrapper>
-            <Badge>{product.themeName}</Badge>
+            <BadgeWrapper>
+                <Badge>{product.themeName}</Badge>
+                <ConditionBadge >{product.themeCondition}</ConditionBadge >
+            </BadgeWrapper>
                 <NoMarginDivider />
                 <DetailText>최소출발인원(수량) {product.productMinParticipants}명(개)</DetailText>
                 <NoMarginDivider />
