@@ -72,7 +72,7 @@ function CompanyCom(){
             <GlobalStyle />
             <CompanyContainer ref={companyContainerRef}>
                 <LogoWrapper>
-                    <img src="/static/img/logo/logo.png" alt="Company Logo" style={{ width: '100%', maxWidth: '800px', height: 'auto' }} />
+                    <img src="/img/logo/logo.png" alt="Company Logo" style={{ width: '100%', maxWidth: '800px', height: 'auto' }} />
                 </LogoWrapper>
                 <CompanyTextWrapper style={{ marginTop: '-100px' }}>
                     <CompanyTitle className="CompanyTitle">
@@ -93,7 +93,7 @@ function CompanyCom(){
             {/* 스크롤 시 나타나는 다음 페이지 섹션 */}
             <SecondPageContainer ref={secondPageContainerRef}>
                 <HelloLogoWrapper className="HelloLogoWrapper">
-                    <img src="/static/img/logo/Hello.png" alt="Company Logo" style={{ width: '100%' }} />
+                    <img src="/img/logo/Hello.png" alt="Company Logo" style={{ width: '100%' }} />
                 </HelloLogoWrapper>
                 <CompanyTextWrapper>
                     <CompanyParagraph className="CompanyParagraph">
@@ -108,7 +108,7 @@ function CompanyCom(){
             {/* 새로 추가된 세 번째 페이지 섹션 */}
             <ThirdPageContainer ref={thirdPageContainerRef}>
                 <LogoWrapper2 className="ThirdPageImage">
-                    <img src="/static/img/logo/companylogo.png" alt="Company Logo" style={{ width: '100%', maxWidth: '800px', height: 'auto' }} />
+                    <img src="/img/logo/companylogo.png" alt="Company Logo" style={{ width: '100%', maxWidth: '800px', height: 'auto' }} />
                 </LogoWrapper2>
                 <CompanyTextWrapper className="ThirdPageText" style={{ marginTop: '-150px' }}>
                     <FirstParagraphOfThirdPage className="CompanyParagraph">
