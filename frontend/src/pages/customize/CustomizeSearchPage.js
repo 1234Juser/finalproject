@@ -26,21 +26,46 @@ function CustomizeSearchPage() {
         setSortBy("default");
     };
 
-    const handleToggleWish = (clickedProduct) => {
-        // 여기에 로그인 여부 확인 로직 추가
-        const token = localStorage.getItem('accessToken'); // 예시: 로컬 스토리지에 토큰이 있는지 확인
+    const handleToggleWish = async (clickedProduct) => { // async 키워드 추가
+        const token = localStorage.getItem('accessToken');
         if (!token) {
+            alert('로그인이 필요합니다.');
             navigate('/login');
             return;
         }
 
-        const updatedProducts = products.map(product =>
-            product.productUid === clickedProduct.productUid
-                ? { ...product, isWished: !product.isWished }
-                : product
-        );
-        setProducts(updatedProducts);
+        try {
+            // toggleWish 함수 호출 (productUid만 전달, isWished는 백엔드에서 처리)
+            const result = await toggleWish(clickedProduct.productUid, token);
+
+            // UI 상태 업데이트
+            const updatedProducts = products.map(product =>
+                product.productUid === clickedProduct.productUid
+                    ? { ...product, isWished: result === "LIKED" } // 백엔드 응답에 따라 isWished 업데이트
+                    : product
+            );
+            setProducts(updatedProducts);
+
+            if (result === "LIKED") {
+                alert('찜 목록에 추가되었습니다.');
+            } else {
+                alert('찜 목록에서 제거되었습니다.');
+            }
+
+        } catch (error) {
+            console.error('찜 처리 중 오류 발생:', error);
+            if (error.message === "로그인이 필요합니다.") {
+                alert(error.message);
+                navigate('/login');
+            } else if (error.response && error.response.status === 401) {
+                alert('인증 오류가 발생했습니다. 다시 로그인해주세요.');
+                navigate('/login');
+            } else {
+                alert('찜 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        }
     };
+
 
     const filteredProducts = useMemo(() => {
         const copied = [...products];

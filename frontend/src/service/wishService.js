@@ -73,3 +73,24 @@ export async function deleteGroup(groupCode, accessToken) {
         throw error;
     }
 }
+
+// 찜 추가/삭제 API 호출 함수 수정
+export async function toggleWish(productCode, accessToken) {
+    if (!accessToken) {
+        throw new Error("로그인이 필요합니다.");
+    }
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    };
+
+    try {
+        // RequestBody로 WishDTO를 보내기 위해 객체 형태로 productCode를 전달
+        const response = await axios.post(`${path}/wish/toggle/${productCode}`, { productCode: productCode }, config);
+        return response.data; // "LIKED" 또는 "UNLIKED" 문자열 반환 예상
+    } catch (error) {
+        throw error;
+    }
+}
