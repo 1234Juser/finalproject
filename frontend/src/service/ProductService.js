@@ -250,7 +250,7 @@ const toggleWish = async (product, accessToken) => {
             window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
             return;
         }
-        const response = await fetch(`/wish/toggle/${product.productCode}`, {
+        const response = await fetch(`${path}/wish/toggle/${product.productCode}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

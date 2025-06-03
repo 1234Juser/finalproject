@@ -1,10 +1,10 @@
 import WishGroupCom from "../../components/wish/WishGroupCom";
-import React, { useEffect, useReducer } from "react";
+import React, {useEffect, useReducer, useState} from "react";
 import { reducer, initialState } from "../../modules/wishModule";
 import WishListCom from "../../components/wish/WishListCom";
 import {getGroups, getItemsInGroup, deleteWish, deleteGroup} from "../../service/wishService";
 import {useNavigate, useParams} from "react-router-dom";
-import axios from "axios";
+import {toggleWish} from "../../service/ProductService";
 
 function WishCon({accessToken}) {
     const { groupCode } = useParams();
@@ -13,6 +13,7 @@ function WishCon({accessToken}) {
     const isGroupView = !groupCode;
     const isListView = !!groupCode && !isNaN(parseInt(groupCode, 10));
     const selectedGroup = groups.find(group => group.groupCode === selectedGroupCode);
+    const [targetProductCode, setTargetProductCode] = useState(null);
     const navigate = useNavigate();
 
     // <ThumbImg />클릭시 해당 그룹에 담긴 위시상품들 리스트 페이지로 이동한다.
@@ -24,9 +25,7 @@ function WishCon({accessToken}) {
     };
 
     useEffect(() => {
-        // props로 받은 accessToken 사용
         if (!accessToken) return;
-        console.log("사용 중인 accessToken: ", accessToken);
 
         getGroups(accessToken)
             .then((data) => {
@@ -35,7 +34,7 @@ function WishCon({accessToken}) {
             .catch((err) => {
                 console.error("위시 그룹 가져오기 실패", err);
             });
-    }, [accessToken]); // 의존성 배열에 accessToken 추가
+    }, [accessToken]);
 
     useEffect(() => {
         if (groupCode && accessToken) { // groupCode와 accessToken이 모두 있을 때만 호출
@@ -50,7 +49,30 @@ function WishCon({accessToken}) {
                     console.error("위시 리스트 가져오기 실패", err);
                 });
         }
-    }, [groupCode, accessToken]); // 의존성 배열에 accessToken 추가
+    }, [groupCode, accessToken]);
+
+    useEffect(() => {
+        const handleToggleAndRefresh = async () => {
+            if (!targetProductCode || !accessToken) return;
+
+            dispatch({ type: "SET_LOADING", data: true });
+            try {
+                const status = await toggleWish(targetProductCode, accessToken);
+                const groups = await getGroups(accessToken);
+                dispatch({ type: "SET_GROUPS", data: groups });
+
+                console.log(`찜 상태: ${status}`);
+            } catch (err) {
+                dispatch({ type: "SET_ERROR", data: err });
+                console.error("찜 처리 중 오류 발생:", err);
+            } finally {
+                dispatch({ type: "SET_LOADING", data: false });
+                setTargetProductCode(null); // 실행 후 초기화
+            }
+        };
+
+        handleToggleAndRefresh();
+    }, [targetProductCode, accessToken]);
 
     const handleGroupClick = (groupCode) => {
         dispatch({ type: "SET_SELECTED_GROUP", data: groupCode });
@@ -83,32 +105,6 @@ function WishCon({accessToken}) {
             .catch((err) => {
                 console.error("그룹 삭제 실패", err);
             });
-    };
-
-    // 이껀 찜 페이지에서 필요한 내용이 아니긴함
-    const handleAddWish = async (productCode) => {
-        try {
-            const response = await axios.post(`/wish/toggle/${productCode}`, {}, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // props로 받은 accessToken 사용
-                },
-            });
-
-            // 그룹 자동 생성됐을 수 있으니, 목록 다시 불러오기
-            const groups = await getGroups(accessToken);
-            dispatch({ type: "SET_GROUPS", data: groups });
-
-            const status = response.data;
-            if (status === "LIKED") {
-                console.log("찜 등록 완료");
-            } else if (status === "UNLIKED") {
-                console.log("찜 취소 완료");
-            }
-
-        } catch (e) {
-            alert("찜 추가 실패!");
-            console.error(e);
-        }
     };
 
     return(
