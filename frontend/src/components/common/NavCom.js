@@ -10,6 +10,7 @@ import {
 import {FaComments, FaEllipsisH, FaFlag, FaGift, FaHeart, FaPlaneDeparture, FaStar, FaUserCircle} from "react-icons/fa";
 import React from "react";
 import {IoNotifications} from "react-icons/io5";
+import {Link} from "react-router-dom";
 
 
 
@@ -36,7 +37,7 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                         <a href="/international"><FaPlaneDeparture style={{marginRight:6, color:"#5aa7d2"}} />해외</a>
                     </li>
                     <li>
-                        <a href="/event"><FaGift style={{marginRight:6, color:"#fc8b8b"}} />이벤트</a>
+                        <Link to="/event"><FaGift style={{marginRight:6, color:"#fc8b8b"}} />이벤트</Link>
                     </li>
                     <li>
                         <a href="/customizedtravel"><FaStar style={{marginRight:6, color:"#ffd465"}} />맞춤여행</a>
