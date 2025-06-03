@@ -46,6 +46,10 @@ function MyReceiptCom({order, option, payment, bookingUid,
                 return "여행완료";
             case "CANCELED":
                 return "예약취소";
+            case "WAITING_BANK_TRANSFER":
+                return "무통장 입금대기";
+            case "PENDING":
+                return "결제 대기";
             default:
                 return "상태 없음";
         }
@@ -69,10 +73,12 @@ function MyReceiptCom({order, option, payment, bookingUid,
                 return "결제 완료";
             case "PENDING":
                 return "결제 대기";
-            case "WAITING_BANK_TRANSFER ":
+            case "WAITING_BANK_TRANSFER":
                 return "무통장 입금 대기"
             case "CANCELED":
                 return "결제 취소";
+            case "EXPIRED":
+                return "무통장 입금기한 만료";
             default:
                 return "상태 없음";
         }
