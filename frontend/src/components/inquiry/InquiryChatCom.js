@@ -19,11 +19,11 @@ const InquiryChatCom = ({
 
     // 메시지 목록 끝으로 스크롤
     useEffect(() => {
-        const container = messagesEndRef.current;
+        const container = messagesContainerRef.current;
         if (container) {
             container.scrollTop = container.scrollHeight;
         }
-    }, [messages, messagesEndRef]);
+    }, [messages]);
 
 
 
