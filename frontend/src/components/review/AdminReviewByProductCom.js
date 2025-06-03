@@ -2,25 +2,21 @@ import AdminReviewModalCom from "./AdminReviewModalCom";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {
-    DivPage,
-    DivWrap, FilterAndActionWrap, LeftBox,
-    ListTitle, ProductTitleCell, RightBox, SelectBox,
-    SpanPage,
+    DivPage, DivWrap, FilterAndActionWrap, LeftBox,
+    ListTitle, ProductTitleCell, RightBox, SelectBox, SpanPage,
     StyleContentWrap, StyledActionButton, StyledStatusBadge, StyledTable,
-    StyleReviewBlock,
-    TitleWrapper
+    StyleReviewBlock, TitleWrapper
 } from "../../style/review/StyleAdminReview";
+import {containerStyle, mainStyle, sidebarStyle} from "../../style/member/MyPageStyle";
+import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 
 function AdminReviewByProductCom({ products,
                                     selectedProductCode,
                                     onProductChange,
                                     reviews,
-                                    loading,
-                                    error,
-                                    currentPage,
-                                    totalPages,
-                                    onClick,
-                                    onDelete }) {
+                                    loading, error,
+                                    currentPage, totalPages,
+                                    onClick, onDelete }) {
     const [selectedReview, setSelectedReview] = useState(null);
     const navigate = useNavigate();
 
@@ -63,6 +59,11 @@ function AdminReviewByProductCom({ products,
 
     return(
     <>
+    <div style={containerStyle}>
+        <aside style={sidebarStyle}>
+            <AdminSideBarPage />
+        </aside>
+        <main style={mainStyle}>
         <StyleReviewBlock>
             <StyleContentWrap>
                 <TitleWrapper>
@@ -166,6 +167,8 @@ function AdminReviewByProductCom({ products,
                 )}
             </StyleContentWrap>
         </StyleReviewBlock>
+        </main>
+    </div>
     </>)
 }
 export default AdminReviewByProductCom;
