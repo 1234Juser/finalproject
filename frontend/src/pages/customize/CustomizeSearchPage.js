@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import ProductCom from '../../components/product/ProductCom';
+import { toggleWish } from '../../service/wishService';
 
 function CustomizeSearchPage() {
     const location = useLocation();
