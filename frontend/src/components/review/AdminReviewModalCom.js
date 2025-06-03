@@ -2,13 +2,9 @@ import {getReviewImage} from "../../service/reviewService";
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {
-    CloseButton,
-    Content, Footer, FooterButton, FullImage, FullImageOverlay,
-    Header,
-    Modal,
-    Overlay, ProductTitle, Rating, RatingDateRow, ReviewDate, ReviewInfo, ReviewText, Thumbnail,
-    ThumbnailTitleWrap,
-    Title
+    CloseButton, Content, Footer, FooterButton, FullImage, FullImageOverlay, Header,
+    Modal, Overlay, ProductTitle, Rating, RatingDateRow, ReviewDate, ReviewInfo, ReviewText,
+    Thumbnail, ThumbnailTitleWrap, Title
 } from "../../style/review/StyleReviewModal";
 
 function AdminReviewModalCom({ review, onClose, onDelete }) {
@@ -29,6 +25,11 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
         }
     }, [review.reviewPic]);
 
+    const getImageSrc = (pic) => {
+        if (!pic) return "/img/default-review.jpg";
+        return pic.startsWith("http") ? pic : `/upload/review/${encodeURIComponent(pic)}`;
+    };
+
     return(
     <>
         <Overlay onClick={onClose}>
@@ -40,7 +41,8 @@ function AdminReviewModalCom({ review, onClose, onDelete }) {
                 <Content>
                     <ThumbnailTitleWrap>
                         {review.reviewPic && (
-                        <Thumbnail src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                        <Thumbnail src={getImageSrc(review.reviewPic)}
+                                   // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                     alt="리뷰 이미지"
                                     onError={(e) => {
                                         e.target.style.display = 'none';

@@ -72,6 +72,9 @@ public class ReviewDTO {
         this.reviewDate = entity.getReviewDate();
         this.reviewContent = entity.getReviewContent();
         this.reviewPic = entity.getReviewPic();
+        if (this.reviewPic != null && !this.reviewPic.isBlank() && !this.reviewPic.startsWith("http")) {
+            this.reviewPic = "https://hellotravelogic-img-s3.s3.ap-northeast-2.amazonaws.com/review/" + this.reviewPic;
+        }
         this.reviewStatus = entity.getReviewStatus() != null ? entity.getReviewStatus().name() : "ACTIVE";
         this.optionCode = 0L;
         this.productUid = entity.getProduct() != null ? entity.getProduct().getProductUid() : null;

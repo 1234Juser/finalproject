@@ -47,6 +47,11 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
         }
     };
 
+    const getImageSrc = (pic) => {
+        if (!pic) return "/img/default-review.jpg";
+        return pic.startsWith("http") ? pic : `/upload/review/${encodeURIComponent(pic)}`;
+    };
+
     return (
         <Overlay onClick={onClose}>
             <Modal onClick={(e) => e.stopPropagation()}>
@@ -57,7 +62,8 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                 <Content>
                     <ThumbnailTitleWrap>
                         {review.reviewPic && (
-                        <Thumbnail src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                        <Thumbnail src={getImageSrc(review.reviewPic)}
+                                   // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                     alt="리뷰 이미지"
                                     onClick={handleImageClick}
                                     onError={(e) => {
@@ -92,7 +98,8 @@ function MyReviewModalCom({ review, onClose, onDelete }) {
                     e.stopPropagation();
                     setShowFullImage(false);
                 }}>
-                    <FullImage src={`/upload/review/${encodeURIComponent(review.reviewPic)}`} alt="원본 리뷰 이미지" />
+                    {/*<FullImage src={`/upload/review/${encodeURIComponent(review.reviewPic)}`} alt="원본 리뷰 이미지" />*/}
+                    <FullImage src={getImageSrc(review.reviewPic)} alt="원본 리뷰 이미지" />
                 </FullImageOverlay>
             )}
         </Overlay>

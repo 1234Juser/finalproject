@@ -61,7 +61,8 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                                 <ReviewBodyRow>
                                     <ReviewContent>{review.reviewContent}</ReviewContent>
                                     {review.reviewPic && (
-                                        <Thumbnail src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                                        <Thumbnail src={review.reviewPic}
+                                                   // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
                                                     alt="리뷰 이미지"
                                                     onClick={() => {
                                                     setFullImageSrc(`/upload/review/${encodeURIComponent(review.reviewPic)}`);
@@ -111,7 +112,8 @@ function ProductReviewCom({ top3Reviews = [], previewSortOption = "date", onPrev
                                         <ModalReviewContent>{review.reviewContent}</ModalReviewContent>
                                         {review.reviewPic && (
                                             <Thumbnail
-                                                src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                                                // src={`/upload/review/${encodeURIComponent(review.reviewPic)}`}
+                                                src={review.reviewPic}
                                                 alt="리뷰 이미지"
                                                 onClick={() => handleImageClick(review)}
                                                 onError={(e) => {
