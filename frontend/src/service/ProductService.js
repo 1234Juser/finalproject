@@ -1,5 +1,5 @@
-// const path = "https://api.hellotravelogic.link";
-const path = "http://localhost:8080";
+const path = "https://api.hellotravelogic.link";
+// const path = "http://localhost:8080";
 
 
 
