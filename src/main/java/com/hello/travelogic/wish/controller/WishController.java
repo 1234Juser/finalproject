@@ -103,8 +103,7 @@ public class WishController {
 
     // 찜 등록취소 동시버전
     @PostMapping("/wish/toggle/{productCode}")
-    public ResponseEntity<String> registerOrCancelWish(@RequestBody WishDTO dto,
-                                                       @PathVariable long productCode,
+    public ResponseEntity<String> registerOrCancelWish(@PathVariable long productCode,
                                                        Authentication authentication) {
         try {
             String memberId = authentication.getPrincipal().toString();
@@ -112,6 +111,7 @@ public class WishController {
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
                     .getMemberCode();
 
+            WishDTO dto = new WishDTO();
             dto.setMemberCode(memberCode);
             dto.setProductCode(productCode);
 

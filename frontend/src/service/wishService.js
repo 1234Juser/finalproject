@@ -87,10 +87,11 @@ export async function toggleWish(productCode, accessToken) {
     };
 
     try {
-        // RequestBody로 WishDTO를 보내기 위해 객체 형태로 productCode를 전달
-        const response = await axios.post(`${path}/wish/toggle/${productCode}`, { productCode: productCode }, config);
+        // RequestBody 없이 productCode만 PathVariable로 전달
+        const response = await axios.post(`${path}/wish/toggle/${productCode}`, null, config); // RequestBody를 null로 설정
         return response.data; // "LIKED" 또는 "UNLIKED" 문자열 반환 예상
     } catch (error) {
         throw error;
     }
 }
+
