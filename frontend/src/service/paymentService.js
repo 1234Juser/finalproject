@@ -37,7 +37,7 @@ export const fetchPaymentByBookingUid = async (bookingUid, accessToken) => {
         const config = {
             headers: { Authorization: `Bearer ${accessToken}` }
         };
-        const response = await axios.get(`/payments/booking/${bookingUid}`, config);
+        const response = await axios.get(`${path}/payments/booking/${bookingUid}`, config);
         return response.data;
     } catch (err) {
         throw err;
@@ -49,7 +49,7 @@ export const fetchPaymentByImpUid = async (impUid, accessToken) => {
         const config = {
             headers: { Authorization: `Bearer ${accessToken}` }
         };
-        const response = await axios.get(`/payments/imp/${impUid}`, config);
+        const response = await axios.get(`${path}/payments/imp/${impUid}`, config);
         return response.data;
     } catch (err) {
         throw err;
