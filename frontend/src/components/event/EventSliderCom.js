@@ -18,27 +18,42 @@ const EventSliderCom = () => {
 
     const navigate = useNavigate();
 
+    // useEffect(() => {
+    //     // 진행 중인 이벤트 데이터를 가져옵니다.
+    //     axios.get("https://api.hellotravelogic.link/event/ongoing-slider")
+    //         .then(response => {
+    //             // eventImg 경로를 조정
+    //             const formattedEvents = response.data.map(event => {
+    //                 let imageUrl = '/img/event/default_event.jpg'; // 기본 이미지
+    //                 if (event.eventImg) {
+    //                     // data.sql에서 온 이미지인 경우 (경로에 'event/' 포함)
+    //                     if (event.eventImg.startsWith("event/")) {
+    //                         imageUrl = `/img/${event.eventImg}`;
+    //                     } else {
+    //                         // 새로 등록된 이미지인 경우
+    //                         imageUrl = `/events/${event.eventImg}`;
+    //                     }
+    //                 }
+    //                 return {
+    //                     ...event,
+    //                     eventImg: imageUrl
+    //                 };
+    //             });
+    //             setEvents(formattedEvents);
+    //         })
+    //         .catch(error => {
+    //             console.error("이벤트 데이터를 가져오는 중 오류 발생:", error);
+    //         });
+    // }, []);
+
     useEffect(() => {
-        // 진행 중인 이벤트 데이터를 가져옵니다.
         axios.get("https://api.hellotravelogic.link/event/ongoing-slider")
             .then(response => {
-                // eventImg 경로를 조정
-                const formattedEvents = response.data.map(event => {
-                    let imageUrl = '/img/event/default_event.jpg'; // 기본 이미지
-                    if (event.eventImg) {
-                        // data.sql에서 온 이미지인 경우 (경로에 'event/' 포함)
-                        if (event.eventImg.startsWith("event/")) {
-                            imageUrl = `/img/${event.eventImg}`;
-                        } else {
-                            // 새로 등록된 이미지인 경우
-                            imageUrl = `/events/${event.eventImg}`;
-                        }
-                    }
-                    return {
-                        ...event,
-                        eventImg: imageUrl
-                    };
-                });
+                const formattedEvents = response.data.map(event => ({
+                    ...event,
+                    // event.eventImg 값이 있으면 그대로 사용하고, 없으면(null, "") 기본 이미지를 사용합니다.
+                    eventImg: event.eventImg || '/img/event/default_event.jpg'
+                }));
                 setEvents(formattedEvents);
             })
             .catch(error => {

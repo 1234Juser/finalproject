@@ -13,7 +13,7 @@ function CeoCom(){
     return(
         <CeoContainer>
             <CeoImageWrapper>
-                <img src="/static/img/logo/ceo.png" alt="Company Logo" style={{ width: '100%', maxWidth: '800px', height: 'auto' }} />
+                <img src="/img/logo/ceo.png" alt="Company Logo" style={{ width: '100%', maxWidth: '800px', height: 'auto' }} />
             </CeoImageWrapper>
 
             <CeoTextWrapper>
