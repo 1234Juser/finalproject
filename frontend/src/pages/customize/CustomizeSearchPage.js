@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import ProductCom from '../../components/product/ProductCom';
 
 function CustomizeSearchPage() {
     const location = useLocation();
+    const navigate = useNavigate();
     const searchResults = useMemo(() => location.state?.searchResults || [], [location.state?.searchResults]); // 이전 페이지에서 전달된 검색 결과
 
     const [products, setProducts] = useState([]);
@@ -11,7 +12,7 @@ function CustomizeSearchPage() {
     const [originalData, setOriginalData] = useState([]); // 원본 데이터 백업해서 정렬하기 위함
 
     useEffect(() => {
-        console.log("searchResults 상태 업데이트:", searchResults); // searchResults 상태 업데이트 로그
+        // console.log("searchResults 상태 업데이트:", searchResults); // searchResults 상태 업데이트 로그
         setProducts(searchResults);
         setOriginalData(searchResults);
     }, [searchResults]);
@@ -26,6 +27,13 @@ function CustomizeSearchPage() {
     };
 
     const handleToggleWish = (clickedProduct) => {
+        // 여기에 로그인 여부 확인 로직 추가
+        const token = localStorage.getItem('accessToken'); // 예시: 로컬 스토리지에 토큰이 있는지 확인
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
         const updatedProducts = products.map(product =>
             product.productUid === clickedProduct.productUid
                 ? { ...product, isWished: !product.isWished }
@@ -33,6 +41,7 @@ function CustomizeSearchPage() {
         );
         setProducts(updatedProducts);
     };
+
     const filteredProducts = useMemo(() => {
         const copied = [...products];
         switch (sortBy) {

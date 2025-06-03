@@ -6,9 +6,9 @@ const UserOnlyRoute = ({ children }) => {
     const isAuthenticated = localStorage.getItem("accessToken");
     const userRoles = JSON.parse(localStorage.getItem("roles") || "[]");
 
-    console.log("UserOnlyRoute - isAuthenticated:", isAuthenticated);
-    console.log("UserOnlyRoute - userRoles:", userRoles);
-    console.log("UserOnlyRoute - hasUserRole (before check):", userRoles.includes("ROLE_USER"));
+    // console.log("UserOnlyRoute - isAuthenticated:", isAuthenticated);
+    // console.log("UserOnlyRoute - userRoles:", userRoles);
+    // console.log("UserOnlyRoute - hasUserRole (before check):", userRoles.includes("ROLE_USER"));
 
 
     if (!isAuthenticated) {
