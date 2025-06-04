@@ -29,7 +29,7 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
     @Query("SELECT r FROM ReviewEntity r " +
             "JOIN FETCH r.product p " +
             "JOIN FETCH r.order o " +
-            "JOIN FETCH o.option opt " +
+            "JOIN FETCH r.option opt " +
             "JOIN FETCH r.member m " +
             "WHERE p.productUid = :productUid " +
             "ORDER BY r.reviewRating DESC")
@@ -39,7 +39,7 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
     @Query("SELECT r FROM ReviewEntity r " +
             "JOIN FETCH r.product p " +
             "JOIN FETCH r.order o " +
-            "JOIN FETCH o.option opt " +
+            "JOIN FETCH r.option opt " +
             "JOIN FETCH r.member m " +
             "WHERE p.productUid = :productUid " +
             "ORDER BY r.reviewDate DESC")
