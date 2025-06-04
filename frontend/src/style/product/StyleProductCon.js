@@ -126,7 +126,7 @@ export const CalendarText = styled.span`
 
 export const FilterSortBar = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 16px;
 `;
@@ -134,6 +134,7 @@ export const FilterSortBar = styled.div`
 export const FilterSection = styled.div`
   display: flex;
   align-items: center;
+    margin: 0 10px;
 `;
 
 export const FilterLabel = styled.span`

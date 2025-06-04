@@ -53,8 +53,7 @@ function ProductCom({ cityName, handleFilterReset, handleSort, filteredProducts 
             <ProductFilterCom onFilterChange={onFilterChange}/>
             <FilterSortBar>
                 <FilterSection>
-                    <FilterLabel><GoFilter /> 필터</FilterLabel>
-                    <FilterResetBtn onClick={handleFilterReset}>필터초기화 ⭮</FilterResetBtn>
+                    <FilterResetBtn onClick={handleFilterReset}>초기화 ⭮</FilterResetBtn>
                 </FilterSection>
                 <SortSection>
                     <SortBtn onClick={() => handleSort("low")}>낮은 가격순</SortBtn>
