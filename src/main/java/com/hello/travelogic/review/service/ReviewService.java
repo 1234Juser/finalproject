@@ -148,8 +148,9 @@ public class ReviewService {
             if (optionEntity == null) {
                 throw new IllegalArgumentException("옵션이 존재하지 않습니다. - orderCode: " + order.getOrderCode());
             }
-            ProductEntity productEntity = productRepo.findById(optionEntity.getProduct().getProductCode())
-                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. - productCode: " + optionEntity.getProduct().getProductCode()));
+//            ProductEntity productEntity = productRepo.findById(optionEntity.getProduct().getProductCode())
+//                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. - productCode: " + optionEntity.getProduct().getProductCode()));
+            ProductEntity productEntity = order.getProduct();
 
             // 정확한 중복 검사 (회원 + 주문 조합으로 확인)
             if (reviewRepo.existsByMemberMemberCodeAndOrderOrderCode(member.getMemberCode(), order.getOrderCode())) {

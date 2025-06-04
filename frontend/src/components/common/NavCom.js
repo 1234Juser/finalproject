@@ -31,26 +31,26 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                 {/* 가운데: 주요 메뉴 */}
                 <NavCenter>
                     <li>
-                        <a href="/domestic"><FaFlag style={{marginRight:6, color:"#518de0"}} />국내</a>
+                        <Link to="/domestic"><FaFlag style={{marginRight:6, color:"#518de0"}} />국내</Link>
                     </li>
                     <li>
-                        <a href="/international"><FaPlaneDeparture style={{marginRight:6, color:"#5aa7d2"}} />해외</a>
+                        <Link to="/international"><FaPlaneDeparture style={{marginRight:6, color:"#5aa7d2"}} />해외</Link>
                     </li>
                     <li>
                         <Link to="/event"><FaGift style={{marginRight:6, color:"#fc8b8b"}} />이벤트</Link>
                     </li>
                     <li>
-                        <a href="/customizedtravel"><FaStar style={{marginRight:6, color:"#ffd465"}} />맞춤여행</a>
+                        <Link to="/customizedtravel"><FaStar style={{marginRight:6, color:"#ffd465"}} />맞춤여행</Link>
                     </li>
                     <li>
-                        <a href="/community/companion"><FaComments style={{marginRight:6, color:"#a785e9"}} />커뮤니티</a>
+                        <Link to="/community/companion"><FaComments style={{marginRight:6, color:"#a785e9"}} />커뮤니티</Link>
                     </li>
                     <DropdownContainer>
                         <span><FaEllipsisH style={{marginRight:6, color:"#bbb"}} />더보기</span>
                         <DropdownMenu>
-                            <li><a href="/about">회사소개</a></li>
-                            <li><a href="/ceo">ceo 인사말</a></li>
-                            <li><a href="/faq">자주묻는질문(FAQ)</a></li>
+                            <li><Link to="/about">회사소개</Link></li>
+                            <li><Link to="/ceo">ceo 인사말</Link></li>
+                            <li><Link to="/faq">자주묻는질문(FAQ)</Link></li>
                         </DropdownMenu>
                     </DropdownContainer>
 
@@ -65,27 +65,27 @@ function NavCom({roles = [], toggleChat, chatAnchorRef, toggleNotification, noti
                         알림
                     </li>
                     <li>
-                        <a href="/wish/groups">
+                        <Link to="/wish/groups">
                             <FaHeart style={{marginRight:6, color:"#f2628e"}} />
                             찜 목록
-                        </a>
+                        </Link>
                     </li>
                         {isAdmin
                             ? (<li>
-                                <a href="/adminmypage">
+                                <Link to="/adminmypage">
                                     <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                     관리자 마이페이지
-                                </a>
+                                </Link>
                                 </li>
                             )
                             : (
                                 <>
                                     <li>
                                         <MyPageWrapper>
-                                            <a href="/mypage">
+                                            <Link to="/mypage">
                                                 <FaUserCircle style={{marginRight:6, color:"#409cff"}} />
                                                 마이페이지
-                                            </a>
+                                            </Link>
                                         </MyPageWrapper>
                                     </li>
                                 </>)

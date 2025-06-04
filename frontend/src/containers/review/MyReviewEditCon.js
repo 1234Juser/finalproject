@@ -29,8 +29,9 @@ function MyReviewEditCon({ accessToken }) {
                 });
                 if (reviewData.reviewPic) {
                     // const imageBlob = await fetch(`/review/${reviewData.reviewPic}/image`);
+                    // const imageUrl = URL.createObjectURL(await imageBlob.blob());
                     const imageBlob = await getReviewImage(reviewData.reviewPic);
-                    const imageUrl = URL.createObjectURL(await imageBlob.blob());
+                    const imageUrl = URL.createObjectURL(imageBlob);
                     setImagePreview(imageUrl);
                 }
             } catch (e) {

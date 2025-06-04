@@ -61,6 +61,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import UserOnlyRoute from "./components/UserOnlyRoute";
 import ScrollToTop from "./utils/ScrollToTop";
 import NotFoundPage from "./pages/NotFoundPage";
+import AdminBookingChartPage from "./pages/reservation/AdminBookingChartPage";
 
 function App() {
     return (
@@ -122,6 +123,7 @@ function App() {
                 </Route>
                 <Route path="/admin/booking" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminBookingPage /></PrivateRoute>} />
                 <Route path="/admin/booking/by-product" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminBookingByProductPage /></PrivateRoute>} />
+                <Route path="/admin/booking/chart" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminBookingChartPage /></PrivateRoute>} />
                 <Route path="/admin/review" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminReviewPage /></PrivateRoute>} />
                 <Route path="/admin/review/by-product" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><AdminReviewByProductPage /></PrivateRoute>} />
                 <Route path="/admin/inquirychat" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><InquiryChatAdminPage/></PrivateRoute>} />
