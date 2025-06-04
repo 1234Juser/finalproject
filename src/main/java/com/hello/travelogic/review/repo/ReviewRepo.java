@@ -25,9 +25,25 @@ public interface ReviewRepo extends JpaRepository<ReviewEntity, Long> {
     // /review/product/{productCode}
 //    List<ReviewEntity> findByOrder_Product_ProductCode(long productCode);
     // 상품 상세페이지에서 리뷰 정렬옵션 평점순
-    List<ReviewEntity> findByProduct_ProductUidOrderByReviewRatingDesc(String productUid);
+//    List<ReviewEntity> findByProduct_ProductUidOrderByReviewRatingDesc(String productUid);
+    @Query("SELECT r FROM ReviewEntity r " +
+            "JOIN FETCH r.product p " +
+            "JOIN FETCH r.order o " +
+            "JOIN FETCH r.option opt " +
+            "JOIN FETCH r.member m " +
+            "WHERE p.productUid = :productUid " +
+            "ORDER BY r.reviewRating DESC")
+    List<ReviewEntity> findFullReviewsByProductUidOrderByRating(@Param("productUid") String productUid);
     // // 상품 상세페이지에서 리뷰 정렬디폴트 최신순
-    List<ReviewEntity> findByProduct_ProductUidOrderByReviewDateDesc(String productUid);
+//    List<ReviewEntity> findByProduct_ProductUidOrderByReviewDateDesc(String productUid);
+    @Query("SELECT r FROM ReviewEntity r " +
+            "JOIN FETCH r.product p " +
+            "JOIN FETCH r.order o " +
+            "JOIN FETCH r.option opt " +
+            "JOIN FETCH r.member m " +
+            "WHERE p.productUid = :productUid " +
+            "ORDER BY r.reviewDate DESC")
+    List<ReviewEntity> findFullReviewsByProductUidOrderByDate(@Param("productUid") String productUid);
 
     // 회원별 리뷰 조회
     Optional<ReviewEntity> findByMemberMemberCodeAndOrderOrderCode(Long memberCode, Long orderCode);

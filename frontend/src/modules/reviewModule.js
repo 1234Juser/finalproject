@@ -1,7 +1,6 @@
 const initialState = {
     reviews: [],           // 특정 상품의 리뷰 목록
     myReview: null,        // 내 여행(주문)에 대한 단일 리뷰
-    // selectedReview: null,  // 관리자 또는 사용자 선택 리뷰
     selectedReview: {
         reviewCode: null,
         reviewRating: null,

@@ -82,7 +82,7 @@ const reducer = (state, action) => {
                 };
             }
             return opt;
-    });
+            });
             return {
                 ...state,
                 options: updatedAdultOptions,
@@ -107,7 +107,7 @@ const reducer = (state, action) => {
                 };
             }
             return opt;
-    });
+            });
             return {
                 ...state,
                 options: updatedChildOptions,

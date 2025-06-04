@@ -55,9 +55,11 @@ public class ReviewService {
         List<ReviewEntity> entities;
 
         if ("rating".equalsIgnoreCase(sortOption)) {
-            entities = reviewRepo.findByProduct_ProductUidOrderByReviewRatingDesc(ProductUid); // 평점 높은순
+//            entities = reviewRepo.findByProduct_ProductUidOrderByReviewRatingDesc(ProductUid); // 평점 높은순
+            entities = reviewRepo.findFullReviewsByProductUidOrderByRating(ProductUid);
         } else {
-            entities = reviewRepo.findByProduct_ProductUidOrderByReviewDateDesc(ProductUid); // 최신순
+//            entities = reviewRepo.findByProduct_ProductUidOrderByReviewDateDesc(ProductUid); // 최신순
+            entities = reviewRepo.findFullReviewsByProductUidOrderByDate(ProductUid);
         }
 
         return entities

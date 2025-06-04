@@ -120,7 +120,6 @@ export async function fetchProductListForFilter(accessToken) {
     };
     try {
         const res = await axios.get(`${path}/admin/booking/products`, config);
-        // return res.data;
         // 배열 형태로 반환
         if (Array.isArray(res.data)) {
             return res.data;
@@ -136,7 +135,6 @@ export async function fetchProductListForFilter(accessToken) {
 // 디폴트인 전체일 경우 /admin/booking으로 요청
 export async function fetchReservationsByProductCode(productCode, accessToken, start = 1, status = "all") {
     if (!accessToken) {
-        console.error("accessToken 없음");
         return;
     }
     const config = {

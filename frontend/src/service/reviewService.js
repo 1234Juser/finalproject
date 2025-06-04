@@ -56,8 +56,6 @@ export const getReviewsByProductUid = async (productUid, sort = "date") => {
             throw new Error(`리뷰 조회 실패: ${response.status}`);
         }
 
-        // const reviews = await response.json();
-        // return reviews;
         return await response.json();
     } catch (error) {
         throw error;
@@ -75,11 +73,7 @@ export async function getReviewByOrderCode(orderCode, accessToken) {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        const review = response.data;
-        if (!review.reviewStatus) {
-            console.warn("리뷰 상태가 설정되지 않았습니다:", review);
-        }
-        return review;
+        return response.data;
     } catch (error) {
         throw error;
     }
@@ -145,7 +139,6 @@ export const submitReview = async (orderCode, reviewRating, reviewContent, file,
     }
     try {
         const formData = new FormData();
-        // formData.append("orderCode", orderCode);
         formData.append("reviewRating", reviewRating);
         formData.append("reviewContent", reviewContent);
         if (file) {
@@ -159,11 +152,9 @@ export const submitReview = async (orderCode, reviewRating, reviewContent, file,
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        // return response.data;
         if (response.status === 201) return { success: true };
         else return { success: false, message: response.data };
     } catch (error) {
-        // throw error;
         return { success: false, message: error.message };
     }
 };
@@ -271,7 +262,6 @@ export async function fetchProductListForFilter(accessToken) {
 
     try {
         const res = await axios.get(`${path}/admin/review/products`, config);
-        // return res.data;
         // 배열 형태로 반환
         if (Array.isArray(res.data)) {
             return res.data;
