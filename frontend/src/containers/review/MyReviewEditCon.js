@@ -4,7 +4,7 @@ import {getReviewByReviewCode, getReviewImage, updateReview} from "../../service
 import MyReviewEditCom from "../../components/review/MyReviewEditCom";
 
 function MyReviewEditCon({ accessToken }) {
-    const { reviewCode } = useParams(); // URL에서 reviewCode 가져오기
+    const { reviewCode } = useParams();
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
@@ -31,8 +31,6 @@ function MyReviewEditCon({ accessToken }) {
                         // S3 URL이면 직접 썸네일로 사용
                         setImagePreview(reviewData.reviewPic);
                     } else {
-                        // const imageBlob = await fetch(`/review/${reviewData.reviewPic}/image`);
-                        // const imageUrl = URL.createObjectURL(await imageBlob.blob());
                         const imageBlob = await getReviewImage(reviewData.reviewPic);
                         const imageUrl = URL.createObjectURL(imageBlob);
                         setImagePreview(imageUrl);
@@ -94,7 +92,6 @@ function MyReviewEditCon({ accessToken }) {
                 formData.append("reviewPic", selectedFile);
             } else {
                 // 파일 삭제 요청을 위해 빈 파일 추가
-                // formData.append("reviewPic", "");
                 const emptyFile = new File([""], "", { type: "image/*" });
                 formData.append("reviewPic", emptyFile);
             }

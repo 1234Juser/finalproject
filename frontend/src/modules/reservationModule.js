@@ -70,18 +70,8 @@ function reservationReducer(state = initialState, action) {
                 ),
             };
         case "ADD_OLD_RESERVATIONS":
-            // return {
-            //     ...state,
-            //     reservations: [
-            //         ...state.reservations,
-            //         ...action.payload.filter(newRes =>
-            //             !state.reservations.some(existing => existing.orderCode === newRes.orderCode)
-            //         )
-            //     ]
-            // };
             const targetStatus = action.meta?.status;
             if (!targetStatus) {
-                console.warn("ADD_OLD_RESERVATIONS: meta.status 누락됨");
                 return state;
             }
             const normalizedTargetStatus = targetStatus.toUpperCase();

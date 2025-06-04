@@ -4,27 +4,6 @@ import {format} from "date-fns";
 // const path = "http://localhost:8080"
 const path = "https://api.hellotravelogic.link";
 
-export const calculateTotalPrice = (adultCount, childCount, adultPrice, childPrice) => {
-    return (adultCount * adultPrice) + (childCount * childPrice);
-};
-
-export const fetchProduct = async (productUid, accessToken) => {
-    if (!accessToken) {
-        return;
-    }
-    const config = {
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
-    };
-    try {
-        const response = await axios.get(`${path}/products/${productUid}`, config);
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-};
-
 export const fetchOptionForm = async (productUid) => {
     try {
         const response = await axios.get(`${path}/products/${productUid}/option/create`);
@@ -66,21 +45,6 @@ export const saveReservation = async (productUid, reservationDate, adultCount, c
                 },
             }
         );
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-};
-
-export const fetchOptionsByDate = async (productUid, reservationDate) => {
-    try {
-        const formattedDate = reservationDate instanceof Date
-            ? reservationDate.toISOString().split("T")[0]
-            : reservationDate;
-
-        const response = await axios.get(`${path}/products/${productUid}/option`, {
-            params: { date: reservationDate },
-        });
         return response.data;
     } catch (error) {
         throw error;

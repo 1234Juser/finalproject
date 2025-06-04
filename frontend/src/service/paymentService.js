@@ -44,21 +44,8 @@ export const fetchPaymentByBookingUid = async (bookingUid, accessToken) => {
     }
 };
 
-export const fetchPaymentByImpUid = async (impUid, accessToken) => {
-    try {
-        const config = {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        };
-        const response = await axios.get(`${path}/payments/imp/${impUid}`, config);
-        return response.data;
-    } catch (err) {
-        throw err;
-    }
-};
-
 // 결제 요청은 아임포트에서 알아서 진행
 export const requestPayment = async (paymentData, accessToken) => {
-    console.log("[requestPayment] 호출됨:", paymentData);
     try {
         const response = await axios.post(
             `${path}/payments/create`,
@@ -94,23 +81,3 @@ export const updatePaymentStatus = async (impUid, accessToken) => {
         throw error;
     }
 };
-
-// 결제 수동 취소
-export async function cancelPaymentByOrderCode(orderCode, accessToken) {
-    try {
-        const response = await axios.patch(
-            `${path}/payments/cancel/${orderCode}`,
-            {},
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json"
-                },
-                withCredentials: true
-            }
-        );
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-}
