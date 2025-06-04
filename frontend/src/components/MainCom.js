@@ -44,11 +44,26 @@ export default function MainCom({accessToken, state, dispatch}) {
     }, []);
 
     const slideTexts = [
-        <>천년의 미소, 앙코르와트 속으로—<br/>신비로운 캄보디아 유적 탐험</>,
-        <>바다와 별이 만나는 곳, 남해—<br/>자연이 주는 가장 고요한 선물</>,
-        <>파도 위의 천국, 하와이—<br/>당신의 여름은 여기서 시작돼요</>,
-        <>북유럽 하늘에 별이 춤추는 순간,<br/>당신도 거기 있을 수 있어요.</>,
-        <>‘여기 진짜 실화냐?’ 싶은 풍경,<br/>중국 장가계 투어 전격 오픈!</>
+        {
+            text: <>천년의 미소, 앙코르와트 속으로—<br/>신비로운 캄보디아 유적 탐험</>,
+            link: "https://hellotravelogic.link/products/city?city_id=17"
+        },
+        {
+            text: <>바다와 별이 만나는 곳, 남해—<br/>자연이 주는 가장 고요한 선물</>,
+            link: "https://hellotravelogic.link/products/city?city_id=3"
+        },
+        {
+            text: <>파도 위의 천국, 하와이—<br/>당신의 여름은 여기서 시작돼요</>,
+            link: "https://hellotravelogic.link/products/city?city_id=21"
+        },
+        {
+            text: <>북유럽 하늘에 별이 춤추는 순간,<br/>당신도 거기 있을 수 있어요.</>,
+            link: "https://hellotravelogic.link/products/city?city_id=46"
+        },
+        {
+            text: <>‘여기 진짜 실화냐?’ 싶은 풍경,<br/>중국 장가계 투어 전격 오픈!</>,
+            link: "https://hellotravelogic.link/products/city?city_id=26"
+        }
     ];
 
     const cityImages = [
@@ -115,18 +130,26 @@ export default function MainCom({accessToken, state, dispatch}) {
             <BannerSectionStyledWrapper>
                 <BestBannerContainer>
                     <BestSlideWrapper>
-                        {[...images, ...images].map((src, idx) => (
-                            <BestSlideCard key={idx}>
-                                <BestLabel>BEST {(idx % images.length) + 1}</BestLabel>
-                                <BestSlideImage
-                                    // src={`http://localhost:8080${src}`}
-                                    src={`https://api.hellotravelogic.link${src}`}
-                                    alt={`banner-${idx}`}
-                                />
-                                <BestSlideOverlay />
-                                <BestSlideText>{slideTexts[idx % slideTexts.length]}</BestSlideText>
-                            </BestSlideCard>
-                        ))}
+                        {[...images, ...images].map((src, idx) => {
+                            const currentSlideData = slideTexts[idx % slideTexts.length];
+                            return (
+                                <BestSlideCard key={idx}
+                                               onClick={() => {
+                                                   window.location.href = currentSlideData.link;
+                                               }}
+                                               style={{ cursor: 'pointer' }} // 클릭 가능한 UI 표시
+                                >
+                                    <BestLabel>BEST {(idx % images.length) + 1}</BestLabel>
+                                    <BestSlideImage
+                                        // src={`http://localhost:8080${src}`}
+                                        src={`https://api.hellotravelogic.link${src}`}
+                                        alt={`banner-${idx}`}
+                                    />
+                                    <BestSlideOverlay/>
+                                    <BestSlideText>{currentSlideData.text}</BestSlideText>
+                                </BestSlideCard>
+                                )
+                        })}
                     </BestSlideWrapper>
                 </BestBannerContainer>
             </BannerSectionStyledWrapper>

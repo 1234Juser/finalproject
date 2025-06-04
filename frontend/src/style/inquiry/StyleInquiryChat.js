@@ -57,9 +57,22 @@ export const MessageBox = styled.div`
     gap: 12px; // 메시지 간 간격
 
     /* 항상 하단에 메시지가 오도록 설정 */
-    justify-content: flex-end;
+    //justify-content: flex-end;
 
-    /* 스크롤바 스타일링 (선택 사항) */
+    /* 스크롤바 숨기기 시작 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+
+    &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera, Edge */
+    }
+    /* 스크롤바 숨기기 끝 */
+
+    /* 기존에 있던 아래의 스크롤바 스타일링 코드는 
+      ::-webkit-scrollbar { display: none; } 에 의해 
+      더 이상 시각적으로 나타나지 않으므로 삭제하거나 주석 처리해도 됩니다.
+    */
+    /*
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -70,6 +83,7 @@ export const MessageBox = styled.div`
     &::-webkit-scrollbar-track {
         background-color: #f0f0f0;
     }
+    */
 
 `;
 

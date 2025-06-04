@@ -1,4 +1,6 @@
 const path = "https://api.hellotravelogic.link";
+// const path = "http://localhost:8080";
+
 
 
 // tbl_product 전체 데이터 가져오는 함수
