@@ -10,13 +10,14 @@ const adminMenuList = [
             {label: "상품 신규 등록", path: "/admin/productReg"}
         ]
     },
-    { label: "전체예약관리",
+    { label: "예약관리",
         subMenu:[
             {label: "전체예약관리", path: "/admin/booking"},
-            {label: "상품별조회", path: "/admin/booking/by-product"}
+            {label: "상품별조회", path: "/admin/booking/by-product"},
+            {label: "예약통계", path: "/admin/booking/chart"}
         ]
     },
-    { label: "전체리뷰관리",
+    { label: "리뷰관리",
         subMenu:[
             {label: "전체리뷰관리", path: "/admin/review"},
             {label: "상품별조회", path: "/admin/review/by-product"}
