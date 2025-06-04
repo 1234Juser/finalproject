@@ -37,6 +37,22 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+
+    // 네비게이션 링크 클릭 시 사이드 메뉴를 닫는 함수
+    const handleNavLinkClick = (e) => {
+        // 클릭된 요소(e.target) 또는 그 부모 요소 중에 <a> 태그가 있는지 확인합니다.
+        // React Router의 Link 컴포넌트는 기본적으로 <a> 태그로 렌더링됩니다.
+        let targetElement = e.target;
+        while (targetElement && targetElement !== e.currentTarget) {
+            if (targetElement.tagName === 'A') {
+                setShowAside(false); // <a> 태그 클릭 시 Aside 메뉴를 닫습니다.
+                break;
+            }
+            targetElement = targetElement.parentElement;
+        }
+    };
+
+
     return (
         <>
             <HeaderWrapBlock>
@@ -78,7 +94,7 @@ function HeaderCom( {isLoggedIn, profileImg, handleLogout, memberName}) {
                                             </HeaderRight>
                                         </AsideProfileWrap>
 
-                                        <AsideNavWrap>
+                                        <AsideNavWrap onClick={handleNavLinkClick}>
                                             <NavPage />
                                         </AsideNavWrap>
 

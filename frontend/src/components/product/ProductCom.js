@@ -10,10 +10,10 @@ import {
     CardTitle,
     CardSubInfo,
     ViewDetailButton, ProductUid, CalendarTextContainer, CalendarText, CardPrice,
-    FilterSortBar, FilterSection, FilterLabel, FilterResetBtn, SortSection, SortBtn, WishOneButton,
+    FilterSortBar, FilterSection, FilterResetBtn, SortSection, SortBtn, WishOneButton,
 
 } from "../../style/product/StyleProductCon";
-import { GoCalendar, GoFilter  } from "react-icons/go";
+import { GoCalendar } from "react-icons/go";
 import {SaleStatus} from "../../style/product/StyleProductDetail";
 import ProductFilterCom from "./ProductFilterCom";
 import styled from "styled-components";

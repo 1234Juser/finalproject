@@ -32,15 +32,22 @@ import TimedifferenceCom from "./exchange/TimedifferenceCom";
 import EventSliderCom from "./event/EventSliderCom";
 
 export default function MainCom({accessToken, state, dispatch}) {
-    const [index, setIndex] = useState(0);
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 767);
+
 
     useEffect(() => {
         const lastIndex = images.length - 1;
-        const timer = setInterval(() => {
-            setIndex(prev => (prev === lastIndex ? 0 : prev + 1));
-        }, 3000); // 3초마다
 
-        return () => clearInterval(timer); // 언마운트 시 해제
+        // 화면 크기 변경 감지 로직 추가
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth <= 767);
+        };
+        window.addEventListener('resize', handleResize);
+        handleResize(); // 컴포넌트 마운트 시 초기 실행
+
+        return () => {
+            window.removeEventListener('resize', handleResize); // 언마운트 시 리스너 해제
+        };
     }, []);
 
     const slideTexts = [
@@ -163,7 +170,11 @@ export default function MainCom({accessToken, state, dispatch}) {
             <MainSectionWrapper style={{ marginTop: "70px"}}>
                     <TitleSection>
                         <MainTitle>
-                            <span>📌MD가 찜한<HighlightText> "그 도시"</HighlightText>, 대신 다녀와주세요</span>
+                            <span>
+                                📌MD가 찜한<HighlightText> "그 도시"</HighlightText>,
+                                {isMobileView && <br />} {/* 모바일일 때만 br 태그 렌더링 */}
+                                대신 다녀와주세요
+                            </span>
                         </MainTitle>
                         <Subtitle>다음에 가야지가 벌써 3년째 ㅠㅠ</Subtitle>
                     </TitleSection>

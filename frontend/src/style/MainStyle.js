@@ -513,6 +513,7 @@ export const MainTitle = styled.h2`
     @media (max-width: 767px) {
         font-size: 1.5rem; // 모바일용 폰트 크기
         margin-bottom: 0.3rem;
+        line-height: 1.4;
     }
 `;
 
