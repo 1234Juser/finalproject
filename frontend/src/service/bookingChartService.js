@@ -1,0 +1,1 @@
+const path = "https://api.hellotravelogic.link";
