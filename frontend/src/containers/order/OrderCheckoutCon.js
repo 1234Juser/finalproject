@@ -178,9 +178,7 @@ function OrderCheckoutCon({ accessToken }) {
             const thumbnail = optionData.productThumbnail;
             const resolvedThumbnail = !thumbnail
                 ? "/img/default.jpg"
-                : thumbnail.startsWith("http")
-                    ? thumbnail
-                    : `/static/img/product/${thumbnail}`;
+                : thumbnail;
 
             navigate("/payments/complete", {
                 state: {

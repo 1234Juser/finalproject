@@ -30,9 +30,15 @@ function MyReceiptCom({order, option, payment, bookingUid,
             .catch((err) => console.error("복사 실패:", err));
     };
 
-    const thumbnail = product.productThumbnail?.startsWith('/static/')
-        ? product.productThumbnail
-        : `/upload/product/${product.productThumbnail}`;
+    // 로컬버전
+    const resolvedThumbnail = product.productThumbnail;
+    const thumbnail = !resolvedThumbnail
+        ? "/img/default.jpg"
+        : resolvedThumbnail.startsWith("http")
+            ? resolvedThumbnail
+            : resolvedThumbnail.startsWith("/static/") || resolvedThumbnail.startsWith("static/")
+                ? `/${resolvedThumbnail.replace(/^\/?/, "")}`
+                : `/upload/product/${encodeURIComponent(resolvedThumbnail)}`;
 
     const formattedTime = payment?.paymentTime
         ? dayjs(payment.paymentTime).format("YYYY-MM-DD HH:mm:ss")

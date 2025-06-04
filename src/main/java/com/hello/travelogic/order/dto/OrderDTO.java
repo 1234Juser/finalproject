@@ -64,11 +64,6 @@ public class OrderDTO {
         this.memberPhone = entity.getMember().getMemberPhone();
         this.productTitle = entity.getProduct().getProductTitle();
         this.productThumbnail = entity.getProduct() != null ? entity.getProduct().getProductThumbnail() : null;
-        if (this.productThumbnail != null && !this.productThumbnail.isBlank()) {
-            if (!this.productThumbnail.startsWith("http") && !this.productThumbnail.startsWith("static") && !this.productThumbnail.startsWith("/img/")) {
-                this.productThumbnail = "https://hellotravelogic-img-s3.s3.ap-northeast-2.amazonaws.com/" + this.productThumbnail;
-            }
-        }
         this.adultCount = entity.getOption().getAdultCount();
         this.childCount = entity.getOption().getChildCount();
         this.reservationDate = entity.getOption().getReservationDate();
