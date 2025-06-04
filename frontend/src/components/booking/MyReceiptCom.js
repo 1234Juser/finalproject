@@ -35,11 +35,11 @@ function MyReceiptCom({order, option, payment, bookingUid,
     //     ? product.productThumbnail
     //     : `/upload/product/${product.productThumbnail}`;
     const resolvedThumbnail = product.productThumbnail;
-    const thumbnail = product.productThumbnail
-        ? product.productThumbnail.startsWith("http")
-            ? product.productThumbnail
-            : `/${product.productThumbnail.replace(/^\/?/, "")}`
-        : "/img/default.jpg";
+    // const thumbnail = product.productThumbnail
+    //     ? product.productThumbnail.startsWith("http")
+    //         ? product.productThumbnail
+    //         : `/${product.productThumbnail.replace(/^\/?/, "")}`
+    //     : "/img/default.jpg";
 
     const formattedTime = payment?.paymentTime
         ? dayjs(payment.paymentTime).format("YYYY-MM-DD HH:mm:ss")
@@ -114,7 +114,7 @@ function MyReceiptCom({order, option, payment, bookingUid,
                 <Title>{getOrderStatusMessage(order?.orderStatus)}</Title>
 
                 <ProductSection>
-                    <ProductImage src={thumbnail} alt="상품 이미지"
+                    <ProductImage src={product.productThumbnail} alt="상품 이미지"
                                 style={{ width: "300px", borderRadius: "8px" }}
                                 onError={(e) => {
                                     e.target.onerror = null;

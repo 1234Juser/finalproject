@@ -63,7 +63,13 @@ public class OrderDTO {
         this.memberEmail = entity.getMember().getMemberEmail();
         this.memberPhone = entity.getMember().getMemberPhone();
         this.productTitle = entity.getProduct().getProductTitle();
-        this.productThumbnail = entity.getProduct() != null ? entity.getProduct().getProductThumbnail() : null;
+//        this.productThumbnail = entity.getProduct() != null ? entity.getProduct().getProductThumbnail() : null;
+        this.productThumbnail = entity.getProduct().getProductThumbnail();
+        if (this.productThumbnail != null && !this.productThumbnail.isBlank() && !this.productThumbnail.startsWith("http")) {
+            this.productThumbnail = "https://hellotravelogic-img-s3.s3.ap-northeast-2.amazonaws.com/" + this.productThumbnail.replace("\\", "/");
+        } else if (this.productThumbnail == null || this.productThumbnail.isBlank()) {
+            this.productThumbnail = "/static/img/earth.jpg";
+        }
         this.adultCount = entity.getOption().getAdultCount();
         this.childCount = entity.getOption().getChildCount();
         this.reservationDate = entity.getOption().getReservationDate();
