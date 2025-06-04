@@ -18,6 +18,13 @@ const FilterRow = styled.div`
     gap: 1.25rem;
     margin-bottom: 1rem;
 
+    // 버튼들을 위한 스타일 조정 (새로운 버튼 그룹 Row를 위해)
+    &.button-row {
+        justify-content: flex-end; // 버튼들을 오른쪽으로 정렬
+        margin-top: 0.5rem; // 필터 요소들과의 간격
+        margin-bottom: 0; // 마지막 줄이므로 하단 마진 제거
+    }
+
     @media (max-width: 768px) {
         flex-direction: column;
         align-items: stretch;
@@ -87,6 +94,14 @@ const Button = styled.button`
     &:active {
         transform: translateY(1px);
     }
+
+    // 초기화 버튼을 위한 스타일 추가 (선택적)
+
+    &.reset-button {
+        background-color: #ffffff; // 다른 색상
+        border: 1px solid #dfdede;
+        color: #000000;
+    }
 `;
 
 const PriceRangeSeparator = styled.span`
@@ -104,8 +119,27 @@ function ProductFilterCom({ onFilterChange }) {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
+
+    const handlePriceChange = (setter) => (e) => {
+        const value = e.target.value;
+        // 숫자만 입력 가능 (정수), 음수 방지
+        if (value === "" || (/^\d+$/.test(value) && parseInt(value, 10) >= 0)) {
+            setter(value);
+        }
+    };
+
     const handleApplyFilter = () => {
         onFilterChange({ minPrice, maxPrice, status, startDate, endDate });
+    };
+
+    const handleResetFilters = () => {
+        setMinPrice("");
+        setMaxPrice("");
+        setStatus("");
+        setStartDate("");
+        setEndDate("");
+        // 초기화 후 바로 부모 컴포넌트에 변경사항 알림 (필터 적용)
+        onFilterChange({ minPrice: "", maxPrice: "", status: "", startDate: "", endDate: "" });
     };
 
     return (
@@ -114,9 +148,9 @@ function ProductFilterCom({ onFilterChange }) {
                 <FilterSection style={{ flexGrow: 1, minWidth: '230px' }}> {/* 가격대 전체의 최소 너비 확보 */}
                     <label>가격대</label>
                     <div>
-                        <Input style={{ width: '100px' }} type="number" placeholder="최소" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+                        <Input style={{ width: '100px' }} type="number" placeholder="최소" value={minPrice} onChange={handlePriceChange(setMinPrice)} />
                         <PriceRangeSeparator>~</PriceRangeSeparator>
-                        <Input style={{ width: '100px' }} type="number" placeholder="최대" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+                        <Input style={{ width: '100px' }} type="number" placeholder="최대" value={maxPrice} onChange={handlePriceChange(setMaxPrice)} />
                     </div>
                 </FilterSection>
                 <FilterSection style={{ flexGrow: 1, flexShrink: 0 }}>
@@ -137,6 +171,7 @@ function ProductFilterCom({ onFilterChange }) {
                     </div>
                 </FilterSection>
                 <FilterRow style={{ marginBottom : 0 }}>
+                    <Button className="reset-button" onClick={handleResetFilters}>필터 초기화</Button>
                     <Button onClick={handleApplyFilter}>필터 적용</Button>
                 </FilterRow>
             </FilterRow>
