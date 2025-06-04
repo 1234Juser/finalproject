@@ -94,7 +94,9 @@ function MyReviewEditCon({ accessToken }) {
                 formData.append("reviewPic", selectedFile);
             } else {
                 // 파일 삭제 요청을 위해 빈 파일 추가
-                formData.append("reviewPic", "");
+                // formData.append("reviewPic", "");
+                const emptyFile = new File([""], "", { type: "image/*" });
+                formData.append("reviewPic", emptyFile);
             }
 
             const response = await updateReview({
