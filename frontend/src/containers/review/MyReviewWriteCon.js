@@ -123,8 +123,15 @@ function MyReviewWriteCon({ accessToken }) {
                 alert("리뷰는 500자 이하로 작성해주세요.");
                 return;
             }
-            await submitReview(orderCode, selectedRating, trimmedContent, selectedFileRef.current, accessToken);
+            // await submitReview(orderCode, selectedRating, trimmedContent, selectedFileRef.current, accessToken);
+            const result = await submitReview(orderCode, selectedRating, trimmedContent, selectedFileRef.current, accessToken);
+            // 성공 메시지 판단
+            if (result.success) {
             setIsModalOpen(true);
+            } else {
+                // alert("리뷰 등록 중 문제가 발생했습니다. 다시 시도해주세요.");
+                alert(result.message || "리뷰 등록 중 문제가 발생했습니다. 다시 시도해주세요.");
+            }
         } catch (e) {
             alert("리뷰 등록에 실패했습니다. 다시 시도해주세요.");
         }

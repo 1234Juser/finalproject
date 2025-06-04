@@ -159,9 +159,12 @@ export const submitReview = async (orderCode, reviewRating, reviewContent, file,
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        return response.data;
+        // return response.data;
+        if (response.status === 201) return { success: true };
+        else return { success: false, message: response.data };
     } catch (error) {
-        throw error;
+        // throw error;
+        return { success: false, message: error.message };
     }
 };
 
