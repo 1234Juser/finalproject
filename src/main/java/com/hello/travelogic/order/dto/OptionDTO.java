@@ -47,6 +47,9 @@ public class OptionDTO {
             this.productChild = entity.getProduct().getProductChild();
             this.productMaxParticipants = entity.getProduct().getProductMaxParticipants();
             this.productThumbnail = entity.getProduct().getProductThumbnail();
+            if (this.productThumbnail != null && !this.productThumbnail.isBlank() && !this.productThumbnail.startsWith("http")) {
+                this.productThumbnail = "https://hellotravelogic-img-s3.s3.ap-northeast-2.amazonaws.com/" + this.productThumbnail;
+            }
             log.debug("🟡 ProductEntity 로드 완료 - productCode: {}, productTitle: {}", this.productCode, this.productTitle);
         }
     }

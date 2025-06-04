@@ -176,14 +176,9 @@ function OrderCheckoutCon({ accessToken }) {
             await completeOrder(orderCode, selectedPaymentMethod, orderData.totalPrice, accessToken);
 
             const thumbnail = optionData.productThumbnail;
-
             const resolvedThumbnail = !thumbnail
                 ? "/img/default.jpg"
-                : thumbnail.startsWith("https://")
-                    ? thumbnail // S3 전체 URL로 저장된 경우
-                    : thumbnail.includes("upload/")
-                        ? `/${encodeURIComponent(thumbnail)}` // S3 상대 경로
-                        : `/static/img/product/${encodeURIComponent(thumbnail)}`; // 웹 개발 초기 등록
+                : thumbnail;
 
             navigate("/payments/complete", {
                 state: {
