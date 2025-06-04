@@ -13,5 +13,5 @@ public class ProductOrderStatDTO {
     private String productTitle;
 
     // 쿼리 결과를 담을 임시필드
-    private Long orderCount;
+    private Long totalRevenue;
 }

@@ -4,6 +4,7 @@ import com.hello.travelogic.member.domain.MemberEntity;
 import com.hello.travelogic.order.domain.OrderEntity;
 import com.hello.travelogic.order.domain.OrderStatus;
 import com.hello.travelogic.order.dto.OrderDTO;
+import com.hello.travelogic.order.dto.ProductOrderStatDTO;
 import com.hello.travelogic.payment.domain.PaymentStatus;
 import com.hello.travelogic.product.domain.ProductEntity;
 import org.springframework.data.domain.Page;
@@ -98,11 +99,17 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
     Page<OrderEntity> findByProduct_ProductCodeAndOrderStatus(Long productCode, OrderStatus orderStatus, Pageable pageable);
     Page<OrderEntity> findByOrderStatus(OrderStatus orderStatus, Pageable pageable);
 
-    // 상품별 주문 통계
-    @Query("SELECT o.product.productCode, o.product.productTitle, COUNT(o) " +
+    // 상품별 총매출
+    @Query("SELECT new com.hello.travelogic.order.dto.ProductOrderStatDTO(" +
+            "o.product.productCode, o.product.productTitle, SUM(o.totalPrice)) " +
             "FROM OrderEntity o " +
-            "WHERE o.orderStatus = 'COMPLETED' " +
-            "GROUP BY o.product.productCode, o.product.productTitle " +
-            "ORDER BY COUNT(o) DESC")
-    List<Object[]> getProductOrderStats();
+//            "WHERE o.orderStatus = com.hello.travelogic.order.domain.OrderStatus.COMPLETED " +
+            "WHERE o.orderStatus IN (:statuses) " +
+            "AND o.orderDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY o.product.productCode, o.product.productTitle")
+    List<ProductOrderStatDTO> findTotalRevenueByProductAndPeriod(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            @Param("statuses") List<OrderStatus> statuses
+    );
 }

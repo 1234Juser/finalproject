@@ -1,9 +1,57 @@
 import AdminBookingChartCom from "../../components/booking/AdminBookingChartCom";
+import {useEffect, useState} from "react";
+import {fetchProductRevenueStats} from "../../service/bookingChartService";
 
 function AdminBookingChartCon({accessToken}) {
+    const [chartData, setChartData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 1); // 1월은 0번째 달
+
+    // 기간 고정
+    // const defaultStartDate = startOfYear.toISOString().split("T")[0]; // 'YYYY-MM-DD'
+    // const defaultEndDate = today.toISOString().split("T")[0];         // 'YYYY-MM-DD'
+    // 기간 유동
+    const [startDate, setStartDate] = useState(startOfYear.toISOString().split("T")[0]);
+    const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
+
+    useEffect(() => {
+        const loadChartData = async (start, end) => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const data = await fetchProductRevenueStats(start, end, accessToken);
+                setChartData(data);
+            } catch (err) {
+                console.error("API 호출 중 에러:", err);
+                setError("데이터를 불러오는데 실패했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadChartData(startDate, endDate);
+    }, [startDate, endDate]);
+
+    const handleDateChange = (field, value) => {
+        if (field === "startDate") setStartDate(value);
+        if (field === "endDate") setEndDate(value);
+        if (field === "startDate" && value > endDate) return alert("시작일은 종료일보다 앞서야 합니다.");
+    };
+
     return(
-    <>
-        <AdminBookingChartCom />
-    </>)
+        <>
+            <AdminBookingChartCom
+                chartData={chartData}
+                loading={loading}
+                error={error}
+                startDate={startDate}
+                endDate={endDate}
+                onDateChange={handleDateChange}
+            />
+        </>)
 }
 export default AdminBookingChartCon;
