@@ -65,10 +65,22 @@ public class OrderDTO {
         this.productTitle = entity.getProduct().getProductTitle();
 //        this.productThumbnail = entity.getProduct() != null ? entity.getProduct().getProductThumbnail() : null;
         this.productThumbnail = entity.getProduct().getProductThumbnail();
-        if (this.productThumbnail != null && !this.productThumbnail.isBlank() && !this.productThumbnail.startsWith("http")) {
+//        if (this.productThumbnail != null && !this.productThumbnail.isBlank() && !this.productThumbnail.startsWith("http")) {
+//            this.productThumbnail = "https://hellotravelogic-img-s3.s3.ap-northeast-2.amazonaws.com/" + this.productThumbnail.replace("\\", "/");
+//        } else if (this.productThumbnail == null || this.productThumbnail.isBlank()) {
+//            this.productThumbnail = "/static/img/earth.jpg";
+//        }
+        if (this.productThumbnail == null || this.productThumbnail.isBlank()) {
+            this.productThumbnail = "/static/img/earth.jpg"; // 기본 이미지
+        } else if (this.productThumbnail.startsWith("http")) {
+            // 이미 전체 URL이면 그대로 사용
+            this.productThumbnail = this.productThumbnail;
+        } else if (this.productThumbnail.startsWith("static/") || this.productThumbnail.startsWith("/static/")) {
+            // 웹 배포에 포함된 정적 이미지일 경우
+            this.productThumbnail = "/" + this.productThumbnail.replaceFirst("^/+", "");
+        } else {
+            // 나머지는 S3에 저장된 파일이라고 간주
             this.productThumbnail = "https://hellotravelogic-img-s3.s3.ap-northeast-2.amazonaws.com/" + this.productThumbnail.replace("\\", "/");
-        } else if (this.productThumbnail == null || this.productThumbnail.isBlank()) {
-            this.productThumbnail = "/static/img/earth.jpg";
         }
         this.adultCount = entity.getOption().getAdultCount();
         this.childCount = entity.getOption().getChildCount();
