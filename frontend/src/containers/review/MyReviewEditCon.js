@@ -5,7 +5,6 @@ import MyReviewEditCom from "../../components/review/MyReviewEditCom";
 
 function MyReviewEditCon({ accessToken }) {
     const { reviewCode } = useParams(); // URL에서 reviewCode 가져오기
-    const [state, dispatch] = useState({})
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
@@ -28,11 +27,16 @@ function MyReviewEditCon({ accessToken }) {
                     reviewPicFile: null,
                 });
                 if (reviewData.reviewPic) {
-                    // const imageBlob = await fetch(`/review/${reviewData.reviewPic}/image`);
-                    // const imageUrl = URL.createObjectURL(await imageBlob.blob());
-                    const imageBlob = await getReviewImage(reviewData.reviewPic);
-                    const imageUrl = URL.createObjectURL(imageBlob);
-                    setImagePreview(imageUrl);
+                    if (reviewData.reviewPic.startsWith("http")) {
+                        // S3 URL이면 직접 썸네일로 사용
+                        setImagePreview(reviewData.reviewPic);
+                    } else {
+                        // const imageBlob = await fetch(`/review/${reviewData.reviewPic}/image`);
+                        // const imageUrl = URL.createObjectURL(await imageBlob.blob());
+                        const imageBlob = await getReviewImage(reviewData.reviewPic);
+                        const imageUrl = URL.createObjectURL(imageBlob);
+                        setImagePreview(imageUrl);
+                    }
                 }
             } catch (e) {
                 if (e.response) {
