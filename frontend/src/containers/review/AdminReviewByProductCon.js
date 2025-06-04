@@ -46,7 +46,9 @@ function AdminReviewByProductCon({ accessToken }) {
             .then((res) => {
                 setProducts(res);
             })
-            .catch((e) => console.error("상품 목록 불러오기 실패", e));
+            .catch(() => {
+                alert("상품 목록 불러오기에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+            });
     }, [accessToken]);
 
     useEffect(() => {

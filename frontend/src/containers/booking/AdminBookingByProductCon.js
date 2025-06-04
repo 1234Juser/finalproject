@@ -32,7 +32,9 @@ function AdminBookingByProductCon({accessToken}) {
             .then((res) => {
                 setProducts(res);
             })
-            .catch((e) => console.error("상품 목록 불러오기 실패", e));
+            .catch(() => {
+                alert("상품 목록 조회에 실패했습니다.");
+            });
     }, [accessToken]);
 
     // 예약 목록 불러오기 (상품 필터 기준)

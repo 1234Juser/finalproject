@@ -123,7 +123,6 @@ function MyReviewWriteCon({ accessToken }) {
                 alert("리뷰는 500자 이하로 작성해주세요.");
                 return;
             }
-            // await submitReview(orderCode, selectedRating, trimmedContent, selectedFileRef.current, accessToken);
             const result = await submitReview(orderCode, selectedRating, trimmedContent, selectedFileRef.current, accessToken);
             // 성공 메시지 판단
             if (result.success) {

@@ -44,8 +44,6 @@ function AdminReviewCon({accessToken}) {
             const roles = decoded.roles;
             if (!roles.includes("ROLE_ADMIN")) {
                 alert("접근 권한이 없습니다. 관리자만 접근할 수 있습니다.");
-                // 필요 시 아래처럼 리다이렉트도 가능
-                // navigate("/");
                 return;
             }
             dispatch({ type: "SET_LOADING", data: true });

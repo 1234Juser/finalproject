@@ -85,6 +85,13 @@ export const Title = styled.h4`
     margin-bottom: 0.5rem;
     box-sizing: border-box;
     cursor: pointer;
+    max-width: 420px;
+    //white-space: nowrap;            // 줄바꿈 안 함
+    display: -webkit-box;
+    -webkit-line-clamp: 2;          // 최대 2줄
+    -webkit-box-orient: vertical;
+    overflow: hidden;               // 넘치는 텍스트 감춤
+    text-overflow: ellipsis;       // ... 표시
 
     &:hover {
         text-decoration: underline;

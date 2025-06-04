@@ -14,10 +14,8 @@ import {fetchPaymentMethods, requestPayment} from "../../service/paymentService"
 
 function OrderCheckoutCon({ accessToken }) {
     const { productUid, optionCode } = useParams();
-    // const { orderCode } = useParams();
     const [orderCode, setOrderCode] = useState(null);
     const [optionData, setOptionData] = useState(null);
-    // const [loadedOptionData, setLoadedOptionData] = useState(optionData || null);
     const [memberInfo, setMemberInfo] = useState(null);
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
@@ -60,7 +58,9 @@ function OrderCheckoutCon({ accessToken }) {
     useEffect(() => {
         fetchPaymentMethods()
             .then((methods) => setPaymentMethods(methods))
-            .catch((err) => console.error(err));
+            .catch(() => {
+                alert("결제수단을 불러오는 데 실패했습니다. 다시 시도해주세요.");
+            });
     }, []);
 
     // 탭 삭제시 삭제
@@ -96,8 +96,9 @@ function OrderCheckoutCon({ accessToken }) {
     useEffect(() => {
         const timer = setTimeout(() => {
             deletePendingOrder(orderCode, accessToken)
-                .then(() => console.log("⏱ 주문 자동 삭제 완료"))
-                .catch((err) => console.warn("자동 삭제 실패:", err));
+                .then(() => {
+                    alert("장시간 주문이 진행되지 않았습니다. 다시 주문을 진행해 주세요.");
+                })
         }, 10 * 60 * 1000); // 10분
 
         return () => clearTimeout(timer);
@@ -139,7 +140,6 @@ function OrderCheckoutCon({ accessToken }) {
                 productCode: optionData.productCode,
                 productTitle: optionData.productTitle,
                 optionCode: optionData.optionCode,
-                // memberCode: optionData.memberCode,
                 memberCode: memberInfo.memberCode,
                 memberName: memberInfo.memberName,
                 memberEmail: memberInfo.memberEmail,
@@ -175,10 +175,15 @@ function OrderCheckoutCon({ accessToken }) {
 
             await completeOrder(orderCode, selectedPaymentMethod, orderData.totalPrice, accessToken);
 
-            const resolvedThumbnail =
-                orderData.productThumbnail?.includes("upload/")
-                    ? `/upload/product/${encodeURIComponent(orderData.productThumbnail)}`
-                    : `/static/img/product/${encodeURIComponent(orderData.productThumbnail)}`;
+            const thumbnail = optionData.productThumbnail;
+
+            const resolvedThumbnail = !thumbnail
+                ? "/img/default.jpg"
+                : thumbnail.startsWith("https://")
+                    ? thumbnail // S3 전체 URL로 저장된 경우
+                    : thumbnail.includes("upload/")
+                        ? `/${encodeURIComponent(thumbnail)}` // S3 상대 경로
+                        : `/static/img/product/${encodeURIComponent(thumbnail)}`; // 웹 개발 초기 등록
 
             navigate("/payments/complete", {
                 state: {

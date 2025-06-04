@@ -12,7 +12,6 @@ function ProductReviewCon({ productUid }) {
     const [top3Reviews, setTop3Reviews] = useState([]);
     const [modalSortOption, setModalSortOption] = useState("date");     // 모달용
     const [previewSortOption, setPreviewSortOption] = useState("date"); // top3용
-    const [averageRating, setAverageRating] = useState(0);
 
     // 미리보기 top3 리뷰
     useEffect(() => {
@@ -27,7 +26,6 @@ function ProductReviewCon({ productUid }) {
         const fetchFullReviews = async () => {
             try {
                 dispatch({ type: "SET_LOADING", data: true });
-                const sortOption = state.sortOption || "date";
                 const reviews = await getReviewsByProductUid(productUid, modalSortOption);
                 dispatch({ type: "SET_REVIEWS", data: reviews });
 
@@ -48,10 +46,6 @@ function ProductReviewCon({ productUid }) {
             fetchFullReviews();
         }
     }, [productUid, modalSortOption]);
-
-    const handleSortChange = (sortOption) => {
-        dispatch({ type: "SET_SORT_OPTION", data: sortOption });
-    };
 
     return(
         <>

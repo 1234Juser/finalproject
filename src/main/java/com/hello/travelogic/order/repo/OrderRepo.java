@@ -97,4 +97,12 @@ public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
     // 관리자의 상품별 예약조회에 상태별 추가
     Page<OrderEntity> findByProduct_ProductCodeAndOrderStatus(Long productCode, OrderStatus orderStatus, Pageable pageable);
     Page<OrderEntity> findByOrderStatus(OrderStatus orderStatus, Pageable pageable);
+
+    // 상품별 주문 통계
+    @Query("SELECT o.product.productCode, o.product.productTitle, COUNT(o) " +
+            "FROM OrderEntity o " +
+            "WHERE o.orderStatus = 'COMPLETED' " +
+            "GROUP BY o.product.productCode, o.product.productTitle " +
+            "ORDER BY COUNT(o) DESC")
+    List<Object[]> getProductOrderStats();
 }

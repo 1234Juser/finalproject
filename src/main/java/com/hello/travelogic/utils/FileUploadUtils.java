@@ -51,8 +51,25 @@ public class FileUploadUtils {
                 .build();
     }
 
+    // 범용버킷 내 폴더가 아니라 바로 저장을 위해 매개변수가 하나인 경우
     public String uploadToS3(MultipartFile file) throws IOException {
-        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+        return uploadToS3(file, null);
+    }
+
+    public String uploadToS3(MultipartFile file, String folderName) throws IOException {
+        // 범용버킷에 바로저장
+//        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+
+        String originalFileName = file.getOriginalFilename();
+        // 범용 버킷 내 폴더에 저장
+//        String fileName = folderName + "/" + System.currentTimeMillis() + "-" + originalFileName;
+        // 폴더 있을 때와 없을 때 모두 가능
+        String fileName;
+        if (folderName == null || folderName.isBlank()) {
+            fileName = System.currentTimeMillis() + "-" + originalFileName;
+        } else {
+            fileName = folderName + "/" + System.currentTimeMillis() + "-" + originalFileName;
+        }
         
         s3Client.putObject(builder -> builder.bucket(bucketName).key(fileName),
                 RequestBody.fromInputStream(file.getInputStream(), file.getSize()));

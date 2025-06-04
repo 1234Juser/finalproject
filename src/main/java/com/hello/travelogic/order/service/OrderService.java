@@ -348,7 +348,7 @@ public class OrderService {
     public void cleanUpPendingOrders() {
         List<OrderEntity> pendingOrders = orderRepo.findAllByOrderStatusAndOrderDateBefore(
                 OrderStatus.PENDING,
-                LocalDateTime.now().minusMinutes(5) // 5분 이상 된 PENDING
+                LocalDateTime.now().minusMinutes(10) // 10분 이상 된 PENDING
         );
 
         for (OrderEntity order : pendingOrders) {

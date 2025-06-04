@@ -29,7 +29,6 @@ function MyReviewModalCon({ orderCode, onClose, accessToken }) {
                 dispatch({ type: "REMOVE_REVIEW", payload: review.reviewCode });
                 alert("리뷰가 삭제되었습니다.");
                 onClose();  // 모달 닫기
-                // window.location.reload();  // 페이지 새로고침
                 setTimeout(() => {
                     window.location.reload();
                 }, 100);

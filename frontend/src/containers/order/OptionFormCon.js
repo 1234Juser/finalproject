@@ -136,10 +136,6 @@ function OptionFormCon({ accessToken }){
             navigate(`/products/${productUid}/order/create/${optionCode}`);
         } catch (error) {
             alert("옵션 생성에 실패했습니다.");
-
-            // 백엔드 에러 메시지 그대로 사용자에게 전달
-            // const backendMessage = error?.response?.data || "옵션 생성에 실패했습니다.";
-            // alert(backendMessage);
         }
     };
 

@@ -16,10 +16,7 @@ function RecentReviewRequestModalCon({accessToken, state, dispatch}) {
         const hideUntil = hideUntilRaw ? Number(hideUntilRaw) : null;
         const now = Date.now();
 
-        if (hideUntil && hideUntil > now) {
-            console.log("모달 숨김 유지 중 (자정까지)");
-            return;
-        }
+        if (hideUntil && hideUntil > now) return;
 
         const checkReviewRequest = async () => {
             try {
@@ -30,11 +27,8 @@ function RecentReviewRequestModalCon({accessToken, state, dispatch}) {
                 const hiddenOrders = JSON.parse(sessionStorage.getItem(key) || "[]");
                 if (!hiddenOrders.includes(Number(order.orderCode))) {
                     dispatch({ type: "SET_REVIEW_REQUEST", payload: order });
-                } else {
-                    console.log("해당 주문에 관한 리뷰 요청은 숨김 처리됨");
                 }
             } catch (err) {
-                console.error("리뷰 요청 조회 실패:", err);
             }
         };
 

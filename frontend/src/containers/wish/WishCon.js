@@ -32,7 +32,6 @@ function WishCon({accessToken}) {
                 dispatch({ type: "SET_GROUPS", data });
             })
             .catch((err) => {
-                console.error("위시 그룹 가져오기 실패", err);
             });
     }, [accessToken]);
 
@@ -46,7 +45,6 @@ function WishCon({accessToken}) {
                     dispatch({ type: "SET_WISH_LIST", data });
                 })
                 .catch((err) => {
-                    console.error("위시 리스트 가져오기 실패", err);
                 });
         }
     }, [groupCode, accessToken]);
@@ -60,11 +58,8 @@ function WishCon({accessToken}) {
                 const status = await toggleWish(targetProductCode, accessToken);
                 const groups = await getGroups(accessToken);
                 dispatch({ type: "SET_GROUPS", data: groups });
-
-                console.log(`찜 상태: ${status}`);
             } catch (err) {
                 dispatch({ type: "SET_ERROR", data: err });
-                console.error("찜 처리 중 오류 발생:", err);
             } finally {
                 dispatch({ type: "SET_LOADING", data: false });
                 setTargetProductCode(null); // 실행 후 초기화
@@ -81,7 +76,6 @@ function WishCon({accessToken}) {
                 dispatch({ type: "SET_WISH_LIST", data });
             })
             .catch((err) => {
-                console.error("리스트 조회 실패", err);
             });
     };
 
@@ -90,8 +84,8 @@ function WishCon({accessToken}) {
             .then((data) => {
                 dispatch({ type: "SET_WISH_LIST", data });
             })
-            .catch((err) => {
-                console.error("찜 삭제 실패", err);
+            .catch(() => {
+                alert("찜 취소에 실패했습니다. 다시 시도해 주세요.");
             });
     };
 
@@ -102,8 +96,8 @@ function WishCon({accessToken}) {
                 dispatch({ type: "SET_WISH_LIST", data: [] });
                 dispatch({ type: "SET_SELECTED_GROUP", data: null });
             })
-            .catch((err) => {
-                console.error("그룹 삭제 실패", err);
+            .catch(() => {
+                alert("그룹 삭제에 실패했습니다. 다시 시도해 주세요.");
             });
     };
 

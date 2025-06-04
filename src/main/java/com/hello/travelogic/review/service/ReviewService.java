@@ -55,11 +55,9 @@ public class ReviewService {
         List<ReviewEntity> entities;
 
         if ("rating".equalsIgnoreCase(sortOption)) {
-//            entities = reviewRepo.findByProduct_ProductUidOrderByReviewRatingDesc(ProductUid); // 평점 높은순
-            entities = reviewRepo.findFullReviewsByProductUidOrderByRating(ProductUid);
+            entities = reviewRepo.findFullReviewsByProductUidOrderByRating(ProductUid); // 평점 높은순
         } else {
-//            entities = reviewRepo.findByProduct_ProductUidOrderByReviewDateDesc(ProductUid); // 최신순
-            entities = reviewRepo.findFullReviewsByProductUidOrderByDate(ProductUid);
+            entities = reviewRepo.findFullReviewsByProductUidOrderByDate(ProductUid); // 최신순
         }
 
         return entities
@@ -150,8 +148,6 @@ public class ReviewService {
             if (optionEntity == null) {
                 throw new IllegalArgumentException("옵션이 존재하지 않습니다. - orderCode: " + order.getOrderCode());
             }
-//            ProductEntity productEntity = productRepo.findById(optionEntity.getProduct().getProductCode())
-//                    .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다. - productCode: " + optionEntity.getProduct().getProductCode()));
             ProductEntity productEntity = order.getProduct();
 
             // 정확한 중복 검사 (회원 + 주문 조합으로 확인)
@@ -166,11 +162,10 @@ public class ReviewService {
             reviewDTO.setReservationDate(optionEntity.getReservationDate());
 
             if (reviewPic != null && !reviewPic.isEmpty()) {
-//                String savedFileName= FileUploadUtils.saveReviewFile(reviewPic);
-//                reviewDTO.setReviewPic(savedFileName);
                 try {
                     // S3에 파일 업로드
-                    String s3Url = fileUploadUtils.uploadToS3(reviewPic);
+//                    String s3Url = fileUploadUtils.uploadToS3(reviewPic);
+                    String s3Url = fileUploadUtils.uploadToS3(reviewPic, "review");
                     log.debug("s3Url : {}", s3Url);
                     reviewDTO.setReviewPic(s3Url);
                 } catch (IOException e) {
@@ -238,25 +233,18 @@ public class ReviewService {
             String existingPic = review.getReviewPic();
             if (reviewPic != null && !reviewPic.isEmpty()) {
                 // 기존 파일 삭제
-//                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
-//                    deleteFile(review.getReviewPic(), REVIEW_DIR);
-//                }
                 // 기존의 파일이 S3에 존재한다면 삭제한다
                 if (existingPic != null && !existingPic.isEmpty() && !existingPic.equals("nan")) {
                     fileUploadUtils.deleteS3File(existingPic);
                 }
                 // 새 이미지 파일 저장
-                String newS3Url = fileUploadUtils.uploadToS3(reviewPic);
+//                String newS3Url = fileUploadUtils.uploadToS3(reviewPic);
+                String newS3Url = fileUploadUtils.uploadToS3(reviewPic, "review");
                 review.setReviewPic(newS3Url);
-//                String newFileName = FileUploadUtils.saveReviewFile(reviewPic);
-//                review.setReviewPic(newFileName);
             // 새 파일 없이 기존 파일만 삭제할 경우
-//            } else if (reviewPic == null) {
             // S3 버전에선 빈 파일을 업로드해 기존이미지를 제거한다는 논리
             } else if (reviewPic != null && reviewPic.isEmpty()) {
                 // 파일 삭제 요청 (빈 파일로 초기화)
-//                if (review.getReviewPic() != null && !review.getReviewPic().equals("nan")) {
-//                    deleteFile(review.getReviewPic(), REVIEW_DIR);
                 if (existingPic != null && !existingPic.isEmpty() && !existingPic.equals("nan")) {
                     fileUploadUtils.deleteS3File(existingPic);
                 }
@@ -325,11 +313,6 @@ public class ReviewService {
         review.setReviewStatus(ReviewStatus.DELETE_BY_ADMIN);
         review.setReviewContent("관리자에 의해 삭제된 리뷰입니다.");
 
-//        String reviewPic = review.getReviewPic();
-//        if (reviewPic != null && !reviewPic.equals("nan")) {
-//            deleteFile(reviewPic, REVIEW_DIR);
-//            review.setReviewPic("nan"); // 이미지 필드를 비워줌
-//        }
         String s3ReviewPic = review.getReviewPic();
         // S3 파일이 존재한다면 진행
         if (s3ReviewPic != null && !s3ReviewPic.isEmpty()) {
