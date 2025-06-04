@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {getReviewByReviewCode, updateReview} from "../../service/reviewService";
+import {getReviewByReviewCode, getReviewImage, updateReview} from "../../service/reviewService";
 import MyReviewEditCom from "../../components/review/MyReviewEditCom";
 
 function MyReviewEditCon({ accessToken }) {
@@ -28,7 +28,8 @@ function MyReviewEditCon({ accessToken }) {
                     reviewPicFile: null,
                 });
                 if (reviewData.reviewPic) {
-                    const imageBlob = await fetch(`/review/${reviewData.reviewPic}/image`);
+                    // const imageBlob = await fetch(`/review/${reviewData.reviewPic}/image`);
+                    const imageBlob = await getReviewImage(reviewData.reviewPic);
                     const imageUrl = URL.createObjectURL(await imageBlob.blob());
                     setImagePreview(imageUrl);
                 }

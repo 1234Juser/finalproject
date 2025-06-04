@@ -1,12 +1,8 @@
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {
-    CenteredContainer,
-    HiddenFileInput, PhotoBox, PhotoUpload, RemoveButton,
-    ReviewFormWrap,
-    StarRating,
-    TextArea,
-    Title
+    CenteredContainer, HiddenFileInput, PhotoBox, PhotoUpload, RemoveButton,
+    ReviewFormWrap, StarRating, TextArea, Title
 } from "../../style/review/StyleReviewForm";
 
 const SubmitButton = styled.button`

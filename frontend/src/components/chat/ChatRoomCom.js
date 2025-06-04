@@ -11,7 +11,7 @@ import {
     MessageRow, messageTextStyle, profileImageStyle, senderInfoStyle, DangerButton, OutlineButton
 } from '../../style/community/chat/StyleChatRoom'
 import FormatDate from '../../utils/FormatDate';
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 
 // 모달 컴포넌트 정의
@@ -70,6 +70,7 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSender, setSelectedSender] = useState({});
+    const chatBoxRef = useRef(null);
 
     const handleSenderClick = (sender, profileImageUrl) => {
         setSelectedSender({ sender, profileImageUrl });
@@ -80,6 +81,13 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
         setIsModalOpen(false);
         setSelectedSender({});
     };
+
+    // messages 배열이 변경될 때마다 스크롤을 맨 아래로 이동
+    useEffect(() => {
+        if (chatBoxRef.current) {
+            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+    }, [messages]);
 
 
 
@@ -103,7 +111,7 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
                 채팅방 나가기
             </OutlineButton>
 
-            <ChatBox>
+            <ChatBox ref={chatBoxRef}>
                 {messages.map((msg, index) => (
                     <MessageRow key={index}>
                         <div style={messageContentStyle}>
