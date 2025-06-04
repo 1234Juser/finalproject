@@ -63,7 +63,7 @@ function ProductAllAdminCom({products, handlePrev, handleNext, renderPageButtons
                             <li>★ 신규 국가/도시 투어 등록은 개발팀에게 문의하세요 ★</li>
                         </ul>
                     </div>
-                    <ImageButton onClick={() => handleImagePopup('/img/product/table.png')}>
+                    <ImageButton onClick={() => handleImagePopup('/static/img/product/table.png')}>
                         국가/도시 코드
                     </ImageButton>
                 </DivContainer>
