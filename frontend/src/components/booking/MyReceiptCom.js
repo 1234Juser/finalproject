@@ -31,14 +31,15 @@ function MyReceiptCom({order, option, payment, bookingUid,
     };
 
     // 로컬버전
+    // const thumbnail = product.productThumbnail?.startsWith('/static/')
+    //     ? product.productThumbnail
+    //     : `/upload/product/${product.productThumbnail}`;
     const resolvedThumbnail = product.productThumbnail;
-    const thumbnail = !resolvedThumbnail
-        ? "/img/default.jpg"
-        : resolvedThumbnail.startsWith("http")
-            ? resolvedThumbnail
-            : resolvedThumbnail.startsWith("/static/") || resolvedThumbnail.startsWith("static/")
-                ? `/${resolvedThumbnail.replace(/^\/?/, "")}`
-                : `/upload/product/${encodeURIComponent(resolvedThumbnail)}`;
+    const thumbnail = product.productThumbnail
+        ? product.productThumbnail.startsWith("http")
+            ? product.productThumbnail
+            : `/${product.productThumbnail.replace(/^\/?/, "")}`
+        : "/img/default.jpg";
 
     const formattedTime = payment?.paymentTime
         ? dayjs(payment.paymentTime).format("YYYY-MM-DD HH:mm:ss")
