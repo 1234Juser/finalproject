@@ -183,10 +183,10 @@ export const GraphDiv = styled.div`
     max-width: 1000px;
     background-color: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    align-items: center;
+    //align-items: center;
     gap: 1.5rem;
 
     ul {

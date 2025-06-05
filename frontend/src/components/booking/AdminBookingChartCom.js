@@ -62,7 +62,7 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
         scales: {
             x: {
                 ticks: {
-                    display: false, // 그래프 아래에 productTitle라벨 숨기기
+                    // display: false, // 그래프 아래에 productTitle라벨 숨기기
                     autoSkip: false,
                     maxRotation: 45,
                     minRotation: 45,
