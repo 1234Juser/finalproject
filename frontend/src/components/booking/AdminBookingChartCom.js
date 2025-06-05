@@ -92,13 +92,14 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                     <p>데이터가 없습니다.</p>
                                 ) : (
                                     <>
-                                        <ul>
+                                        <RevenueList>
                                             {chartData.map((item) => (
-                                                <li key={item.productCode}>
-                                                    <strong>{item.productTitle}</strong> - 총 매출: {item.totalRevenue.toLocaleString()}원
-                                                </li>
+                                                <RevenueItem key={item.productCode}>
+                                                    <strong>{item.productTitle}</strong>
+                                                    <span>총 매출: {item.totalRevenue.toLocaleString()}원</span>
+                                                </RevenueItem>
                                             ))}
-                                        </ul>
+                                        </RevenueList>
                                         {barData && <Bar data={barData} options={barOptions} />}
                                     </>
                                 )}

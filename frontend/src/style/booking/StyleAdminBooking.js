@@ -144,15 +144,16 @@ export const StyleDiv = styled.div`
     width : 90%;
 `;
 export const DateFilterWrap = styled.div`
+    max-width: 1050px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1rem;
     margin: 1.5rem 0;
     padding: 1rem;
-    background-color: #f5f8ff;
+    background-color: #f5f5f5;
     border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    //box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     font-size: 1rem;
 `;
 export const DateLabel = styled.label`
