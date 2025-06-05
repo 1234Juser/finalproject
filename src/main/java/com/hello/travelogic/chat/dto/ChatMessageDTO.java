@@ -19,6 +19,7 @@ public class ChatMessageDTO {
     private String message;
     private LocalDateTime sentAt;
     private String profileImageUrl;
+    private Long memberCode;
 
     public enum MessageType {
         CHAT,

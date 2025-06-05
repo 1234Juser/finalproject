@@ -8,7 +8,14 @@ import {
     JoinMsg,
     LeaveMsg,
     messageContentStyle,
-    MessageRow, messageTextStyle, profileImageStyle, senderInfoStyle, DangerButton, OutlineButton
+    MessageRow,
+    messageTextStyle,
+    profileImageStyle,
+    senderInfoStyle,
+    DangerButton,
+    OutlineButton,
+    ChatRoomTitleText,
+    ChatRoomDescription, CreatorBadge
 } from '../../style/community/chat/StyleChatRoom'
 import FormatDate from '../../utils/FormatDate';
 import {useEffect, useRef, useState} from "react";
@@ -65,8 +72,7 @@ function Modal({ isOpen, onClose,  showId,  profileImageUrl}) {
 
 
 
-function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, roomUid, onDeleteChatRoom, onHandleLeaveChatRoom,
-                        currentParticipants}) {
+function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, setNewMessage, roomUid, onDeleteChatRoom, onHandleLeaveChatRoom, roomDetails}) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSender, setSelectedSender] = useState({});
@@ -100,8 +106,14 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
                 </ConnectionStatus>
                 )
             </h2>
+            <ChatRoomTitleText>{roomDetails?.chatRoomTitle}</ChatRoomTitleText >
+            <ChatRoomDescription >{roomDetails?.chatRoomDescription}</ChatRoomDescription >
             <p>사용자: {username}</p>
-            {/*<p>현재 참여 인원 : {currentParticipants}</p>*/}
+            {roomDetails && roomDetails.currentUserCreator && (
+                <p style={{ color: 'green', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
+                    <span role="img" aria-label="crown">👑</span> 당신은 이 채팅방의 방장입니다. <span role="img" aria-label="crown">👑</span>
+                </p>
+            )}
             {/* 삭제는 DangerButton 사용 */}
             <DangerButton onClick={() => onDeleteChatRoom(roomUid)}>
                 채팅방 삭제
@@ -128,6 +140,12 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
                                     <span style={senderInfoStyle}
                                           onClick={() => handleSenderClick(msg.sender, msg.profileImageUrl)}
                                     >
+                                          {/* 방장 비교 전 로그 추가 */}
+                                        {/*console.log(`비교: msg.memberCode (${msg.memberCode}, type:${typeof msg.memberCode}) vs roomDetails.memberCode (${roomDetails?.memberCode}, type:${typeof roomDetails?.memberCode})`)*/}
+                                        {/* 메시지 발신자 닉네임 옆에 방장 표시 */}
+                                        {/*{roomDetails && roomDetails.memberCode === Number(msg.memberCode) && (
+                                            <CreatorBadge>방장</CreatorBadge>
+                                        )}*/}
                                             <strong>{msg.sender}</strong>
                                             <small> ({FormatDate(msg.sentAt || Date.now())})</small>
                                     </span>

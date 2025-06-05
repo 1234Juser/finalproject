@@ -15,6 +15,24 @@ export const ConnectionStatus = styled.span`
     font-weight: 600;
 `;
 
+export const ChatRoomTitleText = styled.p`
+    font-size: 1.5em; /* h2보다 약간 작게 */
+    color: #444;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    word-break: break-word;
+`;
+
+export const ChatRoomDescription = styled.p`
+    font-size: 1em; /* 기본 폰트 크기 */
+    margin-top: 10px; /* 제목과의 간격 */
+    margin-bottom: 25px; /* 메시지 목록과의 간격 */
+    padding: 10px 20px;
+    text-align: center;
+    word-break: break-word; /* 긴 설명도 줄 바꿈 */
+`;
+
 export const ChatBox = styled.div`
     border: 1.5px solid #d1d5db;
     height: 320px;
@@ -33,6 +51,19 @@ export const ChatBox = styled.div`
         background-color: #cbd5e1;
         border-radius: 4px;
     }
+`;
+
+export const CreatorBadge = styled.span`
+    display: inline-block;
+    background-color: #ffd700; /* 황금색 */
+    color: #333;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 5px;
+    vertical-align: middle;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 `;
 
 export const MessageRow = styled.div`
