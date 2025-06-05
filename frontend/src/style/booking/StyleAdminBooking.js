@@ -143,6 +143,36 @@ export const StyleDiv = styled.div`
     margin : auto;
     width : 90%;
 `;
+export const DateFilterWrap = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: #f5f8ff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+`;
+export const DateLabel = styled.label`
+    font-weight: 600;
+    margin-right: 0.5rem;
+    color: #333;
+`;
+export const DateInput = styled.input`
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    background-color: #fff;
+
+    &:focus {
+        outline: none;
+        border-color: #4d90fe;
+        box-shadow: 0 0 0 2px rgba(77, 144, 254, 0.2);
+    }
+`;
 export const GraphDiv = styled.div`
     margin: 2rem auto;
     padding: 2rem;

@@ -1,7 +1,7 @@
 import {containerStyle, mainStyle, sidebarStyle} from "../../style/member/MyPageStyle";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {
-    DivWrap, GraphDiv, ListTitle,
+    DateFilterWrap, DateInput, DateLabel, GraphDiv, ListTitle,
     StyleBookingBlock, StyleContentWrap, StyleDiv, TitleWrapper
 } from "../../style/booking/StyleAdminBooking";
 import {useMemo} from "react";
@@ -65,21 +65,25 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                 <ListTitle>상품별 매출 통계</ListTitle>
                             </TitleWrapper>
                             <StyleDiv>
-                                <div>
-                                    <label htmlFor="startDate">시작일:</label><input
+                                <DateFilterWrap>
+                                    <DateLabel htmlFor="startDate">시작일:</DateLabel>
+                                    <DateInput
                                         type="date"
                                         id="startDate"
                                         value={startDate}
                                         max={endDate}
                                         onChange={(e) => onDateChange("startDate", e.target.value)}
-                                    /> ~ <label htmlFor="endDate">종료일:</label><input
+                                    />
+                                    <span>~</span>
+                                    <DateLabel htmlFor="endDate">종료일:</DateLabel>
+                                    <DateInput
                                         type="date"
                                         id="endDate"
                                         value={endDate}
                                         min={startDate}
                                         onChange={(e) => onDateChange("endDate", e.target.value)}
                                     />
-                                </div>
+                                </DateFilterWrap>
                             </StyleDiv>
                             {loading && <p>로딩 중...</p>}
                             {error && <p style={{ color: "red" }}>{error}</p>}
