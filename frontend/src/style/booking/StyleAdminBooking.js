@@ -18,8 +18,9 @@ export const StyleBookingBlock = styled.div`
 `;
 export const StyleContentWrap = styled.div`
     width: 90%;
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: 2000px;
+    //max-width: 1400px;
+    //margin: 0 auto;
 `;
 export const TitleWrapper = styled.div`
     height: 100px;               // 원하는 높이
@@ -145,7 +146,10 @@ export const SpanPage = styled.span`
 // 통계페이지용
 export const StyleDiv = styled.div`
     margin : auto;
+    //width : 100%;
     width : 90%;
+    padding-bottom : 8rem;
+    min-height : 80vh;
 `;
 export const DateFilterWrap = styled.div`
     max-width: 1050px;

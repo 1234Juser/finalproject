@@ -110,10 +110,10 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                         onChange={(e) => onDateChange("endDate", e.target.value)}
                                     />
                                 </DateFilterWrap>
-                            </StyleDiv>
+                            {/*</StyleDiv>*/}
                             {loading && <p>로딩 중...</p>}
                             {error && <p style={{ color: "red" }}>{error}</p>}
-                            <GraphDiv>
+                            {/*<GraphDiv>*/}
                                 {chartData.length === 0 ? (
                                     <p>데이터가 없습니다.</p>
                                 ) : (
@@ -146,7 +146,8 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                         </div>
                                     </>
                                 )}
-                            </GraphDiv>
+                            {/*</GraphDiv>*/}
+                            </StyleDiv>
                         </StyleContentWrap>
                     </StyleBookingBlock>
                 </main>
