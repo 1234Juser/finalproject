@@ -18,6 +18,7 @@ function AdminBookingChartCon({accessToken}) {
     const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
 
     const chartRef = useRef(null);
+    const chartWrapperRef = useRef(null);
 
     useEffect(() => {
         const loadChartData = async (start, end) => {
@@ -82,6 +83,7 @@ function AdminBookingChartCon({accessToken}) {
                 endDate={endDate}
                 onDateChange={handleDateChange}
                 chartRef={chartRef}
+                chartWrapperRef={chartWrapperRef}
                 onBarFocus={handleHighLightBar}
             />
         </>)

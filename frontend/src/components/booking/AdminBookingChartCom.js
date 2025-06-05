@@ -10,14 +10,12 @@ import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Toolti
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, onDateChange, chartRef, onBarFocus }) {
+function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, onDateChange, chartRef, chartWrapperRef, onBarFocus }) {
     // if (loading) return <div>로딩 중...</div>;
     // if (error) return <div>{error}</div>;
     // if (!chartData || chartData.length === 0) {
     //     return <p>데이터가 없습니다.</p>;
     // }
-
-    const chartRef = useRef(null);
 
     const barData = useMemo(() => {
         if (!chartData || chartData.length === 0) return null;
@@ -42,7 +40,8 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
 
     const barOptions = {
         responsive: true,
-        maintainAspectRatio: false, // 높이와 관련된 오류 예방
+        // maintainAspectRatio: false, // 높이와 관련된 오류 예방
+        maintainAspectRatio: true,
         layout: {
             padding: {
                 left: 20,
@@ -119,7 +118,7 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                             ))}
                                         </RevenueList>
                                         <div ref={chartWrapperRef} style={{ width: `${chartData.length * 100}px`, overflowX: "auto" }}>
-                                            {barData && <Bar data={barData} options={barOptions} ref={chartRef} height={400} />}
+                                            {barData && <Bar data={barData} options={barOptions} ref={chartRef} />}
                                         </div>
                                     </>
                                 )}
