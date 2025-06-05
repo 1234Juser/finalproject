@@ -1,14 +1,14 @@
 import {containerStyle, mainStyle, sidebarStyle} from "../../style/member/MyPageStyle";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {
-    DivWrap, ListTitle,
-    StyleBookingBlock, StyleContentWrap, TitleWrapper
+    DivWrap, GraphDiv, ListTitle,
+    StyleBookingBlock, StyleContentWrap, StyleDiv, TitleWrapper
 } from "../../style/booking/StyleAdminBooking";
 import {useMemo} from "react";
-import {Pie} from "react-chartjs-2";
-import {ArcElement, Chart as ChartJS, Legend, Tooltip} from "chart.js";
+import {Bar} from "react-chartjs-2";
+import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip} from "chart.js";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, onDateChange }) {
     // if (loading) return <div>로딩 중...</div>;
@@ -17,7 +17,7 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
     //     return <p>데이터가 없습니다.</p>;
     // }
 
-    const pieData = useMemo(() => {
+    const barData = useMemo(() => {
         if (!chartData || chartData.length === 0) return null;
 
         const labels = chartData.map(item => item.productTitle);
@@ -38,11 +38,16 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
         };
     }, [chartData]);
 
-    const pieOptions = {
+    const barOptions = {
         responsive: true,
         plugins: {
             legend: {
-                position: "bottom",
+                position: "top",
+            },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
             },
         },
     };
@@ -59,20 +64,15 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                             <TitleWrapper>
                                 <ListTitle>상품별 매출 통계</ListTitle>
                             </TitleWrapper>
-                            <DivWrap>
+                            <StyleDiv>
                                 <div>
-                                    <label htmlFor="startDate">시작일:</label><br />
-                                    <input
+                                    <label htmlFor="startDate">시작일:</label><input
                                         type="date"
                                         id="startDate"
                                         value={startDate}
                                         max={endDate}
                                         onChange={(e) => onDateChange("startDate", e.target.value)}
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="endDate">종료일:</label><br />
-                                    <input
+                                    /> ~ <label htmlFor="endDate">종료일:</label><input
                                         type="date"
                                         id="endDate"
                                         value={endDate}
@@ -80,10 +80,10 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                         onChange={(e) => onDateChange("endDate", e.target.value)}
                                     />
                                 </div>
-                            </DivWrap>
+                            </StyleDiv>
                             {loading && <p>로딩 중...</p>}
                             {error && <p style={{ color: "red" }}>{error}</p>}
-                            <DivWrap>
+                            <GraphDiv>
                                 {chartData.length === 0 ? (
                                     <p>데이터가 없습니다.</p>
                                 ) : (
@@ -95,10 +95,10 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                                 </li>
                                             ))}
                                         </ul>
-                                        {pieData && <Pie data={pieData} options={pieOptions} />}
+                                        {barData && <Bar data={barData} options={barOptions} />}
                                     </>
                                 )}
-                            </DivWrap>
+                            </GraphDiv>
                         </StyleContentWrap>
                     </StyleBookingBlock>
                 </main>

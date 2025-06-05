@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const FilterWrap = styled.div`
-  text-align: right;
-  margin-bottom: 1rem;
+    text-align: right;
+    margin-bottom: 1rem;
 `;
 
 export const DivWrap = styled.div`
@@ -32,25 +32,25 @@ export const ListTitle = styled.h2`
 `;
 
 export const SelectBox = styled.select`
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 `;
 
 export const FilterAndActionWrap = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 `;
 
 export const LeftBox = styled.div`
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 `;
 
 export const RightBox = styled.div`
-  text-align: right;
+    text-align: right;
 `;
 
 export const StyledForm = styled.form`
@@ -98,33 +98,33 @@ export const StyledTable = styled.table`
     }
 `;
 export const StyledActionButton = styled.button`
-  background-color: #fbeff1;
-  color: #333;
-  padding: 8px 14px;
-  border: 1px solid #f8dbe1;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+    background-color: #fbeff1;
+    color: #333;
+    padding: 8px 14px;
+    border: 1px solid #f8dbe1;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-  &:hover {
-    background-color: #f8dbe1;
-  }
+    &:hover {
+        background-color: #f8dbe1;
+    }
 `;
 export const StyledStatusBadge = styled.span`
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: ${({ status }) =>
-    status === "SCHEDULED" ? "#00796b" :
-        status === "COMPLETED" ? "#2e7d32" :
-            status === "CANCELED" ? "#c62828" : "#555"};
-  background-color: ${({ status }) =>
-    status === "SCHEDULED" ? "#e0f2f1" :
-        status === "COMPLETED" ? "#e8f5e9" :
-            status === "CANCELED" ? "#ffebee" : "#eee"};
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: ${({ status }) =>
+        status === "SCHEDULED" ? "#00796b" :
+            status === "COMPLETED" ? "#2e7d32" :
+                status === "CANCELED" ? "#c62828" : "#555"};
+    background-color: ${({ status }) =>
+        status === "SCHEDULED" ? "#e0f2f1" :
+            status === "COMPLETED" ? "#e8f5e9" :
+                status === "CANCELED" ? "#ffebee" : "#eee"};
 `;
 // 페이지 버튼들이 모인 구역
 export const DivPage = styled.div`
@@ -136,4 +136,39 @@ export const SpanPage = styled.span`
     width : 30px;
     display : inline-block;
     cursor : pointer;
+`;
+
+// 통계페이지용
+export const StyleDiv = styled.div`
+    margin : auto;
+    width : 90%;
+`;
+export const GraphDiv = styled.div`
+    margin: 2rem auto;
+    padding: 2rem;
+    width: 100%;
+    max-width: 1000px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+
+    ul {
+        list-style: none;
+        padding: 0;
+        width: 100%;
+    }
+
+    li {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    canvas {
+        max-width: 100%;
+    }
 `;
