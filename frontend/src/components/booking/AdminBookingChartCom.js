@@ -4,7 +4,7 @@ import {
     DateFilterWrap, DateInput, DateLabel, GraphDiv, ListTitle, RevenueItem, RevenueList,
     StyleBookingBlock, StyleContentWrap, StyleDiv, TitleWrapper
 } from "../../style/booking/StyleAdminBooking";
-import {useMemo} from "react";
+import {useMemo, useRef} from "react";
 import {Bar} from "react-chartjs-2";
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip} from "chart.js";
 
@@ -16,6 +16,8 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
     // if (!chartData || chartData.length === 0) {
     //     return <p>데이터가 없습니다.</p>;
     // }
+
+    const chartRef = useRef(null);
 
     const barData = useMemo(() => {
         if (!chartData || chartData.length === 0) return null;
