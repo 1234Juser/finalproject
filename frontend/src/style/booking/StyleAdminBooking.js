@@ -242,3 +242,11 @@ export const RevenueItem = styled.li`
         color: #666;
     }
 `;
+export const ColorDot = styled.span`
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-color: ${({ color }) => color || "#ccc"};
+`;

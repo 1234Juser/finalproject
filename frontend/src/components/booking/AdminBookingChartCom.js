@@ -1,10 +1,11 @@
 import {containerStyle, mainStyle, sidebarStyle} from "../../style/member/MyPageStyle";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {
+    ColorDot,
     DateFilterWrap, DateInput, DateLabel, GraphDiv, ListTitle, RevenueItem, RevenueList,
     StyleBookingBlock, StyleContentWrap, StyleDiv, TitleWrapper
 } from "../../style/booking/StyleAdminBooking";
-import {useMemo, useRef} from "react";
+import {useMemo} from "react";
 import {Bar} from "react-chartjs-2";
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip} from "chart.js";
 
@@ -30,7 +31,10 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                     label: "상품별 총 매출 (원)",
                     data: dataValues,
                     backgroundColor: [
-                        "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#FFCD56"
+                        "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF",
+                        "#FF9F40", "#FFCD56", "#8E44AD", "#2ECC71", "#E67E22",
+                        "#1ABC9C", "#3498DB", "#9B59B6", "#E74C3C", "#F39C12",
+                        "#7F8C8D", "#2C3E50", "#27AE60", "#D35400", "#BDC3C7"
                     ],
                     borderWidth: 1,
                 },
@@ -58,9 +62,13 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
         scales: {
             x: {
                 ticks: {
+                    display: false, // 그래프 아래에 productTitle라벨 숨기기
                     autoSkip: false,
                     maxRotation: 45,
                     minRotation: 45,
+                },
+                grid: {
+                    drawTicks: false,
                 },
             },
             y: {
@@ -89,7 +97,8 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                         id="startDate"
                                         value={startDate}
                                         max={endDate}
-                                        onChange={(e) => onDateChange("startDate", e.target.value)}
+                                        onChange={(e) =>
+                                            onDateChange("startDate", e.target.value)}
                                     />
                                     <span>~</span>
                                     <DateLabel htmlFor="endDate">종료일:</DateLabel>
@@ -111,13 +120,14 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                     <>
                                         <RevenueList>
                                             {chartData.map((item) => (
-                                                <RevenueItem key={item.productCode} onClick={() => onBarFocus(item.productTitle)}>
+                                                <RevenueItem key={item.productCode} style={{ display: "flex", alignItems: "center" }} onClick={() => onBarFocus(item.productTitle)}>
+                                                    <ColorDot color={barData.datasets[0].backgroundColor[index % barData.datasets[0].backgroundColor.length]} />
                                                     <strong>{item.productTitle}</strong>
                                                     <span>총 매출: {item.totalRevenue.toLocaleString()}원</span>
                                                 </RevenueItem>
                                             ))}
                                         </RevenueList>
-                                        <div ref={chartWrapperRef} style={{ width: `${chartData.length * 100}px`, overflowX: "auto" }}>
+                                        <div ref={chartWrapperRef} style={{ overflowX: "auto" }}>
                                             {barData && <Bar data={barData} options={barOptions} ref={chartRef} />}
                                         </div>
                                     </>
