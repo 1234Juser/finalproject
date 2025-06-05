@@ -100,10 +100,10 @@ function AdminBookingByProductCon({accessToken}) {
             if (invalidOrders.length > 0) {
                 invalidOrders.forEach(res => {
                     if (res.orderStatus === "CANCELED") {
-                        alert(`예약 번호 ${res.orderCode}는 이미 취소된 여행입니다.`);
+                        alert(`해당 예약은 이미 취소된 여행입니다.`);
                     }
                     if (res.orderStatus === "COMPLETED") {
-                        alert(`예약 번호 ${res.orderCode}는 종료된 여행이므로 취소할 수 없습니다.`);
+                        alert(`해당 예약은 종료된 여행이므로 취소할 수 없습니다.`);
                     }
                 });
                 return;

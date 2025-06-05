@@ -29,7 +29,6 @@ function AdminBookingChartCon({accessToken}) {
                 const data = await fetchProductRevenueStats(start, end, accessToken);
                 setChartData(data);
             } catch (err) {
-                console.error("API 호출 중 에러:", err);
                 setError("데이터를 불러오는데 실패했습니다.");
             } finally {
                 setLoading(false);
