@@ -152,7 +152,6 @@ export const StyleDiv = styled.div`
     min-height : 80vh;
 `;
 export const DateFilterWrap = styled.div`
-    max-width: 1050px;
     display: flex;
     justify-content: center;
     align-items: center;
