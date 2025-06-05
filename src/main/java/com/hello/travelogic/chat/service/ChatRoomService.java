@@ -53,7 +53,7 @@ public class ChatRoomService {
 
     // 채팅방 상세 조회
     @Transactional(readOnly = true)
-    public ChatRoomCreateResponse getChatRoomDetails(String roomUid) {
+    public ChatRoomCreateResponse getChatRoomDetails(String roomUid, String token) {
 
         ChatRoomEntity chatRoom = chatRoomRepo.findByChatRoomUid(roomUid)
                 .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
@@ -61,8 +61,33 @@ public class ChatRoomService {
         // 현재 참여자 수
         int currentParticipants = chatRoomMemberRepo.countByChatRoomIdAndCrmIsExited(chatRoom, false);
 
+        // 현재 로그인한 사용자가 방장인지 확인
+        boolean isCurrentUserCreator = false;
+        if (token != null && !token.isEmpty()) {
+            // "Bearer " 접두사를 제거하고 양쪽 공백을 다시 한번 제거하는 것을 추가합니다.
+            String cleanToken = token.startsWith("Bearer ") ? token.substring(7).trim() : token.trim(); // <--- 이 부분 수정
+            log.debug("JWT 토큰에서 Bearer 제거 및 trim 후: '{}'", cleanToken); // <--- 이 로그 추가
+
+
+
+            try {
+                Long memberCode = jwtUtil.getMemberCodeFromToken(cleanToken); // 클린한 토큰 전달
+                log.debug("JWT 토큰에서 추출된 memberCode: {}", memberCode); // 이 로그 추가
+
+                if (memberCode != null) {
+                    isCurrentUserCreator = chatRoom.getMemberCode().getMemberCode().equals(memberCode);
+                }
+            } catch (Exception e) {
+                log.warn("토큰에서 사용자 정보 추출 실패: {}", e.getMessage());
+                // 토큰이 유효하지 않거나 만료되었을 경우 isCurrentUserCreator는 false로 유지
+            }
+        }
+
+
         // ChatRoomCreateResponse로 변환하여 반환
-        return new ChatRoomCreateResponse(chatRoom, currentParticipants);
+        ChatRoomCreateResponse response = new ChatRoomCreateResponse(chatRoom, currentParticipants);
+        response.setCurrentUserCreator(isCurrentUserCreator); // 새로 추가한 필드 설정
+        return response;
     }
 
 

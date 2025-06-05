@@ -29,7 +29,7 @@ function ChatRoomCon({roomUid}) {
 
         if (token && loggedInMemberCode) {
             return {
-                token,
+                token : token.trim(),
                 username: loggedInUsername,
                 memberCode : loggedInMemberCode 
             };
@@ -49,6 +49,26 @@ function ChatRoomCon({roomUid}) {
             if (authInfo.token && authInfo.username && authInfo.memberCode) {
                 dispatch({type: 'SET_USERNAME', payload: authInfo.username});
                 dispatch({type: 'SET_MEMBER_CODE', payload: authInfo.memberCode});
+
+                // --- 여기서 getChatRoomDetail 함수 호출 ---
+                const fetchRoomDetails = async () => {
+                    try {
+                        const details = await getChatRoomDetail(roomUid, authInfo.token);
+                        if (details) {
+                            dispatch({type: 'SET_ROOM_DETAILS', payload: details});
+                        }
+
+                    } catch (error) {
+                        console.error("채팅방 상세 정보 로드 실패:", error);
+                        // 오류 발생 시 사용자에게 알리거나, 채팅방 목록으로 리다이렉트 등을 고려할 수 있습니다.
+                    }
+                };
+                fetchRoomDetails();
+                // ------------------------------------------
+
+
+
+
             } else {
                 dispatch({type: 'SET_AUTH_ERROR', payload: "본 서비스는 로그인이 필요합니다."});
             }
@@ -202,6 +222,7 @@ function ChatRoomCon({roomUid}) {
                 sender: username,      // ★ sender로 username (memberName) 사용 ★
                 message: newMessage,
                 sentAt : new Date().toISOString(),
+                memberCode : memberCode,
             };
             // console.log(`----------Sending CHAT message to /app/chat.send/${roomUid}:`, chatMessage);
             
@@ -319,7 +340,8 @@ function ChatRoomCon({roomUid}) {
                              roomUid={roomUid}
                              onDeleteChatRoom={onDeleteChatRoom}
                              onHandleLeaveChatRoom={onHandleLeaveChatRoom}
-                             currentParticipants={roomDetails?.currentParticipants || 0}
+                             // currentParticipants={roomDetails?.currentParticipants || 0}
+                             roomDetails={roomDetails}
                 />
             </div>
         </>

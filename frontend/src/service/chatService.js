@@ -1,4 +1,5 @@
 const path = "https://api.hellotravelogic.link";
+// const path = "http://localhost:8080";
 
 // 채팅방 전체 조회
 export const getAllChatRooms = async () => {
@@ -126,6 +127,10 @@ export const getChatRoomDetail = async (chatRoomUid, token) => {
             }
         });
 
+        // const data = await response.json();
+        // console.log("채팅방 상세 정보 확인", data);
+        //
+        // return data;
         return response.json();
 
     } catch(error) {

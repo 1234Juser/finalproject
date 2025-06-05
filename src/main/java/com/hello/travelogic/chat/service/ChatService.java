@@ -34,6 +34,11 @@ public class ChatService {
     // ★★ 클라이언트에서 join/chat 메시지 보낼 때 sender 필드에 'username'으로 담아서 보내는 중임 ★★
     public ChatMessageDTO sendMessage(String roomId, ChatMessageDTO message) {
 
+        log.debug("sendMessage 호출됨. RoomId: {}, Message Type: {}", roomId, message.getType());
+        generalLogger.debug("수신된 메시지 원본 - sender: {}, memberCode: {}", message.getSender(), message.getMemberCode()); // <--- 이 로그 추가
+
+
+
         // 서버 시간
         message.setSentAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 

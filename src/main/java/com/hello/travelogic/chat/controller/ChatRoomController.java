@@ -46,9 +46,10 @@ public class ChatRoomController {
 
     // 특정 채팅방 세부 정보 조회
     @GetMapping("/detail/{chatRoomUid}")
-    public ResponseEntity<ChatRoomCreateResponse> getChatRoomDetails(@PathVariable String chatRoomUid) {
+    public ResponseEntity<ChatRoomCreateResponse> getChatRoomDetails(@PathVariable String chatRoomUid,
+                                                                     @RequestHeader(value = "Authorization", required = false) String token) {
         try {
-            ChatRoomCreateResponse response = chatRoomService.getChatRoomDetails(chatRoomUid);
+            ChatRoomCreateResponse response = chatRoomService.getChatRoomDetails(chatRoomUid, token);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (RuntimeException e) {
             log.warn("채팅방 세부 정보 조회 실패: {}", e.getMessage());
