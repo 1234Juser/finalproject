@@ -1,5 +1,5 @@
 import AdminBookingChartCom from "../../components/booking/AdminBookingChartCom";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {fetchProductRevenueStats} from "../../service/bookingChartService";
 
 function AdminBookingChartCon({accessToken}) {
@@ -16,6 +16,8 @@ function AdminBookingChartCon({accessToken}) {
     // 기간 유동
     const [startDate, setStartDate] = useState(startOfYear.toISOString().split("T")[0]);
     const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
+
+    const chartRef = useRef(null);
 
     useEffect(() => {
         const loadChartData = async (start, end) => {
@@ -42,6 +44,34 @@ function AdminBookingChartCon({accessToken}) {
         if (field === "startDate" && value > endDate) return alert("시작일은 종료일보다 앞서야 합니다.");
     };
 
+    const handleHighLightBar = (productTitle) => {
+        const chart = chartRef.current;
+        if (!chartRef.current) return;
+
+        const chartInstance = chart.chartInstance || chart; // 일부 버전 호환
+
+        const datasetIndex = 0;
+        const index = chartData.findIndex(item => item.productTitle === productTitle);
+
+        if (index === -1) return;
+
+        // bar 강조 효과: activeElements 설정 후 update
+        chartInstance.setActiveElements([
+            { datasetIndex, index }
+        ]);
+        chartInstance.update();
+
+        const wrapper = chartWrapperRef.current;
+        if (wrapper && chartInstance.scales.x) {
+            const xScale = chartInstance.scales.x;
+            const bar = xScale.getPixelForValue(index); // 막대의 x 위치
+            wrapper.scrollTo({
+                left: bar - 100, // 약간 왼쪽 여유 주기
+                behavior: "smooth",
+            });
+        }
+    };
+
     return(
         <>
             <AdminBookingChartCom
@@ -51,6 +81,8 @@ function AdminBookingChartCon({accessToken}) {
                 startDate={startDate}
                 endDate={endDate}
                 onDateChange={handleDateChange}
+                chartRef={chartRef}
+                onBarFocus={handleHighLightBar}
             />
         </>)
 }

@@ -10,7 +10,7 @@ import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Toolti
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, onDateChange }) {
+function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, onDateChange, chartRef, onBarFocus }) {
     // if (loading) return <div>로딩 중...</div>;
     // if (error) return <div>{error}</div>;
     // if (!chartData || chartData.length === 0) {
@@ -68,24 +68,6 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
         },
     };
 
-    const highlightBar = (productTitle) => {
-        if (!chartRef.current) return;
-
-        const chart = chartRef.current;
-        const chartInstance = chart.chartInstance || chart; // 일부 버전 호환
-
-        const datasetIndex = 0;
-        const index = chartData.findIndex(item => item.productTitle === productTitle);
-
-        if (index === -1) return;
-
-        // bar 강조 효과: activeElements 설정 후 update
-        chartInstance.setActiveElements([
-            { datasetIndex, index }
-        ]);
-        chartInstance.update();
-    };
-
     return(
         <>
             <div style={containerStyle}>
@@ -128,14 +110,14 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                     <>
                                         <RevenueList>
                                             {chartData.map((item) => (
-                                                <RevenueItem key={item.productCode} onClick={() => highlightBar(item.productTitle)}>
+                                                <RevenueItem key={item.productCode} onClick={() => onBarFocus(item.productTitle)}>
                                                     <strong>{item.productTitle}</strong>
                                                     <span>총 매출: {item.totalRevenue.toLocaleString()}원</span>
                                                 </RevenueItem>
                                             ))}
                                         </RevenueList>
-                                        <div style={{ width: `${chartData.length * 100}px` }}>
-                                            {barData && <Bar data={barData} options={barOptions} ref={chartRef} />}
+                                        <div ref={chartWrapperRef} style={{ width: `${chartData.length * 100}px`, overflowX: "auto" }}>
+                                            {barData && <Bar data={barData} options={barOptions} ref={chartRef} height={400} />}
                                         </div>
                                     </>
                                 )}
