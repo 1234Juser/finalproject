@@ -18,7 +18,7 @@ public class BookingChartService {
     private final OrderRepo orderRepo;
 
     public List<ProductOrderStatDTO> getProductRevenueStats(LocalDateTime startDate, LocalDateTime endDate) {
-        List<OrderStatus> targetStatuses = List.of(OrderStatus.SCHEDULED, OrderStatus.CANCELED);
+        List<OrderStatus> targetStatuses = List.of(OrderStatus.SCHEDULED, OrderStatus.COMPLETED);
         return orderRepo.findTotalRevenueByProductAndPeriod(startDate, endDate, targetStatuses);
     }
 }
