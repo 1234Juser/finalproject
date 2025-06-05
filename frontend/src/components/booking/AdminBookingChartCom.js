@@ -119,7 +119,7 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                 ) : (
                                     <>
                                         <RevenueList>
-                                            {chartData.map((item) => (
+                                            {chartData.map((item, index) => (
                                                 <RevenueItem key={item.productCode} style={{ display: "flex", alignItems: "center" }} onClick={() => onBarFocus(item.productTitle)}>
                                                     <ColorDot color={barData.datasets[0].backgroundColor[index % barData.datasets[0].backgroundColor.length]} />
                                                     <strong>{item.productTitle}</strong>
