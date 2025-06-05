@@ -120,14 +120,28 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                     <>
                                         <RevenueList>
                                             {chartData.map((item, index) => (
-                                                <RevenueItem key={item.productCode} style={{ display: "flex", alignItems: "center" }} onClick={() => onBarFocus(item.productTitle)}>
-                                                    <ColorDot color={barData.datasets[0].backgroundColor[index % barData.datasets[0].backgroundColor.length]} />
-                                                    <strong>{item.productTitle}</strong>
-                                                    <span>총 매출: {item.totalRevenue.toLocaleString()}원</span>
+                                                <RevenueItem key={item.productCode}
+                                                            // style={{ display: "flex", alignItems: "center" }}
+                                                            onClick={() => onBarFocus(item.productTitle)}>
+                                                    <div className="left">
+                                                        <ColorDot color={barData.datasets[0].backgroundColor[index % barData.datasets[0].backgroundColor.length]} />
+                                                        <strong>{item.productTitle}</strong>
+                                                    </div>
+                                                    <div className="right">
+                                                        총 매출: {item.totalRevenue.toLocaleString()}원
+                                                    </div>
                                                 </RevenueItem>
                                             ))}
                                         </RevenueList>
-                                        <div ref={chartWrapperRef} style={{ overflowX: "auto" }}>
+                                        <div ref={chartWrapperRef}
+                                            style={{
+                                                minWidth: "100%",
+                                                overflowX: "auto",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                            }}
+                                            // style={{ overflowX: "auto" }}
+                                        >
                                             {barData && <Bar data={barData} options={barOptions} ref={chartRef} />}
                                         </div>
                                     </>

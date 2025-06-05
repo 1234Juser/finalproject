@@ -233,6 +233,17 @@ export const RevenueItem = styled.li`
         transition: background-color 0.2s ease-in-out;
     }
 
+    .left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .right {
+        text-align: right;
+        color: #666;
+    }
+    
     strong {
         font-weight: 600;
         color: #2b3e5c;
