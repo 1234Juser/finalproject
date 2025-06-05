@@ -40,16 +40,50 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
 
     const barOptions = {
         responsive: true,
+        maintainAspectRatio: false, // 높이와 관련된 오류 예방
+        layout: {
+            padding: {
+                left: 20,
+                right: 30, // 오른쪽 잘림 방지
+                top: 20,
+                bottom: 20,
+            },
+        },
         plugins: {
             legend: {
                 position: "top",
             },
         },
         scales: {
+            x: {
+                ticks: {
+                    autoSkip: false,
+                    maxRotation: 45,
+                    minRotation: 45,
+                },
+            },
             y: {
                 beginAtZero: true,
             },
         },
+    };
+
+    const highlightBar = (productTitle) => {
+        if (!chartRef.current) return;
+
+        const chart = chartRef.current;
+        const chartInstance = chart.chartInstance || chart; // 일부 버전 호환
+
+        const datasetIndex = 0;
+        const index = chartData.findIndex(item => item.productTitle === productTitle);
+
+        if (index === -1) return;
+
+        // bar 강조 효과: activeElements 설정 후 update
+        chartInstance.setActiveElements([
+            { datasetIndex, index }
+        ]);
+        chartInstance.update();
     };
 
     return(
@@ -94,13 +128,15 @@ function AdminBookingChartCom({ chartData, loading, error, startDate, endDate, o
                                     <>
                                         <RevenueList>
                                             {chartData.map((item) => (
-                                                <RevenueItem key={item.productCode}>
+                                                <RevenueItem key={item.productCode} onClick={() => highlightBar(item.productTitle)}>
                                                     <strong>{item.productTitle}</strong>
                                                     <span>총 매출: {item.totalRevenue.toLocaleString()}원</span>
                                                 </RevenueItem>
                                             ))}
                                         </RevenueList>
-                                        {barData && <Bar data={barData} options={barOptions} />}
+                                        <div style={{ width: `${chartData.length * 100}px` }}>
+                                            {barData && <Bar data={barData} options={barOptions} ref={chartRef} />}
+                                        </div>
                                     </>
                                 )}
                             </GraphDiv>

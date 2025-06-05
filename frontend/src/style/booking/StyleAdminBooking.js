@@ -175,6 +175,8 @@ export const DateInput = styled.input`
     }
 `;
 export const GraphDiv = styled.div`
+    overflow-x: auto;
+    overflow-y: hidden;
     margin: 2rem auto;
     padding: 2rem;
     width: 100%;
