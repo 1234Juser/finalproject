@@ -104,7 +104,7 @@ public class ChatRoomService {
             chatRoomE.setChatRoomTitle(request.getChatRoomTitle());
             chatRoomE.setChatRoomDescription(request.getChatRoomDescription());
             chatRoomE.setChatRoomMaxParticipants(request.getChatRoomMaxParticipants());
-            chatRoomE.setChatRoomCreateAt(LocalDateTime.now());
+            chatRoomE.setChatRoomCreateAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
             chatRoomE.setMemberCode(member);    // 방 만든 사람
 
             chatRoomRepo.save(chatRoomE);
@@ -114,7 +114,7 @@ public class ChatRoomService {
             ChatRoomMemberEntity chatRoomMemberE = new ChatRoomMemberEntity();
             chatRoomMemberE.setChatRoomId(chatRoomE);   // chatRoomE는 이미 저장된 ChatRoomEntity 객체
             chatRoomMemberE.setMemberCode(member);
-            chatRoomMemberE.setCrmJoinedAt(LocalDateTime.now());
+            chatRoomMemberE.setCrmJoinedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
             chatRoomMemberE.setCrmIsExited(false);      // 퇴장 여부는 기본값으로 false 설정
             chatRoomMemberE.setCrmExitedAt(null);       // 참여 중이면 기본값으로 null 설정
             chatRoomMemberE.setMemberName(member.getMemberName());
