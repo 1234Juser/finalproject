@@ -203,3 +203,40 @@ export const GraphDiv = styled.div`
         max-width: 100%;
     }
 `;
+export const RevenueList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fafafa;
+`;
+export const RevenueItem = styled.li`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+    color: #333;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background-color: #f0f8ff;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    strong {
+        font-weight: 600;
+        color: #2b3e5c;
+    }
+
+    span {
+        color: #666;
+    }
+`;
