@@ -19,16 +19,20 @@ export const StyleBookingBlock = styled.div`
 export const StyleContentWrap = styled.div`
     width: 90%;
     max-width: 1400px;
+    margin: 0 auto;
 `;
 export const TitleWrapper = styled.div`
     height: 100px;               // 원하는 높이
     display: flex;
     justify-content: center;    // 가로 중앙
     align-items: center;        // 세로 중앙
+    width: 100%;
 `;
 export const ListTitle = styled.h2`
     font-size: 24px;
     margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
 `;
 
 export const SelectBox = styled.select`
@@ -177,7 +181,7 @@ export const DateInput = styled.input`
 export const GraphDiv = styled.div`
     overflow-x: auto;
     overflow-y: hidden;
-    margin: 2rem auto;
+    //margin: 2rem auto;
     padding: 2rem;
     width: 100%;
     max-width: 1000px;
@@ -186,7 +190,8 @@ export const GraphDiv = styled.div`
     //box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    //align-items: center;
+    justify-content: center;
+    align-items: center;
     gap: 1.5rem;
 
     ul {

@@ -30,7 +30,9 @@ const StyledButton = styled.button`
     }
 `;
 
-function MyScheduleCom({ reservations = [], onCancelReservation, onLoadOldReservations, showMoreSchedule, cityIdMap = {} }){
+function MyScheduleCom({ reservations = [],
+                        onCancelReservation, onLoadOldReservations, showMoreSchedule,
+                        cityIdMap = {} }){
     const scheduled = (reservations ?? []).filter(
         res => res.orderStatus === "SCHEDULED" || res.orderStatus === "WAITING_BANK_TRANSFER"
     );

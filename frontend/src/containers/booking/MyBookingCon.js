@@ -282,10 +282,11 @@ function MyBookingCon({accessToken}){
                 cityIdMap={cityIdMap}
             />
             {selectedOrderCode &&
-                <MyReviewModalCon orderCode={selectedOrderCode}
-                                  onClose={closeReviewModal}
-                                  onDeleteReview={handleDeleteReview}
-                                  accessToken={accessToken}
+                <MyReviewModalCon
+                    orderCode={selectedOrderCode}
+                    onClose={closeReviewModal}
+                    onDeleteReview={handleDeleteReview}
+                    accessToken={accessToken}
                 />}
         </>)
 }
