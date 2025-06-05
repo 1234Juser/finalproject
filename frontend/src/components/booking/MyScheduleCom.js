@@ -30,7 +30,7 @@ const StyledButton = styled.button`
     }
 `;
 
-function MyScheduleCom({ reservations = [], onCancelReservation, onLoadOldReservations, showMoreSchedule }){
+function MyScheduleCom({ reservations = [], onCancelReservation, onLoadOldReservations, showMoreSchedule, cityIdMap = {} }){
     const scheduled = (reservations ?? []).filter(
         res => res.orderStatus === "SCHEDULED" || res.orderStatus === "WAITING_BANK_TRANSFER"
     );
@@ -96,7 +96,9 @@ function MyScheduleCom({ reservations = [], onCancelReservation, onLoadOldReserv
                                             </RightBlock>
                                         </StyledInfo>
                                     <StyledButtonArea>
-                                        <StyledButton>문의하기</StyledButton>
+                                        <StyledButton onClick={() =>
+                                            navigate(`/products/city?city_id=${cityIdMap[res.productUid]}`)
+                                        }>이 도시의 다른 상품 보기</StyledButton>
                                         <StyledButton onClick={() => onClickReceipt(res.bookingUid)}>명세서 보기</StyledButton>
                                         <StyledButton onClick={(e) => {
                                             e.stopPropagation();

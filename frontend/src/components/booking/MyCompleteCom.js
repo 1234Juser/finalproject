@@ -28,7 +28,7 @@ const StyledButton = styled.button`
     }
 `;
 
-function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, showMoreComplete, openReviewModal }) {
+function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, showMoreComplete, openReviewModal, cityIdMap = {} }) {
     const completed = (reservations ?? []).filter(res => res.orderStatus === "COMPLETED");
     console.log("예약 상태들:", reservations.map(r => r.orderStatus));
     const navigate = useNavigate();
@@ -80,7 +80,9 @@ function MyCompleteCom({ reservations = [], onPageClick, onLoadOldReservations, 
                                     </RightBlock>
                                 </StyledInfo>
                                 <StyledButtonArea>
-                                    <StyledButton>문의하기</StyledButton>
+                                    <StyledButton onClick={() =>
+                                        navigate(`/products/city?city_id=${cityIdMap[res.productUid]}`)
+                                    }>이 도시의 다른 상품 보기</StyledButton>
                                     <StyledButton onClick={() => onClickReceipt(res.bookingUid)}>명세서 보기</StyledButton>
                                     {Boolean(res.reviewed) ? (
                                         <StyledButton onClick={() => openReviewModal(res.orderCode)}>리뷰보기</StyledButton>

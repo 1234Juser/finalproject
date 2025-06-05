@@ -11,7 +11,8 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                         onLoadOldReservationsForCancel,
                         showMoreSchedule, showMoreComplete, showMoreCancel,
                         openReviewModal,
-                        autoLoadingDone}){
+                        autoLoadingDone,
+                        cityIdMap={}}){
 
     const filtered = {
         0: reservations.filter(r =>
@@ -60,6 +61,7 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                                 onCancelReservation={onCancelReservation}
                                 onLoadOldReservations={onLoadOldReservationsForSchedule}
                                 showMoreSchedule={showMoreSchedule}
+                                cityIdMap={cityIdMap}
                             />
                         )}
                         {selectedTab === 1 && (
@@ -68,12 +70,14 @@ function MyBookingCom({selectedTab, onChangeTab, reservations = [],
                                 onLoadOldReservations={onLoadOldReservationsForComplete}
                                 showMoreComplete={showMoreComplete}
                                 openReviewModal={openReviewModal}
+                                cityIdMap={cityIdMap}
                             />
                         )}
                         {selectedTab === 2 &&
                             <MyCancelCom reservations={filtered[2]}
                                          onLoadOldReservations={onLoadOldReservationsForCancel}
                                          showMoreCancel={showMoreCancel}
+                                         cityIdMap={cityIdMap}
                             />}
                     </>
                 ) : (

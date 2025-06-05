@@ -30,7 +30,7 @@ const StyledButton = styled.button`
     }
 `;
 
-function MyCancelCom({ reservations = [], onLoadOldReservations, showMoreCancel }) {
+function MyCancelCom({ reservations = [], onLoadOldReservations, showMoreCancel, cityIdMap = {} }) {
     const canceled = (reservations ?? []).filter(res => res.orderStatus === "CANCELED");
     console.log("예약 상태들:", reservations.map(r => r.orderStatus));
     const navigate = useNavigate();
@@ -84,7 +84,9 @@ function MyCancelCom({ reservations = [], onLoadOldReservations, showMoreCancel 
                                     </RightBlock>
                                 </StyledInfo>
                                 <StyledButtonArea>
-                                    <StyledButton>문의하기</StyledButton>
+                                    <StyledButton onClick={() =>
+                                        navigate(`/products/city?city_id=${cityIdMap[res.productUid]}`)
+                                    }>이 도시의 다른 상품 보기</StyledButton>
                                     <StyledButton onClick={() => onClickReceipt(res.bookingUid)}>명세서 보기</StyledButton>
                                 </StyledButtonArea>
                             </Card>

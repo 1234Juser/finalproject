@@ -8,6 +8,7 @@ import {initialState, reservationReducer} from "../../modules/reservationModule"
 import {deleteMyReview} from "../../service/reviewService";
 import MyReviewModalCon from "../review/MyReviewModalCon";
 import dayjs from "dayjs";
+import {getProductDetail} from "../../service/ProductService";
 
 function MyBookingCon({accessToken}){
     const [selectedTab, setSelectedTab] = useState(0);
@@ -17,6 +18,7 @@ function MyBookingCon({accessToken}){
     const [showMoreCancel, setShowMoreCancel] = useState(true);
     const [selectedOrderCode, setSelectedOrderCode] = useState(null);
     const [autoLoadingDone, setAutoLoadingDone] = useState(false);
+    const [cityIdMap, setCityIdMap] = useState({}); // 해당 예약이 가지고 있는 상품이 가지고 있는 도시정보
 
     // 가장 오래된 예약찾기
     function getEarliestReservationDate(status) {
@@ -30,6 +32,26 @@ function MyBookingCon({accessToken}){
             current.isBefore(earliest) ? current : earliest
         );
     }
+
+    useEffect(() => {
+        const fetchCityIds = async () => {
+            const map = {};
+            const uniqueProductUids = [...new Set(state.reservations.map(r => r.productUid))];
+            for (const uid of uniqueProductUids) {
+                try {
+                    const product = await getProductDetail(uid, accessToken);
+                    map[uid] = product.city?.cityId || product.cityId; // product.city가 객체거나 숫자
+                } catch (e) {
+                    console.error("도시 정보 조회 실패:", uid);
+                }
+            }
+            setCityIdMap(map);
+        };
+
+        if (accessToken && state.reservations.length > 0) {
+            fetchCityIds();
+        }
+    }, [state.reservations, accessToken]);
 
     useEffect(() => {
         if (!accessToken) {
@@ -257,6 +279,7 @@ function MyBookingCon({accessToken}){
                 showMoreCancel={showMoreCancel}
                 openReviewModal={openReviewModal}
                 autoLoadingDone={autoLoadingDone}
+                cityIdMap={cityIdMap}
             />
             {selectedOrderCode &&
                 <MyReviewModalCon orderCode={selectedOrderCode}
