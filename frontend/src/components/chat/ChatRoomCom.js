@@ -140,12 +140,10 @@ function ChatRoomCom({isConnected, username, messages, sendMessage, newMessage, 
                                     <span style={senderInfoStyle}
                                           onClick={() => handleSenderClick(msg.sender, msg.profileImageUrl)}
                                     >
-                                          {/* 방장 비교 전 로그 추가 */}
-                                        {/*console.log(`비교: msg.memberCode (${msg.memberCode}, type:${typeof msg.memberCode}) vs roomDetails.memberCode (${roomDetails?.memberCode}, type:${typeof roomDetails?.memberCode})`)*/}
                                         {/* 메시지 발신자 닉네임 옆에 방장 표시 */}
-                                        {/*{roomDetails && roomDetails.memberCode === Number(msg.memberCode) && (
+                                        {roomDetails && roomDetails.memberCode === Number(msg.memberCode) && (
                                             <CreatorBadge>방장</CreatorBadge>
-                                        )}*/}
+                                        )}
                                             <strong>{msg.sender}</strong>
                                             <small> ({FormatDate(msg.sentAt || Date.now())})</small>
                                     </span>
