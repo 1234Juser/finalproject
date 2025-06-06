@@ -15,7 +15,7 @@ import {
 
 function MyReceiptCom({order, option, payment, bookingUid,
                         adProducts = [],
-                        product, onBack, onCancelReservation}){
+                        product, onBack, onCancelReservation, convertToKST}){
     const navigate = useNavigate();
 
     if (!order || !option || !payment || !product) {
@@ -44,6 +44,9 @@ function MyReceiptCom({order, option, payment, bookingUid,
     const formattedTime = payment?.paymentTime
         ? dayjs(payment.paymentTime).format("YYYY-MM-DD HH:mm:ss")
         : "시간 정보 없음";
+
+    const formattedOrderDate = convertToKST(order?.orderDate);
+    const formattedPaymentTime = convertToKST(payment?.paymentTime);
 
     const getOrderStatusText = (status) => {
         switch (status) {
@@ -106,7 +109,8 @@ function MyReceiptCom({order, option, payment, bookingUid,
                 </HeaderLeft>
                 <CreatedDate>
                     <Label>예약 생성 일시</Label>
-                    <Value>{order?.orderDate || "예약일 정보 없음"}</Value>
+                    {/*<Value>{order?.orderDate || "예약일 정보 없음"}</Value>*/}
+                    <Value>{formattedOrderDate}</Value>
                 </CreatedDate>
             </Header>
             <ContentCard>
@@ -159,7 +163,7 @@ function MyReceiptCom({order, option, payment, bookingUid,
                     if (order?.orderCode) {
                         onCancelReservation(order.orderCode);
                     } else {
-                        console.error("orderCode가 정의되지 않음:", order);
+                        console.error("order가 정의되지 않음:", order);
                     }
                 }}>예약 취소</CancelButton>
                 </CancelButtonWrapper>

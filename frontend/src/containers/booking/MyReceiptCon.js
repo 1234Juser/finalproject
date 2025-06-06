@@ -78,6 +78,12 @@ function MyReceiptCon({orderCode, optionCode, accessToken}){
         }
     }
 
+    const convertToKST = (date) => {
+        if (!date) return "시간 정보 없음";
+        const localDate = new Date(date);
+        return localDate.toLocaleString("ko-KR", {timeZone: "Asia/Seoul"});
+    };
+
     return(
         <>
             <MyReceiptCom
@@ -89,6 +95,7 @@ function MyReceiptCon({orderCode, optionCode, accessToken}){
                 adProducts={productState.adProducts}
                 onCancelReservation={handleCancel}
                 onBack={() => navigate("/my/reservations")}
+                convertToKST={convertToKST}  // KST 변환 함수 전달
             />
         </>)
 }
