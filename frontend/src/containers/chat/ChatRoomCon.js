@@ -10,7 +10,7 @@ import {
     AuthErrorTitle,
 } from "../../style/community/chat/StyleChatRoom";
 import {useNavigate} from "react-router-dom";
-import {deleteChatRoom, getAllChatRooms, getChatRoomDetail, leaveChatRoom} from "../../service/chatService";
+import {deleteChatRoom, getChatRoomDetail, leaveChatRoom} from "../../service/chatService";
 
 
 function ChatRoomCon({roomUid}) {

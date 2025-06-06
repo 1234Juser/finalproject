@@ -37,7 +37,7 @@ public class ChatController {
 
         // 여기서 chatMessage.getMemberCode() 값이 있는지 확인이 필요
         // log.debug("Controller: Received memberCode {}", chatMessage.getMemberCode()); // 만약 로그가 찍힌다면...
-        chatService.sendMessage(roomId, message);
+//        chatService.sendMessage(roomId, message);
 
         return chatService.sendMessage(roomId, message);
     }
