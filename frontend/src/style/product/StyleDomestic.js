@@ -7,10 +7,12 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 700px;
+  //height: 700px;
+  min-height: calc(100vh - 100px);
 
   @media (max-width: 768px) {
     padding: 30px 16px;
+    height: auto; /* 모바일에서는 높이 자동 조절 */
   }
 
   @media (max-width: 480px) {
@@ -21,6 +23,16 @@ export const Container = styled.div`
 export const Title = styled.h2`
   font-size: 1.8rem;
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.3rem;
+    margin-bottom: 0.6rem;
+  }
 `;
 
 export const RegionGrid = styled.div`
@@ -28,6 +40,29 @@ export const RegionGrid = styled.div`
   flex-wrap: nowrap;
   gap: 1rem;
   margin-bottom: 2rem;
+
+  overflow-x: auto; /* 가로 스크롤 허용 */
+  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+  width: 100%; /* 부모 컨테이너 너비에 맞춤 */
+  justify-content: center; /* 가로 중앙 정렬 */
+
+  /* 스크롤바 숨기기 (기능은 유지) */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+  
+  @media (max-width: 768px) {
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    justify-content: flex-start; /* 스크롤 시 왼쪽부터 시작 */
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const RegionCard = styled.div`
@@ -40,6 +75,22 @@ export const RegionCard = styled.div`
   margin: 0.5rem;
   flex-direction: column;
   gap: 10px;
+
+  flex-shrink: 0; /* flex item이 줄어들지 않도록 함 (가로 스크롤 위함) */
+
+  @media (max-width: 768px) {
+    width: 160px;
+    height: 160px;
+    margin: 0.3rem;
+    gap: 8px;
+  }
+
+  @media (max-width: 480px) {
+    width: 120px;
+    height: 120px;
+    margin: 0.2rem;
+    gap: 6px;
+  }
 `;
 
 
@@ -76,6 +127,16 @@ export const FullWidthDiv = styled.div`
   margin: 6px;            // 기존 CountryBox margin과 동일하게
   width: 152px; /* 핵심: 한 줄 전체 차지하지 않도록 */
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    width: 120px; /* 태블릿에서 너비 조정 */
+    margin: 4px;
+  }
+
+  @media (max-width: 480px) {
+    width: 90px; /* 모바일에서 너비 조정 */
+    margin: 3px;
+  }
 `;
 
 
@@ -117,12 +178,15 @@ export const CountryBox = styled.button`
     font-size: 13px;
     padding: 8px 12px;
     min-width: 120px;
+    margin: 4px;
   }
 
   @media (max-width: 480px) {
-    font-size: 12px;
+    font-size: 0.65rem;
     padding: 6px 10px;
-    min-width: 100px;
+    min-width: 100%;
+    margin: 3px;
+    white-space: nowrap;
   }
 `;
 
@@ -136,7 +200,19 @@ export const CityListContainer = styled.div`
   border-radius: 16px;
   min-height: 56px;
   width: 900px;
-  max-height: 200px;
+
+  @media (max-width: 768px) {
+    width: 100%; /* 너비를 100%로 설정 */
+    padding: 10px 0;
+    margin-top: 5px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 0;
+    margin-top: 4px;
+    border-radius: 10px;
+  }
 `;
 
 // DomesticCon 전용 CityListContainer
@@ -151,6 +227,17 @@ export const DomesticCityListContainer = styled.div`
     /* 추가적인 스타일이 필요하면 여기에 작성 */
     background-color: #f9f9f9;
   padding-bottom: 15px;
+
+  @media (max-width: 768px) {
+    width: 100%; /* 너비를 100%로 설정 */
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 6px;
+    padding-bottom: 8px;
+  }
 `;
 
 
@@ -162,6 +249,19 @@ export const CityList = styled.div`
   gap: 0.75rem;
   margin-top: 1rem;
   width: max-content;
+  padding: 0 6px;
+
+  @media (max-width: 768px) {
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+    width: 100%; /* 너비를 100%로 설정하여 유연하게 만듬 */
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    padding: 0 3px;
+  }
 `;
 
 export const CityButton = styled.button`
@@ -180,6 +280,16 @@ export const CityButton = styled.button`
     border-color: #666;
     outline: none;
   }
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+    padding: 0.35rem 0.7rem;
+  }
 `;
 
 export const RegionImage = styled.div`
@@ -195,5 +305,13 @@ export const RegionImage = styled.div`
         height: 100%;
         object-fit: cover;
     }
+
+  @media (max-width: 768px) {
+    border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 15px;
+  }
 `;
 
