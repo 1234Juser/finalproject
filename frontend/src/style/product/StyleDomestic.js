@@ -157,6 +157,13 @@ export const CountryBox = styled.button`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease-in-out;
 
+  // ✨ 추가된 부분 시작
+  color: #000; // 텍스트 색상을 검정색으로 강제 (또는 원하는 색상)
+  -webkit-text-size-adjust: none; // 자동 텍스트 크기 조절 방지
+  -webkit-touch-callout: none; // 길게 눌렀을 때 팝업 메뉴 방지
+  -webkit-tap-highlight-color: rgba(0,0,0,0); // 탭 시 배경 하이라이트 제거
+  // ✨ 추가된 부분 끝
+
   &:hover {
     border-color: #aaa;
     background-color: #f8f8f8;
@@ -272,6 +279,13 @@ export const CityButton = styled.button`
   cursor: pointer;
   transition: background-color 0.2s ease;
 
+  // ✨ 추가된 부분 시작
+  color: #000; // 텍스트 색상을 검정색으로 강제 (또는 원하는 색상)
+  -webkit-text-size-adjust: none; // 자동 텍스트 크기 조절 방지
+  -webkit-touch-callout: none; // 길게 눌렀을 때 팝업 메뉴 방지
+  -webkit-tap-highlight-color: rgba(0,0,0,0); // 탭 시 배경 하이라이트 제거
+  // ✨ 추가된 부분 끝
+
   &:hover {
     background-color: #eee;
   }
@@ -299,11 +313,15 @@ export const RegionImage = styled.div`
     border-radius: 30px;
     background-color: #f8f8f8;
   box-shadow:  0px 0 8px 3px rgb(179 179 179 / 15%);
+  height: 100%; // RegionCard의 200px/160px/120px에 맞춰 100% 사용
 
     img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+      // object-fit: contain; // 이미지가 잘리지 않고 전체가 보이도록 하려면 이 속성을 사용해보세요.
+      // 이 경우, 이미지의 가로세로 비율에 따라 빈 공간이 생길 수 있습니다.
+      // flex-shrink: 0; // 이미지가 줄어들지 않도록 설정 (RegionCard 내에서 필요할 수 있음)
     }
 
   @media (max-width: 768px) {

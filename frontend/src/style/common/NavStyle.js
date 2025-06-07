@@ -73,7 +73,6 @@ export const StyledNav = styled.nav`
         align-items: center;
         height: 110px;      // 원하는 높이로(예시)
         min-height: 110px;  // 원하는 높이로(예시)
-    overflow-x: hidden; /* ✅ 좌우 넘침 방지 */
     box-sizing: border-box; /* ✅ padding 포함 계산 */
 
     @media (max-width: 1023px) { // 태블릿
