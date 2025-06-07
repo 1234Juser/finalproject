@@ -73,18 +73,20 @@ export const StyledNav = styled.nav`
         align-items: center;
         height: 110px;      // 원하는 높이로(예시)
         min-height: 110px;  // 원하는 높이로(예시)
+    overflow-x: hidden; /* ✅ 좌우 넘침 방지 */
+    box-sizing: border-box; /* ✅ padding 포함 계산 */
 
     @media (max-width: 1023px) { // 태블릿
         height: 90px;
         min-height: 90px;
         padding: 0 20px;
     }
-    @media (max-width: 767px) { // 모바일
-        height: auto; // 내용에 따라 자동 조절
+    @media (max-width: 767px) {
+        height: auto;
         min-height: 70px;
-        padding: 10px 15px; // 상하 패딩 추가
-        flex-wrap: wrap; // 로고-메뉴-유저메뉴가 공간 부족 시 다음 줄로
-        justify-content: space-between; // 로고와 오른쪽 메뉴 양쪽 정렬
+        padding: 10px env(safe-area-inset-left, 15px) 10px env(safe-area-inset-right, 15px); /* ✅ iOS safe-area 대응 */
+        flex-wrap: wrap;
+        justify-content: space-between;
         margin-bottom: 15px;
     }
 `;
@@ -116,6 +118,7 @@ export const NavCenter = styled.ul`
             transition: all 0.16s;
             cursor: pointer;
             white-space: nowrap; /* 추가: 메뉴 텍스트가 한 줄로 표시되도록 (예: '맞춤여행') */
+            //border: 1px solid blue;
             
             &:hover {
                 background: linear-gradient(90deg, #fdf6ff 0%, #d8edff 100%);
@@ -145,7 +148,7 @@ export const NavCenter = styled.ul`
     @media (max-width: 767px) { // 모바일
         order: 3; 
         width: 100%; 
-        flex-wrap: wrap; 
+        //flex-wrap: wrap; 
         justify-content: end; 
         gap: 8px 10px; // 모바일 세로, 가로 간격
         font-size: 0.9rem; // 모바일 폰트 크기
@@ -153,6 +156,9 @@ export const NavCenter = styled.ul`
         flex-direction: column;
         align-items: flex-start;
         li {
+            //word-break: keep-all;
+            //overflow-wrap: break-word;
+
             a, span {
                 padding: 5px 8px; // 모바일 패딩
                 border-radius: 8px;
@@ -218,7 +224,6 @@ export const NavRight = styled.ul`
         font-size: 0.9rem;
         flex-direction: row; // ✅ 세로 → 가로 정렬로 전환
         padding-left: 8px;
-        flex-direction: row;
         flex-wrap: wrap;
         display: flex;
         justify-content: space-between;
