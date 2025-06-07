@@ -62,6 +62,7 @@ import UserOnlyRoute from "./components/UserOnlyRoute";
 import ScrollToTop from "./utils/ScrollToTop";
 import NotFoundPage from "./pages/NotFoundPage";
 import AdminBookingChartPage from "./pages/reservation/AdminBookingChartPage";
+import ScrollToTopButton from "./utils/ScrollToTopButton";
 
 function App() {
     return (
@@ -157,6 +158,7 @@ function App() {
             <FooterCom/>
             {/* 토스트 창 : 찜하기 완료 후 사용 */}
             <ToastContainer position="top-center" autoClose={2000} />
+            <ScrollToTopButton /> {/* 여기에 컴포넌트를 추가 */}
         </div>
     );
 }
