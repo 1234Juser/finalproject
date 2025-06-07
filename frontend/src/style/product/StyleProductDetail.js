@@ -11,6 +11,11 @@ export const Container = styled.div`
   gap: 40px;
   border-radius: 12px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+
+    @media (max-width: 768px) {
+        padding: 20px;
+        gap: 20px;
+    }
 `;
 
 export const MainSectionWrapper = styled.div`
@@ -19,6 +24,11 @@ export const MainSectionWrapper = styled.div`
   gap: 40px;
   width: 100%;
   align-items: flex-start;
+
+    @media (max-width: 768px) {
+        flex-direction: column; // 모바일에서는 세로로 정렬
+        gap: 20px;
+    }
 `;
 
 
@@ -30,6 +40,11 @@ export const ImageSection = styled.div`
     border-radius: 12px;
     object-fit: cover;
     border: 1px solid #e0e0e0;
+
+      @media (max-width: 768px) {
+          flex: none; // 모바일에서는 flex 속성 해제
+          width: 100%;
+      }
   }
 `;
 
@@ -39,6 +54,12 @@ export const InfoSection = styled.div`
   flex-direction: column;
   gap: 14px;
   position: relative;
+
+    @media (max-width: 768px) {
+        flex: none; // 모바일에서는 flex 속성 해제
+        width: 100%;
+        gap: 10px;
+    }
 `;
 
 export const Title = styled.h2`
@@ -46,6 +67,11 @@ export const Title = styled.h2`
   font-weight: bold;
   color: #222;
   margin-bottom: 10px;
+
+    @media (max-width: 768px) {
+        font-size: 22px;
+        margin-bottom: 5px;
+    }
 `;
 
 export const PriceWrapper = styled.div`
@@ -66,12 +92,28 @@ export const PriceWrapper = styled.div`
     font-size: 18px;
     margin-left: 10px;
   }
+
+    @media (max-width: 768px) {
+        font-size: 28px;
+
+        .discount {
+            font-size: 20px;
+        }
+
+        .original {
+            font-size: 16px;
+        }
+    }
 `;
 
 export const BadgeWrapper = styled.div`
   display: flex;
   gap: 8px;  // 배지 사이 간격 조절
   align-items: center;  // 세로 중앙 정렬
+
+    @media (max-width: 768px) {
+        gap: 6px;
+    }
 `;
 
 
@@ -84,6 +126,12 @@ export const Badge = styled.div`
   border-radius: 20px;
   margin-bottom: 10px;
   width: fit-content;
+
+    @media (max-width: 768px) {
+        font-size: 12px;
+        padding: 5px 10px;
+        margin-bottom: 8px;
+    }
 `;
 
 export const ConditionBadge = styled.div`
@@ -95,6 +143,12 @@ export const ConditionBadge = styled.div`
   border-radius: 20px;
   margin-bottom: 10px;
   width: fit-content;
+
+    @media (max-width: 768px) {
+        font-size: 12px;
+        padding: 5px 10px;
+        margin-bottom: 8px;
+    }
 `;
 
 export const DetailText = styled.div`
@@ -107,6 +161,11 @@ export const DetailText = styled.div`
     color: #222;
     margin-right: 6px;
   }
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+        line-height: 1.5;
+    }
 `;
 
 export const WishButton = styled.button`
@@ -122,6 +181,10 @@ export const WishButton = styled.button`
   &:hover {
     transform: scale(1.1);
   }
+
+    @media (max-width: 768px) {
+        font-size: 20px;
+    }
 `;
 
 // PaymentButton 수정: 상태에 따라 색상과 텍스트 변경
@@ -152,6 +215,12 @@ export const PaymentButton = styled.button`
             return '#ccc';
         }};
     }
+
+    @media (max-width: 768px) {
+        width: 100%; // 모바일에서는 전체 너비 사용
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
 `;
 
 
@@ -166,6 +235,13 @@ export const DetailTabWrapper = styled.div`
    position: sticky;
    background-color: white; /* 필요에 따라 배경색 설정 */
   z-index: 10; /* 다른 요소 위에 표시하기 위해 z-index 설정 (다른 콘텐츠 위에 나타나도록) */
+
+    @media (max-width: 768px) {
+        gap: 10px;
+        margin-top: 20px;
+        font-size: 16px;
+        justify-content: space-around; // 탭들을 균등하게 배치
+    }
 `;
 
 export const DetailTab = styled.button`
@@ -188,6 +264,11 @@ export const DetailTab = styled.button`
     color: black;
     background-color: #f0f0f0; /* 클릭 시 회색 배경 */
   }
+
+    @media (max-width: 768px) {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
 `;
 
 export const DetailContentWrapper = styled.div`
@@ -216,12 +297,31 @@ export const DetailContentWrapper = styled.div`
   .emoji {
     margin-right: 6px;
   }
+
+
+    @media (max-width: 768px) {
+        padding: 20px 0;
+        font-size: 14px;
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            margin: 15px 0 8px;
+            font-size: 16px;
+        }
+    }
 `;
 
 export const SectionWrapper = styled.section`
   padding: 40px 0;
   // border-bottom: ${({ active }) => (active ? '3px solid black' : 'none')};
   transition: border-bottom 0.3s ease;
+
+    @media (max-width: 768px) {
+        padding: 20px 0;
+    }
 `;
 
 
@@ -230,11 +330,21 @@ export const SubTitle = styled.h3`
     font-weight: bold;
     margin-top: 30px;
     margin-bottom: 10px;
+
+    @media (max-width: 768px) {
+        font-size: 18px;
+        margin-top: 20px;
+        margin-bottom: 8px;
+    }
 `;
 
 export const LeftAlignedSubTitle = styled(SubTitle)`
   align-self: flex-start;
   margin-left: 10px;
+
+    @media (max-width: 768px) {
+        margin-left: 0; // 모바일에서는 왼쪽 정렬 유지
+    }
 `;
 
 
@@ -242,12 +352,22 @@ export const Divider = styled.hr`
   margin: 30px 0;
   border: none;
   border-top: 1px solid #eee;
+
+
+    @media (max-width: 768px) {
+        margin: 20px 0;
+    }
 `;
 
 export const NoMarginDivider = styled(Divider)`
   margin-left: 10px;
     margin: 0;
     width: 50%;
+
+    @media (max-width: 768px) {
+        width: 80%; // 모바일에서 너비 조정
+        margin-left: 0;
+    }
 `;
 
 
@@ -255,10 +375,21 @@ export const NoMarginDivider = styled(Divider)`
 export const FlexSectionWrapper = styled(SectionWrapper)`
   display: flex;
   gap: 20px; /* 필요에 따라 gap 속성 추가 */
+
+    @media (max-width: 768px) {
+        flex-direction: column; // 모바일에서는 세로로 정렬
+        gap: 20px;
+    }
 `;
 
 export const MapWrapper = styled.div`
   flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
+
+
+    @media (max-width: 768px) {
+        width: 100%; // 모바일에서는 전체 너비
+        height: 250px; // 지도 높이 조정
+    }
 `;
 
 export const WeatherWrapper = styled.div`
@@ -268,6 +399,15 @@ export const WeatherWrapper = styled.div`
   gap: 10px; /* 텍스트와 이모티콘 사이의 간격 */
   border-left : 1px solid #eee;
     flex-direction: column;
+
+    @media (max-width: 768px) {
+        flex: none; // 모바일에서는 flex 속성 해제
+        width: 100%;
+        border-left: none; // 모바일에서는 왼쪽 보더 제거
+        border-top: 1px solid #eee; // 상단 보더 추가
+        padding-top: 20px;
+        margin-top: 20px;
+    }
 `;
 
 
@@ -290,5 +430,10 @@ export const SaleStatus = styled.span`
     color: white;
     font-size: 14px;
     font-weight: 300;
+
+    @media (max-width: 768px) {
+        font-size: 12px;
+        padding: 3px 6px;
+    }
 `;
 

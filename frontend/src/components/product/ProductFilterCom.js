@@ -9,6 +9,11 @@ const FilterContainer = styled.div`
     border-radius: 12px;
     background-color: #ffffff;
     font-family: 'Arial', sans-serif;
+
+    @media (max-width: 768px) {
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+    }
 `;
 
 const FilterRow = styled.div`
@@ -29,6 +34,13 @@ const FilterRow = styled.div`
         flex-direction: column;
         align-items: stretch;
         gap: 0.75rem;
+
+        // 버튼 row에 대한 모바일 스타일 조정
+        &.button-row {
+            flex-direction: row; // 모바일에서도 버튼은 가로로 정렬
+            justify-content: flex-start; // 양쪽 끝 정렬
+            margin-top: 1rem; // 간격 조정
+        }
     }
 `;
 
@@ -48,6 +60,16 @@ const FilterSection = styled.div`
         align-items: center;
         gap: 0.5rem;
     }
+
+    @media (max-width: 768px) {
+        label {
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+        & > div {
+            gap: 0.4rem;
+        }
+    }
 `;
 
 
@@ -66,12 +88,22 @@ const inputStyle = `
         border-color: #339af0;
         outline: none;
     }
+    
+     @media (max-width: 768px) {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.9rem;
+    }
 `;
 
 const Input = styled.input`${inputStyle}`;
 const Select = styled.select`
     ${inputStyle};
     width: 200px;
+
+
+    @media (max-width: 768px) {
+        //width: 100%; // 모바일에서는 전체 너비 사용
+    }
 `;
 
 const DateInput = styled(Input)`
@@ -102,12 +134,22 @@ const Button = styled.button`
         border: 1px solid #dfdede;
         color: #000000;
     }
+
+    @media (max-width: 768px) {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        margin-left: 0; // 버튼들의 왼쪽 마진 제거
+    }
 `;
 
 const PriceRangeSeparator = styled.span`
     margin: 0 0.25rem;
     color: #868e96; /* 구분자 색상 변경 */
     align-self: center; /* 수직 중앙 정렬 */
+
+    @media (max-width: 768px) {
+        margin: 0 0.2rem;
+    }
 `;
 
 
@@ -170,7 +212,7 @@ function ProductFilterCom({ onFilterChange }) {
                         <DateInput type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
                 </FilterSection>
-                <FilterRow style={{ marginBottom : 0 }}>
+                <FilterRow className="button-row">
                     <Button className="reset-button" onClick={handleResetFilters}>필터 초기화</Button>
                     <Button onClick={handleApplyFilter}>필터 적용</Button>
                 </FilterRow>
