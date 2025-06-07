@@ -98,7 +98,7 @@ const InternationalCon = () => {
                                                 {city.cityNameKR}
                                             </CityButton>
                                         ))) : (
-                                        <p>도시 정보를 가져오는 중...</p>
+                                        <p>Loading...</p>
                                     )}
                                      </CityList>
                                     )}

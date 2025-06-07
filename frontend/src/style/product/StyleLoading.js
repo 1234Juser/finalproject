@@ -2,10 +2,10 @@ import styled, { keyframes } from 'styled-components';
 
 const spin = keyframes`
   0% {
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform:  rotate(0deg);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(360deg);
+    transform:  rotate(360deg);
   }
 `;
 
@@ -16,8 +16,8 @@ const Backdrop = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(180, 180, 180, 0.2); /* 약간 어두운 반투명 배경 */
-  backdrop-filter: blur(4px); /* 배경 흐림 효과 */
+  //background-color: rgba(180, 180, 180, 0.2); /* 약간 어두운 반투명 배경 */
+  backdrop-filter: blur(2px); /* 배경 흐림 효과 */
   -webkit-backdrop-filter: blur(4px); /* Safari 브라우저 호환성 */
   z-index: 999; /* 로딩 컴포넌트보다 아래에 위치 */
 `;
@@ -50,7 +50,6 @@ const Spinner = styled.div`
     border-top-color: #85c0e9; /* 스피너 상단 테두리 색상 (더 밝게) */
     border-radius: 50%; /* 원형 모양 */
     animation: ${spin} 1s linear infinite; /* 회전 애니메이션 적용 */
-    margin-bottom: 15px; /* 텍스트와의 간격 */
 `;
 
 // 로딩 컴포넌트
