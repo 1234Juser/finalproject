@@ -30,8 +30,9 @@ import ExchangeBoxCom from "./exchange/ExchangeBoxCom";
 import RecentReviewRequestModalCon from "../containers/review/RecentReviewRequestModalCon";
 import TimedifferenceCom from "./exchange/TimedifferenceCom";
 import EventSliderCom from "./event/EventSliderCom";
+import AdSlider from "./ad/AdSlider";
 
-export default function MainCom({accessToken, state, dispatch}) {
+export default function MainCom({accessToken, state, dispatch, adProducts = []}) {
     const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 767);
 
 
@@ -190,11 +191,32 @@ export default function MainCom({accessToken, state, dispatch}) {
                     </ImageGallery>
             </MainSectionWrapper>
 
-            {/* 4. 이벤트 슬라이드쇼 */}
-            <EventSliderCom />
+            <MainSectionWrapper style={{marginTop: "70px"}}>
+                <TitleSection>
+                    <MainTitle>
+                                        <span>
+                                            🎉 진행 중인<HighlightText> 이벤트</HighlightText>
+                                        </span>
+                    </MainTitle>
+                    <Subtitle>현재 진행 중인 이벤트를 확인해보세요!</Subtitle>
+                </TitleSection>
+                {/* 4. 이벤트 슬라이드쇼 */}
+                <EventSliderCom/>
+            </MainSectionWrapper>
 
-            <MainSectionWrapper>
-            {/*    메인 섹션 추가 */}
+            <MainSectionWrapper style={{margin : "70px 0"}}>
+                <TitleSection>
+                    <MainTitle>
+                                <span>
+                                    💭어디로 <HighlightText> 떠나야</HighlightText> 할지
+                                    {isMobileView && <br />} {/* 모바일일 때만 br 태그 렌더링 */}
+                                    모르시겠다구요?
+                                </span>
+                    </MainTitle>
+                    <Subtitle>랜덤으로 추천해드려요</Subtitle>
+                </TitleSection>
+                {/* hideTitle prop을 true로 설정하여 '다른 상품은 어때요?' 문구 숨김 */}
+                <AdSlider adProducts={adProducts} hideTitle={true} isMainPage={true}/>
             </MainSectionWrapper>
 
 

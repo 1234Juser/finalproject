@@ -82,7 +82,7 @@ const EventSliderCom = () => {
         return null; // 이벤트가 없으면 슬라이더를 표시하지 않음
     }
     return (
-        <MainSectionWrapper style={{marginTop: "40px", zIndex: 2}}> {/* 위치 조정 */}
+        <MainSectionWrapper style={{ zIndex: 2}}> {/* 위치 조정 */}
             <h2 style={{
                 fontSize: "1.8rem",
                 fontWeight: "bold",
@@ -90,7 +90,7 @@ const EventSliderCom = () => {
                 marginBottom: "20px",
                 textAlign: "center"
             }}>
-                <span style={{color: "#567eff"}}>진행 중</span>인 이벤트
+                {/*<span style={{color: "#567eff"}}>진행 중</span>인 이벤트*/}
             </h2>
             <EventSliderContainer>
                 {/* --slide-count 변수를 사용하여 동적으로 width를 계산하도록 합니다. */}
