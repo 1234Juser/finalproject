@@ -20,6 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
 
 @Slf4j
@@ -153,6 +154,12 @@ public class KaKaoOAuthService {
                             .authority(userAuthority)
                             .build();
                     memberRoleRepository.save(memberRole);
+
+                    //  [핵심 수정 1] 메모리에 있는 member 객체에 role 정보 즉시 반영
+                    if (member.getRoles() == null) {
+                        member.setRoles(new HashSet<>());
+                    }
+                    member.getRoles().add(memberRole);
                 }
 
                 LoginRequestDTO loginRequest = LoginRequestDTO.builder()
@@ -200,6 +207,12 @@ public class KaKaoOAuthService {
                                 .authority(userAuthority)
                                 .build();
                         memberRoleRepository.save(memberRole);
+
+                        //  [핵심 수정 2] 메모리에 있는 member 객체에 role 정보 즉시 반영
+                        if (member.getRoles() == null) {
+                            member.setRoles(new HashSet<>());
+                        }
+                        member.getRoles().add(memberRole);
                     }
 
                     LoginRequestDTO loginRequest = LoginRequestDTO.builder()
@@ -247,6 +260,12 @@ public class KaKaoOAuthService {
                             .authority(userAuthority)
                             .build();
                     memberRoleRepository.save(memberRole);
+
+                    // ⭐ [핵심 수정 3] 메모리에 있는 newMember 객체에 role 정보 즉시 반영
+                    if (newMember.getRoles() == null) {
+                        newMember.setRoles(new HashSet<>());
+                    }
+                    newMember.getRoles().add(memberRole);
                 }
 
                 LoginRequestDTO loginRequest = LoginRequestDTO.builder()
