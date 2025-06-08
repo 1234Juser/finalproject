@@ -64,7 +64,9 @@ function KakaoCallbackPage() {
 
 
                 // 4. 메인페이지로 이동 (홈 등)
-                navigate("/");
+                // navigate("/");
+                window.location.href = "/"; // 변경된 코드
+
             })
             .catch(err => {
                 // 실패 시 처리
