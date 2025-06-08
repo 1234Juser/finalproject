@@ -17,12 +17,12 @@ const UserOnlyRoute = ({ children }) => {
         // console.log(`UserOnlyRoute useEffect triggered for path: ${location.pathname}`);
         // console.log("localStorage accessToken:", currentAuth);
         // console.log("localStorage roles string:", currentRoles);
-        try {
-            const parsedRoles = JSON.parse(currentRoles || "[]");
-            // console.log("Parsed roles:", parsedRoles);
-        } catch (e) {
-            // console.error("Error parsing roles from localStorage:", e);
-        }
+        // try {
+        //     const parsedRoles = JSON.parse(currentRoles || "[]");
+        //     console.log("Parsed roles:", parsedRoles);
+        // } catch (e) {
+        //     console.error("Error parsing roles from localStorage:", e);
+        // }
 
     }, [location.pathname]); // 의존성 배열에 location.pathname을 추가하여 경로가 변경될 때마다 이 useEffect가 실행되도록 합니다.
 
