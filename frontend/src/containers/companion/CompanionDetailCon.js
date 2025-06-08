@@ -140,6 +140,19 @@ function CompanionDetailCon() {
 
     useEffect(() => {
         fetchCompanionDetail();
+
+        // 브라우저 창이 다시 포커스될 때마다 데이터(이미지 URL 포함)를 새로고침
+        const handleFocus = () => {
+            console.log("Window focused, refetching data...");
+            fetchCompanionDetail();
+        };
+
+        window.addEventListener('focus', handleFocus);
+
+        // 컴포넌트가 언마운트될 때 이벤트 리스너를 정리하여 메모리 누수 방지
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
     }, [fetchCompanionDetail]); // fetchCompanionDetail 함수가 변경될 때마다 useEffect 실행
 
     const handleUpdateClick = () => {

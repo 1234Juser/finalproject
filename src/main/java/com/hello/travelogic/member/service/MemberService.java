@@ -11,7 +11,7 @@ import com.hello.travelogic.member.repository.MemberRoleRepository;
 import com.hello.travelogic.member.repository.PasswordResetAuthCodeRepository;
 import com.hello.travelogic.utils.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -127,6 +127,7 @@ public class MemberService {
     }
 
     //로그인
+    @Transactional(readOnly = true)
     public LoginResponseDTO login(LoginRequestDTO dto) {
         MemberEntity member = memberRepository.findByMemberId(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("해당아이디가 존재하지않습니다."));
