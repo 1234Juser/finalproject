@@ -129,7 +129,7 @@ public class MemberService {
     //로그인
     @Transactional(readOnly = true)
     public LoginResponseDTO login(LoginRequestDTO dto) {
-        MemberEntity member = memberRepository.findByMemberId(dto.getMemberId())
+        MemberEntity member = memberRepository.findByMemberIdWithRoles(dto.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("해당아이디가 존재하지않습니다."));
 
 

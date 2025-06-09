@@ -2,6 +2,8 @@ package com.hello.travelogic.member.repository;
 
 import com.hello.travelogic.member.domain.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -23,6 +25,9 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     Optional<MemberEntity> findByMemberEmail(String email);
     // 채팅창 프로필 사진
     Optional<MemberEntity> findByMemberName(String memberName);
+    //게시글삭제권한관련
+    @Query("SELECT m FROM MemberEntity m LEFT JOIN FETCH m.roles r LEFT JOIN FETCH r.authority WHERE m.memberId = :memberId")
+    Optional<MemberEntity> findByMemberIdWithRoles(@Param("memberId") String memberId);
 
 
 }
