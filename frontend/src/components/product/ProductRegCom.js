@@ -7,7 +7,7 @@ import {
     StyledSelect,
     StyledFileInput,
     StyledError,
-    StyledDivider, StyledTitle
+    StyledDivider, StyledTitle, RegisterButton, EditButton, ListButton
 } from "../../style/product/StyleProductReg";
 import AdminSideBarPage from "../../pages/common/AdminSideBarPage";
 import {Link} from "react-router-dom";
@@ -265,7 +265,7 @@ function ProductRegCom({
 
                     <InputWrapper>
                         <StyledLabel htmlFor="productThumbnail">썸네일 업로드</StyledLabel>
-                        <StyledFileInput id="productThumbnail" type="file" name="productThumbnail" 
+                        <StyledFileInput id="productThumbnail" type="file" name="productThumbnail"
                                         onChange={(e) => handleFileSelect(e.target.files[0])}   // FormData로 따로 보낼 파일>>객체<<는 따로 관리
                                          required={!isEditPage}
                         />
@@ -277,15 +277,15 @@ function ProductRegCom({
                     <br/>
                     {isEditPage ? (
                         <>
-                        <button type="submit" onClick={onSubmit}>수정</button>
+                        <EditButton type="submit" onClick={onSubmit}>수정</EditButton>
                         </>
                     ) : (
                         <>
-                    <button type="submit" onClick={onSubmit}>상품 등록</button>
+                    <RegisterButton type="submit" onClick={onSubmit}>상품 등록</RegisterButton>
                         </>
                     )}
                     <Link to="/admin/productAll">
-                        <button type="button" >목록으로</button>
+                        <ListButton type="button" >목록으로</ListButton>
                     </Link>
                 </form>
             </main>
