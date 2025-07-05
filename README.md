@@ -1,4 +1,3 @@
-발표자료 : [helloTravelogic.pdf](https://github.com/user-attachments/files/20674682/helloTravelogic.pdf)
 
 
 # 프로젝트 이름 : Hello, Travelogic!
